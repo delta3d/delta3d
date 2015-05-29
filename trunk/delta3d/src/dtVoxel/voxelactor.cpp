@@ -19,10 +19,19 @@
 
 #include <dtVoxel/voxelactor.h>
 #include <dtVoxel/voxelgriddebugdrawable.h>
+
+#include <dtABC/application.h>
+
 #include <dtCore/transformable.h>
 #include <dtCore/propertymacros.h>
-#include <openvdb/openvdb.h>
+#include <dtCore/camera.h>
 #include <dtCore/project.h>
+#include <dtCore/transform.h>
+
+#include <dtGame/basemessages.h>
+#include <dtGame/gamemanager.h>
+
+#include <openvdb/openvdb.h>
 #include <dtVoxel/aabbintersector.h>
 
 namespace dtVoxel
@@ -71,6 +80,7 @@ namespace dtVoxel
       static dtUtil::RefString GROUP("VoxelActor");
       RegHelper regHelper(*this, this, GROUP);
       
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(ViewDistance, "View Distance", "View Distance", "The distance to at which voxels will be generated into groups of volumes and rendered.", RegHelper, regHelper);
       DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(GridDimensions, "Grid Dimensions", "Grid Dimensions", "The size of the grid to allocate into blocks.", RegHelper, regHelper);
       DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(BlockDimensions, "Block Dimensions", "Block Dimensions", "The size of the blocks within the grid.", RegHelper, regHelper);
       DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(CellDimensions, "Cell Dimensions", "Cell Dimensions", "The size of the cells within the blocks", RegHelper, regHelper);
@@ -121,35 +131,64 @@ namespace dtVoxel
       }
       return result;
    }
+   
+   void VoxelActor::OnTickLocal(const dtGame::TickMessage& tickMessage)
+   {
+      if (mGrid.valid())
+      {
+         dtGame::GameManager* gm = GetGameManager();
+
+         if (gm != nullptr)
+         {
+            dtCore::Camera* cam = gm->GetApplication().GetCamera();
+
+            osg::Vec3 pos;
+            dtCore::Transform xform;
+            cam->GetTransform(xform);
+            xform.GetTranslation(pos);
+
+            mGrid->UpdateGrid(pos);
+
+            //std::cout << "Updating voxel grid with position (" << pos[0] << ", " << pos[1] << ", " << pos[2] << ")" << std::endl;
+         }
+      }
+   }
+
 
    /////////////////////////////////////////////////////
    void VoxelActor::CreateDrawable()
    {
-      dtCore::RefPtr<VoxelGridDebugDrawable> dd = new VoxelGridDebugDrawable();
+      //commented out, this is a simple debug rendering
+      //dtCore::RefPtr<VoxelGridDebugDrawable> dd = new VoxelGridDebugDrawable();
+      //dd->CreateDebugDrawable(*mGrid);
+      //SetDrawable(*dd);
 
-      SetDrawable(*dd);
+      mGrid = new VoxelGrid();
+      SetDrawable(*mGrid);
+
    }
 
 
    void VoxelActor::OnEnteredWorld()
    {
-      mGrid = new VoxelGrid();
+      RegisterForMessages(dtGame::MessageType::TICK_LOCAL, dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
 
-      /*SetDatabase(dtCore::ResourceDescriptor("StaticMeshes:delta3d_island.vdb"));
-      osg::Vec3 offset(0.0, 0.0, -100.0);
-      osg::Vec3 dim(500, 500, 200);
-      osg::Vec3 blockDim(25, 25, 25);
-      osg::Vec3 cellDim(5, 5, 5);
-      osg::Vec3i texRes(16, 16, 16);*/
+      openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(GetGrid(0));
 
+      /*osg::Vec3 offset(-2500.0, -2500.0, -9.0);
+      osg::Vec3 dim(5000, 5000, 18);
+      osg::Vec3 blockDim(50, 50, 6);
+      osg::Vec3 cellDim(12.5, 12.5, 2);
+      osg::Vec3i texRes(24, 24, 4);
+
+      mGrid->SetViewDistance(1000.0f);*/
+      osg::Vec3i res(int(mTextureResolution.x()), int(mTextureResolution.y()), int(mTextureResolution.z()));
       osg::Vec3 offset = GetTranslation();
-      osg::Vec3i texRes(int(mTextureResolution.x()), int(mTextureResolution.y()), int(mTextureResolution.z()));
 
-      mGrid->Init(offset, mGridDimensions, mBlockDimensions, mCellDimensions, texRes);
-      mGrid->CreateGridFromActor(*this);
-
-      VoxelGridDebugDrawable* dd = GetDrawable<VoxelGridDebugDrawable>();
-      dd->CreateDebugDrawable(*mGrid);
+      mGrid->Init(offset, mGridDimensions, mBlockDimensions, mCellDimensions, res);
+      
+      osg::Vec3 pos(0.0f, 0.0f, 0.0f);
+      mGrid->CreateGridFromActor(pos, *this);
 
    }
 

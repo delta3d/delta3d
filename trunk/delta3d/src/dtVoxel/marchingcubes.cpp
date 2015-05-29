@@ -30,9 +30,9 @@ namespace dtVoxel
    Return the point between two points in the same ratio as
    isolevel is between valp1 and valp2
    */
-   osg::Vec3 VertexInterp(double isolevel, const osg::Vec3& p1, const osg::Vec3& p2, double valp1, double valp2)
+   osg::Vec3 VertexInterp(float isolevel, const osg::Vec3& p1, const osg::Vec3& p2, float valp1, float valp2)
    {
-      double mu;
+      float mu;
       osg::Vec3 p;
 
       if (std::abs(isolevel - valp1) < 0.00001)
@@ -49,7 +49,7 @@ namespace dtVoxel
       return(p);
    }
 
-   int PolygonizeCube(GRIDCELL g, double iso, TRIANGLE *tri)
+   int PolygonizeCube(GRIDCELL g, float iso, TRIANGLE *tri)
    {
       int i, ntri = 0;
       int cubeindex;
@@ -464,9 +464,10 @@ namespace dtVoxel
          tri[ntri].p[1] = vertlist[triTable[cubeindex][i + 1]];
          tri[ntri].p[2] = vertlist[triTable[cubeindex][i + 2]];
 
-         tri[ntri].n[0] = vertlist[triTable[cubeindex][i]];
-         tri[ntri].n[1] = vertlist[triTable[cubeindex][i + 1]];
-         tri[ntri].n[2] = vertlist[triTable[cubeindex][i + 2]];
+         //todo- generate normals
+         tri[ntri].n[0].set(0.0f, 0.0f, 1.0f);
+         tri[ntri].n[1].set(0.0f, 0.0f, 1.0f);
+         tri[ntri].n[2].set(0.0f, 0.0f, 1.0f);
 
          ntri++;
       }

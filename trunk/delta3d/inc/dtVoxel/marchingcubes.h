@@ -49,7 +49,7 @@ namespace dtVoxel
    0 will be returned if the grid cell is either totally above
    of totally below the isolevel.
    */
-   DT_VOXEL_EXPORT int PolygonizeCube(GRIDCELL g, double iso, TRIANGLE *tri);
+   DT_VOXEL_EXPORT int PolygonizeCube(GRIDCELL g, float iso, TRIANGLE *tri);
 
 
 } /* namespace dtVoxel */

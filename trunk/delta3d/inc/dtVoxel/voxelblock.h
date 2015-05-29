@@ -37,19 +37,27 @@ namespace dtVoxel
       virtual ~VoxelBlock();
 
       void Init(const osg::Vec3& ws_dimensions, const osg::Vec3& ws_offset, const osg::Vec3f& cellSize);
-      bool IsAllocated() const;
       
+      bool IsAllocated() const;
+
+      void SetDirty(bool b);
+      bool GetDirty() const;
+
+      void SetEmpty(bool b);
+      bool GetEmpty() const;
+
       const osg::Vec3& GetOffset();
       
-      void Allocate(VoxelActor& voxelActor, openvdb::GridBase::Ptr localGrid, const osg::Vec3i& textureResolution);
+      void DeAllocate();
+      void Allocate(VoxelActor& voxelActor, const osg::Vec3i& textureResolution);
       
       //void AllocateCell(const osg::Vec3& pos, const osg::Vec3i& textureResolution);
       
       VoxelCell* GetCellFromIndex(int x, int y, int z);      
       VoxelCell* GetCellFromPos(const osg::Vec3& pos);
       
-      osgVolume::Volume* GetOSGVolume();      
-      const osgVolume::Volume* GetOSGVolume() const;
+      osg::Group* GetOSGNode();      
+      const osg::Group* GetOSGNode() const;
       
       const osg::Vec3& GetOffset() const;
 
@@ -62,8 +70,14 @@ namespace dtVoxel
       osg::Vec3 mWSCellDimensions;
       osg::Vec3 mOffset;
 
-      dtCore::RefPtr<osgVolume::Volume> mVolume;
+      //dtCore::RefPtr<osgVolume::Volume> mVolume;
+      dtCore::RefPtr<osg::Group> mVolume;
 
+      bool mIsAllocated;
+      bool mIsDirty;
+      bool mIsEmpty;
+
+      int mNumCells;
       VoxelCell* mCells;
    };
 

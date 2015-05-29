@@ -19,13 +19,19 @@
 
 #include <dtVoxel/voxelblock.h>
 #include <dtUtil/log.h>
+#include <osgUtil/Simplifier>
+#include <tbb/parallel_for.h>
 #include <iostream>
 
 namespace dtVoxel
 {
 
    VoxelBlock::VoxelBlock()
-      : mCells(NULL)
+      : mIsAllocated(false)      
+      , mIsDirty(false)
+      , mIsEmpty(true)
+      , mNumCells(0)
+      , mCells(NULL)
    {
    }
 
@@ -36,18 +42,55 @@ namespace dtVoxel
 
    void VoxelBlock::Init(const osg::Vec3& ws_dimensions, const osg::Vec3& ws_offset, const osg::Vec3f& cellSize)
    {
-      static int count = 0;
-      std::cout << "Creating Voxel Block " << count++ << std::endl;
+      //static int count = 0;
+      //std::cout << "Creating Voxel Block " << count++ << std::endl;
 
       mWSDimensions = ws_dimensions;
       mOffset = ws_offset;
       mWSCellDimensions = cellSize;
 
+      mVolume = new osg::Group();
+   }
+   
+   void VoxelBlock::DeAllocate()
+   {
+      //std::cout << "DeAllocating Voxel Block" << std::endl;
+
+      mVolume->removeChildren(0, mVolume->getNumChildren());
+
+      for (int i = 0; i < mNumCells; ++i)
+      {
+         mCells[i].DeAllocate();
+      }
+
+      delete[] mCells;
+
+      mIsAllocated = false;
    }
 
    bool VoxelBlock::IsAllocated() const
    {
-      return mVolume.valid();
+      return mIsAllocated;
+   }
+
+   void VoxelBlock::SetDirty(bool b)
+   {
+      mIsDirty = b;
+   }
+
+   bool VoxelBlock::GetDirty() const
+   {
+      return mIsDirty;
+   }
+
+   void VoxelBlock::SetEmpty(bool b)
+   {
+      mIsEmpty = b;
+   }
+
+   bool VoxelBlock::GetEmpty() const
+   {
+      return mIsEmpty;
    }
 
    const osg::Vec3& VoxelBlock::GetOffset()
@@ -55,18 +98,18 @@ namespace dtVoxel
       return mOffset;
    }
 
-   void VoxelBlock::Allocate(VoxelActor& voxelActor, openvdb::GridBase::Ptr localGrid, const osg::Vec3i& textureResolution)
+   void VoxelBlock::Allocate(VoxelActor& voxelActor, const osg::Vec3i& textureResolution)
    {
-      mVolume = new osgVolume::Volume;
+      //std::cout << "Allocating Voxel Block" << std::endl;
 
       osg::Vec3 gridDim(
          int(std::floor(mWSDimensions[0] / mWSCellDimensions[0])),
          int(std::floor(mWSDimensions[1] / mWSCellDimensions[1])),
          int(std::floor(mWSDimensions[2] / mWSCellDimensions[2])));
 
-      int numCells = gridDim[0] * gridDim[1] * gridDim[2];
+      mNumCells = gridDim[0] * gridDim[1] * gridDim[2];
       //todo catch out of memory exception here
-      mCells = new VoxelCell[numCells];
+      mCells = new VoxelCell[mNumCells];
      
 
       //VoxelCell* cellToInit = &mCells[0];
@@ -94,7 +137,7 @@ namespace dtVoxel
                   int cellIndex = (z * gridDim[1] * gridDim[0]) + (y * gridDim[0]) + x;
 
                   //cellToInit->Init(transform, mWSCellDimensions, textureResolution);
-                  mCells[cellIndex].CreateImage(voxelActor, vdbGrid, transform, mWSCellDimensions, textureResolution);
+                  mCells[cellIndex].CreateMesh(voxelActor, vdbGrid, transform, mWSCellDimensions, textureResolution);
 
                   //todo- should these be spatialized?
                   mVolume->addChild(mCells[cellIndex].GetOSGNode());
@@ -105,6 +148,12 @@ namespace dtVoxel
          }
       }
 
+      //dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
+      //simplifier->setMaximumLength(1000.0f);
+      //simplifier->setDoTriStrip(true);
+      //mVolume->accept(*simplifier);
+
+      mIsAllocated = true;
    }
 
    //void VoxelBlock::AllocateCell(const osg::Vec3& pos, const osg::Vec3i& textureResolution)
@@ -169,12 +218,12 @@ namespace dtVoxel
       return cell;
    }
 
-   osgVolume::Volume* VoxelBlock::GetOSGVolume()
+   osg::Group* VoxelBlock::GetOSGNode()
    {
       return mVolume.get();
    }
 
-   const osgVolume::Volume* VoxelBlock::GetOSGVolume() const
+   const osg::Group* VoxelBlock::GetOSGNode() const
    {
       return mVolume.get();
    }

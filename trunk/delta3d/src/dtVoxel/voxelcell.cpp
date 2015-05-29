@@ -24,6 +24,8 @@
 #include <osgVolume/FixedFunctionTechnique>
 #include <osg/Texture2D>
 #include <osg/Geometry>
+#include <osg/PolygonMode>
+#include <osgUtil/Simplifier>
 
 #include <dtVoxel/marchingcubes.h>
 
@@ -38,6 +40,17 @@ namespace dtVoxel
    class VoxelCellImpl
    {
    public:
+      VoxelCellImpl()
+         : mIsAllocated(false)
+         , mIsDirty(false)
+      {
+
+      }
+
+      bool mIsAllocated;
+      bool mIsDirty;
+
+      osg::Vec3 mOffset;
       dtCore::RefPtr<osg::Geode> mMeshNode;
       dtCore::RefPtr<osgVolume::ImageLayer> mImage;
       dtCore::RefPtr<osgVolume::VolumeTile> mVolumeTile;
@@ -53,21 +66,37 @@ namespace dtVoxel
       delete mImpl;
    }
 
-   bool VoxelCell::IsAllocated()
+   bool VoxelCell::IsAllocated() const
    {
-      return (mImpl->mVolumeTile.valid() || mImpl->mMeshNode.valid());
+      return mImpl->mIsAllocated;
+   }
+
+   void VoxelCell::DeAllocate()
+   {
+      //std::cout << "DeAllocating Voxel Cell " << std::endl;
+
+      mImpl->mMeshNode = NULL;
+      mImpl->mImage = NULL;
+      mImpl->mVolumeTile = NULL;
+
+      mImpl->mIsAllocated = false;
    }
 
    void VoxelCell::CreateMesh(VoxelActor& voxelActor, openvdb::GridBase::Ptr localGrid, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution)
    {
+      static int mesh_count = 0;
+
+      //std::cout << "Creating Voxel Cell " << mesh_count++ << std::endl;
+
       mImpl->mMeshNode = new osg::Geode();
 
       dtCore::RefPtr<osg::Geometry> geom = new osg::Geometry();
       dtCore::RefPtr<osg::Vec3Array> vertArray = new osg::Vec3Array();
       dtCore::RefPtr<osg::Vec3Array> normalArray = new osg::Vec3Array();
+      dtCore::RefPtr<osg::Vec3Array> colorArray = new osg::Vec3Array();
       dtCore::RefPtr<osg::DrawElementsUInt> drawElements = new osg::DrawElementsUInt(GL_TRIANGLES);
 
-      osg::Vec3 pos = transform.getTrans();
+      mImpl->mOffset = transform.getTrans();
       
       osg::Vec3 texelSize(cellSize[0] / float(resolution[0]), cellSize[1] / float(resolution[1]), cellSize[2] / float(resolution[2]));
 
@@ -79,7 +108,7 @@ namespace dtVoxel
       openvdb::tools::GridSampler<openvdb::BoolGrid::ConstAccessor, openvdb::tools::BoxSampler>
          fastSampler(accessor, gridB->transform());
 
-      float isolevel = 1.0;
+      float isolevel = 1.0f;
 
       for (int i = 0; i < resolution[0]; ++i)
       {
@@ -87,9 +116,9 @@ namespace dtVoxel
          {
             for (int k = 0; k < resolution[2]; ++k)
             {
-               double worldX = pos[0] + (i * texelSize[0]);
-               double worldY = pos[1] + (j * texelSize[1]);
-               double worldZ = pos[2] + (k * texelSize[2]);
+               double worldX = mImpl->mOffset[0] + (i * texelSize[0]);
+               double worldY = mImpl->mOffset[1] + (j * texelSize[1]);
+               double worldZ = mImpl->mOffset[2] + (k * texelSize[2]);
 
                osg::Vec3 from(worldX, worldY, worldZ);
                
@@ -97,28 +126,28 @@ namespace dtVoxel
                TRIANGLE triangles[5];
 
                grid.p[0] = from;
-               grid.val[0] = fastSampler.wsSample(openvdb::Vec3R(grid.p[0].x(), grid.p[0].y(), grid.p[0].z()));
+               grid.val[0] = !fastSampler.wsSample(openvdb::Vec3R(grid.p[0].x(), grid.p[0].y(), grid.p[0].z()));
 
                grid.p[1].set(from[0] + texelSize[0], from[1], from[2]);
-               grid.val[1] = fastSampler.wsSample(openvdb::Vec3R(grid.p[1].x(), grid.p[1].y(), grid.p[1].z()));
+               grid.val[1] = !fastSampler.wsSample(openvdb::Vec3R(grid.p[1].x(), grid.p[1].y(), grid.p[1].z()));
 
                grid.p[2].set(from[0] + texelSize[0], from[1] + texelSize[1], from[2]);
-               grid.val[2] = fastSampler.wsSample(openvdb::Vec3R(grid.p[2].x(), grid.p[2].y(), grid.p[2].z()));
+               grid.val[2] = !fastSampler.wsSample(openvdb::Vec3R(grid.p[2].x(), grid.p[2].y(), grid.p[2].z()));
 
                grid.p[3].set(from[0], from[1] + texelSize[1], from[2]);
-               grid.val[3] = fastSampler.wsSample(openvdb::Vec3R(grid.p[3].x(), grid.p[3].y(), grid.p[3].z()));
+               grid.val[3] = !fastSampler.wsSample(openvdb::Vec3R(grid.p[3].x(), grid.p[3].y(), grid.p[3].z()));
 
                grid.p[4].set(from[0], from[1], from[2] + texelSize[2]);
-               grid.val[4] = fastSampler.wsSample(openvdb::Vec3R(grid.p[4].x(), grid.p[4].y(), grid.p[4].z()));
+               grid.val[4] = !fastSampler.wsSample(openvdb::Vec3R(grid.p[4].x(), grid.p[4].y(), grid.p[4].z()));
 
                grid.p[5].set(from[0] + texelSize[0], from[1], from[2] + texelSize[2]);
-               grid.val[5] = fastSampler.wsSample(openvdb::Vec3R(grid.p[5].x(), grid.p[5].y(), grid.p[5].z()));
+               grid.val[5] = !fastSampler.wsSample(openvdb::Vec3R(grid.p[5].x(), grid.p[5].y(), grid.p[5].z()));
 
                grid.p[6].set(from[0] + texelSize[0], from[1] + texelSize[1], from[2] + texelSize[2]);
-               grid.val[6] = fastSampler.wsSample(openvdb::Vec3R(grid.p[6].x(), grid.p[6].y(), grid.p[6].z()));
+               grid.val[6] = !fastSampler.wsSample(openvdb::Vec3R(grid.p[6].x(), grid.p[6].y(), grid.p[6].z()));
 
                grid.p[7].set(from[0], from[1] + texelSize[1], from[2] + texelSize[2]);
-               grid.val[7] = fastSampler.wsSample(openvdb::Vec3R(grid.p[7].x(), grid.p[7].y(), grid.p[7].z()));
+               grid.val[7] = !fastSampler.wsSample(openvdb::Vec3R(grid.p[7].x(), grid.p[7].y(), grid.p[7].z()));
 
                int numTriangles = PolygonizeCube(grid, isolevel, triangles);
 
@@ -136,18 +165,38 @@ namespace dtVoxel
                   normalArray->push_back(triangles[n].n[0]);
                   normalArray->push_back(triangles[n].n[1]);
                   normalArray->push_back(triangles[n].n[2]);
+
+                  colorArray->push_back(osg::Vec3(1.0f, 1.0f, 1.0f));
                }
             }
          }
       }
 
-
-      geom->setVertexArray(vertArray);
-      geom->setNormalArray(normalArray);
-      geom->setNormalBinding(osg::Geometry::BIND_PER_VERTEX);
+      //std::cout << "Num Triangles Before Simplifier " << vertArray->size() << std::endl;
+      
+      geom->setVertexArray(vertArray);      
+      geom->setColorArray(colorArray);
+      geom->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
       geom->addPrimitiveSet(drawElements);
       
       mImpl->mMeshNode->addDrawable(geom);
+
+      dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
+      simplifier->setMaximumLength(100.0f);
+      simplifier->setDoTriStrip(true);
+      mImpl->mMeshNode->accept(*simplifier);
+
+      //std::cout << "Num Triangles After Simplifier " << geom->getVertexArray()->getNumElements() << std::endl;
+
+      mImpl->mMeshNode->accept(*simplifier);
+
+      /*osg::ref_ptr<osg::PolygonMode> polymode = new osg::PolygonMode;
+      polymode->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
+      osg::StateSet* ss = mImpl->mMeshNode->getOrCreateStateSet();
+      ss->setAttributeAndModes(polymode.get(), osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+      ss->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);*/
+
+      mImpl->mIsAllocated = true;
       
    }
 
@@ -340,17 +389,21 @@ namespace dtVoxel
    
    osg::Node* VoxelCell::GetOSGNode()
    {
-       return mImpl->mVolumeTile.get();
+      if (mImpl->mMeshNode.valid()) return mImpl->mMeshNode;
+      else return mImpl->mVolumeTile.get();
    }
 
    const osg::Node* VoxelCell::GetOSGNode() const
    {
-      return mImpl->mVolumeTile.get();
+      if (mImpl->mMeshNode.valid()) return mImpl->mMeshNode;
+      else return mImpl->mVolumeTile.get();
    }
 
    osg::Vec3 VoxelCell::GetOffset() const
    {
-       osg::Vec3 result;
+      return mImpl->mOffset;
+
+       /*osg::Vec3 result;
        if (mImpl->mVolumeTile.valid())
        {
           osgVolume::Locator* locator = mImpl->mVolumeTile->getLocator();
@@ -360,7 +413,7 @@ namespace dtVoxel
           }
        }
 
-       return result;
+       return result;*/
    }
 
 
