@@ -1140,6 +1140,8 @@ namespace dtEditQt
          return;
       }
 
+//      GetObjectMotionModel()->SetEnabled(true);
+//      getCamera()->getDeltaCamera()->GetOSGCamera()->setCullMask(mEnabledMask);
       GetObjectMotionModel()->SetEnabled(enabled);
 
       if (enabled)

@@ -67,7 +67,10 @@ namespace dtQt
    {
       dtCore::System& system = dtCore::System::GetInstance();
       if (system.IsRunning())
+      {
          system.StepWindow();
+         emit PostTick();
+      }
    }
 
 }

@@ -34,6 +34,7 @@
 #include <osgViewer/CompositeViewer>
 #include <dtUtil/log.h>
 #include <dtCore/map.h>
+#include <dtCore/system.h>
 #include <dtCore/actorproxyicon.h>
 #include <dtEditQt/viewportmanager.h>
 #include <dtEditQt/orthoviewport.h>
@@ -57,8 +58,14 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    ViewportManager::ViewportManager()
-      : mShareMasterContext(true)
-      , mMasterViewport(NULL)
+      : mSnapTranslationEnabled()
+      , mSnapRotationEnabled()
+      , mSnapScaleEnabled()
+      , mSnapTranslation()
+      , mSnapRotation()
+      , mSnapScale()
+      , mShareMasterContext(true)
+      , mMasterViewport()
       , mMasterScene(new dtCore::Scene())
    {
       mViewportOverlay     = new ViewportOverlay();
@@ -557,6 +564,21 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::onPostTick()
+   {
+      std::map<std::string,bool>::iterator itor;
+      for (itor = mViewportWantsRefresh.begin(); itor != mViewportWantsRefresh.end(); ++itor)
+      {
+         if (itor->second)
+         {
+            const std::string& name = itor->first;
+            EnableViewport(mViewportList[name], false);
+            itor->second = false;
+         }
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    void ViewportManager::onActorPropertyChanged(dtCore::RefPtr<dtCore::BaseActorObject> proxy,
       dtCore::RefPtr<dtCore::ActorProperty> property)
    {
@@ -805,52 +827,68 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool ViewportManager::EnableViewport(Viewport* viewport, bool enable)
+   bool ViewportManager::EnableViewport(Viewport* viewport, bool enable, bool disableAfterRender)
    {
       if (GetApplication() == NULL || !viewport)
       {
          return false;
       }
 
-      if (enable)
+      // Add it the first time
+      if (!GetApplication()->ContainsView(*viewport->GetView()))
       {
-         if (!GetApplication()->ContainsView(*viewport->GetView()))
+         GetApplication()->AddView(*viewport->GetView());
+
+         //if OSG thinks we're done, set it straight.
+         if (GetApplication()->GetCompositeViewer()->done())
          {
-            GetApplication()->AddView(*viewport->GetView());
-
-            //if OSG thinks we're done, set it straight.
-            if (GetApplication()->GetCompositeViewer()->done())
-            {
-               GetApplication()->GetCompositeViewer()->setDone(false);
-            }
-
-            // Now refresh the camera motion model
-            EditorViewport* editorView = dynamic_cast<EditorViewport*>(viewport);
-            if (editorView)
-            {
-               editorView->getCameraMotionModel()->SetCamera(editorView->getCamera());
-            }
-
-            return true;
+            GetApplication()->GetCompositeViewer()->setDone(false);
          }
-      }
-      else
-      {
-         if (GetApplication()->ContainsView(*viewport->GetView()))
+
+         // Now refresh the camera motion model
+         EditorViewport* editorView = dynamic_cast<EditorViewport*>(viewport);
+         if (editorView)
          {
-            GetApplication()->RemoveView(*viewport->GetView());
-
-            // Now refresh the camera motion model
-            EditorViewport* editorView = dynamic_cast<EditorViewport*>(viewport);
-            if (editorView)
-            {
-               editorView->getCameraMotionModel()->SetCamera(editorView->getCamera());
-            }
-
-            return true;
+            editorView->getCameraMotionModel()->SetCamera(editorView->getCamera());
          }
       }
 
-      return false;
+      //printf ("viewport %s has been enabled %d\n", viewport->getName().c_str(), enable);
+
+      bool result = viewport->getCamera()->getDeltaCamera()->GetEnabled() != enable;
+      viewport->getCamera()->getDeltaCamera()->SetEnabled(enable);
+
+      if (result)
+         mViewportWantsRefresh[viewport->getName()] = disableAfterRender;
+      // a subsequent enable before disableAfterRender is cleared, needs to be cleared or it will cause it to be disabled for no reason.
+      else if (enable && !disableAfterRender)
+         mViewportWantsRefresh[viewport->getName()] = false;
+
+      dtCore::System& sys = dtCore::System::GetInstance();
+      if (enable && !sys.IsRunning())
+      {
+         sys.Start();
+      }
+      else if (!enable && sys.IsRunning())
+      {
+         bool oneEnabled = false;
+         std::map<std::string, Viewport*>::iterator itor;
+         for (itor = mViewportList.begin(); itor != mViewportList.end(); ++itor)
+         {
+            Viewport* v = itor->second;
+            if (v->getCamera()->getDeltaCamera()->GetEnabled())
+            {
+
+            }
+         }
+         if (!oneEnabled)
+         {
+            sys.Stop();
+         }
+      }
+
+
+      return result;
+
    }
 } // namespace dtEditQt
