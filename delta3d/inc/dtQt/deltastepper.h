@@ -42,6 +42,9 @@ namespace dtQt
       void Start();
       void Stop();
 
+   signals:
+      void PostTick();
+
    public slots:
       void Tick();
 

@@ -114,8 +114,6 @@ namespace dtEditQt
          this->GetQGLWidget()->setMouseTracking(true);
       }
 
-      mCacheMouseLocation = true;
-
       mCamera->getDeltaCamera()->SetWindow(mWindow.get());
       mView->SetCamera(mCamera->getDeltaCamera());
       mView->SetScene(mScene.get());
@@ -701,19 +699,9 @@ namespace dtEditQt
       }
       this->GetQGLWidget()->setCursor(QCursor(Qt::BlankCursor));
 
-      // Cache the old mouse location so the cursor doesn't appear to jump when
-      // the camera mode operation is complete.
-      if (mCacheMouseLocation)
-      {
-         mOldMouseLocation = QCursor::pos();
-         mCacheMouseLocation = false;
-      }
+      mOldMouseLocation = QCursor::pos();
 
       mIsMouseTrapped = true;
-      // Put the mouse cursor in the center of the viewport.
-      QPoint center((this->GetQGLWidget()->x()+this->GetQGLWidget()->width())/2, (this->GetQGLWidget()->y()+this->GetQGLWidget()->height())/2);
-      mLastMouseUpdateLocation = this->GetQGLWidget()->mapToGlobal(center);
-      QCursor::setPos(mLastMouseUpdateLocation);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -726,16 +714,6 @@ namespace dtEditQt
          this->GetQGLWidget()->setCursor(mOldMouseCursor);
       }
 
-      if (mousePosition.x() != -1 && mousePosition.y() != -1)
-      {
-         QCursor::setPos(mousePosition);
-      }
-      else
-      {
-         QCursor::setPos(mOldMouseLocation);
-      }
-
-      mCacheMouseLocation = true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -752,32 +730,17 @@ namespace dtEditQt
 
       float dx, dy;
 
-      dx = (float)(e->globalX() - mLastMouseUpdateLocation.x());
-      dy = (float)(e->globalY() - mLastMouseUpdateLocation.y());
+      dx = (float)(e->globalX() - mOldMouseLocation.x());
+      dy = (float)(e->globalY() - mOldMouseLocation.y());
 
       onMouseMoveEvent(e, dx, dy);
 
-      QPoint mousePos = e->globalPos();
-
       if ((mIsMouseTrapped) && (this->GetQGLWidget() != NULL))
       {
-         QPoint center((this->GetQGLWidget()->x()+this->GetQGLWidget()->width())/2, (this->GetQGLWidget()->y()+this->GetQGLWidget()->height())/2);
-
-         float dxCenter = dtUtil::Abs(float(e->pos().x() - center.x()));
-         float dyCenter = dtUtil::Abs(float(e->pos().y() - center.y()));
-
-         if (dxCenter > (this->GetQGLWidget()->width()/2) || dyCenter > (this->GetQGLWidget()->height()/2))
-         {
-            // Moving the mouse back to the center makes the movement recurse
-            // so this is a flag to prevent the recursion
-            mouseMoving = true;
-            mousePos = this->GetQGLWidget()->mapToGlobal(center);
-            QCursor::setPos(mousePos);
-            mouseMoving = false;
-         }
+         mouseMoving = true;
+         QCursor::setPos(mOldMouseLocation);
+         mouseMoving = false;
       }
-
-      mLastMouseUpdateLocation = mousePos;
 
       //refresh();
       renderFrame();

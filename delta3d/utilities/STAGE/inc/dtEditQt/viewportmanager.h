@@ -403,10 +403,11 @@ namespace dtEditQt
       *
       * @param[in]  viewport  The viewport.
       * @param[in]  enable    Enable or Disable?
+      * @param[in]  disableAfterRender if it should be disabled after 1 render.
       *
       * @return     Returns true if the viewport enabled status was changed.
       */
-      bool EnableViewport(Viewport* viewport, bool enable);
+      bool EnableViewport(Viewport* viewport, bool enable, bool disableAfterRender = false);
 
    signals:
 
@@ -568,6 +569,11 @@ namespace dtEditQt
 
    public slots:
       /**
+       * Called after a system step.
+       */
+      void onPostTick();
+
+      /**
        * Called when an actor property has changed.  This method simply tells the
        * viewports to update themselves.
        * @param proxy
@@ -662,6 +668,7 @@ namespace dtEditQt
 
       bool                            mShareMasterContext;
       std::map<std::string,Viewport*> mViewportList;
+      std::map<std::string,bool>      mViewportWantsRefresh;
       Viewport*                       mMasterViewport;
       dtCore::RefPtr<ViewportOverlay> mViewportOverlay;
       dtCore::RefPtr<dtCore::Scene>   mMasterScene;

@@ -3,11 +3,13 @@
 #include <dtEditQt/editorviewport.h>
 #include <QtGui/QMouseEvent>
 
+#include <dtCore/system.h>
+
 ////////////////////////////////////////////////////////////////////////////////
 dtEditQt::STAGEGLWidget::STAGEGLWidget(bool drawOnSeparateThread,  QWidget* parent,
                                        const QGLWidget* shareWidget, Qt::WindowFlags f)
    : dtQt::OSGAdapterWidget(drawOnSeparateThread, parent, shareWidget, f)
-   , mViewport(NULL)
+   , mViewport(nullptr)
 {
 }
 
@@ -133,29 +135,19 @@ void dtEditQt::STAGEGLWidget::dropEvent(QDropEvent* event)
 ////////////////////////////////////////////////////////////////////////////////
 void dtEditQt::STAGEGLWidget::paintGL()
 {
-   if (mViewport == NULL || mViewport->GetIsRemoved())
+   if (mViewport == NULL || mViewport->GetIsRemoved() || !isVisible())
    {
       return;
    }
 
-   //Qt wants to redraw this widget.  If this View isn't currently in the Application
-   //temporarily add it, render, then remove it.
-   bool viewAdded = false;
-   if (ViewportManager::GetInstance().EnableViewport(mViewport, true))
+   if (ViewportManager::GetInstance().EnableViewport(mViewport, true, true))
    {
       mViewport->SetEnabled(true); //enable the Viewport
-      viewAdded = true;
    }
 
+   // No painting actually happens here.
    dtQt::OSGAdapterWidget::paintGL();
    mViewport->paintGL();
-
-   //put things back the way they were
-   if (viewAdded)
-   {
-      ViewportManager::GetInstance().EnableViewport(mViewport, false);
-      mViewport->SetEnabled(false); //disable the Viewport
-   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -250,8 +242,8 @@ void dtEditQt::STAGEGLWidget::enterEvent(QEvent *e)
       if (!mViewport->GetIsRemoved())
       {
          //mouse entered this Widget.  Make sure the View is in the Application
-         ViewportManager::GetInstance().EnableViewport(mViewport, true);
-         mViewport->SetEnabled(true); //enable the Viewport
+         if(ViewportManager::GetInstance().EnableViewport(mViewport, true))
+            mViewport->SetEnabled(true); //enable the Viewport
       }
    }
 }
@@ -265,8 +257,8 @@ void dtEditQt::STAGEGLWidget::leaveEvent(QEvent *e)
       if (!mViewport->GetIsRemoved())
       {
          //mouse left this Widget.  Make sure the View is not in the Application
-         ViewportManager::GetInstance().EnableViewport(mViewport, false);
-         mViewport->SetEnabled(false); //disable the Viewport
+         if (ViewportManager::GetInstance().EnableViewport(mViewport, false))
+            mViewport->SetEnabled(false); //disable the Viewport
       }
    }
 }

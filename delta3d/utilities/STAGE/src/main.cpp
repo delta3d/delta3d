@@ -129,6 +129,8 @@ int main(int argc, char* argv[])
       //create a little class to ensure Delta3D performs Window "steps"
       dtCore::System::GetInstance().Start();
       dtQt::DeltaStepper stepper;
+      stepper.connect(&stepper, SIGNAL(PostTick()),
+            &dtEditQt::ViewportManager::GetInstance(), SLOT(onPostTick()));
       stepper.Start();
 
       splash->finish(&mainWindow);

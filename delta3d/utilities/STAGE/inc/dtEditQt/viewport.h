@@ -576,7 +576,6 @@ namespace dtEditQt
 
       QCursor mOldMouseCursor;
       QPoint  mOldMouseLocation;
-      bool    mCacheMouseLocation;
       bool    mIsMouseTrapped;
 
       QPoint mLastMouseUpdateLocation;

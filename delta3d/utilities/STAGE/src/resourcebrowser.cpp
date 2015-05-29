@@ -53,8 +53,8 @@ namespace dtEditQt
       // container
       mTabC              = new TabContainer(this);
 
-      bool enablePreview = false;
-      bool enableCreateActor = false;
+      bool enablePreview = true;
+      bool enableCreateActor = true;
       // widgets
       addTab(new StaticMeshBrowser(dtCore::DataType::STATIC_MESH, this, enablePreview, enableCreateActor));
       addTab(new StaticMeshBrowser(dtCore::DataType::SKELETAL_MESH, this, enablePreview, enableCreateActor));
