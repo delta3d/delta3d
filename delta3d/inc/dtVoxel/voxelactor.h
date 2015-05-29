@@ -47,12 +47,15 @@ namespace dtVoxel
       size_t GetNumGrids() const;
 
       virtual void OnEnteredWorld();
+      virtual void OnTickLocal(const dtGame::TickMessage& tickMessage);
+
 
       /**
        * Returns a new grid that contains the collision set of the given bounding box.
        */
       openvdb::GridBase::Ptr CollideWithAABB(osg::BoundingBox& bb, int gridIdx = 0);
 
+      DT_DECLARE_ACCESSOR_INLINE(float, ViewDistance)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, GridDimensions)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, BlockDimensions)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, CellDimensions)

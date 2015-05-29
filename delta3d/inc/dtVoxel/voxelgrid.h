@@ -40,7 +40,9 @@ namespace dtVoxel
       ///Call Init() before CreateVoxelGrid()
       void Init(const osg::Vec3& grid_offset, const osg::Vec3& dimensions, const osg::Vec3& block_dimensions, const osg::Vec3& cellDimensions, const osg::Vec3i& textureResolution);
 
-      void CreateGridFromActor(VoxelActor& voxelActor);
+      void UpdateGrid(const osg::Vec3& newCameraPos);
+
+      void CreateGridFromActor(const osg::Vec3& pos, VoxelActor& voxelActor);
 
       VoxelBlock* GetBlockFromIndex(int index);
       VoxelBlock* GetBlockFromIndex(int x, int y, int z);
@@ -54,11 +56,12 @@ namespace dtVoxel
       DT_DECLARE_ACCESSOR_INLINE(int, BlocksY)
       DT_DECLARE_ACCESSOR_INLINE(int, BlocksZ)
       DT_DECLARE_ACCESSOR_INLINE(int, NumBlocks)
+      DT_DECLARE_ACCESSOR_INLINE(float, ViewDistance)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, GridOffset)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, WSDimensions)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, BlockDimensions)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, CellDimensions)
-
+      
       const osg::Vec3i& GetTextureResolution() const;
 
    protected:
@@ -66,11 +69,17 @@ namespace dtVoxel
 
       openvdb::GridBase::Ptr ConvertToLocalResolutionGrid(openvdb::GridBase::Ptr);
       
+      osg::BoundingBox ComputeWorldBounds(const osg::Vec3& pos);
+
+      osg::Vec3 GetCenterOfBlock(int x, int y, int z);
+
       virtual ~VoxelGrid();
    
    private:
+      osg::BoundingBox mAllocatedBounds;
       osg::Vec3i mTextureResolution;
       dtCore::RefPtr<osg::Group> mRootNode;
+      dtCore::ObserverPtr<VoxelActor> mVoxelActor;
 
       VoxelBlock* mBlocks;
       

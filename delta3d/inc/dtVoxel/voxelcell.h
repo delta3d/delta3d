@@ -46,7 +46,8 @@ namespace dtVoxel
       
       void CreateMesh(VoxelActor& voxelActor, openvdb::GridBase::Ptr localGrid, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution);
       
-      bool IsAllocated();
+      bool IsAllocated() const;
+      void DeAllocate();
 
       osg::Vec3 GetOffset() const;
 
