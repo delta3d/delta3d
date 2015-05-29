@@ -106,6 +106,19 @@ namespace dtCore
    }
 
    //////////////////////////////////////////////////////////////////////////
+   SerializerRuntimeData& ActorPropertySerializer::Top()
+   {
+      if (mData.empty())
+      {
+         dtCore::SerializerRuntimeData data;
+         mData.push(data);
+      }
+
+      return  mData.top();
+   }
+
+
+   //////////////////////////////////////////////////////////////////////////
    void ActorPropertySerializer::SetMap(Map* map)
    {
       mMap = map;
