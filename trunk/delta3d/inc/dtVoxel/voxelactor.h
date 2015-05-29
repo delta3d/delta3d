@@ -60,6 +60,7 @@ namespace dtVoxel
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, BlockDimensions)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, CellDimensions)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, TextureResolution)
+      DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, Offset)
 
    protected:
       /**
