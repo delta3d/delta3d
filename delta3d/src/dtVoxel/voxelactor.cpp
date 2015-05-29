@@ -85,6 +85,7 @@ namespace dtVoxel
       DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(BlockDimensions, "Block Dimensions", "Block Dimensions", "The size of the blocks within the grid.", RegHelper, regHelper);
       DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(CellDimensions, "Cell Dimensions", "Cell Dimensions", "The size of the cells within the blocks", RegHelper, regHelper);
       DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TextureResolution, "Texture Resolution", "Texture Resolution", "The dimensions of the 3d texture which holds individual voxels within a single cell.", RegHelper, regHelper);
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(Offset, "Offset", "Offset", "The offset of the database in world space.", RegHelper, regHelper);
 
       DT_REGISTER_RESOURCE_PROPERTY(dtCore::DataType::VOLUME, Database, "Database", "Voxel database file", RegHelper, regHelper);
    }
@@ -183,9 +184,9 @@ namespace dtVoxel
 
       mGrid->SetViewDistance(1000.0f);*/
       osg::Vec3i res(int(mTextureResolution.x()), int(mTextureResolution.y()), int(mTextureResolution.z()));
-      osg::Vec3 offset = GetTranslation();
 
-      mGrid->Init(offset, mGridDimensions, mBlockDimensions, mCellDimensions, res);
+
+      mGrid->Init(mOffset, mGridDimensions, mBlockDimensions, mCellDimensions, res);
       
       osg::Vec3 pos(0.0f, 0.0f, 0.0f);
       mGrid->CreateGridFromActor(pos, *this);
