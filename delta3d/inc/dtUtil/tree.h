@@ -782,6 +782,7 @@ namespace dtUtil
       mPrevSibling = NULL;
       mNext = NULL;
       mLastDescendant = NULL;
+      value = NULL;
    }
 
    template <class T, class T_BaseClass>
@@ -1207,31 +1208,27 @@ namespace dtUtil
    template <class T, class T_BaseClass>
    void Tree<T, T_BaseClass>::change_last_descendant(pointer newLast)
    {
-      // If the last descent is to be the tree itself, avoid any extra
-      // processing by simply setting the pointer. This prevents any
-      // deletion problems.
-      if (newLast == this)
+      // Go up to ancestors referencing the current last descendant
+      // and change them to point to the new last descendant so the
+      // whole tree remains in synch.
+      pointer oldLast = mLastDescendant;
+
+      // NOTE: the last descendant should not be NULL.
+      pointer ancestor = this;
+
+      do
       {
-         mLastDescendant = this;
+         ancestor->mLastDescendant = newLast;
+         ancestor = ancestor->mParent;
       }
-      else
-      {
-         ref_pointer oldLast = mLastDescendant;
-         ref_pointer ancestor = this;
-         do
-         {
-            ancestor->mLastDescendant = newLast;
-            ancestor = ancestor->mParent;
-         }
-         while (ancestor.valid() && (ancestor->mLastDescendant == oldLast));
-      }
+      while (ancestor != NULL && (ancestor->mLastDescendant == oldLast));
    }
 
    template <class T, class T_BaseClass>
    void Tree<T, T_BaseClass>::remove_subtree(pointer child)
    {
-      ref_pointer sib = child->next_sibling();
-      if (sib.valid())
+      pointer sib = child->next_sibling();
+      if (sib != NULL)
       {
          sib->mPrevSibling = child->mPrevSibling;
       }
@@ -1240,17 +1237,17 @@ namespace dtUtil
          first_child()->mPrevSibling = child->mPrevSibling;
       }
 
-      if (mLastDescendant == child->mLastDescendant)
-      {
-         change_last_descendant(child->prev());
-      }
-
       // The Next pointer keeps children in existence.
       // Since Next is about to change, keep a temporary
       // pointer to ensure child instances exist until
       // all other operations in this method have had
       // their chances to complete.
       ref_pointer tmp = mNext;
+
+      if (mLastDescendant == child->mLastDescendant)
+      {
+         change_last_descendant(child->prev());
+      }
 
       if (mNext == child)   // deleting first child?
       {
@@ -1278,7 +1275,7 @@ namespace dtUtil
 
       // Cleanup.
       // The temporary pointer can now be released since everything
-      // has completed up to this point.
+      // have completed up to this point.
       tmp = NULL;
    }
 
