@@ -86,6 +86,56 @@ namespace dtVoxel
       return osg::BoundingBox(bbMin, bbMax);
    }
 
+   void VoxelGrid::MarkDirtyAABB(const osg::BoundingBox& bb)
+   {      
+      osg::Vec3 newDim;
+      newDim[0] = bb.xMax() - bb.xMin();
+      newDim[1] = bb.yMax() - bb.yMin();
+      newDim[2] = bb.zMax() - bb.zMin();
+
+      int blocksX = int(std::floor(newDim.x() / mBlockDimensions.x()));
+      int blocksY = int(std::floor(newDim.y() / mBlockDimensions.y()));
+      int blocksZ = int(std::floor(newDim.z() / mBlockDimensions.z()));
+
+      //std::cout << "Blocks X " << blocksX << " Blocks Y " << blocksY << " Blocks Z " << blocksZ << std::endl;
+
+      osg::Vec3 bboffset = bb._min - mGridOffset;
+      int startX = int(std::floor(bboffset.x() / mBlockDimensions.x()));
+      int startY = int(std::floor(bboffset.y() / mBlockDimensions.y()));
+      int startZ = int(std::floor(bboffset.z() / mBlockDimensions.z()));
+
+      //std::cout << "start X " << startX << " start Y " << startY << " start Z " << startZ << std::endl;
+
+      int endX = startX + blocksX;
+      int endY = startY + blocksY;
+      int endZ = startZ + blocksZ;
+
+      //std::cout << "end X " << endX << " end Y " << endY << " end Z " << endZ << std::endl;
+
+      for (int z = startZ; z < endZ; z++)
+      {
+         for (int y = startY; y < endY; y++)
+         {
+            for (int x = startX; x < endX; x++)
+            {
+               VoxelBlock* curBlock = GetBlockFromIndex(x, y, z);
+
+               if (curBlock != nullptr)
+               {
+                  if (curBlock->IsAllocated())
+                  {
+                     curBlock->RegenerateAABB(*mVoxelActor, bb, mTextureResolution);                     
+                  }
+                  else
+                  {
+                     curBlock->SetDirty(true);
+                  }
+               }
+            }
+         }
+      }
+   }
+
 
    void VoxelGrid::UpdateGrid(const osg::Vec3& newCameraPos)
    {
@@ -160,6 +210,10 @@ namespace dtVoxel
                      {
                         curBlock->Allocate(*mVoxelActor, mTextureResolution);
                         mRootNode->addChild(curBlock->GetOSGNode());
+                     }
+                     else if (curBlock->GetDirty())
+                     {
+                        curBlock->RegenerateAABB(*mVoxelActor, newBounds, mTextureResolution);
                      }
 
                   }
@@ -241,7 +295,6 @@ namespace dtVoxel
                      //allocate this block
                      curBlock->Allocate(*mVoxelActor, mTextureResolution);
 
-                     //todo- spatially subdivide
                      mRootNode->addChild(curBlock->GetOSGNode());
                   }
                   

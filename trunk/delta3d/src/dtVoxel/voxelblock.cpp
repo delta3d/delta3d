@@ -20,6 +20,7 @@
 #include <dtVoxel/voxelblock.h>
 #include <dtUtil/log.h>
 #include <osgUtil/Simplifier>
+#include <osgUtil/Optimizer>
 #include <tbb/parallel_for.h>
 #include <iostream>
 
@@ -98,14 +99,82 @@ namespace dtVoxel
       return mOffset;
    }
 
+   void VoxelBlock::RegenerateAABB(VoxelActor& voxelActor, const osg::BoundingBox& bb, const osg::Vec3i& textureResolution)
+   {
+      osg::Vec3 newDim;
+      newDim[0] = bb.xMax() - bb.xMin();
+      newDim[1] = bb.yMax() - bb.yMin();
+      newDim[2] = bb.zMax() - bb.zMin();
+
+      int blocksX = int(std::floor(newDim.x() / mWSCellDimensions.x()));
+      int blocksY = int(std::floor(newDim.y() / mWSCellDimensions.y()));
+      int blocksZ = int(std::floor(newDim.z() / mWSCellDimensions.z()));
+
+      //std::cout << "Blocks X " << blocksX << " Blocks Y " << blocksY << " Blocks Z " << blocksZ << std::endl;
+
+      osg::Vec3 bboffset = bb._min - mOffset;
+      int startX = int(std::floor(bboffset.x() / mWSDimensions.x()));
+      int startY = int(std::floor(bboffset.y() / mWSDimensions.y()));
+      int startZ = int(std::floor(bboffset.z() / mWSDimensions.z()));
+
+      //std::cout << "start X " << startX << " start Y " << startY << " start Z " << startZ << std::endl;
+
+      int endX = startX + blocksX;
+      int endY = startY + blocksY;
+      int endZ = startZ + blocksZ;
+
+      for (int z = startZ; z < endZ; z++)
+      {
+         for (int y = startY; y < endY; y++)
+         {
+            for (int x = startX; x < endX; x++)
+            {
+               VoxelCell* vc = GetCellFromIndex(x, y, z);
+               if (vc != nullptr)
+               {
+                  osg::Vec3 pos(x * mWSCellDimensions[0], y * mWSCellDimensions[1], z * mWSCellDimensions[2]);
+                  osg::Vec3 offsetFrom = pos + mOffset;
+                  osg::Vec3 offsetTo = offsetFrom + mWSCellDimensions;
+
+                  osg::Matrix transform;
+                  transform.makeScale(1.0f, 1.0f, 1.0f); //compute offset
+                  transform.setTrans(offsetFrom);
+
+                  //todo using local grid should be faster
+                  osg::BoundingBox bb(offsetFrom, offsetTo);
+                  openvdb::GridBase::Ptr vdbGrid = voxelActor.CollideWithAABB(bb);
+
+                  if (vc->IsAllocated())
+                  {
+                     mVolume->removeChild(vc->GetOSGNode());
+                     vc->DeAllocate();
+                  }
+
+                  if (vdbGrid != NULL && !vdbGrid->empty())
+                  {                    
+                     vc->CreateMesh(voxelActor, vdbGrid, transform, mWSCellDimensions, textureResolution);
+                     mVolume->addChild(vc->GetOSGNode());
+                  }
+               }
+               else
+               {
+                  LOG_ERROR("Error calculating VoxelCell AABB region");
+               }
+            }
+         }
+      }
+
+      SetDirty(false);
+   }
+
    void VoxelBlock::Allocate(VoxelActor& voxelActor, const osg::Vec3i& textureResolution)
    {
       //std::cout << "Allocating Voxel Block" << std::endl;
 
       osg::Vec3 gridDim(
-         int(std::floor(mWSDimensions[0] / mWSCellDimensions[0])),
-         int(std::floor(mWSDimensions[1] / mWSCellDimensions[1])),
-         int(std::floor(mWSDimensions[2] / mWSCellDimensions[2])));
+       1.0 +  int(std::floor(mWSDimensions[0] / mWSCellDimensions[0])),
+       1.0 + int(std::floor(mWSDimensions[1] / mWSCellDimensions[1])),
+       1.0 + int(std::floor(mWSDimensions[2] / mWSCellDimensions[2])));
 
       mNumCells = gridDim[0] * gridDim[1] * gridDim[2];
       //todo catch out of memory exception here
@@ -148,10 +217,15 @@ namespace dtVoxel
          }
       }
 
+      //simplify mesh
       //dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
       //simplifier->setMaximumLength(1000.0f);
       //simplifier->setDoTriStrip(true);
       //mVolume->accept(*simplifier);
+
+      //spatialize
+      osgUtil::Optimizer opt;
+      opt.optimize(mVolume, osgUtil::Optimizer::SPATIALIZE_GROUPS);
 
       mIsAllocated = true;
    }
