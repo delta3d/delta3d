@@ -44,7 +44,7 @@ namespace dtVoxel
       {
       }
 
-      /*override*/ ~ColliderCallback() {}
+      ~ColliderCallback() override {}
 
       /**
        * Override this to return the triangles within the given axis aligned bounding box.

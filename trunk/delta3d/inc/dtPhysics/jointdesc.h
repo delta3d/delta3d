@@ -42,7 +42,7 @@ namespace dtPhysics
 
       static dtCore::RefPtr<dtCore::ObjectType> JOINT_DESC_TYPE;
 
-      /*override*/ const dtCore::ObjectType& GetObjectType() const;
+      const dtCore::ObjectType& GetObjectType() const override;
    public:
 
       DT_DECLARE_ACCESSOR(std::string, Body1Name)

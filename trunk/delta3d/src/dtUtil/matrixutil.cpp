@@ -79,7 +79,7 @@ void MatrixUtil::SetRow(osg::Matrix& matrix, const osg::Vec4& vec, int row)
 }
 
 
-void MatrixUtil::HprToMatrix(osg::Matrix& rotation, const osg::Vec3& hpr)
+void MatrixUtil::HprToMatrix(osg::Matrix& rotation, const osg::Vec3& hpr, bool zeroTranslation)
 {
    // implementation converted from plib's sg.cxx
    // PLIB - A Suite of Portable Game Libraries
@@ -144,9 +144,12 @@ void MatrixUtil::HprToMatrix(osg::Matrix& rotation, const osg::Vec3& hpr)
    rotation(1, 2) =  sp;
    rotation(2, 2) =  cr * cp;
 
-   rotation(3, 0) =  0.0;  // x trans
-   rotation(3, 1) =  0.0;  // y trans
-   rotation(3, 2) =  0.0;  // z trans
+   if (zeroTranslation)
+   {
+      rotation(3, 0) =  0.0;  // x trans
+      rotation(3, 1) =  0.0;  // y trans
+      rotation(3, 2) =  0.0;  // z trans
+   }
 
    rotation(0, 3) =  0.0;
    rotation(1, 3) =  0.0;

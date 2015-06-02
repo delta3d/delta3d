@@ -88,7 +88,7 @@ namespace dtPhysics
 
       static dtCore::RefPtr<dtCore::ObjectType> TYPE;
 
-      /*override*/ const dtCore::ObjectType& GetObjectType() const;
+      const dtCore::ObjectType& GetObjectType() const override;
    public:
 
       //PhysicsObject(const PhysicsObject&);
@@ -208,8 +208,8 @@ namespace dtPhysics
       void SetAngularVelocity(const VectorType& velocity_rad);
 
       VectorType GetLinearVelocity() const;
-      /*override MotionInterface*/ osg::Vec3 GetVelocity() const { return GetLinearVelocity(); }
-      /*implements MotionInterface*/ VectorType GetAngularVelocity() const;
+      osg::Vec3 GetVelocity() const override { return GetLinearVelocity(); }
+      VectorType GetAngularVelocity() const override;
 
       /// Gets the velocity of a point relative to the body based on the linear and angular velocity.
       VectorType GetLinearVelocityAtLocalPoint(const VectorType& relPos) const;

@@ -1080,6 +1080,35 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   void NormalAddChild(dtCore::Map& map, dtCore::BaseActorObject& actor, dtCore::Scene& scene)
+   {
+      if (actor.GetDrawable() != nullptr && actor.GetDrawable()->GetParent() == nullptr)
+      {
+         //If we got here, then the proxy wishes the system to determine how to display
+         //the proxy. (Currently defaults to DRAW_ACTOR.
+         if (map.GetEnvironmentActor() != nullptr)
+         {
+            IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(map.GetEnvironmentActor()->GetDrawable());
+            if (ea == nullptr)
+            {
+               throw dtCore::InvalidActorException(
+                     "Actor should be of type dtCore::EnvironmentActor", __FILE__, __LINE__);
+            }
+            // Hack to ensure the environment doesn't add itself from the map
+            if (actor.GetDrawable() != dynamic_cast<dtCore::DeltaDrawable*>(ea))
+            {
+               ea->AddActor(*actor.GetDrawable());
+            }
+         }
+         else
+         {
+            scene.AddChild(actor.GetDrawable());
+         }
+      }
+
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void Project::LoadMapIntoScene(Map& map, dtCore::Scene& scene, bool addBillBoards)
    {
       mImpl->CheckMapValidity(map, true);
@@ -1089,17 +1118,17 @@ namespace dtCore
       for (std::vector<dtCore::RefPtr<BaseActorObject> >::iterator proxyIter = container.begin();
            proxyIter != container.end(); ++proxyIter)
       {
-         BaseActorObject& proxy = **proxyIter;
+         BaseActorObject& actor = **proxyIter;
 
          //if we are adding billboards, then we need to check the render modes.
          if (addBillBoards)
          {
-            const BaseActorObject::RenderMode &renderMode = proxy.GetRenderMode();
+            const BaseActorObject::RenderMode& renderMode = actor.GetRenderMode();
 
             if (renderMode == BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON ||
                 renderMode == BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
             {
-               ActorProxyIcon *billBoard = proxy.GetBillBoardIcon();
+               ActorProxyIcon *billBoard = actor.GetBillBoardIcon();
 
                // Load the textures for the billboard and orientation arrow.
                // This is only done here so the files will only be loaded when
@@ -1109,70 +1138,39 @@ namespace dtCore
                // to fix that. -osb
                billBoard->LoadImages();
 
-               if (billBoard == NULL)
+               if (billBoard == nullptr)
                {
                   mImpl->mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                      "Proxy [%s] billboard was NULL.", proxy.GetName().c_str());
+                                      "Proxy [%s] billboard was NULL.", actor.GetName().c_str());
                }
                else
                {
-                  scene.AddChild(billBoard->GetDrawable());
+                  if (actor.GetDrawable()->GetParent() != nullptr)
+                  {
+                     actor.GetDrawable()->GetParent()->AddChild(billBoard->GetDrawable());
+                  }
+                  else
+                  {
+                     scene.AddChild(billBoard->GetDrawable());
+                  }
                }
 
             }
 
             if (renderMode == BaseActorObject::RenderMode::DRAW_ACTOR ||
-                renderMode == BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
+                renderMode == BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
+                renderMode == BaseActorObject::RenderMode::DRAW_AUTO)
             {
-               scene.AddChild(proxy.GetDrawable());
-            }
-
-
-            if (renderMode == BaseActorObject::RenderMode::DRAW_AUTO)
-            {
-               //If we got here, then the proxy wishes the system to determine how to display
-               //the proxy. (Currently defaults to DRAW_ACTOR.
-               if (map.GetEnvironmentActor() != NULL)
-               {
-                  IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(map.GetEnvironmentActor()->GetDrawable());
-                  if (ea == NULL)
-                     throw dtCore::InvalidActorException(
-                     "Actor should be of type dtCore::EnvironmentActor", __FILE__, __LINE__);
-
-                  ea->AddActor(*proxy.GetDrawable());
-               }
-               else
-               {
-                  scene.AddChild(proxy.GetDrawable());
-               }
+               NormalAddChild(map, actor, scene);
             }
          }
          else
          {
-            //if we aren't drawing billboards, then the actors should always be in the scene.
-            if (map.GetEnvironmentActor() != NULL)
-            {
-               IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(map.GetEnvironmentActor()->GetDrawable());
-               if (ea == NULL)
-               {
-                  throw dtCore::InvalidActorException(
-                  "Actor should be of type dtCore::EnvironmentActor", __FILE__, __LINE__);
-               }
-
-               // Hack to ensure the environment doesn't add itself from the map
-               if (proxy.GetDrawable() != dynamic_cast<dtCore::DeltaDrawable*>(ea))
-               {
-                  ea->AddActor(*proxy.GetDrawable());
-               }
-            }
-            else
-            {
-               scene.AddChild(proxy.GetDrawable());
-            }
+            NormalAddChild(map, actor, scene);
          }
       }
 
-      if (map.GetEnvironmentActor() != NULL)
+      if (map.GetEnvironmentActor() != nullptr)
       {
          scene.AddChild(map.GetEnvironmentActor()->GetDrawable());
       }

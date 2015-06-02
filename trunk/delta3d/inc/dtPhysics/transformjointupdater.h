@@ -24,6 +24,7 @@
 
 #include <dtPhysics/physicsexport.h>
 #include <dtCore/observerptr.h>
+#include <dtCore/transformpropertydelegate.h>
 #include <dtUtil/getsetmacros.h>
 #include <osg/Referenced>
 #include <osg/Transform>
@@ -32,22 +33,22 @@ class palLink;
 
 namespace dtPhysics
 {
-   class DT_PHYSICS_EXPORT TransformJointUpdater : public osg::Referenced
+   class DT_PHYSICS_EXPORT TransformJointUpdater : public dtCore::TransformPropertyDelegate
    {
    public:
-      TransformJointUpdater(palLink& mJoint, osg::Transform& mTransformNode);
+      typedef dtCore::TransformPropertyDelegate BaseClass;
+
+      TransformJointUpdater(osg::Transform& transformNode, palLink& mJoint);
       virtual ~TransformJointUpdater();
 
       virtual void operator()();
 
       palLink* GetJoint() const { return mJoint; }
-      osg::Transform* GetTransformNode() { return mTransformNode.get(); }
 
       DT_DECLARE_ACCESSOR(bool, DeleteJoint);
 
    private:
       palLink* mJoint;
-      dtCore::ObserverPtr<osg::Transform> mTransformNode;
    };
 
    typedef dtCore::RefPtr<TransformJointUpdater> TransformJointUpdaterPtr;

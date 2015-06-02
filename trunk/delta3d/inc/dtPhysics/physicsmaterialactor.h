@@ -58,20 +58,20 @@ namespace dtPhysics
       MaterialActor();
 
       // Adds the properties associated with this actor
-      /*override*/  void BuildPropertyMap();
+      void BuildPropertyMap() override;
 
       /**
       * The Material actor is global.
       */
-      /*override*/  bool IsPlaceable() const { return false; }
+      bool IsPlaceable() const override { return false; }
 
       // Creates the actor
-      /*override*/ void CreateDrawable();
+      void CreateDrawable() override;
 
       /// Registers the material
-      /*override*/ void OnEnteredWorld();
+      void OnEnteredWorld() override;
 
-      /*override*/ void OnRemovedFromWorld();
+      void OnRemovedFromWorld() override;
 
       /// @return the material object this actor registered.
       Material* GetMaterial() const;

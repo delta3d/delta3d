@@ -52,7 +52,22 @@ namespace dtPhysics
    const dtUtil::RefString PhysicsActComp::PROPERTY_MATERIAL_ACTOR("Material Actor");
 
    DT_IMPLEMENT_ARRAY_ACCESSOR(PhysicsActComp, dtCore::RefPtr<JointDesc>, Joint, Joints, new JointDesc);
-   DT_IMPLEMENT_ARRAY_ACCESSOR(PhysicsActComp, dtCore::RefPtr<TransformJointUpdater>, TransformJointUpdater, TransformJointUpdaters, NULL);
+   DT_IMPLEMENT_ARRAY_ACCESSOR_WITH_ON_ADD_REMOVE(PhysicsActComp, TransformJointUpdaterPtr, TransformJointUpdater, TransformJointUpdaters, nullptr, \
+         {value->AddProperties(*this);\
+         dtGame::GameActorProxy* parent = nullptr; \
+         GetOwner(parent); \
+         if (parent != nullptr) \
+         {\
+            parent->AddProperty(this->GetProperty(value->GetTranslationPropertyName()));\
+            parent->AddProperty(this->GetProperty(value->GetRotationPropertyName()));\
+         }\
+         },\
+         {mTransformJointUpdaters[idx]->RemoveProperties(*this); \
+         dtCore::PropertyContainer* parent = nullptr; \
+         GetOwner(parent); \
+         if (parent != nullptr) \
+            mTransformJointUpdaters[idx]->RemoveProperties(*this); }\
+         );
 
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
@@ -107,10 +122,10 @@ namespace dtPhysics
    {
       void operator()(dtCore::RefPtr<PhysicsObject>& po)
       {
-         if (po->GetMaterial() == NULL)
+         if (po->GetMaterial() == nullptr)
          {
             const MaterialActor* mat = mPac->LookupMaterialActor();
-            if (mat != NULL)
+            if (mat != nullptr)
             {
                po->SetMaterial(mat->GetMaterial());
             }
@@ -149,7 +164,7 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsActComp::OnAddedToActor(dtCore::BaseActorObject& actor)
    {
-      dtCore::Transformable* xformable = NULL;
+      dtCore::Transformable* xformable = nullptr;
       actor.GetDrawable(xformable);
       mCachedTransformable = xformable;
    }
@@ -157,15 +172,15 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsActComp::OnRemovedFromActor(dtCore::BaseActorObject& actor)
    {
-      mCachedTransformable = NULL;
+      mCachedTransformable = nullptr;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void PhysicsActComp::RegisterWithGMComponent()
    {
-      PhysicsComponent* comp = NULL;
+      PhysicsComponent* comp = nullptr;
 
-      dtGame::GameActorProxy* act = NULL;
+      dtGame::GameActorProxy* act = nullptr;
       GetOwner(act);
 
       mIsRemote = act->IsRemote();
@@ -173,7 +188,7 @@ namespace dtPhysics
       act->GetGameManager()->
             GetComponentByName(PhysicsComponent::DEFAULT_NAME, comp);
 
-      if (comp != NULL)
+      if (comp != nullptr)
       {
          comp->RegisterActorComp(*this);
       }
@@ -188,15 +203,15 @@ namespace dtPhysics
    ////////////////////////////////////////////////////////////////////////////////
    void PhysicsActComp::UnregisterWithGMComponent()
    {
-      PhysicsComponent* comp = NULL;
+      PhysicsComponent* comp = nullptr;
 
-      dtGame::GameActorProxy* act = NULL;
+      dtGame::GameActorProxy* act = nullptr;
       GetOwner(act);
 
       act->GetGameManager()->
             GetComponentByName(PhysicsComponent::DEFAULT_NAME, comp);
 
-      if (comp != NULL)
+      if (comp != nullptr)
       {
          comp->UnregisterActorComp(*this);
       }
@@ -232,7 +247,7 @@ namespace dtPhysics
    class PhysicsObjectPropertyContainerActorProperty : public dtCore::PropertyContainerActorProperty<PhysicsObject>
    {
    public:
-	  typedef dtCore::PropertyContainerActorProperty<PhysicsObject> BaseClass;
+      typedef dtCore::PropertyContainerActorProperty<PhysicsObject> BaseClass;
       typedef BaseClass::SetFuncType SetFuncType;
       typedef BaseClass::GetFuncType GetFuncType;
 
@@ -246,7 +261,7 @@ namespace dtPhysics
       : BaseClass(name, label, set, get, desc, groupName)
       {
       }
-	  /*override*/ void CreateNew() { BaseClass::SetValue(PhysicsObject::CreateNew()); }
+	  /*override*/ void CreateNew() override { BaseClass::SetValue(PhysicsObject::CreateNew()); }
    protected:
       virtual ~PhysicsObjectPropertyContainerActorProperty() {}
    };
@@ -322,7 +337,7 @@ namespace dtPhysics
       AddProperty(physObjArrayProp.get());
 
 
-      typedef dtCore::ArrayActorPropertyComplex<dtCore::RefPtr<JointDesc> > JointArrayPropType;
+      typedef dtCore::ArrayActorPropertyComplex<JointDescPtr > JointArrayPropType;
       dtCore::RefPtr<JointArrayPropType> jointArrayProp =
           new JointArrayPropType
           ("Joints", "Joints",
@@ -358,7 +373,7 @@ namespace dtPhysics
       if ( idx != std::string::npos && idx + 2 < name.length())
       {
          PhysicsObject* po = GetPhysicsObject(name.substr(0, idx));
-         if (po != NULL)
+         if (po != nullptr)
          {
             result = po->GetProperty(name.substr(idx + 2));
          }
@@ -433,7 +448,7 @@ namespace dtPhysics
          if (mHelperAction.valid())
          {
             PhysicsWorld::GetInstance().RemoveAction(*mHelperAction);
-            mHelperAction = NULL;
+            mHelperAction = nullptr;
          }
       }
    }
@@ -449,6 +464,15 @@ namespace dtPhysics
       {
          DefaultPostPhysicsUpdate();
       }
+      struct CallUpdate
+      {
+         void operator() (dtCore::RefPtr<TransformJointUpdater>& callback)
+         {
+            (*callback)();
+         }
+      };
+      CallUpdate call;
+      std::for_each(mTransformJointUpdaters.begin(), mTransformJointUpdaters.end(), call);
    }
 
    //////////////////////////////////////////////////////////////////
@@ -473,12 +497,12 @@ namespace dtPhysics
    //////////////////////////////////////////////////////////////////
    const MaterialActor* PhysicsActComp::LookupMaterialActor()
    {
-      const MaterialActor* result = NULL;
+      const MaterialActor* result = nullptr;
       if (!GetMaterialActor().ToString().empty() )
       {
-         dtGame::GameActorProxy* gap = NULL;
+         dtGame::GameActorProxy* gap = nullptr;
          GetOwner(gap);
-         if (gap != NULL)
+         if (gap != nullptr)
          {
             gap->GetGameManager()->FindActorById(GetMaterialActor(), result);
          }
@@ -489,10 +513,10 @@ namespace dtPhysics
    //////////////////////////////////////////////////////////////////
    const MaterialActor* PhysicsActComp::LookupMaterialActor(const std::string& matName)
    {
-      const MaterialActor* result = NULL;
-      dtGame::GameActorProxy* gap = NULL;
+      const MaterialActor* result = nullptr;
+      dtGame::GameActorProxy* gap = nullptr;
       GetOwner(gap);
-      if (gap != NULL)
+      if (gap != nullptr)
       {
          gap->GetGameManager()->FindActorByName(matName, result);
       }
@@ -550,12 +574,12 @@ namespace dtPhysics
    //////////////////////////////////////////////////////////////////
    void PhysicsActComp::AddPhysicsObject(PhysicsObject& po, bool makeMain)
    {
-      if (po.GetUserData() != NULL)
+      if (po.GetUserData() != nullptr)
       {
          // Should this throw an exception?
          LOG_ERROR(std::string("The user data on the passed in physics object nameed \"") +
                po.GetName() +
-               "\" is not NULL.  Either it already is added to a helper, "
+               "\" is not nullptr.  Either it already is added to a helper, "
                "or it has a custom user data. Value will be overwritten.");
       }
 
@@ -579,7 +603,7 @@ namespace dtPhysics
       }
       else
       {
-         return NULL;
+         return nullptr;
       }
    }
 
@@ -592,7 +616,7 @@ namespace dtPhysics
       }
       else
       {
-         return NULL;
+         return nullptr;
       }
    }
 
@@ -607,7 +631,7 @@ namespace dtPhysics
          if((*iter)->GetName() == name)
             return (*iter).get();
       }
-      return NULL;
+      return nullptr;
    }
 
    //////////////////////////////////////////////////////////////////
@@ -621,7 +645,7 @@ namespace dtPhysics
          if((*iter)->GetName() == name)
             return (*iter).get();
       }
-      return NULL;
+      return nullptr;
    }
 
    //////////////////////////////////////////////////////////////////
@@ -635,7 +659,7 @@ namespace dtPhysics
          PhysicsObject& po = **iter;
          if (po.GetName() == name)
          {
-            po.SetUserData(NULL);
+            po.SetUserData(nullptr);
             mPhysicsObjects.erase(iter);
             return;
          }
@@ -653,7 +677,7 @@ namespace dtPhysics
          PhysicsObject& po = **iter;
          if (&po == &objectToRemove)
          {
-            po.SetUserData(NULL);
+            po.SetUserData(nullptr);
             mPhysicsObjects.erase(iter);
             return;
          }
@@ -682,7 +706,7 @@ namespace dtPhysics
    //////////////////////////////////////////////////////////////////
    void PhysicsActComp::SetPhysicsObjectByIndex(unsigned index, PhysicsObject* obj)
    {
-      if (obj != NULL && mPhysicsObjects.size() > size_t(index))
+      if (obj != nullptr && mPhysicsObjects.size() > size_t(index))
       {
          // TODO we need a clone
          mPhysicsObjects[index] = PhysicsObject::CreateNew(obj->GetName());
@@ -694,7 +718,7 @@ namespace dtPhysics
    //////////////////////////////////////////////////////////////////
    PhysicsObject* PhysicsActComp::GetPhysicsObjectByIndex(unsigned index)
    {
-      PhysicsObject* obj = NULL;
+      PhysicsObject* obj = nullptr;
 
       if (size_t(index) < mPhysicsObjects.size())
       {
@@ -719,7 +743,7 @@ namespace dtPhysics
    {
       if (size_t(index) < mPhysicsObjects.size())
       {
-         mPhysicsObjects[index]->SetUserData(NULL);
+         mPhysicsObjects[index]->SetUserData(nullptr);
          mPhysicsObjects.erase(mPhysicsObjects.begin() + index);
       }
    }
@@ -736,9 +760,9 @@ namespace dtPhysics
       TransformType frameParent, visualToBody;
       dtPhysics::PhysicsObject* body1 = GetPhysicsObject(desc.GetBody1Name());
       dtPhysics::PhysicsObject* body2 = GetPhysicsObject(desc.GetBody2Name());
-      if (body1 == NULL || body1->GetBodyWrapper() == NULL || body2 == NULL || body2->GetBodyWrapper() == NULL)
-         return NULL;
-      if (refNode != NULL)
+      if (body1 == nullptr || body1->GetBodyWrapper() == nullptr || body2 == nullptr || body2->GetBodyWrapper() == nullptr)
+         return nullptr;
+      if (refNode != nullptr)
       {
          body1->GetVisualToBodyTransform(visualToBody);
          ComputeLocalOffsetMatrixForNode(frameParent, *refNode, visualToBody);
@@ -756,9 +780,9 @@ namespace dtPhysics
       if (node.getNumParents() > 0)
       {
          const osg::Transform* parentNode = node.getParent(0)->asTransform();
-         if (parentNode != NULL)
+         if (parentNode != nullptr)
          {
-            parentNode->computeLocalToWorldMatrix(wcMatrix, NULL);
+            parentNode->computeLocalToWorldMatrix(wcMatrix, nullptr);
          }
       }
 
@@ -775,7 +799,7 @@ namespace dtPhysics
    void PhysicsActComp::SetMultiBodyTransform(const TransformType& xform)
    {
       PhysicsObject* po = GetMainPhysicsObject();
-      if (po != NULL)
+      if (po != nullptr)
       {
          po->SetTransform(xform);
       }
@@ -785,7 +809,7 @@ namespace dtPhysics
    void PhysicsActComp::GetMultiBodyTransform(TransformType& xform)
    {
       PhysicsObject* po = GetMainPhysicsObject();
-      if (po != NULL)
+      if (po != nullptr)
       {
          po->GetTransform(xform);
       }
@@ -808,7 +832,7 @@ namespace dtPhysics
    void PhysicsActComp::GetMultiBodyTransformAsVisual(TransformType& xform)
    {
       PhysicsObject* po = GetMainPhysicsObject();
-      if (po != NULL)
+      if (po != nullptr)
       {
          po->GetTransformAsVisual(xform);
       }
@@ -823,7 +847,7 @@ namespace dtPhysics
       for (; i != iend; ++i)
       {
          PhysicsObject* curPo = *i;
-         if (curPo->GetBodyWrapper() != NULL)
+         if (curPo->GetBodyWrapper() != nullptr)
          {
             if (PhysicsWorld::GetInstance().IsBackgroundUpdateStepRunning())
             {
@@ -836,7 +860,7 @@ namespace dtPhysics
       if (mHelperAction.valid())
       {
          PhysicsWorld::GetInstance().RemoveAction(*mHelperAction);
-         mHelperAction = NULL;
+         mHelperAction = nullptr;
       }
 
       //      std::vector<dtCore::ActorProperty *> propList;
@@ -960,7 +984,7 @@ namespace dtPhysics
       }
       else
       {
-         BaseActorObject* actor = NULL;
+         BaseActorObject* actor = nullptr;
          GetOwner(actor);
          std::string debugInfo("Invalid transform on physics actor component: ");
          if (actor)
@@ -978,7 +1002,7 @@ namespace dtPhysics
          return;
       dtCore::Transform xform;
       dtPhysics::PhysicsObject* physObj = GetMainPhysicsObject();
-      if (physObj == NULL || physObj->GetMechanicsType() == MechanicsType::STATIC || physObj->GetBodyWrapper() == NULL)
+      if (physObj == nullptr || physObj->GetMechanicsType() == MechanicsType::STATIC || physObj->GetBodyWrapper() == nullptr)
          return;
 
       physObj->GetTransformAsVisual(xform);
@@ -989,7 +1013,7 @@ namespace dtPhysics
       }
       else
       {
-         BaseActorObject* actor = NULL;
+         BaseActorObject* actor = nullptr;
          GetOwner(actor);
          std::string debugInfo("Invalid transform on physics actor component: ");
          if (actor)

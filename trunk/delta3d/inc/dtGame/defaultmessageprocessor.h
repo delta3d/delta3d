@@ -49,9 +49,9 @@ namespace dtGame
        * pass it off to its correct handler function based on its type
        * @param msg The message
        */
-      /*override*/ void ProcessMessage(const Message& msg);
+      void ProcessMessage(const Message& msg) override;
 
-      /*override*/ void BuildPropertyMap();
+      void BuildPropertyMap() override;
 
       DT_DECLARE_ACCESSOR(bool, AcceptMapLoadRequests);
       DT_DECLARE_ACCESSOR(bool, AcceptMapChangeRequests);

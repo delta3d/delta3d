@@ -436,7 +436,7 @@ namespace dtGame
          /**
           * This tries to return a reasonable velocity for this frame.
           */
-         /*override MotionInterface*/ osg::Vec3 GetVelocity() const { return GetCurrentInstantVelocity(); }
+         /*override MotionInterface*/ osg::Vec3 GetVelocity() const override { return GetCurrentInstantVelocity(); }
 
          /**
           * Sets this entity's DIS/RPR-FOM acceleration vector.
@@ -449,7 +449,7 @@ namespace dtGame
           * @return the acceleration vector
           */
          const osg::Vec3& GetLastKnownAcceleration() const { return mTranslation.mAcceleration; }
-         /*override MotionInterface*/ osg::Vec3 GetAcceleration() const { return GetLastKnownAcceleration(); }
+         /*override MotionInterface*/ osg::Vec3 GetAcceleration() const override { return GetLastKnownAcceleration(); }
 
          /**
           * Sets this entity's DIS/RPR-FOM angular velocity vector.
@@ -462,7 +462,7 @@ namespace dtGame
           * @return the angular velocity vector
           */
          const osg::Vec3& GetLastKnownAngularVelocity() const { return mAngularVelocityVector; }
-         /*override MotionInterface*/ osg::Vec3 GetAngularVelocity() const { return GetLastKnownAngularVelocity(); }
+         /*override MotionInterface*/ osg::Vec3 GetAngularVelocity() const override { return GetLastKnownAngularVelocity(); }
 
          ///@return the total amount of time to use when smoothing the translation for this last update.
          float GetTranslationEndSmoothingTime() const { return mTranslation.mEndSmoothingTime; }

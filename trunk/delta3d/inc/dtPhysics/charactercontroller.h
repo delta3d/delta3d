@@ -46,7 +46,7 @@ namespace dtPhysics
 
       static dtCore::RefPtr<dtCore::ObjectType> TYPE;
 
-      /*override*/ const dtCore::ObjectType& GetObjectType() const;
+      const dtCore::ObjectType& GetObjectType() const override;
 
       virtual void Init();
 

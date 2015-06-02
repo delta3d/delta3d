@@ -36,7 +36,7 @@ namespace dtVoxel
       CPPUNIT_TEST_SUITE_END();
 
    public:
-      /*override*/ void GetRequiredLibraries(NameVector& names)
+      void GetRequiredLibraries(NameVector& names) override
       {
          static const std::string voxelLib("dtVoxel");
          BaseClass::GetRequiredLibraries(names);

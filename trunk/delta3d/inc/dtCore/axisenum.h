@@ -42,7 +42,7 @@ namespace dtCore
       static AxisEnum AXIS_Z;
 
       unsigned GetIndex() const;
-      osg::Vec3 AsVector() const;
+      const osg::Vec3& AsVector() const;
    protected:
       AxisEnum(const std::string& name, const osg::Vec3& vec, unsigned idx);
       virtual ~AxisEnum();

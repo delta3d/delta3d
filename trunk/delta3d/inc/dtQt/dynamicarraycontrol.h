@@ -172,10 +172,10 @@ namespace dtQt
       virtual void onItemCopyClicked(int itemIndex);
       virtual void onItemDeleteClicked(int itemIndex);
 
-      /*override*/ void PropertyAboutToChangePassThrough(dtCore::PropertyContainer& pc, dtCore::ActorProperty& prop,
-               std::string oldValue, std::string newValue);
+      void PropertyAboutToChangePassThrough(dtCore::PropertyContainer& pc, dtCore::ActorProperty& prop,
+               std::string oldValue, std::string newValue) override;
 
-      /*override*/ void PropertyChangedPassThrough(dtCore::PropertyContainer& pc, dtCore::ActorProperty& prop);
+      void PropertyChangedPassThrough(dtCore::PropertyContainer& pc, dtCore::ActorProperty& prop) override;
 
    private:
       /**

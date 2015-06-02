@@ -168,6 +168,7 @@ namespace dtPhysics
          /**
           *  Creates a joint object based on the description, sets the parent frame to match that on the given node.
           *  It's templated on the updater type so it can be subclassed, though it must be a subclass of TransformJointUpdater.
+          *  This version will add the properties of the updater to the actor
           */
          template<typename UpdaterType = TransformJointUpdater>
          UpdaterType* CreateJointAndRegisterUpdater(dtPhysics::JointDesc& desc, osg::Transform& refNodeToUpdate)
@@ -177,7 +178,7 @@ namespace dtPhysics
             if (newLink == NULL)
                return NULL;
 
-            result = new UpdaterType(*newLink, refNodeToUpdate);
+            result = new UpdaterType(refNodeToUpdate,*newLink);
 
             AddTransformJointUpdater(result);
 

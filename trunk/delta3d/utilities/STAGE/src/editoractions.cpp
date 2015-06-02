@@ -1090,12 +1090,10 @@ namespace dtEditQt
             std::vector<dtCore::DeltaDrawable*> drawables;
             envActor->GetAllActors(drawables);
             envActor->RemoveAllActors();
-            for (unsigned int i = 0; i < drawables.size(); ++i)
-            {
-               scene->AddChild(drawables[i]);
-            }
 
             currMap->SetEnvironmentActor(NULL);
+
+            dtCore::Project::GetInstance().LoadMapIntoScene(*currMap, *scene, true);
 
             if ( ! RemoveActorFromMap(*proxy, *currMap))
             {
@@ -1109,13 +1107,20 @@ namespace dtEditQt
          }
       }
 
-      if (proxy != NULL && scene != NULL)
+      if (proxy != NULL && proxy->GetDrawable() != nullptr)
       {
-         dtCore::RefPtr<dtCore::BaseActorObject> tempRef = proxy;
-         scene->RemoveChild(proxy->GetDrawable());
-         if (proxy->GetBillBoardIcon()!= NULL)
+         dtCore::IEnvironmentActor* envDD =
+               dynamic_cast<dtCore::IEnvironmentActor*>(envProxy != nullptr ? envProxy->GetDrawable() : nullptr);
+         if (envDD)
          {
-            scene->RemoveChild(proxy->GetBillBoardIcon()->GetDrawable());
+            envDD->RemoveActor(*proxy->GetDrawable());
+         }
+
+         dtCore::RefPtr<dtCore::BaseActorObject> tempRef = proxy;
+         proxy->GetDrawable()->Emancipate();
+         if (proxy->GetBillBoardIcon()!= nullptr)
+         {
+            proxy->GetBillBoardIcon()->GetDrawable()->Emancipate();
          }
 
          EditorEvents::GetInstance().emitActorProxyAboutToBeDestroyed(tempRef);
@@ -1165,6 +1170,7 @@ namespace dtEditQt
             dtCore::Scene* scene = ViewportManager::GetInstance().getMasterScene();
             dtCore::IEnvironmentActor* env =
                dynamic_cast<dtCore::IEnvironmentActor*>(envProxy->GetDrawable());
+            scene->RemoveAllDrawables();
             if (env != NULL)
             {
                env->RemoveAllActors();
