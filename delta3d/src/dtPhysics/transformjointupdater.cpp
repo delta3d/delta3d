@@ -38,7 +38,7 @@ namespace dtPhysics
 
       if (!mJoint->SupportsParametersPerAxis())
       {
-         Float pos = mJoint->GetParam(PAL_LINK_RELATIVE_BODY_POS_OR_ANGLE);
+         Float pos = osg::RadiansToDegrees(mJoint->GetParam(PAL_LINK_RELATIVE_BODY_POS_OR_ANGLE));
          switch (mJoint->GetLinkType())
          {
             case PAL_LINK_REVOLUTE:
@@ -60,8 +60,10 @@ namespace dtPhysics
          for (unsigned i = 0; i < 3; ++i)
          {
             trans[i]    = mJoint->GetParam(PAL_LINK_RELATIVE_BODY_POS_OR_ANGLE, i);
-            rotation[i] = mJoint->GetParam(PAL_LINK_RELATIVE_BODY_POS_OR_ANGLE, i + 3);
+            // joint angles are all reversed.
+            rotation[i] = -osg::RadiansToDegrees(mJoint->GetParam(PAL_LINK_RELATIVE_BODY_POS_OR_ANGLE, i + 3));
          }
+         rotation.set(rotation.z(), rotation.x(), rotation.y());
          SetTranslation(trans);
          SetRotation(rotation);
       }
