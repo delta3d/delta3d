@@ -37,12 +37,20 @@ namespace dtVoxel
    public:
       VoxelGrid();
 
-      ///Call Init() before CreateVoxelGrid()
+      ///Call Init() before CreateGridFromActor()
       void Init(const osg::Vec3& grid_offset, const osg::Vec3& dimensions, const osg::Vec3& block_dimensions, const osg::Vec3& cellDimensions, const osg::Vec3i& textureResolution);
-
-      void UpdateGrid(const osg::Vec3& newCameraPos);
-
       void CreateGridFromActor(const osg::Vec3& pos, VoxelActor& voxelActor);
+
+      /***
+      * Updates the renderable area defined by view distance
+      */
+      void UpdateGrid(const osg::Vec3& newCameraPos);
+      
+      /***
+      * Marks a region dirty which will force regenerate next time they are visible
+      */
+      void MarkDirtyAABB(const osg::BoundingBox& bb);
+      
 
       VoxelBlock* GetBlockFromIndex(int index);
       VoxelBlock* GetBlockFromIndex(int x, int y, int z);

@@ -55,6 +55,8 @@ namespace dtVoxel
        */
       openvdb::GridBase::Ptr CollideWithAABB(osg::BoundingBox& bb, int gridIdx = 0);
 
+      void RemoveFromGridAABB(osg::BoundingBox& bb, int gridIdx = 0);
+
       DT_DECLARE_ACCESSOR_INLINE(float, ViewDistance)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, GridDimensions)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, BlockDimensions)

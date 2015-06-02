@@ -108,13 +108,22 @@ namespace dtVoxel
       openvdb::tools::GridSampler<openvdb::BoolGrid::ConstAccessor, openvdb::tools::BoxSampler>
          fastSampler(accessor, gridB->transform());
 
+
+      /*openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(voxelActor.GetGrid(0));
+      //openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(localGrid);
+
+      openvdb::FloatGrid::ConstAccessor accessor = gridB->getConstAccessor();
+
+      openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::BoxSampler>
+         fastSampler(accessor, gridB->transform());*/
+
       float isolevel = 1.0f;
 
-      for (int i = 0; i < resolution[0]; ++i)
+      for (int i = 0; i < resolution[0] + 1; ++i)
       {
-         for (int j = 0; j < resolution[1]; ++j)
+         for (int j = 0; j < resolution[1] + 1; ++j)
          {
-            for (int k = 0; k < resolution[2]; ++k)
+            for (int k = 0; k < resolution[2] + 1; ++k)
             {
                double worldX = mImpl->mOffset[0] + (i * texelSize[0]);
                double worldY = mImpl->mOffset[1] + (j * texelSize[1]);
@@ -149,7 +158,40 @@ namespace dtVoxel
                grid.p[7].set(from[0], from[1] + texelSize[1], from[2] + texelSize[2]);
                grid.val[7] = !fastSampler.wsSample(openvdb::Vec3R(grid.p[7].x(), grid.p[7].y(), grid.p[7].z()));
 
+               bool allSamplesZero = true;
+               bool enablePrintOuts = false;
+               for (int s = 0; s < 8 && enablePrintOuts; ++s)
+               {
+                  if (grid.val[s] != 0 && grid.val[s] != 1)
+                  {
+                     allSamplesZero = false;
+                     break;
+                  }
+               }
+
+               if (!allSamplesZero)
+               {
+                  std::cout << std::endl << "Texel i" << i << ", j " << j << ", k " << k << std::endl;
+                  std::cout << "Pos (" << worldX << ", " << worldY << ", " << worldZ << ")" << std::endl;
+
+
+                  for (int p = 0; p < 8; ++p)
+                  {
+                     std::cout << std::endl;
+
+                     std::cout << "Sample Value: " << grid.val[p];
+                  }
+
+                  std::cout << std::endl;
+               }
+
                int numTriangles = PolygonizeCube(grid, isolevel, triangles);
+
+
+               if (!allSamplesZero)
+               {
+                  std::cout << "NumTriangles " << numTriangles << std::endl << std::endl;
+               }
 
                for (int n = 0; n < numTriangles; ++n)
                {
@@ -190,11 +232,12 @@ namespace dtVoxel
 
       mImpl->mMeshNode->accept(*simplifier);
 
+      osg::StateSet* ss = mImpl->mMeshNode->getOrCreateStateSet();
+
       /*osg::ref_ptr<osg::PolygonMode> polymode = new osg::PolygonMode;
       polymode->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
       ss->setAttributeAndModes(polymode.get(), osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);*/
       
-      osg::StateSet* ss = mImpl->mMeshNode->getOrCreateStateSet();
       ss->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
 
       mImpl->mIsAllocated = true;

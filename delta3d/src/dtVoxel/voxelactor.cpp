@@ -51,6 +51,8 @@ namespace dtVoxel
    /////////////////////////////////////////////////////
    void VoxelActor::LoadGrid(const dtCore::ResourceDescriptor& rd)
    {
+      std::cout << "Loading Grid" << std::endl;
+
       if (rd != GetDatabase() && !rd.IsEmpty())
       {
          try
@@ -59,9 +61,14 @@ namespace dtVoxel
             file.open();
             mGrids = file.getGrids();
             file.close();
+
+            std::cout << "Done Loading Grid" << std::endl;
+
          }
          catch (const openvdb::IoError& ioe)
          {
+            std::cout << "Error Loading Grid" << std::endl;
+
             throw dtUtil::FileUtilIOException(ioe.what(), __FILE__, __LINE__);
          }
       }
@@ -132,7 +139,22 @@ namespace dtVoxel
       }
       return result;
    }
-   
+
+   /////////////////////////////////////////////////////
+   void VoxelActor::RemoveFromGridAABB(osg::BoundingBox& bb, int gridIdx)
+   {
+      //remove from the OpenVDB database
+      openvdb::BBoxd bbox(openvdb::Vec3d(bb.xMin(), bb.yMin(), bb.zMin()), openvdb::Vec3d(bb.xMax(), bb.yMax(), bb.zMax()));
+      if (openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(GetGrid(gridIdx)))
+      {
+      }
+      else if (openvdb::FloatGrid::Ptr gridF = boost::dynamic_pointer_cast<openvdb::FloatGrid>(GetGrid(gridIdx)))
+      {
+      }
+
+
+   }
+
    void VoxelActor::OnTickLocal(const dtGame::TickMessage& tickMessage)
    {
       if (mGrid.valid())
@@ -174,15 +196,7 @@ namespace dtVoxel
    {
       RegisterForMessages(dtGame::MessageType::TICK_LOCAL, dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
 
-      openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(GetGrid(0));
 
-      /*osg::Vec3 offset(-2500.0, -2500.0, -9.0);
-      osg::Vec3 dim(5000, 5000, 18);
-      osg::Vec3 blockDim(50, 50, 6);
-      osg::Vec3 cellDim(12.5, 12.5, 2);
-      osg::Vec3i texRes(24, 24, 4);
-
-      mGrid->SetViewDistance(1000.0f);*/
       osg::Vec3i res(int(mTextureResolution.x()), int(mTextureResolution.y()), int(mTextureResolution.z()));
 
 
