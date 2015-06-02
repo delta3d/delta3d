@@ -50,6 +50,7 @@ class ActorHierarchyTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestDrawableLinking);
       CPPUNIT_TEST(TestActorTraversal);
       CPPUNIT_TEST(TestActorDeletes);
+      CPPUNIT_TEST(TestLastDescendant);
       CPPUNIT_TEST(TestMapSaveLoad);
       CPPUNIT_TEST(TestClone);
    CPPUNIT_TEST_SUITE_END();
@@ -65,6 +66,7 @@ class ActorHierarchyTests : public CPPUNIT_NS::TestFixture
       void TestActorLinkingParentSwap();
       void TestActorTraversal();
       void TestActorDeletes();
+      void TestLastDescendant();
       void TestMapSaveLoad();
       void TestClone();
 
@@ -134,14 +136,36 @@ void ActorHierarchyTests::TestActorLinking()
    CPPUNIT_ASSERT(actorC.valid());
    CPPUNIT_ASSERT(actorD.valid());
 
-   actorB->SetParentActor(actorA.get());
-   actorC->SetParentActor(actorA.get());
-   actorD->SetParentActor(actorC.get());
+   // Ensure each actor points to itself as a last descendant.
+   CPPUNIT_ASSERT(actorA->last_descendant() == actorA);
+   CPPUNIT_ASSERT(actorB->last_descendant() == actorB);
+   CPPUNIT_ASSERT(actorC->last_descendant() == actorC);
+   CPPUNIT_ASSERT(actorD->last_descendant() == actorD);
 
+
+   // Build the actor tree, and check last descendant references along the way.
+   actorB->SetParentActor(actorA.get());
+   CPPUNIT_ASSERT(actorA->last_descendant() == actorB);
+   CPPUNIT_ASSERT(actorB->last_descendant() == actorB);
+
+   actorC->SetParentActor(actorA.get());
+   CPPUNIT_ASSERT(actorA->last_descendant() == actorC);
+   CPPUNIT_ASSERT(actorC->last_descendant() == actorC);
+   CPPUNIT_ASSERT(actorB->last_descendant() == actorB);
+
+   actorD->SetParentActor(actorC.get());
+   CPPUNIT_ASSERT(actorA->last_descendant() == actorD);
+   CPPUNIT_ASSERT(actorC->last_descendant() == actorD);
+   CPPUNIT_ASSERT(actorD->last_descendant() == actorD);
+   CPPUNIT_ASSERT(actorB->last_descendant() == actorB);
+
+
+   // Verify the tree structure.
    CPPUNIT_ASSERT(actorA->GetParentActor() == NULL);
    CPPUNIT_ASSERT(actorB->GetParentActor() == actorA.get());
    CPPUNIT_ASSERT(actorC->GetParentActor() == actorA.get());
    CPPUNIT_ASSERT(actorD->GetParentActor() == actorC.get());
+
 
    // Test tree specific methods
    CPPUNIT_ASSERT( ! actorA->is_descendant_of(*actorA));
@@ -194,6 +218,16 @@ void ActorHierarchyTests::TestActorLinkingParentSwap()
    CPPUNIT_ASSERT(actorY->GetParentActor() == actorX.get());
    CPPUNIT_ASSERT(actorZ->GetParentActor() == actorX.get());
 
+   // Check descendants.
+   CPPUNIT_ASSERT(actorA->last_descendant() == actorC.get()); //   A
+   CPPUNIT_ASSERT(actorC->last_descendant() == actorC.get()); //  / \ 
+   CPPUNIT_ASSERT(actorB->last_descendant() == actorB.get()); // B   C
+
+   CPPUNIT_ASSERT(actorX->last_descendant() == actorZ.get()); //   X
+   CPPUNIT_ASSERT(actorZ->last_descendant() == actorZ.get()); //  / \ 
+   CPPUNIT_ASSERT(actorY->last_descendant() == actorY.get()); // Y   Z
+
+   // Check drawables
    CPPUNIT_ASSERT(drawableA->HasChild(drawableB));
    CPPUNIT_ASSERT(drawableA->HasChild(drawableC));
    CPPUNIT_ASSERT( ! drawableA->HasChild(drawableX));
@@ -213,6 +247,16 @@ void ActorHierarchyTests::TestActorLinkingParentSwap()
    CPPUNIT_ASSERT(actorY->GetParentActor() == actorB.get());
    CPPUNIT_ASSERT(actorZ->GetParentActor() == actorC.get());
 
+   // Check descendants.
+   CPPUNIT_ASSERT(actorA->last_descendant() == actorZ.get()); //   A
+   CPPUNIT_ASSERT(actorB->last_descendant() == actorY.get()); //  / \ 
+   CPPUNIT_ASSERT(actorC->last_descendant() == actorZ.get()); // B   C
+   CPPUNIT_ASSERT(actorY->last_descendant() == actorY.get()); //  \   \ 
+   CPPUNIT_ASSERT(actorZ->last_descendant() == actorZ.get()); //   Y   Z
+
+   CPPUNIT_ASSERT(actorX->last_descendant() == actorX.get()); // All alone.
+
+   // Check drawables.
    CPPUNIT_ASSERT(drawableA->HasChild(drawableB));
    CPPUNIT_ASSERT(drawableA->HasChild(drawableC));
    CPPUNIT_ASSERT(drawableB->HasChild(drawableY));
@@ -376,6 +420,15 @@ void ActorHierarchyTests::TestActorDeletes()
    actorF->SetParentActor(actorC.get());
    actorG->SetParentActor(actorC.get());
 
+   // Check descendants
+   CPPUNIT_ASSERT(actorA->last_descendant() == actorG.get());
+   CPPUNIT_ASSERT(actorB->last_descendant() == actorE.get());
+   CPPUNIT_ASSERT(actorC->last_descendant() == actorG.get());
+   CPPUNIT_ASSERT(actorD->last_descendant() == actorD.get());
+   CPPUNIT_ASSERT(actorE->last_descendant() == actorE.get());
+   CPPUNIT_ASSERT(actorF->last_descendant() == actorF.get());
+   CPPUNIT_ASSERT(actorG->last_descendant() == actorG.get());
+
    // Quick verification that the tree has expected references.
    CPPUNIT_ASSERT(drawableA->HasChild(drawableB.get()));
    CPPUNIT_ASSERT(drawableA->HasChild(drawableC.get()));
@@ -391,6 +444,16 @@ void ActorHierarchyTests::TestActorDeletes()
    CPPUNIT_ASSERT(actorC->GetParentActor() == NULL);
    CPPUNIT_ASSERT( ! drawableA->HasChild(drawableB.get()));
    CPPUNIT_ASSERT( ! drawableA->HasChild(drawableC.get()));
+
+   // Check descendants
+   CPPUNIT_ASSERT(actorA->last_descendant() == actorA.get()); // Alone
+
+   CPPUNIT_ASSERT(actorB->last_descendant() == actorE.get());
+   CPPUNIT_ASSERT(actorC->last_descendant() == actorG.get());
+   CPPUNIT_ASSERT(actorD->last_descendant() == actorD.get());
+   CPPUNIT_ASSERT(actorE->last_descendant() == actorE.get());
+   CPPUNIT_ASSERT(actorF->last_descendant() == actorF.get());
+   CPPUNIT_ASSERT(actorG->last_descendant() == actorG.get());
 
    // Verify that the other children were not affected.
    CPPUNIT_ASSERT(actorD->GetParentActor() == actorB.get());
@@ -434,6 +497,56 @@ void ActorHierarchyTests::TestActorDeletes()
    actorB = NULL;
    CPPUNIT_ASSERT( ! weakPtrD.valid());
    CPPUNIT_ASSERT( ! weakPtrE.valid());
+}
+
+//////////////////////////////////////////////////////////////////////////
+void ActorHierarchyTests::TestLastDescendant()
+{
+   GameActorPtr actorA = CreateTestActor("A");
+   GameActorPtr actorB = CreateTestActor("B");
+   GameActorPtr actorC = CreateTestActor("C");
+   GameActorPtr actorD = CreateTestActor("D");
+   GameActorPtr actorE = CreateTestActor("E");
+   GameActorPtr actorF = CreateTestActor("F");
+   GameActorPtr actorG = CreateTestActor("G");
+
+   // Setup the tree
+   actorB->SetParentActor(actorA.get()); //      A
+   actorC->SetParentActor(actorA.get()); //     / \ 
+   actorD->SetParentActor(actorB.get()); //    /   \ 
+   actorE->SetParentActor(actorB.get()); //   B     C
+   actorF->SetParentActor(actorC.get()); //  / \   / \ 
+   actorG->SetParentActor(actorC.get()); // D   E F   G
+
+   // Check descendants
+   CPPUNIT_ASSERT(actorA->last_descendant() == actorG.get());
+   CPPUNIT_ASSERT(actorB->last_descendant() == actorE.get());
+   CPPUNIT_ASSERT(actorC->last_descendant() == actorG.get());
+   CPPUNIT_ASSERT(actorE->last_descendant() == actorE.get());
+   CPPUNIT_ASSERT(actorF->last_descendant() == actorF.get());
+   CPPUNIT_ASSERT(actorG->last_descendant() == actorG.get());
+
+   // Remove the last descendant
+   actorG->SetParentActor(NULL);
+
+   // Check descendants
+   CPPUNIT_ASSERT(actorA->last_descendant() == actorF.get()); // Now F not G      A
+   CPPUNIT_ASSERT(actorB->last_descendant() == actorE.get()); //                 / \ 
+   CPPUNIT_ASSERT(actorC->last_descendant() == actorF.get()); // Now F not G    /   \ 
+   CPPUNIT_ASSERT(actorE->last_descendant() == actorE.get()); //               B     C
+   CPPUNIT_ASSERT(actorF->last_descendant() == actorF.get()); //              / \     \ 
+                                                              //             D   E     F
+   CPPUNIT_ASSERT(actorG->last_descendant() == actorG.get()); // Alone
+
+   // Remove the last descendant
+   actorG->SetParentActor(actorC.get());
+
+   CPPUNIT_ASSERT(actorA->last_descendant() == actorG.get()); // Back to G
+   CPPUNIT_ASSERT(actorB->last_descendant() == actorE.get());
+   CPPUNIT_ASSERT(actorC->last_descendant() == actorG.get()); // Back to G
+   CPPUNIT_ASSERT(actorE->last_descendant() == actorE.get());
+   CPPUNIT_ASSERT(actorF->last_descendant() == actorF.get());
+   CPPUNIT_ASSERT(actorG->last_descendant() == actorG.get());
 }
 
 //////////////////////////////////////////////////////////////////////////
