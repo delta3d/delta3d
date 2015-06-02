@@ -64,7 +64,7 @@ namespace dtGame
       GameActor(GameActorProxy& parent, TransformableNode& node, const std::string& name = "GameActor");
 
 
-      /*override*/ void SetName(const std::string& name);
+      void SetName(const std::string& name) override;
 
       /**
        * @return the GameActorProxy for this game actor.

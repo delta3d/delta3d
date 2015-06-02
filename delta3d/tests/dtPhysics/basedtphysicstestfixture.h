@@ -34,13 +34,13 @@ namespace dtPhysics
    public:
       typedef dtGame::BaseGMTestFixture BaseClass;
 
-      /*override*/ void GetRequiredLibraries(NameVector& names)
+      void GetRequiredLibraries(NameVector& names) override
       {
          static const std::string dtPhysicsLib("dtPhysics");
          names.push_back(dtPhysicsLib);
       }
 
-      void tearDown()
+      void tearDown() override
       {
          mPhysicsComp = NULL;
          BaseClass::tearDown();

@@ -14,10 +14,10 @@
 
 namespace dtPhysics
 {
-   TransformJointUpdater::TransformJointUpdater(palLink& mJoint, osg::Transform& mTransformNode)
-   : mDeleteJoint(true)
+   TransformJointUpdater::TransformJointUpdater(osg::Transform& transformNode, palLink& mJoint)
+   : BaseClass(transformNode)
+   , mDeleteJoint(true)
    , mJoint(&mJoint)
-   , mTransformNode(&mTransformNode)
    {
    }
 
@@ -34,7 +34,6 @@ namespace dtPhysics
 
    void TransformJointUpdater::operator()()
    {
-      dtCore::Transform xform;
       if (!mJoint->SupportsParameters()) return;
 
       if (!mJoint->SupportsParametersPerAxis())
@@ -44,39 +43,27 @@ namespace dtPhysics
          {
             case PAL_LINK_REVOLUTE:
             {
-               xform.SetRotation(0.0f, 0.0f, pos);
+               SetRotation(osg::Vec3(0.0f, 0.0f, pos));
                break;
             }
             case PAL_LINK_PRISMATIC:
             {
-               xform.SetRotation(pos, 0.0f, 0.0f);
+               SetRotation(osg::Vec3(pos, 0.0f, 0.0f));
                break;
             }
          }
       }
       else
       {
-         dtPhysics::VectorType trans;
-         dtPhysics::VectorType rotation;
+         osg::Vec3 trans;
+         osg::Vec3 rotation;
          for (unsigned i = 0; i < 3; ++i)
          {
             trans[i]    = mJoint->GetParam(PAL_LINK_RELATIVE_BODY_POS_OR_ANGLE, i);
             rotation[i] = mJoint->GetParam(PAL_LINK_RELATIVE_BODY_POS_OR_ANGLE, i + 3);
          }
-      }
-      osg::MatrixTransform* mt = mTransformNode->asMatrixTransform();
-      if (mt != NULL)
-      {
-         osg::Matrix mat;
-         xform.Get(mat);
-         mt->setMatrix(mat);
-         return;
-      }
-      osgSim::DOFTransform* doft = dynamic_cast<osgSim::DOFTransform*>(mTransformNode.get());
-      if (doft != NULL)
-      {
-         doft->setCurrentHPR(xform.GetRotation());
-         doft->setCurrentTranslate(xform.GetTranslation());
+         SetTranslation(trans);
+         SetRotation(rotation);
       }
    }
 

@@ -49,7 +49,7 @@ namespace dtCore
       PropertyContainer();
 
       ///@return the type of this object.
-      virtual const dtCore::ObjectType& GetObjectType() const = 0;
+      virtual const ObjectType& GetObjectType() const = 0;
    public:
       /**
        * Initializes the default values of this actor.
@@ -147,7 +147,7 @@ namespace dtCore
        * @return           A temporary property, or NULL if
        *                   none is needed.
        */
-      virtual dtCore::RefPtr<ActorProperty> GetDeprecatedProperty(const std::string& name);
+      virtual RefPtr<ActorProperty> GetDeprecatedProperty(const std::string& name);
 
       /**
        * Checks if a given property has a default value.
@@ -156,7 +156,7 @@ namespace dtCore
        *
        * @return     True if a default value exists for the given property.
        */
-      virtual bool DoesDefaultExist(const dtCore::ActorProperty& prop) const;
+      virtual bool DoesDefaultExist(const ActorProperty& prop) const;
 
       /**
        * Checks if a given property is already set to its default value.
@@ -165,14 +165,14 @@ namespace dtCore
        *
        * @return     True if the given property is already set to default.
        */
-      virtual bool IsPropertyDefault(const dtCore::ActorProperty& prop) const;
+      virtual bool IsPropertyDefault(const ActorProperty& prop) const;
 
       /**
        * Resets the value of the given property to its default value.
        *
        * @param[in]   prop  The property to reset.
        */
-      virtual void ResetProperty(dtCore::ActorProperty& prop);
+      virtual void ResetProperty(ActorProperty& prop);
 
       /**
        * Checks if a given property should be saved out to file data.
@@ -183,7 +183,7 @@ namespace dtCore
        *
        * @return     True if the given property should be saved.
        */
-      virtual bool ShouldPropertySave(const dtCore::ActorProperty& prop) const;
+      virtual bool ShouldPropertySave(const ActorProperty& prop) const;
 
       /**
        * Copies the property values from the passed in property container to it's own properties
@@ -202,8 +202,8 @@ namespace dtCore
       BREAK_OVERRIDE(GetDefaultPropertyKey() const); // removed 12/2014
    private:
 
-      typedef std::map<dtUtil::RefString, dtCore::RefPtr<ActorProperty> > PropertyMapType;
-      typedef std::vector<dtCore::RefPtr<ActorProperty> > PropertyVectorType;
+      typedef std::map<dtUtil::RefString, RefPtr<ActorProperty> > PropertyMapType;
+      typedef std::vector<RefPtr<ActorProperty> > PropertyVectorType;
 
       ///Map of properties.
       PropertyMapType mPropertyMap;

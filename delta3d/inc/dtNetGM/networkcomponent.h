@@ -127,12 +127,12 @@ namespace dtNetGM
        * Called immediately after a component is added to the GM. Used to register
        * 'additional' Network Messages on the GameManager
        */
-      /*override*/ void OnAddedToGM();
+      void OnAddedToGM() override;
 
       /// Overridden to handle shutdown.
-      /*override*/ void OnRemovedFromGM();
+      void OnRemovedFromGM() override;
 
-      /*override*/ void BuildPropertyMap();
+      void BuildPropertyMap() override;
 
       /**
        * Function called by a GameManager to process Messages. This function forwards the connection related

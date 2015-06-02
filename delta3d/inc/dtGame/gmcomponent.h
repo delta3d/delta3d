@@ -61,7 +61,7 @@ namespace dtGame
 
    public:
 
-      /*override*/ bool IsSystemComponent() const { return true; }
+      bool IsSystemComponent() const override { return true; }
 
       /**
        * handles a sent a message
@@ -90,7 +90,7 @@ namespace dtGame
        */
       DT_DECLARE_ACCESSOR(dtUtil::EnumerationPointer<GameManager::ComponentPriority>, ComponentPriority);
 
-      /*override*/ void BuildPropertyMap();
+      void BuildPropertyMap() override;
 
       /**
        * Called immediately after a component is added to the GM. Override this
@@ -108,7 +108,7 @@ namespace dtGame
        */
       virtual void OnRemovedFromGM();
 
-      /*override*/ void Init(const dtCore::ActorType& actorType);
+      void Init(const dtCore::ActorType& actorType) override;
 
       /**
        * Sets the game manager that owns this component

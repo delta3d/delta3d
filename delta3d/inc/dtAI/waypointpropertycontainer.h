@@ -236,21 +236,21 @@ namespace dtAI
       {
       }
 
-      /*override*/ const dtCore::ObjectType& GetObjectType() const { return mWaypoint->GetWaypointType(); }
+      const dtCore::ObjectType& GetObjectType() const override { return mWaypoint->GetWaypointType(); }
 
       virtual ~WaypointPropertyContainer(){}
 
-      /*virtual*/ WaypointInterface* Get()
+      WaypointInterface* Get() override
       {
          return mWaypoint;
       }
 
-      /*virtual*/ const WaypointInterface* Get() const
+      const WaypointInterface* Get() const override
       {
          return mWaypoint;
       }
 
-      /*virtual*/ void Set(WaypointInterface* wi)
+      void Set(WaypointInterface* wi) override
       {
          WaypointType* wt = dynamic_cast<WaypointType*>(wi);
          if(wt == NULL)

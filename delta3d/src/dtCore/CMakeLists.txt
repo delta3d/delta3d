@@ -209,6 +209,7 @@ SET(LIB_PUBLIC_HEADERS
                 ${HEADER_PATH}/transform.h
                 ${HEADER_PATH}/transformable.h
                 ${HEADER_PATH}/transformableactorproxy.h
+                ${HEADER_PATH}/transformpropertydelegate.h
                 ${HEADER_PATH}/tripod.h
                 ${HEADER_PATH}/typetoactorproperty.h
                 ${HEADER_PATH}/ufomotionmodel.h
@@ -382,6 +383,7 @@ SET(LIB_SOURCES
                 system.cpp
                 systemcomponenttype.cpp
                 transformableactorproxy.cpp
+                transformpropertydelegate.cpp
                 timer.cpp
                 transform.cpp
                 transformable.cpp

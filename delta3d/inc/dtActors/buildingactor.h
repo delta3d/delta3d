@@ -98,7 +98,7 @@ namespace dtActors
       */
       virtual void Visualize(void);
 
-      /*override*/ virtual void SetTransform(const dtCore::Transform& xform, dtCore::Transformable::CoordSysEnum cs = ABS_CS);
+      void SetTransform(const dtCore::Transform& xform, dtCore::Transformable::CoordSysEnum cs = ABS_CS) override;
 
       /**
       * This will update the visuals on a single point.

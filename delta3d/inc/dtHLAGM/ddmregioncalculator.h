@@ -59,7 +59,7 @@ namespace dtHLAGM
          // It would be better to make this actors and be able to load them dynamically from the HLA config.
          static dtCore::RefPtr<dtCore::ObjectType> TYPE;
 
-         /*override*/ const dtCore::ObjectType& GetObjectType() const;
+         const dtCore::ObjectType& GetObjectType() const override;
 
          /**
           * Sets the name of this instance.

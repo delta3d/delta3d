@@ -144,7 +144,7 @@ namespace dtGame
        * for a successful clone operation. This is typically used
        * by the old prototype creation process.
        */
-      /*override*/ dtCore::RefPtr<dtCore::BaseActorObject> Clone();
+      dtCore::RefPtr<dtCore::BaseActorObject> Clone() override;
 
       /**
        * This version of close returns this class to avoid some casting in the implementation.
@@ -153,10 +153,10 @@ namespace dtGame
       virtual dtCore::RefPtr<dtGame::GameActorProxy> CloneGameActor();
 
       /// Overridden to copy properties from actor components.
-      /*override*/ void CopyPropertiesFrom(const PropertyContainer& copyFrom);
+      void CopyPropertiesFrom(const PropertyContainer& copyFrom) override;
 
       /// Overridden to call BuildInvokables
-      virtual void Init(const dtCore::ActorType& actorType);
+      void Init(const dtCore::ActorType& actorType) override;
 
 
       virtual void SetParentActor(dtGame::GameActorProxy* parent);
@@ -167,7 +167,7 @@ namespace dtGame
       virtual dtGame::GameActorProxy* GetParentActor() const;
 
 
-      /*override*/ dtCore::RefPtr<dtCore::ActorComponentContainer::ActorIterator> GetIterator();
+      dtCore::RefPtr<dtCore::ActorComponentContainer::ActorIterator> GetIterator() override;
 
       /**
        * The actor component was probably removed. So, we need to remove each of the properties
@@ -203,7 +203,7 @@ namespace dtGame
       /**
        * Creates the properties associated with this proxy
        */
-      virtual void BuildPropertyMap();
+      void BuildPropertyMap() override;
 
       /**
        * Overwrite to construct the Invokables for this GameActorProxy. Be sure
@@ -694,13 +694,13 @@ namespace dtGame
       /**
        * This is a temporary override from dtCore so it can set the parent/child relationships
        */
-      /*virtual*/ bool SetParentBaseActor(dtCore::BaseActorObject* parent);
+      bool SetParentBaseActor(dtCore::BaseActorObject* parent) override;
 
       /**
        * Returns the actor that is the parent to this actor as a base actor object.
        * Call GetParentActor instead.  This exists just for the map loading code.
        */
-      /*override*/ dtCore::BaseActorObject* GetParentBaseActor() const;
+      dtCore::BaseActorObject* GetParentBaseActor() const override;
    protected:
       /// Destructor
       virtual ~GameActorProxy();

@@ -109,7 +109,7 @@ namespace dtPhysics
       dtPhysicsTests() {}
       ~dtPhysicsTests() {}
 
-      /*override*/ void GetRequiredLibraries(NameVector& names)
+      void GetRequiredLibraries(NameVector& names) override
       {
          static const std::string DTPHYSICS_REGISTRY = "dtPhysics";
          names.push_back(DTPHYSICS_REGISTRY);

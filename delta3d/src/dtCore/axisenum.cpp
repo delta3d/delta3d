@@ -34,6 +34,7 @@ namespace dtCore
    , mVector(vec)
    , mIndex(idx)
    {
+      AddInstance(this);
    }
 
    AxisEnum::~AxisEnum()
@@ -41,6 +42,6 @@ namespace dtCore
    }
 
    unsigned AxisEnum::GetIndex() const { return mIndex; }
-   osg::Vec3 AxisEnum::AsVector() const { return mVector; }
+   const osg::Vec3& AxisEnum::AsVector() const { return mVector; }
 
 } /* namespace dtCore */

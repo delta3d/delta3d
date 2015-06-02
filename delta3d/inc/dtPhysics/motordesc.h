@@ -40,7 +40,7 @@ namespace dtPhysics
       static dtCore::RefPtr<dtCore::ObjectType> MOTOR_DESC_TYPE;
 
       MotorDesc();
-      /*override*/ const dtCore::ObjectType& GetObjectType() const;
+      const dtCore::ObjectType& GetObjectType() const override;
 
       DT_DECLARE_ACCESSOR_INLINE(float, TargetVelocity)
       DT_DECLARE_ACCESSOR_INLINE(float, MaxForce)

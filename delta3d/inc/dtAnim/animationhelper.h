@@ -400,8 +400,8 @@ namespace dtAnim
 
       virtual bool SetupPoses(const dtAnim::BaseModelData& modelData);
 
-      /*override*/ void OnTickLocal(const dtGame::TickMessage& /*tickMessage*/);
-      /*override*/ void OnTickRemote(const dtGame::TickMessage& /*tickMessage*/);
+      void OnTickLocal(const dtGame::TickMessage& /*tickMessage*/) override;
+      void OnTickRemote(const dtGame::TickMessage& /*tickMessage*/) override;
 
 
    private:

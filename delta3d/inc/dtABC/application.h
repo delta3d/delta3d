@@ -222,18 +222,18 @@ namespace dtABC
         * @param defaultValue The default value to use if name isn't found
         * @return a string value that is paired with the given name.  The default is returned if the property is not set.
        */
-      /*override*/ const std::string& GetConfigPropertyValue(const std::string& name, const std::string& defaultValue = "") const;
+      const std::string& GetConfigPropertyValue(const std::string& name, const std::string& defaultValue = "") const override;
 
-      /*override*/ void GetConfigPropertiesWithPrefix(const std::string& prefix, std::vector<std::pair<std::string,std::string> >& resultOut, bool removePrefix = true) const;
+      void GetConfigPropertiesWithPrefix(const std::string& prefix, std::vector<std::pair<std::string,std::string> >& resultOut, bool removePrefix = true) const override;
 
       /// Sets the value of a given config property.
-      /*override*/ void SetConfigPropertyValue(const std::string& name, const std::string& value);
+      void SetConfigPropertyValue(const std::string& name, const std::string& value) override;
 
       /// Removes a property with the given name
-      /*override*/ void RemoveConfigPropertyValue(const std::string& name);
+      void RemoveConfigPropertyValue(const std::string& name) override;
 
       /// Returns whether a config property exists or not
-      /*override*/ bool IsConfigPropertyDefined(const std::string& name) const;
+      bool IsConfigPropertyDefined(const std::string& name) const override;
 
       /// Add a view to the Viewer
       void AddView(dtCore::View& view);
@@ -263,9 +263,9 @@ namespace dtABC
       osgViewer::CompositeViewer* GetCompositeViewer() { return mCompositeViewer.get(); }
 
       /******** Log Time Provider functions ********/
-	  /*override*/ const dtUtil::DateTime& GetDateTime();
-	  /*override*/ unsigned GetFrameNumber();
-	  /*override*/ osg::Referenced* AsReferenced();
+	  const dtUtil::DateTime& GetDateTime() override;
+	  unsigned GetFrameNumber() override;
+	  osg::Referenced* AsReferenced() override;
       /******** Log Time Provider functions end ********/
 
 
