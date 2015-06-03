@@ -36,6 +36,7 @@ namespace dtGame
    const dtUtil::RefString ActorUpdateMessage::PARENT_ID_PARAMETER("Parent ID Parameter");
    const dtUtil::RefString ActorUpdateMessage::IS_PARTIAL_UPDATE_PARAMETER("Is Partial Update");
 
+   static const dtCore::UniqueId INVALID_PARENT_ID("I");
 
    /////////////////////////////////////////////////////////////////
    ActorUpdateMessage::ActorUpdateMessage() : Message()
@@ -45,7 +46,7 @@ namespace dtGame
       AddParameter(new StringMessageParameter(ACTOR_TYPE_CATEGORY_PARAMETER));
       AddParameter(new StringMessageParameter(PROTOTYPE_NAME_PARAMETER));
       AddParameter(new ActorMessageParameter(PROTOTYPE_ID_PARAMETER));
-      AddParameter(new ActorMessageParameter(PARENT_ID_PARAMETER));
+      AddParameter(new ActorMessageParameter(PARENT_ID_PARAMETER, INVALID_PARENT_ID));
 
       // Default the partial update param to false and assume all actor updates
       // are full unless set explicitly (see GameActorProxy->NotifyPartialActorUpdate())
@@ -165,6 +166,18 @@ namespace dtGame
    void ActorUpdateMessage::SetPrototypeID(const dtCore::UniqueId& newPrototypeID)
    {
       static_cast<ActorMessageParameter*>(GetParameter(PROTOTYPE_ID_PARAMETER))->SetValue(newPrototypeID);
+   }
+
+   /////////////////////////////////////////////////////////////////
+   bool ActorUpdateMessage::IsParentIDSet() const
+   {
+      return GetParentID() != INVALID_PARENT_ID;
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void ActorUpdateMessage::SetParentIDToUnset()
+   {
+      SetParentID(INVALID_PARENT_ID);
    }
 
    /////////////////////////////////////////////////////////////////
