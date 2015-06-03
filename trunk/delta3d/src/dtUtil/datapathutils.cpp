@@ -73,12 +73,17 @@ namespace dtUtil
       OpenThreads::ScopedLock<OpenThreads::Mutex> lock(gDatapathMutex);
 
       std::string modpath = pathList;
-      for(std::string::size_type i = 0; i < pathList.size(); i++)
+      std::string::size_type pathLength = pathList.size();
+      for (std::string::size_type i = 0; i < pathLength; i++)
       {
 #ifdef DELTA_WIN32
          try
          {
-            if(modpath.at(i) == ':' && modpath.at(i+1) != '\\')
+            // TODO: Determine why this silly thing is even being done.
+            // Did anyone consider that this would destroy a path with
+            // drive letter such as C:/... ? How about we do not concatenate
+            // paths with colons? CR
+            if (modpath.at(i) == ':' && (i + 1 >= pathLength || modpath.at(i + 1) != '\\'))
             {
                modpath.at(i) = ';';
             }
