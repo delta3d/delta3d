@@ -1651,6 +1651,8 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
    dtCore::RefPtr<dtGame::ActorUpdateMessage> actorUpdateMsg =
       static_cast<dtGame::ActorUpdateMessage*>(mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED).get());
 
+   CPPUNIT_ASSERT(!actorUpdateMsg->IsParentIDSet());
+
    dtCore::UniqueId oldId(gap->GetProperty("TestActorId")->ToString());
    CPPUNIT_ASSERT_MESSAGE("The test actor id should be empty.", oldId.ToString().empty());
    gap->GetProperty("TestActorId")->FromString("33232");
@@ -1666,11 +1668,13 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
       params.push_back("OneIsFired");
       gap->PopulateActorUpdate(*actorUpdateMsg, params);
       actorUpdateMsg->SetParentID(dtCore::UniqueId(false));
+      CPPUNIT_ASSERT(actorUpdateMsg->IsParentIDSet());
    }
    else
    {
       gap->PopulateActorUpdate(*actorUpdateMsg);
       actorUpdateMsg->SetParentID(gapSecondParent->GetId());
+      CPPUNIT_ASSERT(actorUpdateMsg->IsParentIDSet());
    }
 
    CPPUNIT_ASSERT(actorUpdateMsg->GetParameter("Name") != NULL);
@@ -1923,6 +1927,27 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool
 
       CPPUNIT_ASSERT_MESSAGE("The created actor should be remote.", gapRemote->IsRemote());
       CPPUNIT_ASSERT_MESSAGE("The created actor should not be published.", !gapRemote->IsPublished());
+
+      if (addParent)
+      {
+         dtCore::RefPtr<dtGame::ActorUpdateMessage> actorUpdateMsg;
+         mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED, actorUpdateMsg);
+
+         CPPUNIT_ASSERT(!actorUpdateMsg->IsParentIDSet());
+
+         std::vector<dtUtil::RefString> params;
+         params.push_back("OneIsFired");
+         gap->PopulateActorUpdate(*actorUpdateMsg, params);
+         CPPUNIT_ASSERT(actorUpdateMsg->IsParentIDSet());
+         CPPUNIT_ASSERT(actorUpdateMsg->GetParentID() == gapRemote->GetParentActor()->GetId());
+         actorUpdateMsg->SetParentIDToUnset();
+         CPPUNIT_ASSERT(!actorUpdateMsg->IsParentIDSet());
+
+         dtCore::UniqueId id = gapRemote->GetParentActor()->GetId();
+         gapRemote->ApplyActorUpdate(*actorUpdateMsg);
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("The id should not have changed.", id, gapRemote->GetParentActor()->GetId());
+      }
+
    }
    else
    {

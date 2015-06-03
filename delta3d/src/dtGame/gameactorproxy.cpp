@@ -951,27 +951,30 @@ namespace dtGame
          }
       }
 
-      GameActorProxy* gap = GetParentActor();
-      const dtCore::UniqueId& parentId = msg.GetParentID();
-      if (parentId.IsNull())
+      if (msg.IsParentIDSet())
       {
-         if (gap != NULL)
-            SetParentActor(NULL);
-      }
-      else if (gap == NULL || gap->GetId() != parentId)
-      {
-         GameActorProxy* newParent = GetGameManager()->FindGameActorById(parentId);
-         if (newParent != NULL)
+         GameActorProxy* gap = GetParentActor();
+         const dtCore::UniqueId& parentId = msg.GetParentID();
+         if (parentId.IsNull())
          {
-            SetParentActor(newParent);
+            if (gap != NULL)
+               SetParentActor(NULL);
          }
-         else if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_ERROR))
+         else if (gap == NULL || gap->GetId() != parentId)
          {
-            mLogger.LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                  "Setting the parent actor on type\"%s\":name\"%s\" to value \"%s\" failed because the parent actor could not be found.",
-                  GetActorType().GetFullName().c_str(),
-                  GetName().c_str(),
-                  parentId.ToString().c_str() );
+            GameActorProxy* newParent = GetGameManager()->FindGameActorById(parentId);
+            if (newParent != NULL)
+            {
+               SetParentActor(newParent);
+            }
+            else if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_ERROR))
+            {
+               mLogger.LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                     "Setting the parent actor on type\"%s\":name\"%s\" to value \"%s\" failed because the parent actor could not be found.",
+                     GetActorType().GetFullName().c_str(),
+                     GetName().c_str(),
+                     parentId.ToString().c_str() );
+            }
          }
       }
 

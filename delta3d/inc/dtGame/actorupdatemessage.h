@@ -220,6 +220,17 @@ namespace dtGame
          void SetPrototypeID(const dtCore::UniqueId& newPrototypeID);
 
          /**
+          * If the parent id is a valid value.  A null id is a valid value, but if the value was never set
+          * it needs a means to say that the parent id should be ignored.
+          */
+         bool IsParentIDSet() const;
+
+         /**
+          * Sets the parent id to a value that make IsParentIDSet return false.
+          */
+         void SetParentIDToUnset();
+
+         /**
           * This value is used for updating/creating remote actors that need a parent actor id.
           */
          const dtCore::UniqueId& GetParentID() const;
