@@ -103,7 +103,7 @@ namespace dtExample
 
       typedef dtActors::DynamicParticleSystem DynamicParticles;
       typedef dtActors::DynamicParticleSystemActor DynamicParticlesActor;
-      dtCore::RefPtr<DynamicParticlesActor> CreatDynamicParticleSystemActor(const dtCore::ResourceDescriptor& rd,
+      dtCore::RefPtr<DynamicParticlesActor> CreateDynamicParticleSystemActor(const dtCore::ResourceDescriptor& rd,
          const std::string& actorName);
       DynamicParticles* GetDynamicParticles(DynamicParticlesActor* actor);
 
@@ -111,7 +111,8 @@ namespace dtExample
 
    private:
 
-      float mLastSprayRatio, mSprayUpdateTimer;
+      float mLastSprayRatio;
+      float mSprayUpdateTimer;
       osg::Vec3 mLastPos;
 
       dtCore::RefPtr<DynamicParticlesActor> mSprayFrontActor;
