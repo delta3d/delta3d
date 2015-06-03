@@ -56,7 +56,7 @@ namespace dtCore
    {
       if (IsList())
       {
-         stream << mValueList->size();
+         stream << unsigned(mValueList->size());
          for (unsigned int i=0; i<mValueList->size(); i++)
          {
             stream << (*mValueList)[i].GetResourceIdentifier();
