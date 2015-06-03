@@ -19,6 +19,7 @@
 
 #include <dtVoxel/voxelactor.h>
 #include <dtVoxel/voxelgriddebugdrawable.h>
+#include <dtVoxel/aabbintersector.h>
 #include <dtVoxel/voxelgeometry.h>
 
 #include <dtABC/application.h>
@@ -33,7 +34,7 @@
 #include <dtGame/gamemanager.h>
 
 #include <openvdb/openvdb.h>
-#include <dtVoxel/aabbintersector.h>
+#include <openvdb/tools/Interpolation.h>
 
 #include <dtPhysics/physicsactcomp.h>
 
@@ -207,8 +208,24 @@ namespace dtVoxel
 
       mGrid->Init(mOffset, mGridDimensions, mBlockDimensions, mCellDimensions, res);
       
-      osg::Vec3 pos(0.0f, 0.0f, 0.0f);
-      mGrid->CreateGridFromActor(pos, *this);
+      dtGame::GameManager* gm = GetGameManager();
+
+      if (gm != nullptr)
+      {
+         dtCore::Camera* cam = gm->GetApplication().GetCamera();
+
+         osg::Vec3 pos;
+         dtCore::Transform xform;
+         cam->GetTransform(xform);
+         xform.GetTranslation(pos);
+
+         mGrid->SetViewDistance(mViewDistance);
+         mGrid->CreateGridFromActor(pos, *this);
+      }
+      else
+      {
+         LOG_ERROR("NULL GameManager!");
+      }
 
 
       dtPhysics::PhysicsActCompPtr pac = GetComponent<dtPhysics::PhysicsActComp>();

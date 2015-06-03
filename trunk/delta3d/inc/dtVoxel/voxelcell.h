@@ -26,6 +26,9 @@
 
 #include <osg/Vec3>
 #include <osg/Matrix>
+#include <osg/Geometry>
+
+#include <openvdb/tools/Interpolation.h>
 
 #include <openvdb/openvdb.h>
 
@@ -53,6 +56,10 @@ namespace dtVoxel
 
       osg::Node* GetOSGNode();
       const osg::Node* GetOSGNode() const;
+
+      double SampleCoord(double x, double y, double z, openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>& fastSampler);
+         
+      void AddGeometry(VoxelActor& voxelActor, openvdb::GridBase::Ptr localGrid, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution, osg::Vec3Array* vertArray, osg::Vec3Array* normalArray, osg::Vec3Array* colorArray, osg::DrawElementsUInt* drawElements);
 
    protected:
       

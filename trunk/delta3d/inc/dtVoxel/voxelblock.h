@@ -49,8 +49,10 @@ namespace dtVoxel
       const osg::Vec3& GetOffset();
       
       void DeAllocate();
-      void Allocate(VoxelActor& voxelActor, const osg::Vec3i& textureResolution);
+      void AllocateCells(VoxelActor& voxelActor, const osg::Vec3i& textureResolution);
       
+      void AllocateCombinedMesh(VoxelActor& voxelActor, const osg::Vec3i& textureResolution);
+
       void RegenerateAABB(VoxelActor& voxelActor, const osg::BoundingBox& bb, const osg::Vec3i& textureResolution);
 
       //void AllocateCell(const osg::Vec3& pos, const osg::Vec3i& textureResolution);
