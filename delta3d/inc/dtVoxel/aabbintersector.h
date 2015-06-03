@@ -47,9 +47,25 @@ namespace dtVoxel
       {
          mHitGrid = typename GridType::Ptr(new GridType);
          mHitGrid->setTransform(mGrid->transformPtr());
-         mHitGrid->fill(mCollideBox, true, true);
-         mHitGrid->topologyIntersection(*mGrid);
-         mHitGrid->pruneGrid();
+         //mHitGrid->fill(mCollideBox, true, true);
+         //mHitGrid->topologyIntersection(*mGrid);
+         //mHitGrid->pruneGrid();
+         typename GridType::ConstAccessor ca = mGrid->getConstAccessor();
+         typename GridType::Accessor acc = mHitGrid->getAccessor();
+         for (int i = mCollideBox.min().x(); i < mCollideBox.max().x() + 1; ++i)
+         {
+            for (int j = mCollideBox.min().y(); j < mCollideBox.max().y() + 1; ++j)
+            {
+               for (int k = mCollideBox.min().z(); k < mCollideBox.max().z() + 1; ++k)
+               {
+                  openvdb::math::Coord coord(i, j, k);
+                  if (ca.isValueOn(coord))
+                  {
+                     acc.setValue(coord, ca.getValue(coord));
+                  }
+               }
+            }
+         }
       }
 
       typename GridType::Ptr GetGrid() const { return mGrid; }
