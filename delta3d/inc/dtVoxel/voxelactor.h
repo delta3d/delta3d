@@ -38,7 +38,7 @@ namespace dtVoxel
 
       VoxelActor();
 
-      void BuildPropertyMap() override;
+      /*override*/ void BuildPropertyMap();
 
       DT_DECLARE_ACCESSOR(dtCore::ResourceDescriptor, Database);
 
@@ -46,8 +46,8 @@ namespace dtVoxel
       openvdb::GridBase::Ptr GetGrid(int i);
       size_t GetNumGrids() const;
 
-      void OnEnteredWorld() override;
-      void OnTickLocal(const dtGame::TickMessage& tickMessage) override;
+      virtual void OnEnteredWorld();
+      virtual void OnTickLocal(const dtGame::TickMessage& tickMessage);
 
 
       /**
@@ -71,7 +71,7 @@ namespace dtVoxel
        */
       virtual void LoadGrid(const dtCore::ResourceDescriptor& rd);
       virtual ~VoxelActor();
-      void CreateDrawable() override;
+      /*override*/ void CreateDrawable();
    private:
       dtCore::RefPtr<VoxelGrid> mGrid;
       openvdb::GridPtrVecPtr mGrids;

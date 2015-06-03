@@ -208,7 +208,7 @@ namespace dtVoxel
                      //allocate
                      if (!curBlock->GetEmpty() && !curBlock->IsAllocated())
                      {
-                        curBlock->Allocate(*mVoxelActor, mTextureResolution);
+                        curBlock->AllocateCombinedMesh(*mVoxelActor, mTextureResolution);
                         mRootNode->addChild(curBlock->GetOSGNode());
                      }
                      else if (curBlock->GetDirty())
@@ -263,8 +263,10 @@ namespace dtVoxel
 
       std::cout << std::endl << "Creating Voxel Grid with " << mNumBlocks << " Voxel Blocks" << std::endl;
 
+      //openvdb::CoordBBox cbb = mVoxelActor->GetGrid(0)->evalActiveVoxelBoundingBox();
+
       dtCore::RefPtr<osg::Group> currentGroup = NULL;
-      
+      int blockCount = 0;
       for (int z = 0; z < mBlocksZ; z++)
       {
          for (int y = 0; y < mBlocksY; y++)         
@@ -287,21 +289,26 @@ namespace dtVoxel
                osg::BoundingBox bb(offsetFrom, offsetTo);
                openvdb::GridBase::Ptr vdbGrid = mVoxelActor->CollideWithAABB(bb);
 
+               //bool collides = mVoxelActor->FastSampleWithAABB(bb, osg::Vec3i(50, 50, 10));
+
                if (vdbGrid != NULL && !vdbGrid->empty())
                {
                   //only allocate this block if it is within our visual bounds
                   if (mAllocatedBounds.contains(GetCenterOfBlock(x, y, z)))
                   {
                      //allocate this block
-                     curBlock->Allocate(*mVoxelActor, mTextureResolution);
+                     curBlock->AllocateCombinedMesh(*mVoxelActor, mTextureResolution);
 
                      mRootNode->addChild(curBlock->GetOSGNode());
                   }
                   
                   curBlock->SetEmpty(false);
                }
+               ++blockCount;
             }
-            std::cout << ".";
+            
+            std::cout << std::endl << mNumBlocks - blockCount << " Blocks remaining." << std::endl;
+
          }
       }
 

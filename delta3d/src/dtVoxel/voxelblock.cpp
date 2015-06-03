@@ -21,6 +21,8 @@
 #include <dtUtil/log.h>
 #include <osgUtil/Simplifier>
 #include <osgUtil/Optimizer>
+#include <osg/PolygonMode>
+
 #include <tbb/parallel_for.h>
 #include <iostream>
 
@@ -167,9 +169,9 @@ namespace dtVoxel
       SetDirty(false);
    }
 
-   void VoxelBlock::Allocate(VoxelActor& voxelActor, const osg::Vec3i& textureResolution)
+   void VoxelBlock::AllocateCells(VoxelActor& voxelActor, const osg::Vec3i& textureResolution)
    {
-      //std::cout << "Allocating Voxel Block" << std::endl;
+      std::cout << "Allocating Individual Voxel Block Cells" << std::endl;
 
       osg::Vec3 gridDim(
        1.0 +  int(std::floor(mWSDimensions[0] / mWSCellDimensions[0])),
@@ -199,12 +201,13 @@ namespace dtVoxel
                //todo using local grid should be faster
                osg::BoundingBox bb(offsetFrom, offsetTo);
                openvdb::GridBase::Ptr vdbGrid = voxelActor.CollideWithAABB(bb);
+               //bool collides = voxelActor.FastSampleWithAABB(bb, osg::Vec3i(25, 25, 10));
 
                if (vdbGrid != NULL && !vdbGrid->empty())
                {
                   //keeping a pointer and incrementing it should be much faster for a large contiguous dataset
                   int cellIndex = (z * gridDim[1] * gridDim[0]) + (y * gridDim[0]) + x;
-
+                  
                   //cellToInit->Init(transform, mWSCellDimensions, textureResolution);
                   mCells[cellIndex].CreateMesh(voxelActor, vdbGrid, transform, mWSCellDimensions, textureResolution);
 
@@ -227,6 +230,97 @@ namespace dtVoxel
       osgUtil::Optimizer opt;
       opt.optimize(mVolume, osgUtil::Optimizer::SPATIALIZE_GROUPS);
 
+      mIsAllocated = true;
+   }
+
+   void VoxelBlock::AllocateCombinedMesh(VoxelActor& voxelActor, const osg::Vec3i& textureResolution)
+   {
+      std::cout << "Allocating Combined Voxel Block" << std::endl;
+
+      osg::Vec3 gridDim(
+         1.0 + int(std::floor(mWSDimensions[0] / mWSCellDimensions[0])),
+         1.0 + int(std::floor(mWSDimensions[1] / mWSCellDimensions[1])),
+         1.0 + int(std::floor(mWSDimensions[2] / mWSCellDimensions[2])));
+
+      mNumCells = gridDim[0] * gridDim[1] * gridDim[2];
+      //todo catch out of memory exception here
+      mCells = new VoxelCell[mNumCells];
+
+      dtCore::RefPtr<osg::Geometry> geom = new osg::Geometry();
+      dtCore::RefPtr<osg::Vec3Array> vertArray = new osg::Vec3Array();
+      dtCore::RefPtr<osg::Vec3Array> normalArray = new osg::Vec3Array();
+      dtCore::RefPtr<osg::Vec3Array> colorArray = new osg::Vec3Array();
+      dtCore::RefPtr<osg::DrawElementsUInt> drawElements = new osg::DrawElementsUInt(GL_TRIANGLES);
+
+
+      //VoxelCell* cellToInit = &mCells[0];
+      for (unsigned int z = 0; z < gridDim[2]; ++z)
+      {
+         for (unsigned int y = 0; y < gridDim[1]; ++y)
+         {
+            for (unsigned int x = 0; x < gridDim[0]; ++x)
+            {
+               osg::Vec3 pos(x * mWSCellDimensions[0], y * mWSCellDimensions[1], z * mWSCellDimensions[2]);
+               osg::Vec3 offsetFrom = pos + mOffset;
+               osg::Vec3 offsetTo = offsetFrom + mWSCellDimensions;
+
+               osg::Matrix transform;
+               transform.makeScale(1.0f, 1.0f, 1.0f); //compute offset
+               transform.setTrans(offsetFrom);
+
+               //todo using local grid should be faster
+               osg::BoundingBox bb(offsetFrom, offsetTo);
+               openvdb::GridBase::Ptr vdbGrid = voxelActor.CollideWithAABB(bb);
+               //bool collides = voxelActor.FastSampleWithAABB(bb, osg::Vec3i(25, 25, 10));
+
+               if (vdbGrid != NULL && !vdbGrid->empty())
+               {
+                  //keeping a pointer and incrementing it should be much faster for a large contiguous dataset
+                  int cellIndex = (z * gridDim[1] * gridDim[0]) + (y * gridDim[0]) + x;                  
+                  mCells[cellIndex].AddGeometry(voxelActor, vdbGrid, transform, mWSCellDimensions, textureResolution, vertArray, normalArray, colorArray, drawElements);
+               }
+
+               //++cellToInit;
+            }
+         }
+      }
+
+
+      geom->setVertexArray(vertArray);
+      geom->setColorArray(colorArray);
+      geom->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
+      geom->addPrimitiveSet(drawElements);
+
+      osg::Geode* geode = new osg::Geode();
+      geode->addDrawable(geom);
+      mVolume->addChild(geode);      
+
+      dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
+      simplifier->setMaximumLength(100.0f);
+      simplifier->setDoTriStrip(true);
+      mVolume->accept(*simplifier);
+      
+      osgUtil::Optimizer opt;
+      opt.optimize(mVolume, osgUtil::Optimizer::ALL_OPTIMIZATIONS);
+
+
+      osg::StateSet* ss = mVolume->getOrCreateStateSet();
+
+      /*osg::ref_ptr<osg::PolygonMode> polymode = new osg::PolygonMode;
+      polymode->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
+      ss->setAttributeAndModes(polymode.get(), osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);*/
+
+      ss->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
+
+
+      //simplify mesh
+      //dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
+      //simplifier->setMaximumLength(1000.0f);
+      //simplifier->setDoTriStrip(true);
+      //mVolume->accept(*simplifier);
+
+      //spatialize
+      
       mIsAllocated = true;
    }
 
