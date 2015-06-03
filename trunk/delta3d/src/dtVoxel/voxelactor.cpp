@@ -19,6 +19,7 @@
 
 #include <dtVoxel/voxelactor.h>
 #include <dtVoxel/voxelgriddebugdrawable.h>
+#include <dtVoxel/voxelgeometry.h>
 
 #include <dtABC/application.h>
 
@@ -33,6 +34,8 @@
 
 #include <openvdb/openvdb.h>
 #include <dtVoxel/aabbintersector.h>
+
+#include <dtPhysics/physicsactcomp.h>
 
 namespace dtVoxel
 {
@@ -155,6 +158,7 @@ namespace dtVoxel
 
    }
 
+   /////////////////////////////////////////////////////
    void VoxelActor::OnTickLocal(const dtGame::TickMessage& tickMessage)
    {
       if (mGrid.valid())
@@ -192,6 +196,7 @@ namespace dtVoxel
    }
 
 
+   /////////////////////////////////////////////////////
    void VoxelActor::OnEnteredWorld()
    {
       RegisterForMessages(dtGame::MessageType::TICK_LOCAL, dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
@@ -205,6 +210,29 @@ namespace dtVoxel
       osg::Vec3 pos(0.0f, 0.0f, 0.0f);
       mGrid->CreateGridFromActor(pos, *this);
 
+
+      dtPhysics::PhysicsActCompPtr pac = GetComponent<dtPhysics::PhysicsActComp>();
+      if (mGrids && pac.valid())
+      {
+         dtPhysics::PhysicsObject* po = pac->GetMainPhysicsObject();
+         if (po != nullptr && po->GetPrimitiveType() == dtPhysics::PrimitiveType::CUSTOM_CONCAVE_MESH)
+         {
+            dtPhysics::TransformType xform;
+            VoxelGeometryPtr geometry;
+            openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(GetGrid(0));
+            if (gridB)
+            {
+               geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridB);
+            }
+            else
+            {
+               openvdb::FloatGrid::Ptr gridF = boost::dynamic_pointer_cast<openvdb::FloatGrid>(GetGrid(0));
+               geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridF);
+            }
+            if (geometry.valid())
+               po->CreateFromGeometry(*geometry);
+         }
+      }
    }
 
 

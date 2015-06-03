@@ -77,6 +77,8 @@ namespace dtVoxel
       openvdb::GridPtrVecPtr mGrids;
    };
 
+   typedef dtCore::RefPtr<VoxelActor> VoxelActorPtr;
+
 } /* namespace dtVoxel */
 
 #endif /* DTVOXEL_VOXELACTOR_H_ */

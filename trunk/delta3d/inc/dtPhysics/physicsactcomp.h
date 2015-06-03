@@ -394,6 +394,7 @@ namespace dtPhysics
 
    };
 
+   typedef dtCore::RefPtr<PhysicsActComp> PhysicsActCompPtr;
 } // namespace
 
 
