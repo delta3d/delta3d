@@ -32,6 +32,7 @@ namespace dtVoxel
       CPPUNIT_TEST_SUITE(VoxelGeometryTests);
 
          CPPUNIT_TEST(testVoxelGeometry);
+         CPPUNIT_TEST(testVoxelActorGeometryCreation);
 
       CPPUNIT_TEST_SUITE_END();
 
@@ -39,6 +40,7 @@ namespace dtVoxel
       void GetRequiredLibraries(NameVector& names) override
       {
          static const std::string voxelLib("dtVoxel");
+         static const std::string dtPhysicsLib("dtPhysics");
          BaseClass::GetRequiredLibraries(names);
          names.push_back(voxelLib);
       }
@@ -74,7 +76,44 @@ namespace dtVoxel
             CPPUNIT_FAIL(ex.ToString());
          }
       }
+
+      void testVoxelActorGeometryCreation()
+      {
+         ChangeEngine(GetPhysicsEngineList()[0]);
+         try
+         {
+            VoxelActorPtr voxelActor;
+            mGM->CreateActor(*VoxelActorRegistry::VOXEL_ACTOR_TYPE, voxelActor);
+            CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(0U));
+            voxelActor->SetDatabase(dtCore::ResourceDescriptor("Volumes:delta3d_island.vdb"));
+            CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(1U));
+
+            dtPhysics::PhysicsActCompPtr pac = new dtPhysics::PhysicsActComp;
+            voxelActor->AddComponent(*pac);
+
+            dtPhysics::PhysicsObjectPtr po = dtPhysics::PhysicsObject::CreateNew("TestVoxel");
+            po->SetPrimitiveType(dtPhysics::PrimitiveType::CUSTOM_CONCAVE_MESH);
+            po->SetMechanicsType(dtPhysics::MechanicsType::STATIC);
+            pac->AddPhysicsObject(*po);
+
+            mGM->AddActor(*voxelActor, false, false);
+
+            dtPhysics::RayCast ray;
+            ray.SetOrigin(dtPhysics::VectorType(12.0f, 12.0f, 200.0f));
+            ray.SetDirection(dtPhysics::VectorType(0.0f, 0.0f, -205.0f));
+            std::vector<dtPhysics::RayCast::Report> hits;
+            mPhysicsComp->GetPhysicsWorld().TraceRay(ray, hits);
+            CPPUNIT_ASSERT_EQUAL(size_t(1U), hits.size());
+         }
+         catch (const dtUtil::Exception& ex)
+         {
+            CPPUNIT_FAIL(ex.ToString());
+         }
+
+      }
    };
+
+
 
    CPPUNIT_TEST_SUITE_REGISTRATION(VoxelGeometryTests);
 
