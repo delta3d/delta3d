@@ -139,6 +139,28 @@ namespace dtExample
    }
 
    //////////////////////////////////////////////////////////////////////////
+   bool InputComponent::HandleMouseScrolled(const dtCore::Mouse* mouse, int delta)
+   {
+      if (mMotionModelMode == &MotionModelType::ORBIT)
+      {
+         dtCore::OrbitMotionModel* omm = dynamic_cast<dtCore::OrbitMotionModel*>(mMotionModel.get());
+         if (omm != nullptr)
+         {
+            float change = float(delta);
+            dtUtil::Clamp(change, -0.5f, 0.5f);
+
+            float distance = omm->GetDistance();
+            distance += change;
+            dtUtil::Clamp(distance, 1.0f, 1000.0f);
+
+            omm->SetDistance(distance);
+         }
+      }
+
+      return false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyBoard, int key)
    {
       std::ostringstream ss;

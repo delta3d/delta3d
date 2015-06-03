@@ -65,7 +65,7 @@ namespace dtExample
       , mSprayUpdateFrequency(3.0f)
       , mSprayVelocityMin(1.0f)
       , mSprayVelocityMax(8.0f)
-      , mLastSprayRatio()
+      , mLastSprayRatio(0.0f)
       , mSprayUpdateTimer(0.0f)
       , mBuoyancyAction(new dtPhysics::BuoyancyAction())
       , mWaterHeightQuery(NULL)
@@ -304,7 +304,7 @@ namespace dtExample
 
    //////////////////////////////////////////////////////////
    dtCore::RefPtr<SurfaceVesselActorComponent::DynamicParticlesActor>
-      SurfaceVesselActorComponent::CreatDynamicParticleSystemActor(
+      SurfaceVesselActorComponent::CreateDynamicParticleSystemActor(
       const dtCore::ResourceDescriptor& rd, const std::string& actorName)
    {
       std::string fileName;
@@ -374,25 +374,25 @@ namespace dtExample
    {
       if(!mSprayFront.valid() && !mSprayFrontResource.IsEmpty())
       {
-         mSprayFrontActor = CreatDynamicParticleSystemActor(mSprayFrontResource, "SprayFrontRight");
+         mSprayFrontActor = CreateDynamicParticleSystemActor(mSprayFrontResource, "SprayFrontRight");
          mSprayFront = GetDynamicParticles(mSprayFrontActor.get());
       }
 
       if(!mSpraySideLeft.valid() && !mSpraySideLeftResource.IsEmpty())
       {
-         mSpraySideLeftActor = CreatDynamicParticleSystemActor(mSpraySideLeftResource, "SpraySideLeft");
+         mSpraySideLeftActor = CreateDynamicParticleSystemActor(mSpraySideLeftResource, "SpraySideLeft");
          mSpraySideLeft = GetDynamicParticles(mSpraySideLeftActor.get());
       }
 
       if(!mSpraySideRight.valid() && !mSpraySideRightResource.IsEmpty())
       {
-         mSpraySideRightActor = CreatDynamicParticleSystemActor(mSpraySideRightResource, "SpraySideRight");
+         mSpraySideRightActor = CreateDynamicParticleSystemActor(mSpraySideRightResource, "SpraySideRight");
          mSpraySideRight = GetDynamicParticles(mSpraySideRightActor.get());
       }
 
       if(!mSprayBack.valid() && !mSprayBackResource.IsEmpty())
       {
-         mSprayBackActor = CreatDynamicParticleSystemActor(mSprayBackResource, "SprayBack");
+         mSprayBackActor = CreateDynamicParticleSystemActor(mSprayBackResource, "SprayBack");
          mSprayBack = GetDynamicParticles(mSprayBackActor.get());
       }
    }

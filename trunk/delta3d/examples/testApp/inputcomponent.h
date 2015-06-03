@@ -76,6 +76,8 @@ namespace dtExample
          void SetMotionModelEnabled(bool enabled);
          bool IsMotionModelEnabled() const;
 
+         /*override*/ bool HandleMouseScrolled(const dtCore::Mouse* mouse, int delta);
+
          /*override*/ bool HandleKeyPressed(const dtCore::Keyboard* keyboard, int key);
 
          /*override*/ bool HandleKeyReleased(const dtCore::Keyboard* keyboard, int key);
