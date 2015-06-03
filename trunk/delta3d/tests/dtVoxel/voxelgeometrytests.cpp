@@ -58,7 +58,8 @@ namespace dtVoxel
             CPPUNIT_ASSERT(grid);
             dtPhysics::PhysicsObjectPtr po = dtPhysics::PhysicsObject::CreateNew("TestVoxel");
             dtPhysics::TransformType xform;
-            dtCore::RefPtr<VoxelGeometry> geometry = VoxelGeometry::CreateVoxelGeometry(xform, 100.0f, grid);
+            VoxelGeometryPtr geometry = VoxelGeometry::CreateVoxelGeometry(xform, 100.0f, grid);
+            CPPUNIT_ASSERT(geometry.valid());
             po->CreateFromGeometry(*geometry);
 
             dtPhysics::RayCast ray;
