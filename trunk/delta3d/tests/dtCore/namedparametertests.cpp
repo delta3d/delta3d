@@ -648,13 +648,13 @@ public:
       param2->FromDataStream(ds);
 
       testList = param2->GetValueList();
-      CPPUNIT_ASSERT_MESSAGE("List element 0 was not correct after FromDataStrean().",
+      CPPUNIT_ASSERT_MESSAGE("List element 0 was not correct after FromDataStream().",
          testList[0] == t1);
-      CPPUNIT_ASSERT_MESSAGE("List element 1 was not correct after FromDataStrean().",
+      CPPUNIT_ASSERT_MESSAGE("List element 1 was not correct after FromDataStream().",
          testList[1] == t2);
-      CPPUNIT_ASSERT_MESSAGE("List element 2 was not correct after FromDataStrean().",
+      CPPUNIT_ASSERT_MESSAGE("List element 2 was not correct after FromDataStream().",
          testList[2] == t3);
-      CPPUNIT_ASSERT_MESSAGE("List element 3 was not correct after FromDataStrean().",
+      CPPUNIT_ASSERT_MESSAGE("List element 3 was not correct after FromDataStream().",
          testList[3] == t4);
 
       param2 = NULL;
