@@ -63,10 +63,10 @@ namespace dtVoxel
 
             dtPhysics::RayCast ray;
             ray.SetOrigin(dtPhysics::VectorType(12.0f, 12.0f, 200.0f));
-            ray.SetDirection(dtPhysics::VectorType(0.0f, 0.0f, -200.0f));
+            ray.SetDirection(dtPhysics::VectorType(0.0f, 0.0f, -205.0f));
             std::vector<dtPhysics::RayCast::Report> hits;
             mPhysicsComp->GetPhysicsWorld().TraceRay(ray, hits);
-            CPPUNIT_ASSERT_EQUAL(size_t(2U), hits.size());
+            CPPUNIT_ASSERT_EQUAL(size_t(1U), hits.size());
          }
          catch (const dtUtil::Exception& ex)
          {
