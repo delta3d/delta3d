@@ -20,6 +20,7 @@
 #ifndef DTVOXEL_VOXELGEOMETRY_H_
 #define DTVOXEL_VOXELGEOMETRY_H_
 
+#include <dtVoxel/export.h>
 #include <dtPhysics/geometry.h>
 #include <dtVoxel/aabbintersector.h>
 #include <pal/palFactory.h>
@@ -44,7 +45,7 @@ namespace dtVoxel
       {
       }
 
-      ~ColliderCallback() override {}
+      /*override*/ ~ColliderCallback() {}
 
       /**
        * Override this to return the triangles within the given axis aligned bounding box.
@@ -132,7 +133,7 @@ namespace dtVoxel
       boost::shared_ptr<IntersectorType> mBoxCollider;
    };
 
-   class VoxelGeometry: public dtPhysics::Geometry
+   class DT_VOXEL_EXPORT VoxelGeometry : public dtPhysics::Geometry
    {
    public:
 
