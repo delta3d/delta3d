@@ -212,13 +212,17 @@ namespace dtVoxel
                      {
                         int index = (z * mBlocksY * mBlocksX) + (y * mBlocksX) + x;
 
-                        if (!curBlock->LoadCachedModel(mCacheFolder, index))
+                        if (curBlock->LoadCachedModel(mCacheFolder, index))
                         {
-                           curBlock->AllocateCombinedMesh(*mVoxelActor, mTextureResolution);
-                           curBlock->SaveCachedModel(mCacheFolder, index);
+                           mRootNode->addChild(curBlock->GetOSGNode());
+                        }
+                        else
+                        {
+                           LOG_ERROR("No data found for block " + dtUtil::ToString(index) );
+                           //curBlock->AllocateCombinedMesh(*mVoxelActor, mTextureResolution);
+                           //curBlock->SaveCachedModel(mCacheFolder, index);
                         }
 
-                        mRootNode->addChild(curBlock->GetOSGNode());
                      }
                      else if (curBlock->GetDirty())
                      {
@@ -276,6 +280,20 @@ namespace dtVoxel
 
       //openvdb::CoordBBox cbb = mVoxelActor->GetGrid(0)->evalActiveVoxelBoundingBox();
 
+      float dist0 = 100.0f;
+      osg::Vec3i res0 = mTextureResolution;
+
+      float dist1 = 350.0f;
+      osg::Vec3i res1(int(std::ceil(float(mTextureResolution[0]) * 0.5f)),
+         int(std::ceil(float(mTextureResolution[1]) * 0.5f)),
+         int(std::ceil(float(mTextureResolution[2]) * 0.5f)));
+
+      float dist2 = 500.0f;
+      osg::Vec3i res2(int(std::ceil(float(mTextureResolution[0]) * 0.5f)),
+         int(std::ceil(float(mTextureResolution[1]) * 0.5f)),
+         int(std::ceil(float(mTextureResolution[2]) * 0.5f)));
+
+
       dtCore::RefPtr<osg::Group> currentGroup = NULL;
       int blockCount = 0;
       for (int z = 0; z < mBlocksZ; z++)
@@ -311,7 +329,9 @@ namespace dtVoxel
                      if (!curBlock->LoadCachedModel(mCacheFolder, index))
                      {
                         //allocate this block
-                        curBlock->AllocateCombinedMesh(*mVoxelActor, mTextureResolution);
+                        //curBlock->AllocateCombinedMesh(*mVoxelActor, mTextureResolution);
+                        
+                        curBlock->AllocateLODMesh(*mVoxelActor, res0, dist0, res1, dist1, res2, dist2);
 
                         curBlock->SaveCachedModel(mCacheFolder, index);
 
@@ -324,7 +344,8 @@ namespace dtVoxel
                      if (!curBlock->HasCachedModel(mCacheFolder, index))
                      {
                         std::cout << "Caching model for later use" << std::endl;
-                        curBlock->AllocateCombinedMesh(*mVoxelActor, mTextureResolution);
+                        //curBlock->AllocateCombinedMesh(*mVoxelActor, mTextureResolution);
+                        curBlock->AllocateLODMesh(*mVoxelActor, res0, dist0, res1, dist1, res2, dist2);
 
                         curBlock->SaveCachedModel(mCacheFolder, index);
 
