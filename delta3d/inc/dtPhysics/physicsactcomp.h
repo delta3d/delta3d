@@ -307,6 +307,16 @@ namespace dtPhysics
          /// For now, this is used to make the old dtPhysX properties map in.
          virtual dtCore::RefPtr<dtCore::ActorProperty> GetDeprecatedProperty(const std::string& name);
 
+         /**
+          * This is like the CreateJoint on PhysicsObject except that it looks up the physics objects, and set
+          * the joint description body1frame to match the transform in the ref node.
+          *
+          * @param setBody2VisualToBody if true, This code assumes the visual to body transform of body 1 is correct,
+          * and if the visual to body transform of body 2 so that it will put it at the joint origin position.
+          * That way, if the transform of the system is set, the body will be warped in a reset position.
+          */
+         palLink* CreateJoint(dtPhysics::JointDesc& desc, osg::Transform* refNode = NULL, bool setBody2VisualToBody = true);
+
          //////////////////////////////////////////////////////////////////////////////////////
          //                                    Utilities                                     //
          //////////////////////////////////////////////////////////////////////////////////////
@@ -348,12 +358,6 @@ namespace dtPhysics
          void SetNameByString(const std::string& name);
          //For the actor property
          const std::string& GetNameAsString() const;
-
-         /**
-          * This is like the CreateJoint on PhysicsObject except that it looks up the physics objects, and set
-          * the joint description body1frame to match the transform in the ref node.
-          */
-         palLink* CreateJoint(dtPhysics::JointDesc& desc, osg::Transform* refNode = NULL);
 
       private:
 
