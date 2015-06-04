@@ -32,9 +32,10 @@ namespace dtVoxel
    */
    osg::Vec3 VertexInterp(float isolevel, const osg::Vec3& p1, const osg::Vec3& p2, float valp1, float valp2)
    {
-      float mu;
       osg::Vec3 p;
 
+      /*
+      float mu;
       if (std::abs(isolevel - valp1) < 0.00001)
          return(p1);
       if (std::abs(isolevel - valp2) < 0.00001)
@@ -45,8 +46,13 @@ namespace dtVoxel
       p[0] = p1[0] + mu * (p2[0] - p1[0]);
       p[1] = p1[1] + mu * (p2[1] - p1[1]);
       p[2] = p1[2] + mu * (p2[2] - p1[2]);
+*/
 
-      return(p);
+      if (valp1 != valp2)
+         p = p1 + (p2 - p1) / (valp2 - valp1)*(isolevel - valp1);
+      else
+         p = p1;
+      return p;      
    }
 
    int PolygonizeCube(GRIDCELL g, float iso, TRIANGLE *tri)
@@ -464,10 +470,15 @@ namespace dtVoxel
          tri[ntri].p[1] = vertlist[triTable[cubeindex][i + 1]];
          tri[ntri].p[2] = vertlist[triTable[cubeindex][i + 2]];
 
-         //todo- generate normals
-         tri[ntri].n[0].set(0.0f, 0.0f, 1.0f);
-         tri[ntri].n[1].set(0.0f, 0.0f, 1.0f);
-         tri[ntri].n[2].set(0.0f, 0.0f, 1.0f);
+         //generate normals         
+         osg::Vec3 normal(tri[ntri].p[1] - tri[ntri].p[0]);
+         osg::Vec3 tempv3(tri[ntri].p[2] - tri[ntri].p[0]);
+         normal = normal ^ tempv3;
+         normal.normalize();
+         
+         tri[ntri].n[0] = normal;
+         tri[ntri].n[1] = normal;
+         tri[ntri].n[2] = normal;
 
          ntri++;
       }
