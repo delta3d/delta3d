@@ -65,15 +65,20 @@ namespace dtVoxel
    {
       //std::cout << "DeAllocating Voxel Block" << std::endl;
 
-      mVolume->removeChildren(0, mVolume->getNumChildren());
-
-      for (int i = 0; i < mNumCells; ++i)
+      if (mVolume.valid())
       {
-         mCells[i].DeAllocate();
+         mVolume->removeChildren(0, mVolume->getNumChildren());
+
+         if (mCells != nullptr && IsAllocated())
+         {
+            for (int i = 0; i < mNumCells; ++i)
+            {
+               mCells[i].DeAllocate();
+            }
+
+            delete[] mCells;
+         }
       }
-
-      delete[] mCells;
-
       mIsAllocated = false;
    }
 
