@@ -65,6 +65,10 @@ namespace dtVoxel
       
       const osg::Vec3& GetOffset() const;
 
+      bool SaveCachedModel(const std::string& folderName, int index);
+
+      bool LoadCachedModel(const std::string& folderName, int index);
+
    protected:
    
       openvdb::GridBase::Ptr ConvertToLocalResolutionGrid(openvdb::GridBase::Ptr);

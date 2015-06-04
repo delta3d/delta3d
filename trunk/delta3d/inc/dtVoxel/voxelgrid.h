@@ -80,7 +80,7 @@ namespace dtVoxel
       osg::BoundingBox ComputeWorldBounds(const osg::Vec3& pos);
 
       osg::Vec3 GetCenterOfBlock(int x, int y, int z);
-
+      void GenerateCacheString();
       virtual ~VoxelGrid();
    
    private:
@@ -88,7 +88,7 @@ namespace dtVoxel
       osg::Vec3i mTextureResolution;
       dtCore::RefPtr<osg::Group> mRootNode;
       dtCore::ObserverPtr<VoxelActor> mVoxelActor;
-
+      std::string mCacheFolder;
       VoxelBlock* mBlocks;
       
    };

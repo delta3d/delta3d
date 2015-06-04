@@ -19,8 +19,14 @@
 
 #include <dtVoxel/voxelblock.h>
 #include <dtUtil/log.h>
+#include <dtUtil/fileutils.h>
+#include <dtUtil/stringutils.h>
+#include <dtCore/project.h>
+
 #include <osgUtil/Simplifier>
 #include <osgUtil/Optimizer>
+
+#include <osgDB/WriteFile>
 #include <osg/PolygonMode>
 
 #include <tbb/parallel_for.h>
@@ -400,5 +406,65 @@ namespace dtVoxel
    {
       return mOffset;
    }
+
+   bool VoxelBlock::LoadCachedModel(const std::string& folderName, int index)
+   {
+      bool result = false;
+
+      std::string filePath = dtCore::Project::GetInstance().GetContext() + "/" + folderName + "/";
+
+      std::string indexString;
+      std::stringstream fileName;
+
+      dtUtil::MakeIndexString(index, indexString, 8);
+
+      fileName << filePath << "VoxelGrid_cache" << indexString << ".osgb";
+
+      if (dtUtil::FileUtils::GetInstance().FileExists(fileName.str()))
+      {
+         std::cout << "Reading block num " << index << " from model cache " << fileName.str() << std::endl;
+
+         osg::Node* n = dtUtil::FileUtils::GetInstance().ReadNode(fileName.str());
+         if (n != nullptr)
+         {
+            mVolume->addChild(n);
+            mIsAllocated = true;
+            result = true;
+         }
+         else
+         {
+            LOG_ERROR("Error reading cached node.");
+         }
+         
+      }
+
+      return result;
+   }
+
+
+
+   bool VoxelBlock::SaveCachedModel(const std::string& folderName, int index)
+   {
+      bool result = false;
+
+      std::string filePath = dtCore::Project::GetInstance().GetContext() + "/" + folderName + "/";
+
+      std::string indexString;
+      std::stringstream fileName;
+
+      dtUtil::MakeIndexString(index, indexString, 8);
+
+      fileName << filePath << "VoxelGrid_cache" << indexString << ".osgb";
+
+      if (dtUtil::FileUtils::GetInstance().DirExists(filePath))
+      {
+         result = osgDB::writeNodeFile(*mVolume, fileName.str());
+
+         std::cout << "Writing block num " << index << " to model cache " << fileName.str() << std::endl;
+      }
+
+      return result;
+   }
+
 
 } /* namespace dtVoxel */

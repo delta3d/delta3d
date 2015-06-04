@@ -18,8 +18,10 @@
  */
 
 #include <dtVoxel/voxelgrid.h>
+#include <dtCore/project.h>
 #include <dtUtil/log.h>
 #include <dtUtil/matrixutil.h>
+#include <dtUtil/fileutils.h>
 #include <dtUtil/mathdefines.h>
 #include <osgUtil/Optimizer>
 #include <iostream>
@@ -187,7 +189,7 @@ namespace dtVoxel
       int endZ = startZ + blocksZ;
 
       //std::cout << "end X " << endX << " end Y " << endY << " end Z " << endZ << std::endl;
-
+    
       for (int z = startZ; z < endZ; z++)
       {
          for (int y = startY; y < endY; y++)
@@ -208,7 +210,14 @@ namespace dtVoxel
                      //allocate
                      if (!curBlock->GetEmpty() && !curBlock->IsAllocated())
                      {
-                        curBlock->AllocateCombinedMesh(*mVoxelActor, mTextureResolution);
+                        int index = (z * mBlocksY * mBlocksX) + (y * mBlocksX) + x;
+
+                        if (!curBlock->LoadCachedModel(mCacheFolder, index))
+                        {
+                           curBlock->AllocateCombinedMesh(*mVoxelActor, mTextureResolution);
+                           curBlock->SaveCachedModel(mCacheFolder, index);
+                        }
+
                         mRootNode->addChild(curBlock->GetOSGNode());
                      }
                      else if (curBlock->GetDirty())
@@ -263,6 +272,8 @@ namespace dtVoxel
 
       std::cout << std::endl << "Creating Voxel Grid with " << mNumBlocks << " Voxel Blocks" << std::endl;
 
+      GenerateCacheString();
+
       //openvdb::CoordBBox cbb = mVoxelActor->GetGrid(0)->evalActiveVoxelBoundingBox();
 
       dtCore::RefPtr<osg::Group> currentGroup = NULL;
@@ -283,9 +294,7 @@ namespace dtVoxel
                osg::Vec3 offsetTo = offsetFrom + mBlockDimensions;
 
                curBlock->Init(mBlockDimensions, offsetFrom, mCellDimensions);
-
-               //check if block is within view distance
-
+               
                osg::BoundingBox bb(offsetFrom, offsetTo);
                openvdb::GridBase::Ptr vdbGrid = mVoxelActor->CollideWithAABB(bb);
 
@@ -296,8 +305,17 @@ namespace dtVoxel
                   //only allocate this block if it is within our visual bounds
                   if (mAllocatedBounds.contains(GetCenterOfBlock(x, y, z)))
                   {
-                     //allocate this block
-                     curBlock->AllocateCombinedMesh(*mVoxelActor, mTextureResolution);
+                     int index = (z * mBlocksY * mBlocksX) + (y * mBlocksX) + x;
+
+                     //attempt to load from cache
+                     if (!curBlock->LoadCachedModel(mCacheFolder, index))
+                     {
+                        //allocate this block
+                        curBlock->AllocateCombinedMesh(*mVoxelActor, mTextureResolution);
+
+                        curBlock->SaveCachedModel(mCacheFolder, index);
+
+                     }
 
                      mRootNode->addChild(curBlock->GetOSGNode());
                   }
@@ -402,6 +420,20 @@ namespace dtVoxel
    const osg::Node* VoxelGrid::GetOSGNode() const
    {
       return mRootNode.get();
+   }
+  
+   void VoxelGrid::GenerateCacheString()
+   {
+      std::stringstream folderName;
+
+      folderName << "Volumes/cache/" << mVoxelActor->GetDatabase().GetResourceName() << "_" << mBlocksX << mBlocksY << mBlocksZ;
+
+      mCacheFolder = folderName.str();
+
+      std::string filePath = dtCore::Project::GetInstance().GetContext() + "/" + mCacheFolder + "/";
+
+      dtUtil::FileUtils::GetInstance().MakeDirectory(filePath);
+
    }
 
 } /* namespace dtVoxel */
