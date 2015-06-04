@@ -22,14 +22,17 @@
 
 #include <dtVoxel/export.h>
 #include <dtCore/transformable.h>
-
 #include <dtVoxel/voxelgrid.h>
+
+#include <openvdb/tools/Interpolation.h>
+#include <openvdb/openvdb.h>
 
 namespace dtVoxel
 {
     /***
     *  VoxelGridDebugDrawable is a DeltaDrawable that performs debug rendering of a VoxelGrid
     */
+   class VoxelActor;
    class DT_VOXEL_EXPORT VoxelGridDebugDrawable : public dtCore::Transformable
    {
    public:
@@ -37,6 +40,8 @@ namespace dtVoxel
       virtual ~VoxelGridDebugDrawable();
 
       void CreateDebugDrawable(dtVoxel::VoxelGrid& grid);
+
+      void CreateScreenSpaceMesh(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3& stepSize);
 
       /*virtual*/ osg::Node* GetOSGNode();
       /*virtual*/ const osg::Node* GetOSGNode() const;
@@ -50,6 +55,8 @@ namespace dtVoxel
 
 
    private:
+
+      double SampleCoord(double x, double y, double z, openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>& fastSampler);
 
       dtCore::RefPtr<osg::Group> mSceneRoot;
 
