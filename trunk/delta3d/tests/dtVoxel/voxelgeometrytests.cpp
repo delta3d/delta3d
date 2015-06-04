@@ -69,12 +69,12 @@ namespace dtVoxel
                for (unsigned j = 0; j < 12; ++j)
                {
                   dtPhysics::RayCast ray;
-                  ray.SetOrigin(dtPhysics::VectorType(float(i), float(j), 200.0f));
-                  ray.SetDirection(dtPhysics::VectorType(0.0f, 0.0f, -205.0f));
+                  ray.SetOrigin(dtPhysics::VectorType(float(i), float(j), 220.0f));
+                  ray.SetDirection(dtPhysics::VectorType(0.0f, 0.0f, -260.0f));
                   std::vector<dtPhysics::RayCast::Report> hits;
                   mPhysicsComp->GetPhysicsWorld().TraceRay(ray, hits);
-                  //printf("%lu\n", hits.size());
-                  CPPUNIT_ASSERT(hits.size() > 0U);
+                  printf("%lu\n", hits.size());
+                  CPPUNIT_ASSERT(hits.size() > 1U);
                }
             }
          }
@@ -110,7 +110,7 @@ namespace dtVoxel
             ray.SetDirection(dtPhysics::VectorType(0.0f, 0.0f, -205.0f));
             std::vector<dtPhysics::RayCast::Report> hits;
             mPhysicsComp->GetPhysicsWorld().TraceRay(ray, hits);
-            CPPUNIT_ASSERT_EQUAL(size_t(1U), hits.size());
+            CPPUNIT_ASSERT_EQUAL(size_t(2U), hits.size());
          }
          catch (const dtUtil::Exception& ex)
          {
