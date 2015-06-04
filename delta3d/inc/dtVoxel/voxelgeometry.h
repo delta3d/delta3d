@@ -81,19 +81,24 @@ namespace dtVoxel
             {
                openvdb::CoordBBox c;
                i.getBoundingBox(c);
-               openvdb::BBoxd bbBox = grid->transform().indexToWorld(c);
+               openvdb::Coord coord = i.getCoord();
+               if (c.min() == c.max())
+               {
+                  c.expand(1);
+               }
+               openvdb::BBoxd voxelBBox = grid->transform().indexToWorld(c);
                typename GridType::ConstAccessor ca = mBoxCollider->GetGrid()->getConstAccessor();
                bool activeNeighbors[6];
-               activeNeighbors[0] = ca.isValueOn(openvdb::Coord(c.min().x()-1,c.min().y(),c.min().z()));
-               activeNeighbors[1] = ca.isValueOn(openvdb::Coord(c.min().x(),c.min().y()-1,c.min().z()));
-               activeNeighbors[2] = ca.isValueOn(openvdb::Coord(c.max().x()+1,c.max().y(),c.max().z()));
-               activeNeighbors[3] = ca.isValueOn(openvdb::Coord(c.min().x(),c.min().y(),c.min().z()-1));
-               activeNeighbors[4] = ca.isValueOn(openvdb::Coord(c.max().x(),c.max().y()+1,c.max().z()));
-               activeNeighbors[5] = ca.isValueOn(openvdb::Coord(c.max().x(),c.max().y(),c.max().z()+1));
+               activeNeighbors[0] = ca.isValueOn(openvdb::Coord(coord.x()-1,coord.y(),coord.z()));
+               activeNeighbors[1] = ca.isValueOn(openvdb::Coord(coord.x(),coord.y()-1,coord.z()));
+               activeNeighbors[2] = ca.isValueOn(openvdb::Coord(coord.x()+1,coord.y(),coord.z()));
+               activeNeighbors[3] = ca.isValueOn(openvdb::Coord(coord.x(),coord.y(),coord.z()-1));
+               activeNeighbors[4] = ca.isValueOn(openvdb::Coord(coord.x(),coord.y()+1,coord.z()));
+               activeNeighbors[5] = ca.isValueOn(openvdb::Coord(coord.x(),coord.y(),coord.z()+1));
                //for (unsigned i = 0; i < 6; ++i) std::cout << activeNeighbors[i] << " ";
                //std::cout << std::endl;
-               openvdb::math::Vec3<Float> min = bbBox.min();
-               openvdb::math::Vec3<Float> max = bbBox.max();
+               openvdb::math::Vec3<Float> min = voxelBBox.min();
+               openvdb::math::Vec3<Float> max = voxelBBox.max();
                Float cube_vertices[] =
                      {
                            min.x(),  max.y(),  max.z(),
@@ -113,9 +118,9 @@ namespace dtVoxel
                      palTriangle tri;
                      for (unsigned j = 0; j < 3; ++j)
                      {
-                        tri.vertices[j].x = cube_vertices[faces[3*i + j]+0];
-                        tri.vertices[j].y = cube_vertices[faces[3*i + j]+1];
-                        tri.vertices[j].z = cube_vertices[faces[3*i + j]+2];
+                        tri.vertices[j].x = cube_vertices[3 * faces[3*i + j] + 0];
+                        tri.vertices[j].y = cube_vertices[3 * faces[3*i + j] + 1];
+                        tri.vertices[j].z = cube_vertices[3 * faces[3*i + j] + 2];
                         //std::cout << "triangle " << tri.vertices[j].x << " " << tri.vertices[j].y << " " << tri.vertices[j].z << std::endl;
                      }
                      trianglesOut.push_back(tri);
