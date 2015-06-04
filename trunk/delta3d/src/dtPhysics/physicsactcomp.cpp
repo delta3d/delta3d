@@ -755,7 +755,7 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////////////////////////////////
-   palLink* PhysicsActComp::CreateJoint(dtPhysics::JointDesc& desc, osg::Transform* refNode)
+   palLink* PhysicsActComp::CreateJoint(dtPhysics::JointDesc& desc, osg::Transform* refNode, bool setBody2VisualToBody)
    {
       TransformType frameParent, visualToBody;
       dtPhysics::PhysicsObject* body1 = GetPhysicsObject(desc.GetBody1Name());
@@ -767,6 +767,24 @@ namespace dtPhysics
          body1->GetVisualToBodyTransform(visualToBody);
          ComputeLocalOffsetMatrixForNode(frameParent, *refNode, visualToBody);
          desc.SetBody1Frame(frameParent);
+      }
+
+      if (setBody2VisualToBody)
+      {
+         dtCore::Transform xform, frame1, frame2, temp;
+         body1->GetTransform(xform);
+         desc.GetBody1Frame(frame1);
+         frame1.Multiply(xform, temp);
+         desc.GetBody2Frame(frame2);
+         frame2.Invert();
+         frame2.Multiply(temp, xform);
+         body2->SetTransform(xform);
+
+         // Just using frame1 as a temp here.
+         body1->GetTransformAsVisual(frame1);
+         frame1.Invert();
+         xform.Multiply(frame1, temp);
+         body2->SetVisualToBodyTransform(temp);
       }
 
       return dtPhysics::PhysicsObject::CreateJoint(*body1, *body2, desc);

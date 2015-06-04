@@ -91,12 +91,12 @@ namespace dtVoxel
       static dtUtil::RefString GROUP("VoxelActor");
       RegHelper regHelper(*this, this, GROUP);
       
-      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(ViewDistance, "View Distance", "View Distance", "The distance to at which voxels will be generated into groups of volumes and rendered.", RegHelper, regHelper);
-      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(GridDimensions, "Grid Dimensions", "Grid Dimensions", "The size of the grid to allocate into blocks.", RegHelper, regHelper);
-      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(BlockDimensions, "Block Dimensions", "Block Dimensions", "The size of the blocks within the grid.", RegHelper, regHelper);
-      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(CellDimensions, "Cell Dimensions", "Cell Dimensions", "The size of the cells within the blocks", RegHelper, regHelper);
-      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(TextureResolution, "Texture Resolution", "Texture Resolution", "The dimensions of the 3d texture which holds individual voxels within a single cell.", RegHelper, regHelper);
-      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(Offset, "Offset", "Offset", "The offset of the database in world space.", RegHelper, regHelper);
+      DT_REGISTER_PROPERTY_WITH_LABEL(ViewDistance, "View Distance", "The distance to at which voxels will be generated into groups of volumes and rendered.", RegHelper, regHelper);
+      DT_REGISTER_PROPERTY_WITH_LABEL(GridDimensions, "Grid Dimensions", "The size of the grid to allocate into blocks.", RegHelper, regHelper);
+      DT_REGISTER_PROPERTY_WITH_LABEL(BlockDimensions,"Block Dimensions", "The size of the blocks within the grid.", RegHelper, regHelper);
+      DT_REGISTER_PROPERTY_WITH_LABEL(CellDimensions, "Cell Dimensions", "The size of the cells within the blocks", RegHelper, regHelper);
+      DT_REGISTER_PROPERTY_WITH_LABEL(TextureResolution, "Texture Resolution", "The dimensions of the 3d texture which holds individual voxels within a single cell.", RegHelper, regHelper);
+      DT_REGISTER_PROPERTY_WITH_LABEL(Offset, "Offset", "The offset of the database in world space.", RegHelper, regHelper);
 
       DT_REGISTER_RESOURCE_PROPERTY(dtCore::DataType::VOLUME, Database, "Database", "Voxel database file", RegHelper, regHelper);
    }
