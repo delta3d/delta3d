@@ -38,7 +38,7 @@ namespace dtVoxel
 
       VoxelActor();
 
-      /*override*/ void BuildPropertyMap();
+      void BuildPropertyMap() override;
 
       DT_DECLARE_ACCESSOR(dtCore::ResourceDescriptor, Database);
 
@@ -70,8 +70,9 @@ namespace dtVoxel
        * @throw dtUtil::FileNotFoundException if the resource does not exist.
        */
       virtual void LoadGrid(const dtCore::ResourceDescriptor& rd);
-      virtual ~VoxelActor();
-      /*override*/ void CreateDrawable();
+      ~VoxelActor() override;
+      void CreateDrawable() override;
+
    private:
       dtCore::RefPtr<VoxelGrid> mGrid;
       openvdb::GridPtrVecPtr mGrids;
