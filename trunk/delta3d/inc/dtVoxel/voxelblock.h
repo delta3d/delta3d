@@ -51,6 +51,8 @@ namespace dtVoxel
       void DeAllocate();
       void AllocateCells(VoxelActor& voxelActor, const osg::Vec3i& textureResolution);
       
+      void AllocateLODMesh(VoxelActor& voxelActor, const osg::Vec3i& resolution0, float dist0, const osg::Vec3i& resolution1, float dist1, const osg::Vec3i& resolution2, float dist2);
+
       void AllocateCombinedMesh(VoxelActor& voxelActor, const osg::Vec3i& textureResolution);
 
       void RegenerateAABB(VoxelActor& voxelActor, const osg::BoundingBox& bb, const osg::Vec3i& textureResolution);
@@ -64,6 +66,8 @@ namespace dtVoxel
       const osg::Group* GetOSGNode() const;
       
       const osg::Vec3& GetOffset() const;
+
+      bool HasCachedModel(const std::string& folderName, int index);
 
       bool SaveCachedModel(const std::string& folderName, int index);
 

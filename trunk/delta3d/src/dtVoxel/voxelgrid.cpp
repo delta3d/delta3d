@@ -302,11 +302,11 @@ namespace dtVoxel
 
                if (vdbGrid != NULL && !vdbGrid->empty())
                {
+                  int index = (z * mBlocksY * mBlocksX) + (y * mBlocksX) + x;
+
                   //only allocate this block if it is within our visual bounds
                   if (mAllocatedBounds.contains(GetCenterOfBlock(x, y, z)))
                   {
-                     int index = (z * mBlocksY * mBlocksX) + (y * mBlocksX) + x;
-
                      //attempt to load from cache
                      if (!curBlock->LoadCachedModel(mCacheFolder, index))
                      {
@@ -318,6 +318,18 @@ namespace dtVoxel
                      }
 
                      mRootNode->addChild(curBlock->GetOSGNode());
+                  }
+                  else
+                  {
+                     if (!curBlock->HasCachedModel(mCacheFolder, index))
+                     {
+                        std::cout << "Caching model for later use" << std::endl;
+                        curBlock->AllocateCombinedMesh(*mVoxelActor, mTextureResolution);
+
+                        curBlock->SaveCachedModel(mCacheFolder, index);
+
+                        curBlock->DeAllocate();
+                     }
                   }
                   
                   curBlock->SetEmpty(false);

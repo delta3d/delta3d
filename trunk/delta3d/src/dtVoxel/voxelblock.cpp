@@ -239,6 +239,11 @@ namespace dtVoxel
       mIsAllocated = true;
    }
 
+   void AllocateLODMesh(VoxelActor& voxelActor, const osg::Vec3i& resolution0, const osg::Vec3i& resolution1, const osg::Vec3i& resolution2)
+   {
+
+   }
+
    void VoxelBlock::AllocateCombinedMesh(VoxelActor& voxelActor, const osg::Vec3i& textureResolution)
    {
       std::cout << "Allocating Combined Voxel Block" << std::endl;
@@ -330,20 +335,10 @@ namespace dtVoxel
       mIsAllocated = true;
    }
 
-   //void VoxelBlock::AllocateCell(const osg::Vec3& pos, const osg::Vec3i& textureResolution)
-   //{
-   //   VoxelCell* cell = GetCellFromPos(pos);
-   //   if (cell != NULL)
-   //   {
-   //      //todo avoid allocation here
-   //      cell->AllocateImage(textureResolution[0], textureResolution[1], textureResolution[2]);
-   //   }
-   //   else
-   //   {
-   //      LOG_ERROR("Cell position out of range.");
-   //   }
-
-   //}
+   void VoxelBlock::AllocateLODMesh(VoxelActor& voxelActor, const osg::Vec3i& resolution0, float dist0, const osg::Vec3i& resolution1, float dist1, const osg::Vec3i& resolution2, float dist2)
+   {
+      
+   }
 
 
    VoxelCell* VoxelBlock::GetCellFromIndex(int x, int y, int z)
@@ -405,6 +400,27 @@ namespace dtVoxel
    const osg::Vec3& VoxelBlock::GetOffset() const
    {
       return mOffset;
+   }
+
+   bool VoxelBlock::HasCachedModel(const std::string& folderName, int index)
+   {
+      bool result = false;
+
+      std::string filePath = dtCore::Project::GetInstance().GetContext() + "/" + folderName + "/";
+
+      std::string indexString;
+      std::stringstream fileName;
+
+      dtUtil::MakeIndexString(index, indexString, 8);
+
+      fileName << filePath << "VoxelGrid_cache" << indexString << ".osgb";
+
+      if (dtUtil::FileUtils::GetInstance().FileExists(fileName.str()))
+      {
+         result = true;
+      }
+
+      return result;
    }
 
    bool VoxelBlock::LoadCachedModel(const std::string& folderName, int index)
