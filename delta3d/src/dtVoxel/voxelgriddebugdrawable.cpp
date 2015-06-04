@@ -108,7 +108,7 @@ namespace dtVoxel
 
    }
 
-   void VoxelGridDebugDrawable::CreateScreenSpaceMesh(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& resolution, const osg::Vec3& stepSize)
+   void VoxelGridDebugDrawable::CreateScreenSpaceMesh(VoxelActor& voxelActor, const osg::Vec3& offset, const osg::Vec3& resolution, const osg::Vec3& stepSize)
    {
       //clear any existing meshes
       mSceneRoot->removeChildren(0, mSceneRoot->getNumChildren());
@@ -119,9 +119,7 @@ namespace dtVoxel
       dtCore::RefPtr<osg::Vec3Array> vertArray = new osg::Vec3Array();
       dtCore::RefPtr<osg::Vec3Array> normalArray = new osg::Vec3Array();
       dtCore::RefPtr<osg::Vec3Array> colorArray = new osg::Vec3Array();
-      dtCore::RefPtr<osg::DrawElementsUInt> drawElements = new osg::DrawElementsUInt(GL_TRIANGLES);
-
-      osg::Vec3 offset = transform.getTrans();      
+      dtCore::RefPtr<osg::DrawElementsUInt> drawElements = new osg::DrawElementsUInt(GL_TRIANGLES);      
 
       /*openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(voxelActor.GetGrid(0));
 
@@ -141,11 +139,11 @@ namespace dtVoxel
 
       float isolevel = 1.0f;
 
-      for (int i = 0; i < resolution[0]; i += stepSize[0])
+      for (float i = 0; i < resolution[0]; i += stepSize[0])
       {
-         for (int j = 0; j < resolution[1]; j += stepSize[1])
+         for (float j = 0; j < resolution[1]; j += stepSize[1])
          {
-            for (int k = 0; k < resolution[2]; k += stepSize[2])
+            for (float k = 0; k < resolution[2]; k += stepSize[2])
             {
                double worldX = offset[0] + i;
                double worldY = offset[1] + j;
@@ -262,6 +260,7 @@ namespace dtVoxel
 
       ss->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
       
+      mSceneRoot->addChild(meshNode);
    }
 
 

@@ -41,7 +41,7 @@ namespace dtVoxel
 
       void CreateDebugDrawable(dtVoxel::VoxelGrid& grid);
 
-      void CreateScreenSpaceMesh(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3& stepSize);
+      void CreateScreenSpaceMesh(VoxelActor& voxelActor, const osg::Vec3& offset, const osg::Vec3& cellSize, const osg::Vec3& stepSize);
 
       /*virtual*/ osg::Node* GetOSGNode();
       /*virtual*/ const osg::Node* GetOSGNode() const;

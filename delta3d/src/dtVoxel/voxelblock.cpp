@@ -244,12 +244,28 @@ namespace dtVoxel
       mIsAllocated = true;
    }
 
-   void AllocateLODMesh(VoxelActor& voxelActor, const osg::Vec3i& resolution0, const osg::Vec3i& resolution1, const osg::Vec3i& resolution2)
+   void VoxelBlock::AllocateLODMesh(VoxelActor& voxelActor, const osg::Vec3i& resolution0, float dist0, const osg::Vec3i& resolution1, float dist1, const osg::Vec3i& resolution2, float dist2)
    {
+      dtCore::RefPtr<osg::LOD> lodNode = new osg::LOD();
 
+      dtCore::RefPtr<osg::Group> node0 = new osg::Group;
+      dtCore::RefPtr<osg::Group> node1 = new osg::Group;
+      dtCore::RefPtr<osg::Group> node2 = new osg::Group;
+
+     
+      AllocateCombinedMesh(voxelActor, *node0, resolution0);
+      AllocateCombinedMesh(voxelActor, *node1, resolution1);
+      AllocateCombinedMesh(voxelActor, *node2, resolution2);
+      
+
+      lodNode->addChild(node0, 0.0f, dist0);
+      lodNode->addChild(node1, dist0, dist1);
+      lodNode->addChild(node2, dist1, dist2);
+
+      mVolume->addChild(lodNode);
    }
 
-   void VoxelBlock::AllocateCombinedMesh(VoxelActor& voxelActor, const osg::Vec3i& textureResolution)
+   void VoxelBlock::AllocateCombinedMesh(VoxelActor& voxelActor, osg::Group& parentNode, const osg::Vec3i& textureResolution)
    {
       std::cout << "Allocating Combined Voxel Block" << std::endl;
 
@@ -309,18 +325,18 @@ namespace dtVoxel
 
       osg::Geode* geode = new osg::Geode();
       geode->addDrawable(geom);
-      mVolume->addChild(geode);      
+      parentNode.addChild(geode);      
 
       dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
       simplifier->setMaximumLength(100.0f);
       simplifier->setDoTriStrip(true);
-      mVolume->accept(*simplifier);
+      parentNode.accept(*simplifier);
       
       osgUtil::Optimizer opt;
-      opt.optimize(mVolume, osgUtil::Optimizer::ALL_OPTIMIZATIONS);
+      opt.optimize(&parentNode, osgUtil::Optimizer::ALL_OPTIMIZATIONS);
 
 
-      osg::StateSet* ss = mVolume->getOrCreateStateSet();
+      osg::StateSet* ss = parentNode.getOrCreateStateSet();
 
       /*osg::ref_ptr<osg::PolygonMode> polymode = new osg::PolygonMode;
       polymode->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
@@ -340,10 +356,6 @@ namespace dtVoxel
       mIsAllocated = true;
    }
 
-   void VoxelBlock::AllocateLODMesh(VoxelActor& voxelActor, const osg::Vec3i& resolution0, float dist0, const osg::Vec3i& resolution1, float dist1, const osg::Vec3i& resolution2, float dist2)
-   {
-      
-   }
 
 
    VoxelCell* VoxelBlock::GetCellFromIndex(int x, int y, int z)

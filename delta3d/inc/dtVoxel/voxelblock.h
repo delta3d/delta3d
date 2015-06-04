@@ -53,7 +53,7 @@ namespace dtVoxel
       
       void AllocateLODMesh(VoxelActor& voxelActor, const osg::Vec3i& resolution0, float dist0, const osg::Vec3i& resolution1, float dist1, const osg::Vec3i& resolution2, float dist2);
 
-      void AllocateCombinedMesh(VoxelActor& voxelActor, const osg::Vec3i& textureResolution);
+      void AllocateCombinedMesh(VoxelActor& voxelActor, osg::Group& parentNode, const osg::Vec3i& textureResolution);
 
       void RegenerateAABB(VoxelActor& voxelActor, const osg::BoundingBox& bb, const osg::Vec3i& textureResolution);
 
