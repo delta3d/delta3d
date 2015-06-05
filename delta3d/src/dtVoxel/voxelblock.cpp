@@ -270,7 +270,8 @@ namespace dtVoxel
       dtCore::RefPtr<osg::Group> node3 = new osg::Group;
 
      
-      AllocateCombinedMesh(voxelActor, *node0, resolution0);
+      //AllocateCombinedMesh(voxelActor, *node0, resolution0);
+      AllocateCells(voxelActor, *node0, resolution0);
       AllocateCombinedMesh(voxelActor, *node1, resolution1);
       AllocateCombinedMesh(voxelActor, *node2, resolution2);
       AllocateCombinedMesh(voxelActor, *node3, resolution3);
