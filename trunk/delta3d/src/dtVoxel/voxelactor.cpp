@@ -124,7 +124,7 @@ namespace dtVoxel
    }
 
    /////////////////////////////////////////////////////
-   openvdb::GridBase::Ptr VoxelActor::CollideWithAABB(osg::BoundingBox& bb, int gridIdx)
+   openvdb::GridBase::Ptr VoxelActor::CollideWithAABB(const osg::BoundingBox& bb, int gridIdx)
    {
       openvdb::GridBase::Ptr result(NULL);
       openvdb::BBoxd bbox(openvdb::Vec3d(bb.xMin(), bb.yMin(), bb.zMin()), openvdb::Vec3d(bb.xMax(), bb.yMax(), bb.zMax()));
@@ -146,18 +146,9 @@ namespace dtVoxel
    }
 
    /////////////////////////////////////////////////////
-   void VoxelActor::RemoveFromGridAABB(osg::BoundingBox& bb, int gridIdx)
+   void VoxelActor::MarkVisualDirty(const osg::BoundingBox& bb, int gridIdx)
    {
-      //remove from the OpenVDB database
-      openvdb::BBoxd bbox(openvdb::Vec3d(bb.xMin(), bb.yMin(), bb.zMin()), openvdb::Vec3d(bb.xMax(), bb.yMax(), bb.zMax()));
-      if (openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(GetGrid(gridIdx)))
-      {
-      }
-      else if (openvdb::FloatGrid::Ptr gridF = boost::dynamic_pointer_cast<openvdb::FloatGrid>(GetGrid(gridIdx)))
-      {
-      }
-
-
+      mGrid->MarkDirtyAABB(bb);
    }
 
    /////////////////////////////////////////////////////
@@ -229,28 +220,28 @@ namespace dtVoxel
       }
 
 
-      //dtPhysics::PhysicsActCompPtr pac = GetComponent<dtPhysics::PhysicsActComp>();
-      //if (mGrids && pac.valid())
-      //{
-      //   dtPhysics::PhysicsObject* po = pac->GetMainPhysicsObject();
-      //   if (po != nullptr && po->GetPrimitiveType() == dtPhysics::PrimitiveType::CUSTOM_CONCAVE_MESH)
-      //   {
-      //      dtPhysics::TransformType xform;
-      //      VoxelGeometryPtr geometry;
-      //      openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(GetGrid(0));
-      //      if (gridB)
-      //      {
-      //         geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridB);
-      //      }
-      //      else
-      //      {
-      //         openvdb::FloatGrid::Ptr gridF = boost::dynamic_pointer_cast<openvdb::FloatGrid>(GetGrid(0));
-      //         geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridF);
-      //      }
-      //      if (geometry.valid())
-      //         po->CreateFromGeometry(*geometry);
-      //   }
-      //}
+      dtPhysics::PhysicsActCompPtr pac = GetComponent<dtPhysics::PhysicsActComp>();
+      if (mGrids && pac.valid())
+      {
+         dtPhysics::PhysicsObject* po = pac->GetMainPhysicsObject();
+         if (po != nullptr && po->GetPrimitiveType() == dtPhysics::PrimitiveType::CUSTOM_CONCAVE_MESH)
+         {
+            dtPhysics::TransformType xform;
+            VoxelGeometryPtr geometry;
+            openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(GetGrid(0));
+            if (gridB)
+            {
+               geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridB);
+            }
+            else
+            {
+               openvdb::FloatGrid::Ptr gridF = boost::dynamic_pointer_cast<openvdb::FloatGrid>(GetGrid(0));
+               geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridF);
+            }
+            if (geometry.valid())
+               po->CreateFromGeometry(*geometry);
+         }
+      }
 
       dtGame::ShaderActorComponent* shaderComp = nullptr;
       GetComponent(shaderComp);

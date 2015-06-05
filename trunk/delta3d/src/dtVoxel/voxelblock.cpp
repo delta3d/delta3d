@@ -157,7 +157,7 @@ namespace dtVoxel
                   osg::BoundingBox bb(offsetFrom, offsetTo);
                   openvdb::GridBase::Ptr vdbGrid = voxelActor.CollideWithAABB(bb);
                   
-                  if (mVolume->getNumChildren() >= 0)
+                  if (mVolume->getNumChildren() > 0)
                   {
                      osg::LOD* lod = dynamic_cast<osg::LOD*>(mVolume->getChild(0));
                      if (lod != nullptr)
