@@ -156,17 +156,33 @@ namespace dtVoxel
                   //todo using local grid should be faster
                   osg::BoundingBox bb(offsetFrom, offsetTo);
                   openvdb::GridBase::Ptr vdbGrid = voxelActor.CollideWithAABB(bb);
-
-                  if (vc->IsAllocated())
+                  
+                  if (mVolume->getNumChildren() >= 0)
                   {
-                     mVolume->removeChild(vc->GetOSGNode());
-                     vc->DeAllocate();
-                  }
+                     osg::LOD* lod = dynamic_cast<osg::LOD*>(mVolume->getChild(0));
+                     if (lod != nullptr)
+                     {
+                        osg::Group* lodChild0 = lod->getChild(0)->asGroup();
+               
+                        if (vc->IsAllocated())
+                        {
+                           lodChild0->removeChild(vc->GetOSGNode());
+                        }
 
-                  if (vdbGrid != NULL && !vdbGrid->empty())
-                  {                    
-                     vc->CreateMesh(voxelActor, vdbGrid, transform, mWSCellDimensions, textureResolution);
-                     mVolume->addChild(vc->GetOSGNode());
+                        if (vdbGrid != NULL && !vdbGrid->empty())
+                        {
+                           vc->CreateMesh(voxelActor, vdbGrid, transform, mWSCellDimensions, textureResolution);
+                           lodChild0->addChild(vc->GetOSGNode());
+                        }
+                     }
+                     else
+                     {
+                        LOG_ERROR("Error finding LOD node, cannot regenerate mesh.");
+                     }
+                  }
+                  else
+                  {
+                     LOG_ERROR("Voxel Block is unallocated, cannot regenerate mesh.");
                   }
                }
                else
@@ -180,7 +196,7 @@ namespace dtVoxel
       SetDirty(false);
    }
 
-   void VoxelBlock::AllocateCells(VoxelActor& voxelActor, const osg::Vec3i& textureResolution)
+   void VoxelBlock::AllocateCells(VoxelActor& voxelActor, osg::Group& parentNode, const osg::Vec3i& textureResolution)
    {
       std::cout << "Allocating Individual Voxel Block Cells" << std::endl;
 
@@ -223,7 +239,7 @@ namespace dtVoxel
                   mCells[cellIndex].CreateMesh(voxelActor, vdbGrid, transform, mWSCellDimensions, textureResolution);
 
                   //todo- should these be spatialized?
-                  mVolume->addChild(mCells[cellIndex].GetOSGNode());
+                  parentNode.addChild(mCells[cellIndex].GetOSGNode());
                }
 
                //++cellToInit;
@@ -235,32 +251,35 @@ namespace dtVoxel
       //dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
       //simplifier->setMaximumLength(1000.0f);
       //simplifier->setDoTriStrip(true);
-      //mVolume->accept(*simplifier);
+      //parentNode.accept(*simplifier);
 
       //spatialize
       osgUtil::Optimizer opt;
-      opt.optimize(mVolume, osgUtil::Optimizer::SPATIALIZE_GROUPS);
+      opt.optimize(&parentNode, osgUtil::Optimizer::SPATIALIZE_GROUPS);
 
       mIsAllocated = true;
    }
 
-   void VoxelBlock::AllocateLODMesh(VoxelActor& voxelActor, const osg::Vec3i& resolution0, float dist0, const osg::Vec3i& resolution1, float dist1, const osg::Vec3i& resolution2, float dist2)
+   void VoxelBlock::AllocateLODMesh(VoxelActor& voxelActor, const osg::Vec3i& resolution0, float dist0, const osg::Vec3i& resolution1, float dist1, const osg::Vec3i& resolution2, float dist2, const osg::Vec3i& resolution3, float viewDistance)
    {
       dtCore::RefPtr<osg::LOD> lodNode = new osg::LOD();
 
       dtCore::RefPtr<osg::Group> node0 = new osg::Group;
       dtCore::RefPtr<osg::Group> node1 = new osg::Group;
       dtCore::RefPtr<osg::Group> node2 = new osg::Group;
+      dtCore::RefPtr<osg::Group> node3 = new osg::Group;
 
      
       AllocateCombinedMesh(voxelActor, *node0, resolution0);
       AllocateCombinedMesh(voxelActor, *node1, resolution1);
       AllocateCombinedMesh(voxelActor, *node2, resolution2);
+      AllocateCombinedMesh(voxelActor, *node3, resolution3);
       
 
       lodNode->addChild(node0, 0.0f, dist0);
       lodNode->addChild(node1, dist0, dist1);
       lodNode->addChild(node2, dist1, dist2);
+      lodNode->addChild(node3, dist2, viewDistance);
 
       mVolume->addChild(lodNode);
    }
