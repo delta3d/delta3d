@@ -93,6 +93,7 @@ namespace dtVoxel
       
    };
 
+   typedef dtCore::RefPtr<VoxelGrid> VoxelGridPtr;
 } /* namespace dtVoxel */
 
 #endif /* DTVOXEL_VOXELGRID_H_ */
