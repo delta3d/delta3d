@@ -25,6 +25,7 @@
 #include <dtUtil/mathdefines.h>
 #include <osgUtil/Optimizer>
 #include <iostream>
+#include <tbb/parallel_for.h>
 
 namespace dtVoxel
 {
@@ -295,10 +296,15 @@ namespace dtVoxel
 
 
       dtCore::RefPtr<osg::Group> currentGroup = NULL;
-      int blockCount = 0;
+      //int blockCount = 0;
+      OpenThreads::Atomic blockCount;
       for (int z = 0; z < mBlocksZ; z++)
       {
-         for (int y = 0; y < mBlocksY; y++)         
+         dtCore::RefPtr<osg::Group> currentGroup = NULL;
+         tbb::parallel_for(tbb::blocked_range<int>(0,mBlocksY),
+               [=, &blockCount](const tbb::blocked_range<int>& r)
+               {
+         for (int y=r.begin(); y!=r.end(); ++y)//(int y = 0; y < mBlocksY; y++)
          {
             for (int x = 0; x < mBlocksX; x++)
             {
@@ -361,6 +367,7 @@ namespace dtVoxel
             std::cout << std::endl << mNumBlocks - blockCount << " Blocks remaining." << std::endl;
 
          }
+               });
       }
 
       std::cout << std::endl << "Done Creating Voxel Grid" << std::endl;
