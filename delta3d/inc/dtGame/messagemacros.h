@@ -52,7 +52,7 @@
 
    In the cpp:
    This actually implements the constructor and it inlines all of the parameter get sets in the
-   header.  if you want to implement the methods yourself
+   header.
    <br>
    DT_IMPLEMENT_MESSAGE_BEGIN(TickMessage)
       DT_ADD_PARAMETER(float, DeltaSimTime)
@@ -72,7 +72,7 @@
    public: \
       CLS();\
    protected: \
-      virtual ~CLS() {} \
+      ~CLS() override {} \
    public: \
 
 #define DECLARE_PARAMETER_INLINE(Type, ParamName) \
