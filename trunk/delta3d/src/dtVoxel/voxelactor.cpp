@@ -229,28 +229,28 @@ namespace dtVoxel
       }
 
 
-      dtPhysics::PhysicsActCompPtr pac = GetComponent<dtPhysics::PhysicsActComp>();
-      if (mGrids && pac.valid())
-      {
-         dtPhysics::PhysicsObject* po = pac->GetMainPhysicsObject();
-         if (po != nullptr && po->GetPrimitiveType() == dtPhysics::PrimitiveType::CUSTOM_CONCAVE_MESH)
-         {
-            dtPhysics::TransformType xform;
-            VoxelGeometryPtr geometry;
-            openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(GetGrid(0));
-            if (gridB)
-            {
-               geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridB);
-            }
-            else
-            {
-               openvdb::FloatGrid::Ptr gridF = boost::dynamic_pointer_cast<openvdb::FloatGrid>(GetGrid(0));
-               geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridF);
-            }
-            if (geometry.valid())
-               po->CreateFromGeometry(*geometry);
-         }
-      }
+      //dtPhysics::PhysicsActCompPtr pac = GetComponent<dtPhysics::PhysicsActComp>();
+      //if (mGrids && pac.valid())
+      //{
+      //   dtPhysics::PhysicsObject* po = pac->GetMainPhysicsObject();
+      //   if (po != nullptr && po->GetPrimitiveType() == dtPhysics::PrimitiveType::CUSTOM_CONCAVE_MESH)
+      //   {
+      //      dtPhysics::TransformType xform;
+      //      VoxelGeometryPtr geometry;
+      //      openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(GetGrid(0));
+      //      if (gridB)
+      //      {
+      //         geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridB);
+      //      }
+      //      else
+      //      {
+      //         openvdb::FloatGrid::Ptr gridF = boost::dynamic_pointer_cast<openvdb::FloatGrid>(GetGrid(0));
+      //         geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridF);
+      //      }
+      //      if (geometry.valid())
+      //         po->CreateFromGeometry(*geometry);
+      //   }
+      //}
 
       dtGame::ShaderActorComponent* shaderComp = nullptr;
       GetComponent(shaderComp);
