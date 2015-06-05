@@ -32,6 +32,7 @@
 
 #include <dtGame/basemessages.h>
 #include <dtGame/gamemanager.h>
+#include <dtGame/shaderactorcomponent.h>
 
 #include <openvdb/openvdb.h>
 #include <openvdb/tools/Interpolation.h>
@@ -249,6 +250,13 @@ namespace dtVoxel
             if (geometry.valid())
                po->CreateFromGeometry(*geometry);
          }
+      }
+
+      dtGame::ShaderActorComponent* shaderComp = nullptr;
+      GetComponent(shaderComp);
+      if (shaderComp != nullptr)
+      {
+         mGrid->SetShaderGroup(shaderComp->GetCurrentShader().GetResourceIdentifier());
       }
    }
 
