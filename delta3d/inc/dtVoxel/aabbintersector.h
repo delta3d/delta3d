@@ -81,7 +81,7 @@ namespace dtVoxel
       template <typename BBoxType>
       inline void SetWorldBB(const BBoxType& worldBoundingBox)
       {
-         mCollideBox = openvdb::math::CoordBBox(openvdb::math::Coord::round(mGrid->worldToIndex(worldBoundingBox.min())), openvdb::math::Coord::round(mGrid->worldToIndex(worldBoundingBox.max())));
+         mCollideBox = mGrid->transform().worldToIndexCellCentered(worldBoundingBox);
       }
 
       typename GridType::Ptr GetHits()
