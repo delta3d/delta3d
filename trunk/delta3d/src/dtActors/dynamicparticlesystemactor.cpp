@@ -50,25 +50,25 @@ namespace dtActors
    ParticleLayerInterpolator* DynamicParticleSystem::GetInterpolator( const std::string& layerName )
    {
       ParticleLayerInterpMap::iterator foundIter = mLayerInterps.find( layerName );
-      return foundIter == mLayerInterps.end() ? NULL : foundIter->second.get();
+      return foundIter == mLayerInterps.end() ? nullptr : foundIter->second.get();
    }
 
    //////////////////////////////////////////////////////////////////////////
    const ParticleLayerInterpolator* DynamicParticleSystem::GetInterpolator( const std::string& layerName ) const
    {
       ParticleLayerInterpMap::const_iterator foundIter = mLayerInterps.find( layerName );
-      return foundIter == mLayerInterps.end() ? NULL : foundIter->second.get();
+      return foundIter == mLayerInterps.end() ? nullptr : foundIter->second.get();
    }
 
    //////////////////////////////////////////////////////////////////////////
    ParticleLayerInterpolator* DynamicParticleSystem::GetInterpolator( unsigned index )
    {
-      ParticleLayerInterpolator* interpolator = NULL;
+      ParticleLayerInterpolator* interpolator = nullptr;
 
       PSLayerList& layers = GetAllLayers();
       if( ! layers.empty() && unsigned(layers.size()) > index )
       {
-         dtCore::ParticleLayer* layer = NULL;
+         dtCore::ParticleLayer* layer = nullptr;
          PSLayerList::iterator curLayer = layers.begin();
          PSLayerList::iterator endLayerList = layers.end();
          for( unsigned curIndex = 0; curLayer != endLayerList; ++curLayer, ++curIndex )
@@ -89,12 +89,12 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////
    const ParticleLayerInterpolator* DynamicParticleSystem::GetInterpolator( unsigned index ) const
    {
-      const ParticleLayerInterpolator* interpolator = NULL;
+      const ParticleLayerInterpolator* interpolator = nullptr;
 
       const PSLayerList& layers = GetAllLayers();
       if( ! layers.empty() && unsigned(layers.size()) > index )
       {
-         const dtCore::ParticleLayer* layer = NULL;
+         const dtCore::ParticleLayer* layer = nullptr;
          PSLayerList::const_iterator curLayer = layers.begin();
          PSLayerList::const_iterator endLayerList = layers.end();
          for( unsigned curIndex = 0; curLayer != endLayerList; ++curLayer, ++curIndex )
@@ -138,14 +138,14 @@ namespace dtActors
    dtCore::ParticleLayer* DynamicParticleSystem::GetParticleLayer( const std::string& layerName )
    {
       ParticleLayerInterpolator* interp = GetInterpolator( layerName );
-      return interp == NULL ? NULL : &interp->GetLayer();
+      return interp == nullptr ? nullptr : &interp->GetLayer();
    }
 
    //////////////////////////////////////////////////////////////////////////
    const dtCore::ParticleLayer* DynamicParticleSystem::GetParticleLayer( const std::string& layerName ) const
    {
       const ParticleLayerInterpolator* interp = GetInterpolator( layerName );
-      return interp == NULL ? NULL : &interp->GetLayer();
+      return interp == nullptr ? nullptr : &interp->GetLayer();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -163,7 +163,7 @@ namespace dtActors
 
       // Access the current interpolation registered with the
       // ALL PROPERTIES particle property.
-      return interpolator != NULL
+      return interpolator != nullptr
          ? interpolator->GetParticlePropertyInterpolation( PS_ALL_PROPERTIES ) : 0.0f;
    }
 
@@ -314,6 +314,21 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void DynamicParticleSystemActor::SetEnabled(bool enabled)
+   {
+      if (mParticleSystem.valid())
+      {
+         mParticleSystem->SetEnabled(enabled);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool DynamicParticleSystemActor::IsEnabled() const
+   {
+      return mParticleSystem.valid() ? mParticleSystem->IsEnabled() : false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void DynamicParticleSystemActor::CreateDrawable()
    {
       SetDrawable(*new DynamicParticleSystem());
@@ -326,7 +341,7 @@ namespace dtActors
 
       const dtUtil::RefString GROUP("Particle System");
 
-      DynamicParticleSystem* drawable = NULL;
+      DynamicParticleSystem* drawable = nullptr;
       GetDrawable(drawable);
 
       // FLOAT PROPERTIES
@@ -350,7 +365,7 @@ namespace dtActors
    {
       BaseClass::OnEnteredWorld();
 
-      DynamicParticleSystem* drawable = NULL;
+      DynamicParticleSystem* drawable = nullptr;
       GetDrawable(drawable);
 
       mParticleSystem = drawable;

@@ -146,6 +146,9 @@ namespace dtActors
          
          DynamicParticleSystemActor();
 
+         void SetEnabled(bool enabled);
+         bool IsEnabled() const;
+
          virtual void CreateDrawable();
 
          virtual void BuildPropertyMap();

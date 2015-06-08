@@ -76,9 +76,6 @@ namespace dtActors
       DT_DECLARE_ACCESSOR(osg::Vec3, Offset);
       DT_DECLARE_ACCESSOR(osg::Vec3, OffsetRotation);
 
-      DT_DECLARE_ACCESSOR(dtCore::RefPtr<dtCore::GameEvent>, EventToEnable);
-      DT_DECLARE_ACCESSOR(dtCore::RefPtr<dtCore::GameEvent>, EventToDisable);
-
       float GetVelocityRatio(float velocity) const;
 
       void InterpolateParticleSystem(float ratio);
@@ -88,8 +85,6 @@ namespace dtActors
       void UpdateParticleSystem(float simTimeDelta, float speed);
 
       void Setup(dtGame::GameActorProxy& ownerActor, osg::Group* attachNode = nullptr);
-
-      void HandleGameEvent(const dtCore::GameEvent& gameEvent);
 
    protected:
       virtual ~DynamicParticlesPropertyContainer();
@@ -130,7 +125,10 @@ namespace dtActors
 
       DynamicParticlesActorComponent(const ACType& type = TYPE);
 
-      DT_DECLARE_ACCESSOR(dtCore::RefPtr<dtCore::GameEvent>, UpdateFromControllerEvent);
+      void SetParticleSystemActorEnabled(const std::string& name, bool enabled);
+      bool IsParticleSyatemActorEnabled(const std::string& name) const;
+
+      DynamicParticlesActor* GetParticleSystemActor(const std::string& name) const;
 
       int GetParticleDataIndex(const std::string& name) const;
 
@@ -154,8 +152,6 @@ namespace dtActors
 
       /*override*/ void OnTickLocal(const dtGame::TickMessage& tickMessage);
       /*override*/ void OnTickRemote(const dtGame::TickMessage& tickMessage);
-
-      /*override*/ void OnGameEvent(const dtGame::GameEventMessage& gameEvent);
 
       /// Adds the properties associated with this actor
       /*override*/ void BuildPropertyMap();
