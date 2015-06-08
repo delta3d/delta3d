@@ -49,12 +49,10 @@ namespace dtVoxel
       const osg::Vec3& GetOffset();
       
       void DeAllocate();
-      void AllocateCells(VoxelActor& voxelActor, osg::Group& parentNode, const osg::Vec3i& textureResolution);
-      
+
       void AllocateLODMesh(VoxelActor& voxelActor, const osg::Vec3i& resolution0, float dist0, const osg::Vec3i& resolution1, float dist1, const osg::Vec3i& resolution2, float dist2, const osg::Vec3i& resolution3, float viewDistance);
 
-      void AllocateCombinedMesh(VoxelActor& voxelActor, osg::Group& parentNode, const osg::Vec3i& textureResolution);
-
+      
       void RegenerateAABB(VoxelActor& voxelActor, const osg::BoundingBox& bb, const osg::Vec3i& textureResolution);
 
       //void AllocateCell(const osg::Vec3& pos, const osg::Vec3i& textureResolution);
@@ -74,7 +72,9 @@ namespace dtVoxel
       bool LoadCachedModel(const std::string& folderName, int index);
 
    protected:
-   
+      void AllocateCells(VoxelActor& voxelActor, osg::Group& parentNode, const osg::Vec3& gridDimensions, const osg::Vec3i& textureResolution);
+      void AllocateCombinedMesh(VoxelActor& voxelActor, osg::Group& parentNode, const osg::Vec3& gridDimensions, const osg::Vec3i& textureResolution);
+
       openvdb::GridBase::Ptr ConvertToLocalResolutionGrid(openvdb::GridBase::Ptr);
 
    private:

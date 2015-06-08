@@ -77,8 +77,10 @@ namespace dtVoxel
             }
 
             delete[] mCells;
+            mCells = NULL;
          }
       }
+
       mIsAllocated = false;
    }
 
@@ -196,26 +198,15 @@ namespace dtVoxel
       SetDirty(false);
    }
 
-   void VoxelBlock::AllocateCells(VoxelActor& voxelActor, osg::Group& parentNode, const osg::Vec3i& textureResolution)
+   void VoxelBlock::AllocateCells(VoxelActor& voxelActor, osg::Group& parentNode, const osg::Vec3& gridDimensions, const osg::Vec3i& textureResolution)
    {
       std::cout << "Allocating Individual Voxel Block Cells" << std::endl;
-
-      osg::Vec3 gridDim(
-       1.0 +  int(std::floor(mWSDimensions[0] / mWSCellDimensions[0])),
-       1.0 + int(std::floor(mWSDimensions[1] / mWSCellDimensions[1])),
-       1.0 + int(std::floor(mWSDimensions[2] / mWSCellDimensions[2])));
-
-      mNumCells = gridDim[0] * gridDim[1] * gridDim[2];
-      //todo catch out of memory exception here
-      mCells = new VoxelCell[mNumCells];
-     
-
-      //VoxelCell* cellToInit = &mCells[0];
-      for (unsigned int z = 0; z < gridDim[2]; ++z)
+           
+      for (unsigned int z = 0; z < gridDimensions[2]; ++z)
       {
-         for (unsigned int y = 0; y < gridDim[1]; ++y)
+         for (unsigned int y = 0; y < gridDimensions[1]; ++y)
          {
-            for (unsigned int x = 0; x < gridDim[0]; ++x)
+            for (unsigned int x = 0; x < gridDimensions[0]; ++x)
             {
                osg::Vec3 pos(x * mWSCellDimensions[0], y * mWSCellDimensions[1], z * mWSCellDimensions[2]);
                osg::Vec3 offsetFrom = pos + mOffset;
@@ -233,9 +224,8 @@ namespace dtVoxel
                if (vdbGrid != NULL && !vdbGrid->empty())
                {
                   //keeping a pointer and incrementing it should be much faster for a large contiguous dataset
-                  int cellIndex = (z * gridDim[1] * gridDim[0]) + (y * gridDim[0]) + x;
+                  int cellIndex = (z * gridDimensions[1] * gridDimensions[0]) + (y * gridDimensions[0]) + x;
                   
-                  //cellToInit->Init(transform, mWSCellDimensions, textureResolution);
                   mCells[cellIndex].CreateMesh(voxelActor, vdbGrid, transform, mWSCellDimensions, textureResolution);
 
                   //todo- should these be spatialized?
@@ -253,46 +243,15 @@ namespace dtVoxel
       //simplifier->setDoTriStrip(true);
       //parentNode.accept(*simplifier);
 
-      //spatialize
+      /*spatialize
       osgUtil::Optimizer opt;
-      opt.optimize(&parentNode, osgUtil::Optimizer::SPATIALIZE_GROUPS);
+      opt.optimize(&parentNode, osgUtil::Optimizer::SPATIALIZE_GROUPS);*/
 
       mIsAllocated = true;
    }
 
    void VoxelBlock::AllocateLODMesh(VoxelActor& voxelActor, const osg::Vec3i& resolution0, float dist0, const osg::Vec3i& resolution1, float dist1, const osg::Vec3i& resolution2, float dist2, const osg::Vec3i& resolution3, float viewDistance)
    {
-      dtCore::RefPtr<osg::LOD> lodNode = new osg::LOD();
-
-      dtCore::RefPtr<osg::Group> node0 = new osg::Group;
-      /*dtCore::RefPtr<osg::Group> node1 = new osg::Group;
-      dtCore::RefPtr<osg::Group> node2 = new osg::Group;
-      dtCore::RefPtr<osg::Group> node3 = new osg::Group;*/
-
-          
-      //AllocateCells(voxelActor, *node0, resolution0);
-      AllocateCombinedMesh(voxelActor, *node0, resolution0);
-      //AllocateCombinedMesh(voxelActor, *node1, resolution1);
-      //AllocateCombinedMesh(voxelActor, *node2, resolution2);
-      //AllocateCombinedMesh(voxelActor, *node3, resolution3);
-      
-
-      lodNode->addChild(node0, 0.0f, viewDistance);
-      //lodNode->addChild(node1, dist0, dist1);
-      //lodNode->addChild(node2, dist1, dist2);
-      //lodNode->addChild(node3, dist2, viewDistance);
-
-      lodNode->setRadius((mWSDimensions * 0.5).length());
-      lodNode->setCenterMode(osg::LOD::CenterMode::USER_DEFINED_CENTER);
-      lodNode->setCenter(mOffset + (mWSDimensions * 0.5));
-
-      mVolume->addChild(lodNode);
-   }
-
-   void VoxelBlock::AllocateCombinedMesh(VoxelActor& voxelActor, osg::Group& parentNode, const osg::Vec3i& textureResolution)
-   {
-      std::cout << "Allocating Combined Voxel Block" << std::endl;
-
       osg::Vec3 gridDim(
          1.0 + int(std::floor(mWSDimensions[0] / mWSCellDimensions[0])),
          1.0 + int(std::floor(mWSDimensions[1] / mWSCellDimensions[1])),
@@ -302,19 +261,48 @@ namespace dtVoxel
       //todo catch out of memory exception here
       mCells = new VoxelCell[mNumCells];
 
+
+      dtCore::RefPtr<osg::LOD> lodNode = new osg::LOD();
+
+      dtCore::RefPtr<osg::Group> node0 = new osg::Group;
+      dtCore::RefPtr<osg::Group> node1 = new osg::Group;
+      dtCore::RefPtr<osg::Group> node2 = new osg::Group;
+      dtCore::RefPtr<osg::Group> node3 = new osg::Group;
+
+          
+      //AllocateCells(voxelActor, *node0, gridDim, resolution0);
+      AllocateCombinedMesh(voxelActor, *node0, gridDim, resolution0);
+      AllocateCombinedMesh(voxelActor, *node1, gridDim, resolution1);
+      AllocateCombinedMesh(voxelActor, *node2, gridDim, resolution2);
+      AllocateCombinedMesh(voxelActor, *node3, gridDim, resolution3);
+      
+
+      lodNode->addChild(node0, 0.0f, dist0);
+      lodNode->addChild(node1, dist0, dist1);
+      lodNode->addChild(node2, dist1, dist2);
+      lodNode->addChild(node3, dist2, viewDistance);
+
+      mVolume->addChild(lodNode);
+      
+      mIsAllocated = true;
+   }
+
+   void VoxelBlock::AllocateCombinedMesh(VoxelActor& voxelActor, osg::Group& parentNode, const osg::Vec3& gridDimensions, const osg::Vec3i& textureResolution)
+   {
+      std::cout << "Allocating Combined Voxel Block" << std::endl;
+
       dtCore::RefPtr<osg::Geometry> geom = new osg::Geometry();
       dtCore::RefPtr<osg::Vec3Array> vertArray = new osg::Vec3Array();
       dtCore::RefPtr<osg::Vec3Array> normalArray = new osg::Vec3Array();
       dtCore::RefPtr<osg::Vec3Array> colorArray = new osg::Vec3Array();
       dtCore::RefPtr<osg::DrawElementsUInt> drawElements = new osg::DrawElementsUInt(GL_TRIANGLES);
 
-
       //VoxelCell* cellToInit = &mCells[0];
-      for (unsigned int z = 0; z < gridDim[2]; ++z)
+      for (unsigned int z = 0; z < gridDimensions[2]; ++z)
       {
-         for (unsigned int y = 0; y < gridDim[1]; ++y)
+         for (unsigned int y = 0; y < gridDimensions[1]; ++y)
          {
-            for (unsigned int x = 0; x < gridDim[0]; ++x)
+            for (unsigned int x = 0; x < gridDimensions[0]; ++x)
             {
                osg::Vec3 pos(x * mWSCellDimensions[0], y * mWSCellDimensions[1], z * mWSCellDimensions[2]);
                osg::Vec3 offsetFrom = pos + mOffset;
@@ -332,7 +320,7 @@ namespace dtVoxel
                if (vdbGrid != NULL && !vdbGrid->empty())
                {
                   //keeping a pointer and incrementing it should be much faster for a large contiguous dataset
-                  int cellIndex = (z * gridDim[1] * gridDim[0]) + (y * gridDim[0]) + x;                  
+                  int cellIndex = (z * gridDimensions[1] * gridDimensions[0]) + (y * gridDimensions[0]) + x;
                   mCells[cellIndex].AddGeometry(voxelActor, vdbGrid, transform, mWSCellDimensions, textureResolution, vertArray, normalArray, colorArray, drawElements);
                }
 
@@ -346,8 +334,6 @@ namespace dtVoxel
       geom->setNormalArray(normalArray);
       geom->setNormalBinding(osg::Geometry::BIND_PER_VERTEX);
 
-      //geom->setColorArray(colorArray);
-      //geom->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
       geom->addPrimitiveSet(drawElements);
 
       osg::Geode* geode = new osg::Geode();
