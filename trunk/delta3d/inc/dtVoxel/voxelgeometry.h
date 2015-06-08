@@ -57,7 +57,7 @@ namespace dtVoxel
                      0, 2, 1,
                      0, 3, 2, // -x
                      0, 1, 4,
-                     6, 0, 4, // -y
+                     6, 0, 4, // +z
                      4, 5, 6,
                      5, 7, 6, // +x
                      2, 3, 5,
@@ -65,7 +65,7 @@ namespace dtVoxel
                      0, 6, 3,
                      3, 6, 7, // +y
                      1, 2, 4,
-                     4, 2, 5  // +z
+                     4, 2, 5  // -y
                };
          typedef typename GridType::ValueOnIter GridItr;
          openvdb::BBoxd bb(openvdb::Vec3d(bbBox.min.x,bbBox.min.y,bbBox.min.z), openvdb::Vec3d(bbBox.max.x,bbBox.max.y,bbBox.max.z));
@@ -79,26 +79,24 @@ namespace dtVoxel
          {
             if (i.isVoxelValue())
             {
-               openvdb::CoordBBox c;
-               i.getBoundingBox(c);
                openvdb::Coord coord = i.getCoord();
-               if (c.min() == c.max())
-               {
-                  c.expand(1);
-               }
-               openvdb::BBoxd voxelBBox = grid->transform().indexToWorld(c);
+               openvdb::BBoxd iBox(openvdb::Vec3d(double(coord.x()), double(coord.y()), double(coord.z())), 0);
+               iBox.expand(0.5f);
+               openvdb::BBoxd voxelBBox = grid->transform().indexToWorld(iBox);
                typename GridType::ConstAccessor ca = mBoxCollider->GetGrid()->getConstAccessor();
                bool activeNeighbors[6];
                activeNeighbors[0] = ca.isValueOn(openvdb::Coord(coord.x()-1,coord.y(),coord.z()));
-               activeNeighbors[1] = ca.isValueOn(openvdb::Coord(coord.x(),coord.y()-1,coord.z()));
+               activeNeighbors[1] = ca.isValueOn(openvdb::Coord(coord.x(),coord.y(),coord.z()+1));
                activeNeighbors[2] = ca.isValueOn(openvdb::Coord(coord.x()+1,coord.y(),coord.z()));
                activeNeighbors[3] = ca.isValueOn(openvdb::Coord(coord.x(),coord.y(),coord.z()-1));
                activeNeighbors[4] = ca.isValueOn(openvdb::Coord(coord.x(),coord.y()+1,coord.z()));
-               activeNeighbors[5] = ca.isValueOn(openvdb::Coord(coord.x(),coord.y(),coord.z()+1));
-               //for (unsigned i = 0; i < 6; ++i) std::cout << activeNeighbors[i] << " ";
+               activeNeighbors[5] = ca.isValueOn(openvdb::Coord(coord.x(),coord.y()-1,coord.z()));
+               //std::cout << " Neighbors ";
+               //for (unsigned n = 0 ; n < 6 ; ++n) std::cout << activeNeighbors[n];
                //std::cout << std::endl;
                openvdb::math::Vec3<Float> min = voxelBBox.min();
                openvdb::math::Vec3<Float> max = voxelBBox.max();
+               //std::cout << "voxel min max: " << min << max << std::endl;
                Float cube_vertices[] =
                      {
                            min.x(),  max.y(),  max.z(),
@@ -116,20 +114,22 @@ namespace dtVoxel
                   if (!activeNeighbors[i/2])
                   {
                      palTriangle tri;
+                     //std::cout << "triangle ";
                      for (unsigned j = 0; j < 3; ++j)
                      {
                         tri.vertices[j].x = cube_vertices[3 * faces[3*i + j] + 0];
                         tri.vertices[j].y = cube_vertices[3 * faces[3*i + j] + 1];
                         tri.vertices[j].z = cube_vertices[3 * faces[3*i + j] + 2];
-                        //std::cout << "triangle " << tri.vertices[j].x << " " << tri.vertices[j].y << " " << tri.vertices[j].z << std::endl;
+                        //std::cout << "[" << tri.vertices[j].x << " " << tri.vertices[j].y << " " << tri.vertices[j].z << "]";
                      }
+                     //std::cout << std::endl;
                      trianglesOut.push_back(tri);
                   }
                }
             }
             else
             {
-               std::cout << "not a voxel\n";
+               //std::cout << "not a voxel\n";
 
             }
          }
