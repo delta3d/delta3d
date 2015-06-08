@@ -22,6 +22,7 @@
 #include <dtVoxel/voxelactorregistry.h>
 #include "../dtPhysics/basedtphysicstestfixture.h"
 #include <dtPhysics/physicsobject.h>
+#include <openvdb/openvdb.h>
 
 namespace dtVoxel
 {
@@ -64,17 +65,29 @@ namespace dtVoxel
             CPPUNIT_ASSERT(geometry.valid());
             po->CreateFromGeometry(*geometry);
 
-            for (unsigned i = 0; i < 12; ++i)
+            for (float i = 0; i < 12.0f; i += 0.25)
             {
-               for (unsigned j = 0; j < 12; ++j)
+               for (float j = 0; j < 12.0f; j += 0.25)
                {
                   dtPhysics::RayCast ray;
-                  ray.SetOrigin(dtPhysics::VectorType(float(i), float(j), 220.0f));
+                  ray.SetOrigin(dtPhysics::VectorType(i, j, 220.0f));
                   ray.SetDirection(dtPhysics::VectorType(0.0f, 0.0f, -260.0f));
                   std::vector<dtPhysics::RayCast::Report> hits;
                   mPhysicsComp->GetPhysicsWorld().TraceRay(ray, hits);
-                  printf("%lu\n", hits.size());
-                  CPPUNIT_ASSERT(hits.size() > 1U);
+                  CPPUNIT_ASSERT(hits.size() > 0U);
+                  int found = 0;
+                  for (unsigned k = 0; k < hits.size(); ++k)
+                  {
+                     dtPhysics::VectorType v = hits[k].mHitPos;
+                     openvdb::Vec3d ov(v.x(), v.y(), v.z());
+                     openvdb::Coord coord1 = grid->transform().worldToIndexNodeCentered(ov);
+                     openvdb::Coord coord2 = grid->transform().worldToIndexCellCentered(ov);
+                     std::ostringstream ss;
+                     ss << "The collision coordinates should match up with cells in the grid." <<   ov << " " << coord1 << " ";
+                     openvdb::BoolGrid::Accessor acc = grid->getAccessor();
+                     if (acc.isValueOn(coord1) || acc.isValueOn(coord2)) ++found;
+                  }
+                  CPPUNIT_ASSERT(found > 0);
                }
             }
          }
@@ -110,7 +123,7 @@ namespace dtVoxel
             ray.SetDirection(dtPhysics::VectorType(0.0f, 0.0f, -205.0f));
             std::vector<dtPhysics::RayCast::Report> hits;
             mPhysicsComp->GetPhysicsWorld().TraceRay(ray, hits);
-            CPPUNIT_ASSERT_EQUAL(size_t(2U), hits.size());
+            CPPUNIT_ASSERT_EQUAL(size_t(4U), hits.size());
          }
          catch (const dtUtil::Exception& ex)
          {
