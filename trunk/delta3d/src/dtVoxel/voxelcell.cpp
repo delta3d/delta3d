@@ -99,11 +99,11 @@ namespace dtVoxel
       osg::Vec3 texelSize(cellSize[0] / float(resolution[0]), cellSize[1] / float(resolution[1]), cellSize[2] / float(resolution[2]));
 
 
-      /*openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(voxelActor.GetGrid(0));
+      /*openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(voxelActor.GetGrid(0));
 
-      openvdb::BoolGrid::ConstAccessor accessor = gridB->getConstAccessor();
+      openvdb::FloatGrid::ConstAccessor accessor = gridB->getConstAccessor();
 
-      openvdb::tools::GridSampler<openvdb::BoolGrid::ConstAccessor, openvdb::tools::PointSampler>
+      openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>
       fastSampler(accessor, gridB->transform());*/
 
 
@@ -236,16 +236,7 @@ namespace dtVoxel
       osg::Vec3 texelSize(cellSize[0] / float(resolution[0]), cellSize[1] / float(resolution[1]), cellSize[2] / float(resolution[2]));
 
 
-      /*openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(voxelActor.GetGrid(0));
-
-      openvdb::BoolGrid::ConstAccessor accessor = gridB->getConstAccessor();
-
-      openvdb::tools::GridSampler<openvdb::BoolGrid::ConstAccessor, openvdb::tools::PointSampler>
-         fastSampler(accessor, gridB->transform());*/
-
-
-      openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(voxelActor.GetGrid(0));
-      //openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(localGrid);
+      openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(localGrid);
 
       openvdb::FloatGrid::ConstAccessor accessor = gridB->getConstAccessor();
 
@@ -343,7 +334,7 @@ namespace dtVoxel
                   normalArray->push_back(triangles[n].n[1]);
                   normalArray->push_back(triangles[n].n[2]);
 
-                  colorArray->push_back(osg::Vec3(1.0f, 1.0f, 1.0f));
+                  //colorArray->push_back(osg::Vec3(1.0f, 1.0f, 1.0f));
                }
             }
          }
@@ -352,8 +343,11 @@ namespace dtVoxel
       //std::cout << "Num Triangles Before Simplifier " << vertArray->size() << std::endl;
       
       geom->setVertexArray(vertArray);      
-      geom->setColorArray(colorArray);
-      geom->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
+      geom->setNormalArray(normalArray);
+      geom->setNormalBinding(osg::Geometry::BIND_PER_VERTEX);
+
+      //geom->setColorArray(colorArray);
+      //geom->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
       geom->addPrimitiveSet(drawElements);
       
       mImpl->mMeshNode->addDrawable(geom);
@@ -364,16 +358,14 @@ namespace dtVoxel
       mImpl->mMeshNode->accept(*simplifier);
 
       //std::cout << "Num Triangles After Simplifier " << geom->getVertexArray()->getNumElements() << std::endl;
+      
+      /*osg::StateSet* ss = mImpl->mMeshNode->getOrCreateStateSet();
 
-      mImpl->mMeshNode->accept(*simplifier);
-
-      osg::StateSet* ss = mImpl->mMeshNode->getOrCreateStateSet();
-
-      /*osg::ref_ptr<osg::PolygonMode> polymode = new osg::PolygonMode;
+      osg::ref_ptr<osg::PolygonMode> polymode = new osg::PolygonMode;
       polymode->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
       ss->setAttributeAndModes(polymode.get(), osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);*/
       
-      ss->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
+      //ss->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
 
       mImpl->mIsAllocated = true;
       
@@ -461,11 +453,11 @@ namespace dtVoxel
        unsigned char charToFill = 0;
        memset(dataPtr, charToFill, imageSize);
        
-       openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(gridPtr);
+       openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(gridPtr);
 
-       openvdb::BoolGrid::ConstAccessor accessor = gridB->getConstAccessor();
+       openvdb::FloatGrid::ConstAccessor accessor = gridB->getConstAccessor();
        
-       openvdb::tools::GridSampler<openvdb::BoolGrid::ConstAccessor, openvdb::tools::BoxSampler>
+       openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::BoxSampler>
           fastSampler(accessor, gridB->transform());
        
        const osg::Matrixd& mat = mImpl->mVolumeTile->getLocator()->getTransform();
@@ -476,7 +468,7 @@ namespace dtVoxel
        osg::Vec3 texelSize(cellSize[0] / float(width), cellSize[1] / float(height), cellSize[2] / float(slices));
        osg::Vec3 halfTexel = texelSize * 0.5;
               
-       AABBIntersector<openvdb::BoolGrid> aabb(boost::dynamic_pointer_cast<openvdb::BoolGrid>(gridPtr));
+       AABBIntersector<openvdb::FloatGrid> aabb(boost::dynamic_pointer_cast<openvdb::FloatGrid>(gridPtr));
        
        //this one we will increment as we set
        ptr = dataPtr;
@@ -542,13 +534,13 @@ namespace dtVoxel
       openvdb::math::Transform::Ptr xform = openvdb::math::Transform::createLinearTransform(m);
       xform->voxelSize(openvdb::Vec3R(cellSize[0], cellSize[1], cellSize[2]));
 
-      openvdb::BoolGrid::Ptr outGrid = openvdb::BoolGrid::create();
+      openvdb::FloatGrid::Ptr outGrid = openvdb::FloatGrid::create();
       outGrid->setTransform(xform);
 
       struct Local {
          static inline void op(
-            const openvdb::BoolGrid::ValueOnCIter& iter,
-            typename openvdb::BoolGrid::Accessor& accessor)
+            const openvdb::FloatGrid::ValueOnCIter& iter,
+            typename openvdb::FloatGrid::Accessor& accessor)
          {
             if (iter.isVoxelValue()) { // set a single voxel
                accessor.setValue(iter.getCoord(), openvdb::math::Abs(*iter) > FLT_EPSILON);

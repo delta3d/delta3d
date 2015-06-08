@@ -282,6 +282,10 @@ namespace dtVoxel
       lodNode->addChild(node2, dist1, dist2);
       lodNode->addChild(node3, dist2, viewDistance);
 
+      lodNode->setRadius((mWSDimensions * 0.5).length());
+      lodNode->setCenterMode(osg::LOD::CenterMode::USER_DEFINED_CENTER);
+      lodNode->setCenter(mOffset + (mWSDimensions * 0.5));
+
       mVolume->addChild(lodNode);
    }
 
@@ -339,8 +343,11 @@ namespace dtVoxel
 
 
       geom->setVertexArray(vertArray);
-      geom->setColorArray(colorArray);
-      geom->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
+      geom->setNormalArray(normalArray);
+      geom->setNormalBinding(osg::Geometry::BIND_PER_VERTEX);
+
+      //geom->setColorArray(colorArray);
+      //geom->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
       geom->addPrimitiveSet(drawElements);
 
       osg::Geode* geode = new osg::Geode();
@@ -356,22 +363,14 @@ namespace dtVoxel
       opt.optimize(&parentNode, osgUtil::Optimizer::ALL_OPTIMIZATIONS);
 
 
-      osg::StateSet* ss = parentNode.getOrCreateStateSet();
+      /*osg::StateSet* ss = parentNode.getOrCreateStateSet();
 
-      /*osg::ref_ptr<osg::PolygonMode> polymode = new osg::PolygonMode;
+      osg::ref_ptr<osg::PolygonMode> polymode = new osg::PolygonMode;
       polymode->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
-      ss->setAttributeAndModes(polymode.get(), osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);*/
+      ss->setAttributeAndModes(polymode.get(), osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
 
-      ss->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
+      ss->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);*/
 
-
-      //simplify mesh
-      //dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
-      //simplifier->setMaximumLength(1000.0f);
-      //simplifier->setDoTriStrip(true);
-      //mVolume->accept(*simplifier);
-
-      //spatialize
       
       mIsAllocated = true;
    }
