@@ -473,7 +473,8 @@ namespace dtVoxel
          //generate normals         
          osg::Vec3 normal(tri[ntri].p[1] - tri[ntri].p[0]);
          osg::Vec3 tempv3(tri[ntri].p[2] - tri[ntri].p[0]);
-         normal = normal ^ tempv3;
+         
+         normal = tempv3 ^ normal;
          normal.normalize();
          
          tri[ntri].n[0] = normal;
