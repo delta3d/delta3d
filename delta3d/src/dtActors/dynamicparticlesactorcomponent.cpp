@@ -117,14 +117,6 @@ namespace dtActors
          "Rotation offset (HPR in degrees) relative to the particle system's attach point.",
          PropertyRegType, propertyRegHelper);
 
-      DT_REGISTER_PROPERTY(EventToEnable,
-         "Event to detect to enable the particle system.",
-         PropertyRegType, propertyRegHelper);
-
-      DT_REGISTER_PROPERTY(EventToDisable,
-         "Event to detect to disable the particle system.",
-         PropertyRegType, propertyRegHelper);
-
       InitDefaults();
    }
 
@@ -162,9 +154,6 @@ namespace dtActors
    DT_IMPLEMENT_ACCESSOR(DynamicParticlesPropertyContainer, std::string, ShaderGroup);
    DT_IMPLEMENT_ACCESSOR(DynamicParticlesPropertyContainer, osg::Vec3, Offset);
    DT_IMPLEMENT_ACCESSOR(DynamicParticlesPropertyContainer, osg::Vec3, OffsetRotation);
-
-   DT_IMPLEMENT_ACCESSOR(DynamicParticlesPropertyContainer, dtCore::RefPtr<dtCore::GameEvent>, EventToEnable);
-   DT_IMPLEMENT_ACCESSOR(DynamicParticlesPropertyContainer, dtCore::RefPtr<dtCore::GameEvent>, EventToDisable);
 
    DT_IMPLEMENT_ACCESSOR_GETTER(DynamicParticlesPropertyContainer, bool, Enabled);
 
@@ -227,20 +216,6 @@ namespace dtActors
 
       // Ensure the particle systems have the current enabled state.
       SetEnabled(mEnabled);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void DynamicParticlesPropertyContainer::HandleGameEvent(const dtCore::GameEvent& gameEvent)
-   {
-      if (mEventToEnable == &gameEvent)
-      {
-         SetEnabled(true);
-      }
-
-      if (mEventToDisable == &gameEvent)
-      {
-         SetEnabled(false);
-      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -479,7 +454,35 @@ namespace dtActors
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   DT_IMPLEMENT_ACCESSOR(DynamicParticlesActorComponent, dtCore::RefPtr<dtCore::GameEvent>, UpdateFromControllerEvent);
+   void DynamicParticlesActorComponent::SetParticleSystemActorEnabled(const std::string& name, bool enabled)
+   {
+      DynamicParticlesActor* actor = GetParticleSystemActor(name);
+      if (actor != nullptr)
+      {
+         actor->SetEnabled(enabled);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool DynamicParticlesActorComponent::IsParticleSyatemActorEnabled(const std::string& name) const
+   {
+      DynamicParticlesActor* actor = GetParticleSystemActor(name);
+      return actor != nullptr ? actor->IsEnabled() : false;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   DynamicParticlesActor* DynamicParticlesActorComponent::GetParticleSystemActor(const std::string& name) const
+   {
+      DynamicParticlesActor* actor = nullptr;
+
+      int index = GetParticleDataIndex(name);
+      if (index > 0)
+      {
+         actor = mParticleDataArray[index]->GetDynamicParticlesActor();
+      }
+
+      return actor;
+   }
 
    /////////////////////////////////////////////////////////////////////////////
    int DynamicParticlesActorComponent::GetParticleDataIndex(const std::string& name) const
@@ -610,8 +613,6 @@ namespace dtActors
 
       RegisterForTick();
 
-      owner->RegisterForMessages(dtGame::MessageType::INFO_GAME_EVENT, dtUtil::MakeFunctor(&DynamicParticlesActorComponent::OnGameEvent, this));
-
       dtCore::RefPtr<dtUtil::NodeCollector> nc;
 
       // Setup all the particle systems.
@@ -657,27 +658,6 @@ namespace dtActors
       }
 
       BaseClass::OnRemovedFromActor(actor);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void DynamicParticlesActorComponent::OnGameEvent(const dtGame::GameEventMessage& gameEventMsg)
-   {
-      const dtCore::GameEvent* gameEvent = gameEventMsg.GetGameEvent();
-
-      if (gameEvent == nullptr)
-      {
-         LOG_ERROR("NULL event received.");
-      }
-      else
-      {
-         // Pass the game event to the particle systems.
-         DynamicParticlesDataArray::const_iterator curIter = mParticleDataArray.begin();
-         DynamicParticlesDataArray::const_iterator endIter = mParticleDataArray.end();
-         for (int i = 0; curIter != endIter; ++curIter, ++i)
-         {
-            curIter->get()->HandleGameEvent(*gameEvent);
-         }
-      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
