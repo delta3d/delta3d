@@ -301,6 +301,13 @@ namespace dtPhysics
          void SetDefaultPrimitiveType(PrimitiveType& p);
          PrimitiveType& GetDefaultPrimitiveType() const;
 
+         /**
+          * Convenience function to force all physics objects in this actor component to be active or inactive.
+          * @see PhysicsObjects::SetActive
+          */
+         void SetAllActive(bool active);
+
+
          // build property maps, for editor.
          virtual void BuildPropertyMap();
 
@@ -340,7 +347,6 @@ namespace dtPhysics
           */
          float TraceRay(const VectorType& location,
             const VectorType& direction , VectorType& outPoint, CollisionGroupFilter groupFlags);
-
 
       protected:
          ~PhysicsActComp();

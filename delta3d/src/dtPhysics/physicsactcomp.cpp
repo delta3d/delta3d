@@ -560,6 +560,15 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////////////////////////////////
+   void PhysicsActComp::SetAllActive(bool active)
+   {
+      std::for_each(mPhysicsObjects.begin(), mPhysicsObjects.end(), [active] (PhysicsObjectPtr& po)
+            {
+               po->SetActive(active);
+            });
+   }
+
+   //////////////////////////////////////////////////////////////////
    bool PhysicsActComp::GetAutoCreateOnEnteringWorld() const
    {
       return mAutoCreateOnEnteringWorld;

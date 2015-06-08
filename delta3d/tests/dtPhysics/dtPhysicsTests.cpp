@@ -1407,7 +1407,6 @@ namespace dtPhysics
       tehVoodoo->AddPhysicsObject(*physicsObject1, true);
       CPPUNIT_ASSERT(tehVoodoo->GetMainPhysicsObject() == physicsObject1);
 
-
       std::vector<PhysicsObject*> toFill;
 
       tehVoodoo->GetAllPhysicsObjects(toFill);
@@ -1465,6 +1464,19 @@ namespace dtPhysics
       tehVoodoo->ForEachPhysicsObject(getAllFunc);
       CPPUNIT_ASSERT_EQUAL(3U, getAllFunc.mCount);
       CPPUNIT_ASSERT(!getAllFunc.mFoundNull);
+
+      physicsObject1->Create();
+      physicsObject2->Create();
+      physicsObject3->Create();
+
+      tehVoodoo->SetAllActive(true);
+      CPPUNIT_ASSERT_MESSAGE("physics object1 should be active", tehVoodoo->GetPhysicsObject(name1)->IsActive());
+      CPPUNIT_ASSERT_MESSAGE("physics object1 should be active", tehVoodoo->GetPhysicsObject(name2)->IsActive());
+      CPPUNIT_ASSERT_MESSAGE("physics object1 should be active", tehVoodoo->GetPhysicsObject(name3)->IsActive());
+      tehVoodoo->SetAllActive(false);
+      CPPUNIT_ASSERT_MESSAGE("physics object1 should not active", !tehVoodoo->GetPhysicsObject(name1)->IsActive());
+      CPPUNIT_ASSERT_MESSAGE("physics object1 should not active", !tehVoodoo->GetPhysicsObject(name2)->IsActive());
+      CPPUNIT_ASSERT_MESSAGE("physics object1 should not active", !tehVoodoo->GetPhysicsObject(name3)->IsActive());
 
       // see if they exist
       CPPUNIT_ASSERT_MESSAGE("physics object1 should be on actorComp", tehVoodoo->GetPhysicsObject(name1) != NULL);
