@@ -19,6 +19,7 @@
 
 #include <dtVoxel/voxelgeometry.h>
 #include <dtPhysics/palutil.h>
+#include <dtPhysics/palphysicsworld.h>
 
 namespace dtVoxel
 {
@@ -27,7 +28,7 @@ namespace dtVoxel
    {
       dtCore::RefPtr<VoxelGeometry> result = new VoxelGeometry();
 
-      palCustomConcaveGeometry* convGeom = palFactory::GetInstance()->CreateCustomConcaveGeometry();
+      palCustomConcaveGeometry* convGeom = dtPhysics::PhysicsWorld::GetInstance().GetPalFactory()->CreateCustomConcaveGeometry();
       if(convGeom == NULL)
       {
          LOG_ERROR("Failed to create voxel geometry.");
