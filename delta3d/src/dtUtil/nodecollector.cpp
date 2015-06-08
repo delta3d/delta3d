@@ -470,7 +470,41 @@ namespace dtUtil
    //Function that is used to request a CONST pointer to a Group Node
    const osg::Group* NodeCollector::GetGroup(const std::string& nodeName) const
    {
-      return CollectorUtil::FindNodePointer(nodeName, mGroupNodeMap);
+      // TODO: Consolidate both const and non-const versions of this method.
+
+      const osg::Group* group = CollectorUtil::FindNodePointer(nodeName, mGroupNodeMap);
+
+      // This if-chain is not ideal. However this reduces complexity
+      // in the Group visitor and reduces the need for redundant references,
+      // in the Group map, such as for other node types that extend Group which
+      // already have their own maps.
+      // This chain is ordered for most commonly accessed nodes to the least.
+      if (group == NULL)
+      {
+         group = CollectorUtil::FindNodePointer(nodeName, mTranformNodeMap);
+      }
+
+      if (group == NULL)
+      {
+         group = CollectorUtil::FindNodePointer(nodeName, mMatrixTransformNodeMap);
+      }
+
+      if (group == NULL)
+      {
+         group = CollectorUtil::FindNodePointer(nodeName, mMultiSwitchNodeMap);
+      }
+
+      if (group == NULL)
+      {
+         group = CollectorUtil::FindNodePointer(nodeName, mSwitchNodeMap);
+      }
+
+      if (group == NULL)
+      {
+         group = CollectorUtil::FindNodePointer(nodeName, mLODNodeMap);
+      }
+
+      return group;
    }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -528,7 +562,41 @@ namespace dtUtil
    //Function that is used to request a pointer to a Group Node
    osg::Group* NodeCollector::GetGroup(const std::string& nodeName)
    {
-      return CollectorUtil::FindNodePointer(nodeName, mGroupNodeMap);
+      // TODO: Consolidate both const and non-const versions of this method.
+
+      osg::Group* group = CollectorUtil::FindNodePointer(nodeName, mGroupNodeMap);
+
+      // This if-chain is not ideal. However this reduces complexity
+      // in the Group visitor and reduces the need for redundant references,
+      // in the Group map, such as for other node types that extend Group which
+      // already have their own maps.
+      // This chain is ordered for most commonly accessed nodes to the least.
+      if (group == NULL)
+      {
+         group = CollectorUtil::FindNodePointer(nodeName, mTranformNodeMap);
+      }
+      
+      if (group == NULL)
+      {
+         group = CollectorUtil::FindNodePointer(nodeName, mMatrixTransformNodeMap);
+      }
+      
+      if (group == NULL)
+      {
+         group = CollectorUtil::FindNodePointer(nodeName, mMultiSwitchNodeMap);
+      }
+      
+      if (group == NULL)
+      {
+         group = CollectorUtil::FindNodePointer(nodeName, mSwitchNodeMap);
+      }
+      
+      if (group == NULL)
+      {
+         group = CollectorUtil::FindNodePointer(nodeName, mLODNodeMap);
+      }
+
+      return group;
    }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
