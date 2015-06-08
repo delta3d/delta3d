@@ -265,22 +265,22 @@ namespace dtVoxel
       dtCore::RefPtr<osg::LOD> lodNode = new osg::LOD();
 
       dtCore::RefPtr<osg::Group> node0 = new osg::Group;
-      dtCore::RefPtr<osg::Group> node1 = new osg::Group;
+      /*dtCore::RefPtr<osg::Group> node1 = new osg::Group;
       dtCore::RefPtr<osg::Group> node2 = new osg::Group;
-      dtCore::RefPtr<osg::Group> node3 = new osg::Group;
+      dtCore::RefPtr<osg::Group> node3 = new osg::Group;*/
 
-     
-      //AllocateCombinedMesh(voxelActor, *node0, resolution0);
-      AllocateCells(voxelActor, *node0, resolution0);
-      AllocateCombinedMesh(voxelActor, *node1, resolution1);
-      AllocateCombinedMesh(voxelActor, *node2, resolution2);
-      AllocateCombinedMesh(voxelActor, *node3, resolution3);
+          
+      //AllocateCells(voxelActor, *node0, resolution0);
+      AllocateCombinedMesh(voxelActor, *node0, resolution0);
+      //AllocateCombinedMesh(voxelActor, *node1, resolution1);
+      //AllocateCombinedMesh(voxelActor, *node2, resolution2);
+      //AllocateCombinedMesh(voxelActor, *node3, resolution3);
       
 
-      lodNode->addChild(node0, 0.0f, dist0);
-      lodNode->addChild(node1, dist0, dist1);
-      lodNode->addChild(node2, dist1, dist2);
-      lodNode->addChild(node3, dist2, viewDistance);
+      lodNode->addChild(node0, 0.0f, viewDistance);
+      //lodNode->addChild(node1, dist0, dist1);
+      //lodNode->addChild(node2, dist1, dist2);
+      //lodNode->addChild(node3, dist2, viewDistance);
 
       lodNode->setRadius((mWSDimensions * 0.5).length());
       lodNode->setCenterMode(osg::LOD::CenterMode::USER_DEFINED_CENTER);
@@ -354,13 +354,13 @@ namespace dtVoxel
       geode->addDrawable(geom);
       parentNode.addChild(geode);      
 
-      dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
+      /*dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
       simplifier->setMaximumLength(100.0f);
       simplifier->setDoTriStrip(true);
       parentNode.accept(*simplifier);
       
       osgUtil::Optimizer opt;
-      opt.optimize(&parentNode, osgUtil::Optimizer::ALL_OPTIMIZATIONS);
+      opt.optimize(&parentNode, osgUtil::Optimizer::ALL_OPTIMIZATIONS);*/
 
 
       /*osg::StateSet* ss = parentNode.getOrCreateStateSet();
