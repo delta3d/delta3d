@@ -234,6 +234,7 @@ namespace dtVoxel
                         if (curBlock->GetDirty())
                         {
                            curBlock->AllocateLODMesh(*mVoxelActor, res0, dist0, res1, dist1, res2, dist2, res3, mViewDistance);
+                           mRootNode->addChild(curBlock->GetOSGNode());
                         }
                         else if (curBlock->LoadCachedModel(mCacheFolder, index))
                         {
@@ -301,21 +302,22 @@ namespace dtVoxel
 
       osg::Vec3i res0 = mTextureResolution;
 
-      float dist0 = 150.0f;
+      float dist0 = 100.0f;
       osg::Vec3i res1(int(std::floor(float(mTextureResolution[0]) * 0.75f)),
          int(std::floor(float(mTextureResolution[1]) * 0.75f)),
          int(std::floor(float(mTextureResolution[2]) * 0.75f)));
       
-      float dist1 = 350.0f;
+      float dist1 = 300.0f;
 
-      osg::Vec3i res2(int(std::floor(float(mTextureResolution[0]) * 0.75f)),
-         int(std::floor(float(mTextureResolution[1]) * 0.75f)),
-         int(std::floor(float(mTextureResolution[2]) * 0.75f)));
+      osg::Vec3i res2(int(std::floor(float(res1[0]) * 0.75f)),
+         int(std::floor(float(res1[1]) * 0.75f)),
+         int(std::floor(float(res1[2]) * 0.75f)));
+      
       float dist2 = 550.0f;
 
-      osg::Vec3i res3(1 + int(std::floor(float(mTextureResolution[0]) * 0.75f)),
-         1 + int(std::floor(float(mTextureResolution[1]) * 0.75f)),
-         1 + int(std::floor(float(mTextureResolution[2]) * 0.75f)));
+      osg::Vec3i res3(1 + int(std::floor(float(res2[0]) * 0.75f)),
+         1 + int(std::floor(float(res2[1]) * 0.75f)),
+         1 + int(std::floor(float(res2[2]) * 0.75f)));
 
 
       dtCore::RefPtr<osg::Group> currentGroup = NULL;

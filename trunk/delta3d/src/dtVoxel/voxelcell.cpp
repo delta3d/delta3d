@@ -65,6 +65,7 @@ namespace dtVoxel
    VoxelCell::~VoxelCell()
    {
       delete mImpl;
+      mImpl = NULL;
    }
 
    bool VoxelCell::IsAllocated() const
@@ -97,15 +98,6 @@ namespace dtVoxel
       mImpl->mOffset = transform.getTrans();
 
       osg::Vec3 texelSize(cellSize[0] / float(resolution[0]), cellSize[1] / float(resolution[1]), cellSize[2] / float(resolution[2]));
-
-
-      /*openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(voxelActor.GetGrid(0));
-
-      openvdb::FloatGrid::ConstAccessor accessor = gridB->getConstAccessor();
-
-      openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>
-      fastSampler(accessor, gridB->transform());*/
-
 
       openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(voxelActor.GetGrid(0));
       //openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(localGrid);
@@ -228,7 +220,6 @@ namespace dtVoxel
       dtCore::RefPtr<osg::Geometry> geom = new osg::Geometry();
       dtCore::RefPtr<osg::Vec3Array> vertArray = new osg::Vec3Array();
       dtCore::RefPtr<osg::Vec3Array> normalArray = new osg::Vec3Array();
-      dtCore::RefPtr<osg::Vec3Array> colorArray = new osg::Vec3Array();
       dtCore::RefPtr<osg::DrawElementsUInt> drawElements = new osg::DrawElementsUInt(GL_TRIANGLES);
 
       mImpl->mOffset = transform.getTrans();
@@ -352,10 +343,10 @@ namespace dtVoxel
       
       mImpl->mMeshNode->addDrawable(geom);
 
-      dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
+      /*dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
       simplifier->setMaximumLength(100.0f);
       simplifier->setDoTriStrip(true);
-      mImpl->mMeshNode->accept(*simplifier);
+      mImpl->mMeshNode->accept(*simplifier);*/
 
       //std::cout << "Num Triangles After Simplifier " << geom->getVertexArray()->getNumElements() << std::endl;
       
@@ -526,37 +517,6 @@ namespace dtVoxel
 
        mImpl->mImage = new osgVolume::ImageLayer(image.get());
    }
-
-   /*openvdb::GridBase::Ptr VoxelCell::CreateLocalResolutionGrid(openvdb::GridBase::Ptr gridPtr, const osg::Vec3& cellSize)
-   {
-      openvdb::Mat4R m;
-      m.setToScale(openvdb::Vec3R(cellSize[0], cellSize[1], cellSize[2]));
-      openvdb::math::Transform::Ptr xform = openvdb::math::Transform::createLinearTransform(m);
-      xform->voxelSize(openvdb::Vec3R(cellSize[0], cellSize[1], cellSize[2]));
-
-      openvdb::FloatGrid::Ptr outGrid = openvdb::FloatGrid::create();
-      outGrid->setTransform(xform);
-
-      struct Local {
-         static inline void op(
-            const openvdb::FloatGrid::ValueOnCIter& iter,
-            typename openvdb::FloatGrid::Accessor& accessor)
-         {
-            if (iter.isVoxelValue()) { // set a single voxel
-               accessor.setValue(iter.getCoord(), openvdb::math::Abs(*iter) > FLT_EPSILON);
-            }
-            else { // fill an entire tile
-               openvdb::CoordBBox bbox;
-               iter.getBoundingBox(bbox);
-               accessor.getTree()->fill(bbox, openvdb::math::Abs(*iter) > FLT_EPSILON);
-            }
-         }
-      };
-
-      openvdb::tools::transformValues(gridPtr->cbeginValueOn(), *outGrid, Local::op);
-
-      return outGrid;
-   }*/
    
    osg::Node* VoxelCell::GetOSGNode()
    {
@@ -573,18 +533,6 @@ namespace dtVoxel
    osg::Vec3 VoxelCell::GetOffset() const
    {
       return mImpl->mOffset;
-
-       /*osg::Vec3 result;
-       if (mImpl->mVolumeTile.valid())
-       {
-          osgVolume::Locator* locator = mImpl->mVolumeTile->getLocator();
-          if (locator != NULL)
-          {
-             result = locator->getTransform().getTrans();
-          }
-       }
-
-       return result;*/
    }
 
 
