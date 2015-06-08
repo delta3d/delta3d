@@ -189,6 +189,24 @@ namespace dtVoxel
       int endY = startY + blocksY;
       int endZ = startZ + blocksZ;
 
+      osg::Vec3i res0 = mTextureResolution;
+
+      float dist0 = 150.0f;
+      osg::Vec3i res1(int(std::floor(float(mTextureResolution[0]) * 0.75f)),
+         int(std::floor(float(mTextureResolution[1]) * 0.75f)),
+         int(std::floor(float(mTextureResolution[2]) * 0.75f)));
+
+      float dist1 = 350.0f;
+
+      osg::Vec3i res2(int(std::floor(float(mTextureResolution[0]) * 0.75f)),
+         int(std::floor(float(mTextureResolution[1]) * 0.75f)),
+         int(std::floor(float(mTextureResolution[2]) * 0.75f)));
+      float dist2 = 550.0f;
+
+      osg::Vec3i res3(1 + int(std::floor(float(mTextureResolution[0]) * 0.75f)),
+         1 + int(std::floor(float(mTextureResolution[1]) * 0.75f)),
+         1 + int(std::floor(float(mTextureResolution[2]) * 0.75f)));
+
       //std::cout << "end X " << endX << " end Y " << endY << " end Z " << endZ << std::endl;
     
       for (int z = startZ; z < endZ; z++)
@@ -205,18 +223,22 @@ namespace dtVoxel
 
                   bool posInOldBounds = mAllocatedBounds.contains(centerPos);
                   bool posInNewBounds = newBounds.contains(centerPos);
-
-                  if (posInNewBounds)
+                   
+                  if (posInNewBounds) 
                   {
                      //allocate
                      if (!curBlock->GetEmpty() && !curBlock->IsAllocated())
                      {
                         int index = (z * mBlocksY * mBlocksX) + (y * mBlocksX) + x;
 
-                        if (curBlock->LoadCachedModel(mCacheFolder, index))
+                        if (curBlock->GetDirty())
+                        {
+                           curBlock->AllocateLODMesh(*mVoxelActor, res0, dist0, res1, dist1, res2, dist2, res3, mViewDistance);
+                        }
+                        else if (curBlock->LoadCachedModel(mCacheFolder, index))
                         {
                            mRootNode->addChild(curBlock->GetOSGNode());
-                        }
+                        }                        
                         else
                         {
                            LOG_ERROR("No data found for block " + dtUtil::ToString(index) );
@@ -224,11 +246,7 @@ namespace dtVoxel
                            //curBlock->SaveCachedModel(mCacheFolder, index);
                         }
 
-                     }
-                     else if (curBlock->GetDirty())
-                     {
-                        curBlock->RegenerateAABB(*mVoxelActor, newBounds, mTextureResolution);
-                     }
+                     }                     
 
                   }
                   else if (posInOldBounds)
