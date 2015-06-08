@@ -228,15 +228,16 @@ namespace dtVoxel
          {
             dtPhysics::TransformType xform;
             VoxelGeometryPtr geometry;
-            openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(GetGrid(0));
-            if (gridB)
+            openvdb::FloatGrid::Ptr gridF = boost::dynamic_pointer_cast<openvdb::FloatGrid>(GetGrid(0));
+            if (gridF)
             {
-               geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridB);
+               geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridF);
             }
             else
             {
-               openvdb::FloatGrid::Ptr gridF = boost::dynamic_pointer_cast<openvdb::FloatGrid>(GetGrid(0));
-               geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridF);
+               openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(GetGrid(0));
+               if (gridB)
+                  geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridB);
             }
             if (geometry.valid())
                po->CreateFromGeometry(*geometry);
