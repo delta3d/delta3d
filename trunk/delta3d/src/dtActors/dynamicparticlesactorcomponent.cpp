@@ -39,6 +39,7 @@
 #include <dtGame/basemessages.h>
 #include <dtGame/messagetype.h>
 #include <dtUtil/mathdefines.h>
+#include <dtUtil/matrixutil.h>
 #include <dtUtil/nodecollector.h>
 #include <osg/MatrixTransform>
 #include <osg/Geode>
@@ -105,6 +106,10 @@ namespace dtActors
          "Name of a node in the parent actor's drawable to which to attach the particle system.",
          PropertyRegType, propertyRegHelper);
 
+      DT_REGISTER_PROPERTY(AttachDirectly,
+         "Determines if the particles should attach to the parent drawable or simply be moved with it every tick.",
+         PropertyRegType, propertyRegHelper);
+
       DT_REGISTER_PROPERTY(ShaderGroup,
          "Shader to apply to the particle system.",
          PropertyRegType, propertyRegHelper);
@@ -150,6 +155,7 @@ namespace dtActors
    DT_IMPLEMENT_ACCESSOR(DynamicParticlesPropertyContainer, float, UpdateFrequency);
    DT_IMPLEMENT_ACCESSOR(DynamicParticlesPropertyContainer, float, VelocityMin);
    DT_IMPLEMENT_ACCESSOR(DynamicParticlesPropertyContainer, float, VelocityMax);
+   DT_IMPLEMENT_ACCESSOR(DynamicParticlesPropertyContainer, bool, AttachDirectly);
    DT_IMPLEMENT_ACCESSOR(DynamicParticlesPropertyContainer, std::string, AttachNodeName);
    DT_IMPLEMENT_ACCESSOR(DynamicParticlesPropertyContainer, std::string, ShaderGroup);
    DT_IMPLEMENT_ACCESSOR(DynamicParticlesPropertyContainer, osg::Vec3, Offset);
@@ -183,11 +189,15 @@ namespace dtActors
 
       if (drawable != nullptr && mParticleSystem.valid())
       {
-         // Attach the particles to the parent drawable.
-         //mParticleSystem->Emancipate();
-         mParticleSystemActor->SetParentActor(mOwner.get());
-         
-         if (attachNode != nullptr)
+         mAttachNode = attachNode;
+
+         if (mAttachDirectly || mAttachNode.valid())
+         {
+            // Attach the particles to the parent drawable.
+            mParticleSystemActor->SetParentActor(mOwner.get());
+         }
+
+         if (mAttachDirectly && mAttachNode.valid())
          {
             osg::Node* node = mParticleSystem->GetOSGNode();
 
@@ -200,7 +210,7 @@ namespace dtActors
             }
 
             // Attach to the new node.
-            attachNode->addChild(node);
+            mAttachNode->addChild(node);
          }
 
          // Offset the particles' transform.
@@ -382,6 +392,26 @@ namespace dtActors
          {
             InterpolateParticleSystem(*mParticleSystem, ratio);
          }
+      }
+
+      // Indirect attach...
+      if (! mAttachDirectly && mAttachNode.valid() && mParticleSystem.valid())
+      {
+         dtCore::Transform xform;
+         osg::Matrix mtx;
+
+         dtCore::Transformable::GetAbsoluteMatrix(mAttachNode.get(), mtx);
+         xform.Set(mtx);
+
+         osg::Matrix rot;
+         dtUtil::MatrixUtil::HprToMatrix(rot, mOffsetRotation);
+         osg::Vec3 finalPos = mtx.preMult(mOffset);
+         osg::Matrix finalRot = mtx * rot;
+
+         dtCore::Transform relXform;
+         xform.SetTranslation(finalPos);
+         xform.SetRotation(finalRot);
+         mParticleSystem->SetTransform(xform);
       }
    }
 

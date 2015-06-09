@@ -71,6 +71,7 @@ namespace dtActors
       DT_DECLARE_ACCESSOR(float, UpdateFrequency);
       DT_DECLARE_ACCESSOR(float, VelocityMin);
       DT_DECLARE_ACCESSOR(float, VelocityMax);
+      DT_DECLARE_ACCESSOR(bool, AttachDirectly);
       DT_DECLARE_ACCESSOR(std::string, AttachNodeName);
       DT_DECLARE_ACCESSOR(std::string, ShaderGroup);
       DT_DECLARE_ACCESSOR(osg::Vec3, Offset);
@@ -105,6 +106,7 @@ namespace dtActors
       dtCore::RefPtr<DynamicParticleSystemActor> mParticleSystemActor;
       dtCore::RefPtr<DynamicParticleSystem> mParticleSystem;
       dtCore::ObserverPtr<dtGame::GameActorProxy> mOwner;
+      dtCore::ObserverPtr<osg::Group> mAttachNode;
    };
 
 
