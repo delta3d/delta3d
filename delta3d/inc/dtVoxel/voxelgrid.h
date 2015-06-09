@@ -81,7 +81,22 @@ namespace dtVoxel
 
       osg::Vec3 GetCenterOfBlock(int x, int y, int z);
       void GenerateCacheString();
+      
+
+      bool ReadBlockVisibility();
+      bool WriteBlockVisibility();
+
       virtual ~VoxelGrid();
+
+      osg::Vec3i mRes0;
+      osg::Vec3i mRes1;
+      osg::Vec3i mRes2;
+      osg::Vec3i mRes3;
+
+      DT_DECLARE_ACCESSOR_INLINE(float, Dist0)
+      DT_DECLARE_ACCESSOR_INLINE(float, Dist1)
+      DT_DECLARE_ACCESSOR_INLINE(float, Dist2)
+
    
    private:
       osg::BoundingBox mAllocatedBounds;
@@ -89,6 +104,7 @@ namespace dtVoxel
       dtCore::RefPtr<osg::Group> mRootNode;
       dtCore::ObserverPtr<VoxelActor> mVoxelActor;
       std::string mCacheFolder;
+      std::vector<bool> mBlockVisibility;
       VoxelBlock* mBlocks;
       
    };
