@@ -211,7 +211,7 @@ namespace dtVoxel
 
    void VoxelCell::CreateMesh(VoxelActor& voxelActor, openvdb::GridBase::Ptr localGrid, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution)
    {
-      static int mesh_count = 0;
+      //static int mesh_count = 0;
 
       //std::cout << "Creating Voxel Cell " << mesh_count++ << std::endl;
 
@@ -457,7 +457,7 @@ namespace dtVoxel
        std::cout << "Cell Offset: " << offset[0] << " " << offset[1] << " " << offset[2] << std::endl;
 
        osg::Vec3 texelSize(cellSize[0] / float(width), cellSize[1] / float(height), cellSize[2] / float(slices));
-       osg::Vec3 halfTexel = texelSize * 0.5;
+       //osg::Vec3 halfTexel = texelSize * 0.5;
               
        AABBIntersector<openvdb::FloatGrid> aabb(boost::dynamic_pointer_cast<openvdb::FloatGrid>(gridPtr));
        
