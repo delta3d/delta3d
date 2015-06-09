@@ -28,6 +28,7 @@
 
 #include <osgDB/WriteFile>
 #include <osg/PolygonMode>
+#include <osg/PagedLOD>
 
 #include <tbb/parallel_for.h>
 #include <iostream>
@@ -287,6 +288,87 @@ namespace dtVoxel
       mIsAllocated = true;
    }
 
+   void VoxelBlock::WritePagedLOD(VoxelActor& voxelActor, int index, const std::string& filePath, const osg::Vec3i& resolution0, float dist0, const osg::Vec3i& resolution1, float dist1, const osg::Vec3i& resolution2, float dist2, const osg::Vec3i& resolution3, float viewDistance)
+   {
+      osg::Vec3 gridDim(
+         1.0 + int(std::floor(mWSDimensions[0] / mWSCellDimensions[0])),
+         1.0 + int(std::floor(mWSDimensions[1] / mWSCellDimensions[1])),
+         1.0 + int(std::floor(mWSDimensions[2] / mWSCellDimensions[2])));
+
+      mNumCells = gridDim[0] * gridDim[1] * gridDim[2];
+      //todo catch out of memory exception here
+      mCells = new VoxelCell[mNumCells];
+
+
+      dtCore::RefPtr<osg::PagedLOD> lodNode = new osg::PagedLOD();
+      lodNode->setDatabasePath(filePath);
+      lodNode->setRadius(2.0 * mWSDimensions.length());
+      lodNode->setCenter(mOffset + (mWSDimensions * 0.5f));
+
+      dtCore::RefPtr<osg::Group> node0 = new osg::Group;
+      dtCore::RefPtr<osg::Group> node1 = new osg::Group;
+      dtCore::RefPtr<osg::Group> node2 = new osg::Group;
+      dtCore::RefPtr<osg::Group> node3 = new osg::Group;
+
+
+      //AllocateCells(voxelActor, *node0, gridDim, resolution0);
+      AllocateCombinedMesh(voxelActor, *node0, gridDim, resolution0);      
+      std::string fileName = SaveCachedModel(filePath, *node0, index, 0);
+      if (!fileName.empty())
+      {
+         lodNode->setFileName(0, fileName);
+         lodNode->setRange(0, 0.0f, dist0);
+      }
+      else
+      {
+         LOG_ERROR("Error writing paged lod node 0.");
+      }
+
+      AllocateCombinedMesh(voxelActor, *node1, gridDim, resolution1);      
+      fileName = SaveCachedModel(filePath, *node1, index, 1);
+      if (!fileName.empty())
+      {
+         lodNode->setFileName(1, fileName);
+         lodNode->setRange(1, dist0, dist1);
+      }
+      else
+      {
+         LOG_ERROR("Error writing paged lod node 1.");
+      }
+
+      AllocateCombinedMesh(voxelActor, *node2, gridDim, resolution2);      
+      fileName = SaveCachedModel(filePath, *node2, index, 2);
+      if (!fileName.empty())
+      {
+         lodNode->setFileName(2, fileName);
+         lodNode->setRange(2, dist1, dist2);
+      }
+      else
+      {
+         LOG_ERROR("Error writing paged lod node 2.");
+      }
+
+      AllocateCombinedMesh(voxelActor, *node3, gridDim, resolution3);
+      fileName = SaveCachedModel(filePath, *node3, index, 3);
+      if (!fileName.empty())
+      {
+         lodNode->setFileName(3, fileName);
+         lodNode->setRange(3, dist2, viewDistance);
+      }
+      else
+      {
+         LOG_ERROR("Error writing paged lod node 3.");
+      }
+
+
+      mVolume->addChild(lodNode);
+
+      SaveCachedModel(filePath, index);
+
+      mIsAllocated = true;
+   }
+
+
    void VoxelBlock::AllocateCombinedMesh(VoxelActor& voxelActor, osg::Group& parentNode, const osg::Vec3& gridDimensions, const osg::Vec3i& textureResolution)
    {
       std::cout << "Allocating Combined Voxel Block" << std::endl;
@@ -341,21 +423,21 @@ namespace dtVoxel
       parentNode.addChild(geode);      
 
       /*dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
-      simplifier->setMaximumLength(100.0f);
+      simplifier->setSampleRatio(0.2);
       simplifier->setDoTriStrip(true);
       parentNode.accept(*simplifier);
       
       osgUtil::Optimizer opt;
-      opt.optimize(&parentNode, osgUtil::Optimizer::ALL_OPTIMIZATIONS);*/
+      opt.optimize(&parentNode, osgUtil::Optimizer::MAKE_FAST_GEOMETRY);*/
 
 
-      /*osg::StateSet* ss = parentNode.getOrCreateStateSet();
+      osg::StateSet* ss = parentNode.getOrCreateStateSet();
 
-      osg::ref_ptr<osg::PolygonMode> polymode = new osg::PolygonMode;
+      /*osg::ref_ptr<osg::PolygonMode> polymode = new osg::PolygonMode;
       polymode->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
-      ss->setAttributeAndModes(polymode.get(), osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+      ss->setAttributeAndModes(polymode.get(), osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);*/
 
-      ss->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);*/
+      /*ss->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);*/
 
       
       mIsAllocated = true;
@@ -435,7 +517,7 @@ namespace dtVoxel
 
       dtUtil::MakeIndexString(index, indexString, 8);
 
-      fileName << filePath << "VoxelGrid_cache" << indexString << ".osgb";
+      fileName << filePath << "VoxelGrid_cache" << indexString << "_paged.osgt";
 
       if (dtUtil::FileUtils::GetInstance().FileExists(fileName.str()))
       {
@@ -456,7 +538,7 @@ namespace dtVoxel
 
       dtUtil::MakeIndexString(index, indexString, 8);
 
-      fileName << filePath << "VoxelGrid_cache" << indexString << ".osgb";
+      fileName << filePath << "VoxelGrid_cache" << indexString << "_paged.osgt";
 
       if (dtUtil::FileUtils::GetInstance().FileExists(fileName.str()))
       {
@@ -466,6 +548,7 @@ namespace dtVoxel
          if (n != nullptr)
          {
             mVolume->addChild(n);
+               
             mIsAllocated = true;
             result = true;
          }
@@ -492,13 +575,48 @@ namespace dtVoxel
 
       dtUtil::MakeIndexString(index, indexString, 8);
 
-      fileName << filePath << "VoxelGrid_cache" << indexString << ".osgb";
+      fileName << filePath << "VoxelGrid_cache" << indexString << "_paged.osgt";
 
       if (dtUtil::FileUtils::GetInstance().DirExists(filePath))
       {
          result = osgDB::writeNodeFile(*mVolume, fileName.str());
 
-         std::cout << "Writing block num " << index << " to model cache " << fileName.str() << std::endl;
+         std::cout << "Writing PagedLOD for block num " << index << " to model cache " << fileName.str() << std::endl;
+      }
+
+      return result;
+   }
+
+   std::string VoxelBlock::SaveCachedModel(const std::string& folderName, osg::Node& n, int index, int lod)
+   {
+      std::string result;
+
+      std::string filePath = dtCore::Project::GetInstance().GetContext() + "/" + folderName + "/";
+
+      std::string indexString;
+      std::string lodString;
+      std::stringstream fileName;
+
+      dtUtil::MakeIndexString(index, indexString, 8);
+      dtUtil::MakeIndexString(lod, lodString, 3);
+
+      fileName << "VoxelGrid_cache" << indexString << "_lod" << lodString << ".osgb";
+
+      if (dtUtil::FileUtils::GetInstance().DirExists(filePath))
+      {
+         bool success = osgDB::writeNodeFile(n, filePath + fileName.str());
+
+         if (success)
+         {
+            //result will be empty string if this fails
+            result = fileName.str();
+            std::cout << "Writing lod " << lod << " for block num " << index << " to model   cache " << filePath + fileName.str() << std::endl;
+         }
+         else
+         {
+            LOG_ERROR("Error writing block to disk.");
+         }
+
       }
 
       return result;

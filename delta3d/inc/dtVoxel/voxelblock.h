@@ -52,7 +52,8 @@ namespace dtVoxel
 
       void AllocateLODMesh(VoxelActor& voxelActor, const osg::Vec3i& resolution0, float dist0, const osg::Vec3i& resolution1, float dist1, const osg::Vec3i& resolution2, float dist2, const osg::Vec3i& resolution3, float viewDistance);
 
-      
+      void WritePagedLOD(VoxelActor& voxelActor, int index, const std::string& filePath, const osg::Vec3i& resolution0, float dist0, const osg::Vec3i& resolution1, float dist1, const osg::Vec3i& resolution2, float dist2, const osg::Vec3i& resolution3, float viewDistance);
+
       void RegenerateAABB(VoxelActor& voxelActor, const osg::BoundingBox& bb, const osg::Vec3i& textureResolution);
 
       //void AllocateCell(const osg::Vec3& pos, const osg::Vec3i& textureResolution);
@@ -68,8 +69,11 @@ namespace dtVoxel
       bool HasCachedModel(const std::string& folderName, int index);
 
       bool SaveCachedModel(const std::string& folderName, int index);
+      
+      std::string SaveCachedModel(const std::string& folderName, osg::Node& n, int index, int lod);
 
       bool LoadCachedModel(const std::string& folderName, int index);
+      bool LoadPagedLODModel(const std::string& folderName, int index);
 
    protected:
       void AllocateCells(VoxelActor& voxelActor, osg::Group& parentNode, const osg::Vec3& gridDimensions, const osg::Vec3i& textureResolution);
