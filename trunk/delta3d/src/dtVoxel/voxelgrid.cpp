@@ -30,6 +30,9 @@
 #include <fstream>
 #include <tbb/parallel_for.h>
 
+#include <OpenThreads/Mutex>
+#include <OpenThreads/ScopedLock>
+
 const char START_END_CHAR = '!';
 const int FILE_IDENT = 99834;
 const std::string DATABASE_FILENAME("VoxelGridDatabase.osgb");
@@ -42,7 +45,7 @@ namespace dtVoxel
       , mBlocksY(0)
       , mBlocksZ(0)
       , mNumBlocks(0)
-      , mViewDistance(1000.0f)
+      , mViewDistance(750.0f)
       , mGridOffset()
       , mWSDimensions()
       , mBlockDimensions()
@@ -373,6 +376,8 @@ namespace dtVoxel
 
    void VoxelGrid::CreatePagedLODGrid(const osg::Vec3& pos, VoxelActor& voxelActor)
    {
+      OpenThreads::Mutex m;
+
       if (!mInitialized)
       {
          LOG_ERROR("VoxelGrid has not been initialized.");
@@ -403,10 +408,10 @@ namespace dtVoxel
       OpenThreads::Atomic blockCount;
       for (int z = 0; z < mBlocksZ; z++)
       {         
-         //tbb::parallel_for(tbb::blocked_range<int>(0, mBlocksY),
-           // [=, &blockCount](const tbb::blocked_range<int>& r)
-         //{
-            for (int y = 0; y < mBlocksY; y++)
+         tbb::parallel_for(tbb::blocked_range<int>(0, mBlocksY),
+            [=, &blockCount, &m](const tbb::blocked_range<int>& r)
+         {
+            for (int y = r.begin(); y != r.end(); ++y)//(int y = 0; y < mBlocksY; y++)
             {
                for (int x = 0; x < mBlocksX; x++)
                {
@@ -432,7 +437,10 @@ namespace dtVoxel
                         curBlock->WritePagedLOD(*mVoxelActor, index, mCacheFolder, mRes0, mDist0, mRes1, mDist1, mRes2, mDist2, mRes3, mViewDistance);
                      }
 
-                     mRootNode->addChild(curBlock->GetOSGNode());
+                     {
+                        OpenThreads::ScopedLock<OpenThreads::Mutex> addChildMutex(m);
+                        mRootNode->addChild(curBlock->GetOSGNode());
+                     }
 
                      curBlock->SetEmpty(false);
                   }
@@ -442,7 +450,7 @@ namespace dtVoxel
                std::cout << std::endl << mNumBlocks - blockCount << " Blocks remaining." << std::endl;
 
             }
-         //});
+         });
       }
 
       std::cout << std::endl << "Done Creating Voxel Grid" << std::endl;
