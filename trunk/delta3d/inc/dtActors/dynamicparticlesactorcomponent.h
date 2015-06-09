@@ -69,15 +69,16 @@ namespace dtActors
       DT_DECLARE_ACCESSOR(dtCore::ResourceDescriptor, ParticleFile);
       DT_DECLARE_ACCESSOR(bool, Enabled);
       DT_DECLARE_ACCESSOR(float, UpdateFrequency);
-      DT_DECLARE_ACCESSOR(float, VelocityMin);
-      DT_DECLARE_ACCESSOR(float, VelocityMax);
+      DT_DECLARE_ACCESSOR(float, OwnerSpeedMin);
+      DT_DECLARE_ACCESSOR(float, OwnerSpeedMax);
+      DT_DECLARE_ACCESSOR(bool, RelativeToParent);
       DT_DECLARE_ACCESSOR(bool, AttachDirectly);
       DT_DECLARE_ACCESSOR(std::string, AttachNodeName);
       DT_DECLARE_ACCESSOR(std::string, ShaderGroup);
       DT_DECLARE_ACCESSOR(osg::Vec3, Offset);
       DT_DECLARE_ACCESSOR(osg::Vec3, OffsetRotation);
 
-      float GetVelocityRatio(float velocity) const;
+      float GetSpeedRatio(float speed) const;
 
       void InterpolateParticleSystem(float ratio);
 
@@ -96,7 +97,8 @@ namespace dtActors
       dtActors::DynamicParticleSystem* CreateParticleSystem();
 
       dtCore::RefPtr<DynamicParticlesActor> CreateDynamicParticleSystemActor(
-         const dtCore::ResourceDescriptor& rd, const std::string& actorName);
+         const dtCore::ResourceDescriptor& rd, const std::string& actorName,
+         bool relativeToParent);
 
       void InterpolateParticleSystem(DynamicParticles& particles, float ratio);
 
