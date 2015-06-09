@@ -212,7 +212,7 @@ namespace dtVoxel
          xform.GetTranslation(pos);
 
          mGrid->SetViewDistance(mViewDistance);
-         mGrid->CreateGridFromActor(pos, *this);
+         mGrid->CreatePagedLODGrid(pos, *this);
       }
       else
       {

@@ -23,13 +23,16 @@
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/mathdefines.h>
+#include <osgDB/WriteFile>
 #include <osgUtil/Optimizer>
+#include <osg/PagedLOD>
 #include <iostream>
 #include <fstream>
 #include <tbb/parallel_for.h>
 
 const char START_END_CHAR = '!';
 const int FILE_IDENT = 99834;
+const std::string DATABASE_FILENAME("VoxelGridDatabase.osgb");
 
 namespace dtVoxel
 {
@@ -76,6 +79,9 @@ namespace dtVoxel
       mBlocksZ = int(std::floor(mWSDimensions[2] / mBlockDimensions[2]));
 
       mNumBlocks = mBlocksX * mBlocksY * mBlocksZ;
+
+      mBlocks = new VoxelBlock[mNumBlocks];
+
 
       mRes0 = mTextureResolution;
 
@@ -173,7 +179,9 @@ namespace dtVoxel
 
 
    void VoxelGrid::UpdateGrid(const osg::Vec3& newCameraPos)
-   {      
+   {   
+      return;
+
       osg::BoundingBox newBounds = ComputeWorldBounds(newCameraPos);
       
       osg::BoundingBox combinedBounds = mAllocatedBounds;
@@ -276,25 +284,16 @@ namespace dtVoxel
       
       mVoxelActor = &voxelActor;
       
-      /*osg::MatrixTransform* mt = new osg::MatrixTransform();
-      osg::Matrix mat;
-      mat.makeScale(1.0f, 1.0f, 1.0f);
-      mt->setMatrix(mat);
-
-      mRootNode = mt;*/
-
-      mBlocks = new VoxelBlock[mNumBlocks];
-
       std::cout << std::endl << "Creating Voxel Grid with " << mNumBlocks << " Voxel Blocks" << std::endl;
 
       GenerateCacheString();
 
-      dtCore::RefPtr<osg::Group> currentGroup = NULL;
+      
       //int blockCount = 0;
       OpenThreads::Atomic blockCount;
       for (int z = 0; z < mBlocksZ; z++)
       {
-         dtCore::RefPtr<osg::Group> currentGroup = NULL;
+         
          tbb::parallel_for(tbb::blocked_range<int>(0,mBlocksY),
                [=, &blockCount](const tbb::blocked_range<int>& r)
                {
@@ -366,11 +365,161 @@ namespace dtVoxel
 
       std::cout << std::endl << "Done Creating Voxel Grid" << std::endl;
 
-      std::cout << std::endl << "Optimizing Grid" << std::endl;
+      /*std::cout << std::endl << "Optimizing Grid" << std::endl;
       osgUtil::Optimizer opt;
       opt.optimize(mRootNode, osgUtil::Optimizer::SPATIALIZE_GROUPS);
-      std::cout << std::endl << "Done Optimizing" << std::endl;
+      std::cout << std::endl << "Done Optimizing" << std::endl;*/
    }
+
+   void VoxelGrid::CreatePagedLODGrid(const osg::Vec3& pos, VoxelActor& voxelActor)
+   {
+      if (!mInitialized)
+      {
+         LOG_ERROR("VoxelGrid has not been initialized.");
+         return;
+      }
+
+      mAllocatedBounds = ComputeWorldBounds(pos);
+
+      mVoxelActor = &voxelActor;
+
+      std::cout << std::endl << "Creating Voxel Grid with " << mNumBlocks << " Voxel Blocks" << std::endl;
+
+      GenerateCacheString();
+
+      if (!ReadBlockVisibility())
+      {
+         GenerateVisibility(voxelActor);
+
+         bool success = WriteBlockVisibility();
+
+         if (!success)
+         {
+            LOG_ERROR("Error writing visibility information.");
+         }
+      }
+
+      
+      OpenThreads::Atomic blockCount;
+      for (int z = 0; z < mBlocksZ; z++)
+      {         
+         tbb::parallel_for(tbb::blocked_range<int>(0, mBlocksY),
+            [=, &blockCount](const tbb::blocked_range<int>& r)
+         {
+            for (int y = r.begin(); y != r.end(); ++y)//(int y = 0; y < mBlocksY; y++)
+            {
+               for (int x = 0; x < mBlocksX; x++)
+               {
+                  VoxelBlock* curBlock = GetBlockFromIndex(x, y, z);
+
+                  osg::Vec3 offsetFrom = mGridOffset;
+                  offsetFrom[0] += x * mBlockDimensions[0];
+                  offsetFrom[1] += y * mBlockDimensions[1];
+                  offsetFrom[2] += z * mBlockDimensions[2];
+
+                  osg::Vec3 offsetTo = offsetFrom + mBlockDimensions;
+
+                  curBlock->Init(mBlockDimensions, offsetFrom, mCellDimensions);
+
+                  osg::BoundingBox bb(offsetFrom, offsetTo);
+
+                  int index = (z * mBlocksY * mBlocksX) + (y * mBlocksX) + x;
+
+                  if (!mBlockVisibility[index])
+                  {
+                     if (!curBlock->LoadCachedModel(mCacheFolder, index))
+                     {
+                        curBlock->WritePagedLOD(*mVoxelActor, index, mCacheFolder, mRes0, mDist0, mRes1, mDist1, mRes2, mDist2, mRes3, mViewDistance);
+                     }
+
+                     mRootNode->addChild(curBlock->GetOSGNode());
+
+                     curBlock->SetEmpty(false);
+                  }
+                  ++blockCount;
+               }
+
+               std::cout << std::endl << mNumBlocks - blockCount << " Blocks remaining." << std::endl;
+
+            }
+         });
+      }
+
+      std::cout << std::endl << "Done Creating Voxel Grid" << std::endl;
+
+      /*std::cout << std::endl << "Optimizing Grid" << std::endl;
+      osgUtil::Optimizer opt;
+      opt.optimize(mRootNode, osgUtil::Optimizer::SPATIALIZE_GROUPS);
+      std::cout << std::endl << "Done Optimizing" << std::endl;*/
+   }
+
+
+   void VoxelGrid::GenerateVisibility(VoxelActor& voxelActor)
+   {
+      if (!mInitialized)
+      {
+         LOG_ERROR("VoxelGrid has not been initialized.");
+         return;
+      }
+    
+      std::cout << std::endl << "Generating Visibility" << std::endl;
+      
+      mBlockVisibility.resize(mNumBlocks);
+      
+      //int blockCount = 0;
+      OpenThreads::Atomic blockCount;
+      for (int z = 0; z < mBlocksZ; z++)
+      {
+         
+         tbb::parallel_for(tbb::blocked_range<int>(0, mBlocksY),
+            [=, &blockCount](const tbb::blocked_range<int>& r)
+         {
+            for (int y = r.begin(); y != r.end(); ++y)//(int y = 0; y < mBlocksY; y++)
+            {
+               for (int x = 0; x < mBlocksX; x++)
+               {
+                  osg::Vec3 offsetFrom = mGridOffset;
+                  offsetFrom[0] += x * mBlockDimensions[0];
+                  offsetFrom[1] += y * mBlockDimensions[1];
+                  offsetFrom[2] += z * mBlockDimensions[2];
+
+                  osg::Vec3 offsetTo = offsetFrom + mBlockDimensions;
+
+                  osg::BoundingBox bb(offsetFrom, offsetTo);
+                  openvdb::GridBase::Ptr vdbGrid = mVoxelActor->CollideWithAABB(bb);
+
+                  int index = (z * mBlocksY * mBlocksX) + (y * mBlocksX) + x;
+
+                  if (vdbGrid != NULL && !vdbGrid->empty())
+                  {                     
+                     mBlockVisibility[index] = false;
+                  }
+                  else
+                  {
+                     mBlockVisibility[index] = true;
+                  }
+                  
+                  ++blockCount;
+               }
+
+               std::cout << std::endl << mNumBlocks - blockCount << " Blocks remaining." << std::endl;
+            }
+         });
+      }
+
+      std::cout << std::endl << "Done Generating Visibility" << std::endl;
+
+      /*std::cout << "Visibility Table" << std::endl;
+
+      for(int i = 0; i < mNumBlocks; ++i)
+      {
+         std::cout << dtUtil::ToString(mBlockVisibility[i]) << "   ";
+      }
+
+      std::cout << std::endl << std::endl;*/
+   }
+
+
 
    VoxelBlock* VoxelGrid::GetBlockFromIndex(int x, int y, int z)
    {
@@ -492,7 +641,15 @@ namespace dtVoxel
             return false;
          }
 
-         ds.Read(mNumBlocks);
+         int numBlocks = 0;
+         ds.Read(numBlocks);
+
+         if (numBlocks != mNumBlocks)
+         {
+            LOG_ERROR("Unexpected number of voxel blocks in visibility file.");
+         }
+
+         mBlockVisibility.resize(mNumBlocks);
 
          for (int i = 0; i < mNumBlocks; ++i)
          {
@@ -508,21 +665,13 @@ namespace dtVoxel
       }
       else
       {
-         LOG_ERROR("Error writing visibility data.");
+         LOG_ERROR("Error reading visibility data.");
          return false;
       }
    }
 
    bool VoxelGrid::WriteBlockVisibility()
-   {
-      mBlockVisibility.resize(mNumBlocks);
-
-      for (int i = 0; i < mNumBlocks; ++i)
-      {
-         mBlockVisibility[i] = mBlocks->GetEmpty();
-      }
-
-
+   {      
       std::string filePath = dtCore::Project::GetInstance().GetContext() + "/" + mCacheFolder + "/";
       std::string filename("VisibilityCache.dat");
       std::ofstream outFile(filePath + filename, std::ios::out | std::ios::binary);
@@ -567,6 +716,60 @@ namespace dtVoxel
 
       dtUtil::FileUtils::GetInstance().MakeDirectory(filePath);
 
+   }
+
+   bool VoxelGrid::WriteVoxelDatabase()
+   {
+      bool result = false;
+
+      std::string filePath = mCacheFolder;
+      
+      std::stringstream fileName;
+
+      fileName << filePath << DATABASE_FILENAME;
+
+      if (dtUtil::FileUtils::GetInstance().FileExists(fileName.str()))
+      {
+         result = osgDB::writeNodeFile(*mRootNode, fileName.str());
+
+         std::cout << "Writing master voxel database " << fileName.str() << std::endl;
+      }
+
+      return result;
+   }
+
+   bool VoxelGrid::ReadVoxelDatabase()
+   {
+      bool result = false;
+
+      std::string filePath = mCacheFolder;
+
+      std::stringstream fileName;
+
+      fileName << filePath << DATABASE_FILENAME;
+
+      std::cout << "Reading master voxel database." << fileName.str() << std::endl;
+
+      if (dtUtil::FileUtils::GetInstance().FileExists(fileName.str()))
+      {
+         osg::Node* n = dtUtil::FileUtils::GetInstance().ReadNode(fileName.str());
+         if (n != nullptr)
+         {
+            mRootNode->addChild(n);
+            result = true;
+         }
+         else
+         {
+            LOG_ERROR("Error reading voxel database, read result = NULL.");
+         }
+
+      }
+      else
+      {
+         LOG_ERROR("Error reading voxel database, file does not exist.");
+      }
+
+      return result;
    }
 
 } /* namespace dtVoxel */

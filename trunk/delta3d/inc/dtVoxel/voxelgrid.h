@@ -41,6 +41,11 @@ namespace dtVoxel
       void Init(const osg::Vec3& grid_offset, const osg::Vec3& dimensions, const osg::Vec3& block_dimensions, const osg::Vec3& cellDimensions, const osg::Vec3i& textureResolution);
       void CreateGridFromActor(const osg::Vec3& pos, VoxelActor& voxelActor);
 
+      void CreatePagedLODGrid(const osg::Vec3& pos, VoxelActor& voxelActor);
+
+      void GenerateVisibility(VoxelActor& voxelActor);
+
+
       /***
       * Updates the renderable area defined by view distance
       */
@@ -81,6 +86,8 @@ namespace dtVoxel
 
       osg::Vec3 GetCenterOfBlock(int x, int y, int z);
       void GenerateCacheString();
+      bool WriteVoxelDatabase();
+      bool ReadVoxelDatabase();
       
 
       bool ReadBlockVisibility();
