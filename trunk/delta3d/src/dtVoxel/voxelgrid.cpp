@@ -52,8 +52,8 @@ namespace dtVoxel
       , mRes1()
       , mRes2()
       , mRes3()
-      , mDist0(100.0f)
-      , mDist1(300.0f)
+      , mDist0(150.0f)
+      , mDist1(350.0f)
       , mDist2(550.0f)
       , mTextureResolution()
       , mRootNode(new osg::Group())
@@ -403,10 +403,10 @@ namespace dtVoxel
       OpenThreads::Atomic blockCount;
       for (int z = 0; z < mBlocksZ; z++)
       {         
-         tbb::parallel_for(tbb::blocked_range<int>(0, mBlocksY),
-            [=, &blockCount](const tbb::blocked_range<int>& r)
-         {
-            for (int y = r.begin(); y != r.end(); ++y)//(int y = 0; y < mBlocksY; y++)
+         //tbb::parallel_for(tbb::blocked_range<int>(0, mBlocksY),
+           // [=, &blockCount](const tbb::blocked_range<int>& r)
+         //{
+            for (int y = 0; y < mBlocksY; y++)
             {
                for (int x = 0; x < mBlocksX; x++)
                {
@@ -442,7 +442,7 @@ namespace dtVoxel
                std::cout << std::endl << mNumBlocks - blockCount << " Blocks remaining." << std::endl;
 
             }
-         });
+         //});
       }
 
       std::cout << std::endl << "Done Creating Voxel Grid" << std::endl;
