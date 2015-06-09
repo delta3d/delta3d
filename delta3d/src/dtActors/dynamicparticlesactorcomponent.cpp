@@ -65,9 +65,11 @@ namespace dtActors
       : BaseClass()
       , mEnabled(false)
       , mUpdateFrequency(1.0f)
-      , mVelocityMin(1.0f)
-      , mVelocityMax(10.0f)
+      , mOwnerSpeedMin(1.0f)
+      , mOwnerSpeedMax(10.0f)
       , mLastInterpRatio(0.0f)
+      , mRelativeToParent(false)
+      , mAttachDirectly(false)
       , mUpdateTimer(0.0f)
    {
       const dtUtil::RefString GROUPNAME("DynamicParticlesPropertyContainer");
@@ -94,12 +96,16 @@ namespace dtActors
          "Set the seconds between updates for the particle system effect interpolation",
          PropertyRegType, propertyRegHelper);
 
-      DT_REGISTER_PROPERTY(VelocityMin,
+      DT_REGISTER_PROPERTY(OwnerSpeedMin,
          "The speed at which to start the particle system effect.",
          PropertyRegType, propertyRegHelper);
 
-      DT_REGISTER_PROPERTY(VelocityMax,
+      DT_REGISTER_PROPERTY(OwnerSpeedMax,
          "The speed at which to clamp the particle system's maximum effect.",
+         PropertyRegType, propertyRegHelper);
+
+      DT_REGISTER_PROPERTY(RelativeToParent,
+         "Flag to cause the particle system to emit particles within parent local space.",
          PropertyRegType, propertyRegHelper);
 
       DT_REGISTER_PROPERTY(AttachNodeName,
@@ -153,8 +159,9 @@ namespace dtActors
    DT_IMPLEMENT_ACCESSOR(DynamicParticlesPropertyContainer, std::string, Name);
    DT_IMPLEMENT_ACCESSOR(DynamicParticlesPropertyContainer, dtCore::ResourceDescriptor, ParticleFile);
    DT_IMPLEMENT_ACCESSOR(DynamicParticlesPropertyContainer, float, UpdateFrequency);
-   DT_IMPLEMENT_ACCESSOR(DynamicParticlesPropertyContainer, float, VelocityMin);
-   DT_IMPLEMENT_ACCESSOR(DynamicParticlesPropertyContainer, float, VelocityMax);
+   DT_IMPLEMENT_ACCESSOR(DynamicParticlesPropertyContainer, float, OwnerSpeedMin);
+   DT_IMPLEMENT_ACCESSOR(DynamicParticlesPropertyContainer, float, OwnerSpeedMax);
+   DT_IMPLEMENT_ACCESSOR(DynamicParticlesPropertyContainer, bool, RelativeToParent);
    DT_IMPLEMENT_ACCESSOR(DynamicParticlesPropertyContainer, bool, AttachDirectly);
    DT_IMPLEMENT_ACCESSOR(DynamicParticlesPropertyContainer, std::string, AttachNodeName);
    DT_IMPLEMENT_ACCESSOR(DynamicParticlesPropertyContainer, std::string, ShaderGroup);
@@ -229,15 +236,15 @@ namespace dtActors
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   float DynamicParticlesPropertyContainer::GetVelocityRatio(float velocity) const
+   float DynamicParticlesPropertyContainer::GetSpeedRatio(float speed) const
    {
       float ratio = 0.0f;
 
-      if (mVelocityMax != 0.0f)
+      if (mOwnerSpeedMax != 0.0f)
       {
-         if (velocity >= mVelocityMin && mVelocityMax > mVelocityMin)
+         if (speed >= mOwnerSpeedMin && mOwnerSpeedMax > mOwnerSpeedMin)
          {
-            ratio = (velocity - mVelocityMin) / (mVelocityMax - mVelocityMin);
+            ratio = (speed - mOwnerSpeedMin) / (mOwnerSpeedMax - mOwnerSpeedMin);
          }
       }
 
@@ -293,7 +300,7 @@ namespace dtActors
    {
       if (!mParticleSystem.valid() && !mParticleFile.IsEmpty())
       {
-         mParticleSystemActor = CreateDynamicParticleSystemActor(mParticleFile, mName);
+         mParticleSystemActor = CreateDynamicParticleSystemActor(mParticleFile, mName, mRelativeToParent);
 
          if ( ! mParticleSystemActor.valid())
          {
@@ -314,7 +321,7 @@ namespace dtActors
    /////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<DynamicParticlesActor>
       DynamicParticlesPropertyContainer::CreateDynamicParticleSystemActor(
-         const dtCore::ResourceDescriptor& rd, const std::string& actorName)
+         const dtCore::ResourceDescriptor& rd, const std::string& actorName, bool relativeToParent)
    {
       std::string fileName;
       try
@@ -343,6 +350,7 @@ namespace dtActors
 
          actor->GetDrawable(drawable);
          drawable->SetName(actorName);
+         drawable->SetParentRelative(relativeToParent);
          drawable->LoadFile(fileName);
 
          // Set default settings.
@@ -375,7 +383,7 @@ namespace dtActors
    /////////////////////////////////////////////////////////////////////////////
    void DynamicParticlesPropertyContainer::UpdateParticleSystem(float simTimeDelta, float speed)
    {
-      float ratio = GetVelocityRatio(speed * (simTimeDelta != 0.0f ? 1.0f / simTimeDelta : 0.0f));
+      float ratio = GetSpeedRatio(speed * (simTimeDelta != 0.0f ? 1.0f / simTimeDelta : 0.0f));
 
       mUpdateTimer += simTimeDelta;
 
