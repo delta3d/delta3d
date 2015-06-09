@@ -56,7 +56,7 @@ namespace dtCore
    dtUtil::RefString TransformPropertyDelegate::GetTranslationPropertyName() const
    { return mTransformNode->getName() + dtCore::TransformableActorProxy::PROPERTY_TRANSLATION; }
    dtUtil::RefString TransformPropertyDelegate::GetRotationPropertyName() const
-   { return mTransformNode->getName() + dtCore::TransformableActorProxy::PROPERTY_TRANSLATION; }
+   { return mTransformNode->getName() + dtCore::TransformableActorProxy::PROPERTY_ROTATION; }
 
    osg::Vec3 TransformPropertyDelegate::GetTranslation() const
    {
