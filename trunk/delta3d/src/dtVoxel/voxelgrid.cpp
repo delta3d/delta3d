@@ -25,7 +25,11 @@
 #include <dtUtil/mathdefines.h>
 #include <osgUtil/Optimizer>
 #include <iostream>
+#include <fstream>
 #include <tbb/parallel_for.h>
+
+const char START_END_CHAR = '!';
+const int FILE_IDENT = 99834;
 
 namespace dtVoxel
 {
@@ -41,6 +45,13 @@ namespace dtVoxel
       , mBlockDimensions()
       , mCellDimensions()
       , mInitialized(false)
+      , mRes0()
+      , mRes1()
+      , mRes2()
+      , mRes3()
+      , mDist0(100.0f)
+      , mDist1(300.0f)
+      , mDist2(550.0f)
       , mTextureResolution()
       , mRootNode(new osg::Group())
       , mBlocks(NULL)
@@ -65,6 +76,22 @@ namespace dtVoxel
       mBlocksZ = int(std::floor(mWSDimensions[2] / mBlockDimensions[2]));
 
       mNumBlocks = mBlocksX * mBlocksY * mBlocksZ;
+
+      mRes0 = mTextureResolution;
+
+      mRes1.set(int(std::floor(float(mTextureResolution[0]) * 0.75f)),
+         int(std::floor(float(mTextureResolution[1]) * 0.75f)),
+         int(std::floor(float(mTextureResolution[2]) * 0.75f)));
+
+      mRes2.set(int(std::floor(float(mRes1[0]) * 0.75f)),
+         int(std::floor(float(mRes1[1]) * 0.75f)),
+         int(std::floor(float(mRes1[2]) * 0.75f)));
+
+      mRes3.set(1 + int(std::floor(float(mRes3[0]) * 0.75f)),
+         1 + int(std::floor(float(mRes3[1]) * 0.75f)),
+         1 + int(std::floor(float(mRes3[2]) * 0.75f)));
+
+
 
       mInitialized = true;
    }
@@ -127,7 +154,12 @@ namespace dtVoxel
                {
                   if (curBlock->IsAllocated())
                   {
-                     curBlock->RegenerateAABB(*mVoxelActor, bb, mTextureResolution);                     
+                     //temporarily just recreating the whole block
+                     //curBlock->RegenerateAABB(*mVoxelActor, bb, mTextureResolution);                     
+                     
+                     curBlock->DeAllocate();
+                     curBlock->AllocateLODMesh(*mVoxelActor, mRes0, mDist0, mRes1, mDist1, mRes2, mDist2, mRes3, mViewDistance);
+
                   }
                   else
                   {
@@ -141,31 +173,12 @@ namespace dtVoxel
 
 
    void VoxelGrid::UpdateGrid(const osg::Vec3& newCameraPos)
-   {
-      //std::cout << "New Camera Pos ";
-
-      //dtUtil::MatrixUtil::Print(newCameraPos);
-
-      //std::cout << "Allocated Bounds " << std::endl;
-      //dtUtil::MatrixUtil::Print(mAllocatedBounds._min);
-      //dtUtil::MatrixUtil::Print(mAllocatedBounds._max);
-
-
+   {      
       osg::BoundingBox newBounds = ComputeWorldBounds(newCameraPos);
-
-      //std::cout << "New Bounds " << std::endl;
-      //dtUtil::MatrixUtil::Print(newBounds._min);
-      //dtUtil::MatrixUtil::Print(newBounds._max);
-
       
       osg::BoundingBox combinedBounds = mAllocatedBounds;
 
       combinedBounds.expandBy(newBounds);
-
-      //std::cout << "combinedBounds " << std::endl;
-      //dtUtil::MatrixUtil::Print(combinedBounds._min);
-      //dtUtil::MatrixUtil::Print(combinedBounds._max);
-
 
       osg::Vec3 newDim;
       newDim[0] = combinedBounds.xMax() - combinedBounds.xMin();
@@ -183,31 +196,9 @@ namespace dtVoxel
       int startY = int(std::floor(bboffset.y() / mBlockDimensions.y()));
       int startZ = int(std::floor(bboffset.z() / mBlockDimensions.z()));
 
-      //std::cout << "start X " << startX << " start Y " << startY << " start Z " << startZ << std::endl;
-
       int endX = startX + blocksX;
       int endY = startY + blocksY;
       int endZ = startZ + blocksZ;
-
-      osg::Vec3i res0 = mTextureResolution;
-
-      float dist0 = 150.0f;
-      osg::Vec3i res1(int(std::floor(float(mTextureResolution[0]) * 0.75f)),
-         int(std::floor(float(mTextureResolution[1]) * 0.75f)),
-         int(std::floor(float(mTextureResolution[2]) * 0.75f)));
-
-      float dist1 = 350.0f;
-
-      osg::Vec3i res2(int(std::floor(float(mTextureResolution[0]) * 0.75f)),
-         int(std::floor(float(mTextureResolution[1]) * 0.75f)),
-         int(std::floor(float(mTextureResolution[2]) * 0.75f)));
-      float dist2 = 550.0f;
-
-      osg::Vec3i res3(1 + int(std::floor(float(mTextureResolution[0]) * 0.75f)),
-         1 + int(std::floor(float(mTextureResolution[1]) * 0.75f)),
-         1 + int(std::floor(float(mTextureResolution[2]) * 0.75f)));
-
-      //std::cout << "end X " << endX << " end Y " << endY << " end Z " << endZ << std::endl;
     
       for (int z = startZ; z < endZ; z++)
       {
@@ -233,7 +224,7 @@ namespace dtVoxel
 
                         if (curBlock->GetDirty())
                         {
-                           curBlock->AllocateLODMesh(*mVoxelActor, res0, dist0, res1, dist1, res2, dist2, res3, mViewDistance);
+                           curBlock->AllocateLODMesh(*mVoxelActor, mRes0, mDist0, mRes1, mDist1, mRes2, mDist2, mRes3, mViewDistance);
                            mRootNode->addChild(curBlock->GetOSGNode());
                         }
                         else if (curBlock->LoadCachedModel(mCacheFolder, index))
@@ -298,28 +289,6 @@ namespace dtVoxel
 
       GenerateCacheString();
 
-      //openvdb::CoordBBox cbb = mVoxelActor->GetGrid(0)->evalActiveVoxelBoundingBox();
-
-      osg::Vec3i res0 = mTextureResolution;
-
-      float dist0 = 100.0f;
-      osg::Vec3i res1(int(std::floor(float(mTextureResolution[0]) * 0.75f)),
-         int(std::floor(float(mTextureResolution[1]) * 0.75f)),
-         int(std::floor(float(mTextureResolution[2]) * 0.75f)));
-      
-      float dist1 = 300.0f;
-
-      osg::Vec3i res2(int(std::floor(float(res1[0]) * 0.75f)),
-         int(std::floor(float(res1[1]) * 0.75f)),
-         int(std::floor(float(res1[2]) * 0.75f)));
-      
-      float dist2 = 550.0f;
-
-      osg::Vec3i res3(1 + int(std::floor(float(res2[0]) * 0.75f)),
-         1 + int(std::floor(float(res2[1]) * 0.75f)),
-         1 + int(std::floor(float(res2[2]) * 0.75f)));
-
-
       dtCore::RefPtr<osg::Group> currentGroup = NULL;
       //int blockCount = 0;
       OpenThreads::Atomic blockCount;
@@ -362,7 +331,7 @@ namespace dtVoxel
                         //allocate this block
                         //curBlock->AllocateCombinedMesh(*mVoxelActor, mTextureResolution);
                         
-                        curBlock->AllocateLODMesh(*mVoxelActor, res0, dist0, res1, dist1, res2, dist2, res3, mViewDistance);
+                        curBlock->AllocateLODMesh(*mVoxelActor, mRes0, mDist0, mRes1, mDist1, mRes2, mDist2, mRes3, mViewDistance);
 
                         curBlock->SaveCachedModel(mCacheFolder, index);
 
@@ -376,7 +345,7 @@ namespace dtVoxel
                      {
                         std::cout << "Caching model for later use" << std::endl;
                         //curBlock->AllocateCombinedMesh(*mVoxelActor, mTextureResolution);
-                        curBlock->AllocateLODMesh(*mVoxelActor, res0, dist0, res1, dist1, res2, dist2, res3, mViewDistance);
+                        curBlock->AllocateLODMesh(*mVoxelActor, mRes0, mDist0, mRes1, mDist1, mRes2, mDist2, mRes3, mViewDistance);
 
                         curBlock->SaveCachedModel(mCacheFolder, index);
 
@@ -486,7 +455,106 @@ namespace dtVoxel
    {
       return mRootNode.get();
    }
-  
+   
+   bool VoxelGrid::ReadBlockVisibility()
+   {
+      std::string filePath = dtCore::Project::GetInstance().GetContext() + "/" + mCacheFolder + "/";
+      std::string filename("VisibilityCache.dat");
+      std::ifstream inFile(filePath + filename, std::ios::in | std::ios::binary);
+
+      if (!inFile.fail())
+      {
+         //get length of file
+         inFile.seekg(0, std::ios::end);
+         int length = inFile.tellg();
+         inFile.seekg(0, std::ios::beg);
+
+         //read data
+         char* buffer = new char[length];
+         inFile.read(buffer, length);
+
+         dtUtil::DataStream ds(buffer, length);
+
+         char startChar = 'a';
+         ds.Read(startChar);
+
+         if (startChar != START_END_CHAR)
+         {
+            return false;
+         }
+
+         //write magic number
+         int magicNum = 0;
+         ds.Read(magicNum);
+
+         if (magicNum != FILE_IDENT)
+         {
+            return false;
+         }
+
+         ds.Read(mNumBlocks);
+
+         for (int i = 0; i < mNumBlocks; ++i)
+         {
+            bool b = false;
+            ds.Read(b);
+
+            mBlockVisibility[i] = b;
+         }
+         
+         inFile.close();
+         
+         return !inFile.fail();
+      }
+      else
+      {
+         LOG_ERROR("Error writing visibility data.");
+         return false;
+      }
+   }
+
+   bool VoxelGrid::WriteBlockVisibility()
+   {
+      mBlockVisibility.resize(mNumBlocks);
+
+      for (int i = 0; i < mNumBlocks; ++i)
+      {
+         mBlockVisibility[i] = mBlocks->GetEmpty();
+      }
+
+
+      std::string filePath = dtCore::Project::GetInstance().GetContext() + "/" + mCacheFolder + "/";
+      std::string filename("VisibilityCache.dat");
+      std::ofstream outFile(filePath + filename, std::ios::out | std::ios::binary);
+      
+      if (!outFile.fail())
+      {
+         dtUtil::DataStream ds;
+         ds.Write(START_END_CHAR);
+         ds.Write(FILE_IDENT);
+
+         ds.Write(mNumBlocks);
+
+         for (int i = 0; i < mNumBlocks; ++i)
+         {
+            ds.Write(mBlockVisibility[i]);
+         }
+         
+         outFile.write(ds.GetBuffer(), ds.GetBufferSize());
+
+         outFile.close();
+         
+         return !outFile.fail();
+
+      }
+      else
+      {
+         LOG_ERROR("Error writing visibility data.");
+         return false;
+      }
+
+   }
+
    void VoxelGrid::GenerateCacheString()
    {
       std::stringstream folderName;
