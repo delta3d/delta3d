@@ -79,7 +79,9 @@ namespace dtVoxel
          {
             if (i.isVoxelValue())
             {
+               // Logging is all commented out here rather than using LOG_... because it's called from the physics engine and really should be fast.
                openvdb::Coord coord = i.getCoord();
+               //std::cout << " Collision with voxel at index " << coord << std::endl;
                openvdb::BBoxd iBox(openvdb::Vec3d(double(coord.x()), double(coord.y()), double(coord.z())), 0);
                iBox.expand(0.5f);
                openvdb::BBoxd voxelBBox = grid->transform().indexToWorld(iBox);
