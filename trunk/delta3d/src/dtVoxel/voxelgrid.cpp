@@ -377,6 +377,7 @@ namespace dtVoxel
    void VoxelGrid::CreatePagedLODGrid(const osg::Vec3& pos, VoxelActor& voxelActor)
    {
       OpenThreads::Mutex m;
+      bool ReadFirstFile = false;
 
       if (!mInitialized)
       {
@@ -409,7 +410,7 @@ namespace dtVoxel
       for (int z = 0; z < mBlocksZ; z++)
       {         
          tbb::parallel_for(tbb::blocked_range<int>(0, mBlocksY),
-            [=, &blockCount, &m](const tbb::blocked_range<int>& r)
+            [=, &ReadFirstFile, &blockCount, &m](const tbb::blocked_range<int>& r)
          {
             for (int y = r.begin(); y != r.end(); ++y)//(int y = 0; y < mBlocksY; y++)
             {
@@ -432,6 +433,12 @@ namespace dtVoxel
 
                   if (!mBlockVisibility[index])
                   {
+                     if (!ReadFirstFile)
+                     {
+                        OpenThreads::ScopedLock<OpenThreads::Mutex> addChildMutex(m);
+                        ReadFirstFile = ReadFirstFile || curBlock->LoadCachedModel(mCacheFolder, index);
+                     }
+
                      if (!curBlock->LoadCachedModel(mCacheFolder, index))
                      {
                         curBlock->WritePagedLOD(*mVoxelActor, index, mCacheFolder, mRes0, mDist0, mRes1, mDist1, mRes2, mDist2, mRes3, mViewDistance);
@@ -583,7 +590,7 @@ namespace dtVoxel
    VoxelBlock* VoxelGrid::GetBlockFromPos(const osg::Vec3& pos)
    {
       VoxelBlock* block = NULL;
-      osg::Vec3 offset = pos - mGridOffset;
+      //osg::Vec3 offset = pos - mGridOffset;
       int cellX = int(std::floor(pos[0] / mBlockDimensions[0]));
       int cellY = int(std::floor(pos[1] / mBlockDimensions[1]));
       int cellZ = int(std::floor(pos[2] / mBlockDimensions[2]));
