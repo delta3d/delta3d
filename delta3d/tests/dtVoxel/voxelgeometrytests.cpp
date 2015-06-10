@@ -84,7 +84,7 @@ namespace dtVoxel
                      openvdb::Coord coord2 = grid->transform().worldToIndexCellCentered(ov);
                      std::ostringstream ss;
                      ss << "The collision coordinates should match up with cells in the grid." <<   ov << " " << coord1 << " ";
-                     openvdb::BoolGrid::Accessor acc = grid->getAccessor();
+                     openvdb::BoolGrid::ConstAccessor acc = grid->getConstAccessor();
                      if (acc.isValueOn(coord1) || acc.isValueOn(coord2)) ++found;
                   }
                   CPPUNIT_ASSERT(found > 0);

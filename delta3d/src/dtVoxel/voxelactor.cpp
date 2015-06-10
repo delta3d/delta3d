@@ -196,10 +196,81 @@ namespace dtVoxel
    }
 
    /////////////////////////////////////////////////////
+   template<typename GridTypePtr>
+   void VoxelActor::UpdateGrid(GridTypePtr grid, const dtCore::NamedArrayParameter* indices, const dtCore::NamedArrayParameter* values,
+         const dtCore::NamedArrayParameter* indicesDeactivated)
+   {
+      typedef typename GridTypePtr::element_type GridType;
+      typedef typename GridType::ValueType ValueType;
+      typedef typename dtCore::TypeToActorProperty<ValueType>::named_parameter_type ParameterType;
+      typedef typename GridType::Accessor AccessorType;
+
+      AccessorType accessor = grid->getAccessor();
+
+      osg::BoundingBox bb;
+      for (unsigned i = 0; i < indices->GetSize(); ++i)
+      {
+         const dtCore::NamedParameter* indexP = indices->GetParameter(i);
+         if (indexP != nullptr && indexP->GetDataType() == dtCore::DataType::VEC3)
+         {
+            auto indexVp = static_cast<const dtCore::NamedVec3Parameter*>(indexP);
+            osg::Vec3 idxVec = indexVp->GetValue();
+            auto valueParam = dynamic_cast<const ParameterType*>(values->GetParameter(i));
+            if (valueParam != NULL)
+            {
+               ValueType val = valueParam->GetValue();
+               bb.expandBy(idxVec);
+               openvdb::Coord c(std::round(idxVec.x()), std::round(idxVec.y()), std::round(idxVec.z()));
+               accessor.setValue(c, val);
+            }
+         }
+         else
+         {
+            LOGN_ERROR("voxelactor.cpp", "Received a VolumeUpdateMessage, but the indices are not Vec3 parameters.");
+         }
+      }
+      for (unsigned i = 0; i < indicesDeactivated->GetSize(); ++i)
+      {
+         const dtCore::NamedParameter* indexP = indicesDeactivated->GetParameter(i);
+         if (indexP != nullptr && indexP->GetDataType() == dtCore::DataType::VEC3)
+         {
+            auto indexVp = static_cast<const dtCore::NamedVec3Parameter*>(indexP);
+            osg::Vec3 idxVec = indexVp->GetValue();
+            bb.expandBy(idxVec);
+            openvdb::Coord c(std::round(idxVec.x()), std::round(idxVec.y()), std::round(idxVec.z()));
+            accessor.setValueOff(c);
+         }
+         else
+         {
+            LOGN_ERROR("voxelactor.cpp", "Received a VolumeUpdateMessage, but the indices deactivated are not Vec3 parameters.");
+         }
+      }
+      //re-add when not busted
+      //MarkVisualDirty(bb, 0);
+   }
+
+   /////////////////////////////////////////////////////
    void VoxelActor::OnVolumeUpdate(const VolumeUpdateMessage& msg)
    {
-      if (msg.GetSource() != GetGameManager()->GetMachineInfo())
+      if (GetNumGrids() > 0 && (IsRemote() || GetLocalActorUpdatePolicy() != dtGame::GameActorProxy::LocalActorUpdatePolicy::IGNORE_ALL)
+            && msg.GetSource() != GetGameManager()->GetMachineInfo())
       {
+         const dtCore::NamedArrayParameter* indices = msg.GetIndicesChanged();
+         const dtCore::NamedArrayParameter* values = msg.GetValuesChanged();
+         const dtCore::NamedArrayParameter* indicesDeactivated = msg.GetIndicesDeactivated();
+
+         openvdb::FloatGrid::Ptr gridF = boost::dynamic_pointer_cast<openvdb::FloatGrid>(GetGrid(0));
+         if (gridF)
+         {
+            UpdateGrid(gridF, indices, values, indicesDeactivated);
+         }
+         else
+         {
+            openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(GetGrid(0));
+            if (gridB)
+               UpdateGrid(gridB, indices, values, indicesDeactivated);
+         }
+
       }
    }
 
