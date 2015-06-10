@@ -85,7 +85,7 @@ namespace dtVoxel
                openvdb::BBoxd iBox(openvdb::Vec3d(double(coord.x()), double(coord.y()), double(coord.z())), 0);
                iBox.expand(0.5f);
                openvdb::BBoxd voxelBBox = grid->transform().indexToWorld(iBox);
-               typename GridType::ConstAccessor ca = mBoxCollider->GetGrid()->getConstAccessor();
+               typename GridType::ConstAccessor& ca = mBoxCollider->GetAccessor();
                bool activeNeighbors[6];
                activeNeighbors[0] = ca.isValueOn(openvdb::Coord(coord.x()-1,coord.y(),coord.z()));
                activeNeighbors[1] = ca.isValueOn(openvdb::Coord(coord.x(),coord.y(),coord.z()+1));

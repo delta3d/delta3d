@@ -896,7 +896,7 @@ namespace dtUtil
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   unsigned int DataStream::GetRemainingReadSize()
+   unsigned int DataStream::GetRemainingReadSize() const
    {
       return mBufferSize - mReadPos;
    }

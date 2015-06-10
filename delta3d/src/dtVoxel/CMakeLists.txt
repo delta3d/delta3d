@@ -11,6 +11,7 @@ file(GLOB LIB_PUBLIC_HEADERS
 SET( LIB_SOURCES
   marchingcubes.cpp
   volumescene.cpp
+  volumeupdatemessage.cpp
   voxelactor.cpp
   voxelactorregistry.cpp
   voxelcell.cpp
@@ -18,6 +19,7 @@ SET( LIB_SOURCES
   voxelgrid.cpp
   voxelgeometry.cpp
   voxelgriddebugdrawable.cpp
+  voxelmessagetype.cpp
 ) 
 
 INCLUDE_DIRECTORIES(${OPENEXR_INCLUDE_DIR} ${TBB_INCLUDE_DIR} ${OPENVDB_INCLUDE_DIR} ${PAL_INCLUDE_DIR}) 

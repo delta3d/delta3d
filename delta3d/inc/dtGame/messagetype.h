@@ -112,7 +112,6 @@ namespace dtGame
          // renamed to INFO_MAP_CHANGE_END
          static const MessageType& INFO_MAP_CHANGED;
 
-
          ///Message sent when a player enters the world.  The Actor deleted message can be used when the player leaves.
          static const MessageType INFO_PLAYER_ENTERED_WORLD;
 
@@ -169,12 +168,10 @@ namespace dtGame
          static const MessageType LOG_REQ_REMOVE_IGNORED_MESSAGETYPE;
          static const MessageType LOG_REQ_CLEAR_IGNORED_MESSAGETYPE_LIST;
 
-
          //SYSTEM MESSAGES
          static const MessageType SYSTEM_POST_EVENT_TRAVERSAL;
          static const MessageType SYSTEM_FRAME_SYNCH;
          static const MessageType SYSTEM_POST_FRAME;
-
 
          // GENERIC GAME SYSTEM MESSAGES
          static const MessageType INFO_GAME_STATE_CHANGED;
@@ -231,23 +228,6 @@ namespace dtGame
          {
             AddInstance(this);
             dtGame::MessageFactory::RegisterMessageType<MessageClass>(*this);
-         }
-
-         /**
-          * Deprecated 9/7/2010. Use the templated MessageType() constructor instead.
-          * @see MessageType
-          */
-         DEPRECATE_FUNC
-         MessageType(const std::string& name, const std::string& category,
-                     const std::string& description, const unsigned short id)
-            : dtUtil::Enumeration(name)
-            , mCategory(category)
-            , mDescription(description)
-            , mId(id)
-         {
-            DEPRECATE("MessageType(const std::string&, const std::string&, const std::string&, const unsigned short)",
-                       "template<typename MessageClass> MessageType(const std::string&, const std::string&, const std::string&, const unsigned short, const MessageClass*)");
-            AddInstance(this);
          }
 
          /// Destructor

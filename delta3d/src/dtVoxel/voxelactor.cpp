@@ -21,6 +21,8 @@
 #include <dtVoxel/voxelgriddebugdrawable.h>
 #include <dtVoxel/aabbintersector.h>
 #include <dtVoxel/voxelgeometry.h>
+#include <dtVoxel/voxelmessagetype.h>
+#include <dtVoxel/volumeupdatemessage.h>
 
 #include <dtABC/application.h>
 
@@ -39,10 +41,14 @@
 
 #include <dtPhysics/physicsactcomp.h>
 
+#include <dtUtil/functor.h>
+
 namespace dtVoxel
 {
 
    VoxelActor::VoxelActor()
+   : mViewDistance(1000.0f)
+   , mCreateRemotePhysics(false)
    {
    }
 
@@ -98,6 +104,7 @@ namespace dtVoxel
       DT_REGISTER_PROPERTY_WITH_LABEL(CellDimensions, "Cell Dimensions", "The size of the cells within the blocks", RegHelper, regHelper);
       DT_REGISTER_PROPERTY_WITH_LABEL(TextureResolution, "Texture Resolution", "The dimensions of the 3d texture which holds individual voxels within a single cell.", RegHelper, regHelper);
       DT_REGISTER_PROPERTY_WITH_LABEL(Offset, "Offset", "The offset of the database in world space.", RegHelper, regHelper);
+      DT_REGISTER_PROPERTY_WITH_LABEL(CreateRemotePhysics, "Create Remote Physics", "Create the voxel geometry for the physics if this actor is remote.", RegHelper, regHelper);
 
       DT_REGISTER_RESOURCE_PROPERTY(dtCore::DataType::VOLUME, Database, "Database", "Voxel database file", RegHelper, regHelper);
    }
@@ -188,6 +195,13 @@ namespace dtVoxel
 
    }
 
+   /////////////////////////////////////////////////////
+   void VoxelActor::OnVolumeUpdate(const VolumeUpdateMessage& msg)
+   {
+      if (msg.GetSource() != GetGameManager()->GetMachineInfo())
+      {
+      }
+   }
 
    /////////////////////////////////////////////////////
    void VoxelActor::OnEnteredWorld()
@@ -220,29 +234,34 @@ namespace dtVoxel
       }
 
 
-      dtPhysics::PhysicsActCompPtr pac = GetComponent<dtPhysics::PhysicsActComp>();
-      if (mGrids && pac.valid())
+      if (!IsRemote() || GetCreateRemotePhysics())
       {
-         dtPhysics::PhysicsObject* po = pac->GetMainPhysicsObject();
-         if (po != nullptr && po->GetPrimitiveType() == dtPhysics::PrimitiveType::CUSTOM_CONCAVE_MESH)
+         dtPhysics::PhysicsActCompPtr pac = GetComponent<dtPhysics::PhysicsActComp>();
+         if (mGrids && pac.valid())
          {
-            dtPhysics::TransformType xform;
-            VoxelGeometryPtr geometry;
-            openvdb::FloatGrid::Ptr gridF = boost::dynamic_pointer_cast<openvdb::FloatGrid>(GetGrid(0));
-            if (gridF)
+            dtPhysics::PhysicsObject* po = pac->GetMainPhysicsObject();
+            if (po != nullptr && po->GetPrimitiveType() == dtPhysics::PrimitiveType::CUSTOM_CONCAVE_MESH)
             {
-               geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridF);
+               dtPhysics::TransformType xform;
+               VoxelGeometryPtr geometry;
+               openvdb::FloatGrid::Ptr gridF = boost::dynamic_pointer_cast<openvdb::FloatGrid>(GetGrid(0));
+               if (gridF)
+               {
+                  geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridF);
+               }
+               else
+               {
+                  openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(GetGrid(0));
+                  if (gridB)
+                     geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridB);
+               }
+               if (geometry.valid())
+                  po->CreateFromGeometry(*geometry);
             }
-            else
-            {
-               openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(GetGrid(0));
-               if (gridB)
-                  geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridB);
-            }
-            if (geometry.valid())
-               po->CreateFromGeometry(*geometry);
          }
       }
+
+      RegisterForMessagesAboutSelf(VoxelMessageType::INFO_VOLUME_CHANGED, dtUtil::MakeFunctor(&VoxelActor::OnVolumeUpdate, this));
 
       dtGame::ShaderActorComponent* shaderComp = nullptr;
       GetComponent(shaderComp);

@@ -35,6 +35,7 @@ namespace dtVoxel
       /// @param isoValue optional iso-value for the ray-intersection.
       AABBIntersector(typename GridType::Ptr grid)
       : mGrid(grid)
+      , mAcc(grid->getConstAccessor())
       {
 //         if (grid->getGridClass() != openvdb::GRID_LEVEL_SET) {
 //            OPENVDB_THROW(openvdb::RuntimeError,
@@ -47,11 +48,10 @@ namespace dtVoxel
       {
          mHitGrid = typename GridType::Ptr(new GridType);
          mHitGrid->setTransform(mGrid->transformPtr());
+         typename GridType::Accessor hitAcc = mHitGrid->getAccessor();
          //mHitGrid->fill(mCollideBox, true, true);
          //mHitGrid->topologyIntersection(*mGrid);
          //mHitGrid->pruneGrid();
-         typename GridType::ConstAccessor ca = mGrid->getConstAccessor();
-         typename GridType::Accessor acc = mHitGrid->getAccessor();
          for (int i = mCollideBox.min().x(); i < mCollideBox.max().x() + 1; ++i)
          {
             for (int j = mCollideBox.min().y(); j < mCollideBox.max().y() + 1; ++j)
@@ -59,9 +59,9 @@ namespace dtVoxel
                for (int k = mCollideBox.min().z(); k < mCollideBox.max().z() + 1; ++k)
                {
                   openvdb::math::Coord coord(i, j, k);
-                  if (ca.isValueOn(coord))
+                  if (mAcc.isValueOn(coord))
                   {
-                     acc.setValue(coord, ca.getValue(coord));
+                     hitAcc.setValue(coord, mAcc.getValue(coord));
                   }
                }
             }
@@ -89,6 +89,7 @@ namespace dtVoxel
          return mHitGrid;
       }
 
+      typename GridType::ConstAccessor& GetAccessor() { return mAcc; }
 
    private:
 
@@ -96,6 +97,8 @@ namespace dtVoxel
       typename GridType::Ptr         mHitGrid;
       const typename GridT::Ptr    mGrid;
       openvdb::math::CoordBBox mCollideBox;
+      typename GridType::ConstAccessor mAcc;
+
 
    };// LevelSetRayIntersector
 

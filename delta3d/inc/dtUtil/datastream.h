@@ -234,7 +234,7 @@ namespace dtUtil
 
       unsigned int SetBufferSize(unsigned int size) { return ResizeBuffer(size); };
       unsigned int IncreaseBufferSize(const unsigned int size = 0);
-      unsigned int GetRemainingReadSize();
+      unsigned int GetRemainingReadSize() const;
       unsigned int ClearBuffer();
       unsigned int AppendDataStream(const DataStream& dataStream);
 

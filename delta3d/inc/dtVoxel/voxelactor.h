@@ -30,6 +30,7 @@
 namespace dtVoxel
 {
    class VoxelGrid;
+   class VolumeUpdateMessage;
 
    class DT_VOXEL_EXPORT VoxelActor: public dtGame::GameActorProxy
    {
@@ -63,7 +64,10 @@ namespace dtVoxel
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, CellDimensions)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, TextureResolution)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, Offset)
+      // if the physics geometry should be created when the actor is remote.
+      DT_DECLARE_ACCESSOR_INLINE(bool, CreateRemotePhysics)
 
+      void OnVolumeUpdate(const VolumeUpdateMessage& msg);
    protected:
       /**
        * Loads the voxel mesh.
