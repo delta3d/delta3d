@@ -601,7 +601,7 @@ namespace dtVoxel
    VoxelBlock* VoxelGrid::GetBlockFromPos(const osg::Vec3& pos)
    {
       VoxelBlock* block = NULL;
-      //osg::Vec3 offset = pos - mGridOffset;
+      osg::Vec3 offset = pos - mGridOffset;
       int cellX = int(std::floor(offset[0] / mBlockDimensions[0]));
       int cellY = int(std::floor(offset[1] / mBlockDimensions[1]));
       int cellZ = int(std::floor(offset[2] / mBlockDimensions[2]));
