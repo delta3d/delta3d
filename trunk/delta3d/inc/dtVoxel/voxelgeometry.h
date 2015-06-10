@@ -37,12 +37,12 @@ namespace dtVoxel
    {
    public:
       typedef AABBIntersector<GridType> IntersectorType;
-      typedef typename GridType::Ptr GridPtr;
+      typedef typename GridType::ConstPtr GridPtr;
 
       ColliderCallback(const palBoundingBox& shapeBoundingBox, GridPtr grid)
       : palCustomGeometryCallback(shapeBoundingBox)
       , mGrid(grid)
-      , mAcc(grid->GetConstAccessor())
+      , mAcc(grid->getConstAccessor())
       {
       }
 
@@ -134,7 +134,7 @@ namespace dtVoxel
       }
 
       GridPtr mGrid;
-      typename GridPtr::ConstAccessor mAcc;
+      typename GridType::ConstAccessor mAcc;
    };
 
    class DT_VOXEL_EXPORT VoxelGeometry : public dtPhysics::Geometry
