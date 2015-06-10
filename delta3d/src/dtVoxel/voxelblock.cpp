@@ -160,8 +160,8 @@ namespace dtVoxel
       //reduce bounding volume to only include our region
       osg::BoundingBox dirtyBounds = bb.intersect(bounds);
 
-      osg::Vec3i startIndex = GetIndexFromPos(bb._min);
-      osg::Vec3i endIndex = GetIndexFromPos(bb._max);
+      osg::Vec3i startIndex = GetIndexFromPos(dirtyBounds._min);
+      osg::Vec3i endIndex = GetIndexFromPos(dirtyBounds._max);
 
       //std::cout << std::endl << "start index " << startIndex.x() << ", " << startIndex.y() << ", " << startIndex.z() << std::endl;
       //std::cout << std::endl << "end index " << endIndex.x() << ", " << endIndex.y() << ", " << endIndex.z() << std::endl;
