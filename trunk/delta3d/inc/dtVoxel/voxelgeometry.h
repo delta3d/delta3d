@@ -41,7 +41,8 @@ namespace dtVoxel
 
       ColliderCallback(const palBoundingBox& shapeBoundingBox, GridPtr grid)
       : palCustomGeometryCallback(shapeBoundingBox)
-      , mBoxCollider(new AABBIntersector<GridType>(grid))
+      , mGrid(grid)
+      , mAcc(grid->GetConstAccessor())
       {
       }
 
@@ -68,76 +69,72 @@ namespace dtVoxel
                      4, 2, 5  // -y
                };
          typedef typename GridType::ValueOnIter GridItr;
-         openvdb::BBoxd bb(openvdb::Vec3d(bbBox.min.x,bbBox.min.y,bbBox.min.z), openvdb::Vec3d(bbBox.max.x,bbBox.max.y,bbBox.max.z));
-         mBoxCollider->SetWorldBB(bb);
-         mBoxCollider->Intersect();
-         GridPtr grid = mBoxCollider->GetHits();
-         GridItr i = grid->beginValueOn();
-         //i.setMinDepth(GridItr::LEAF_DEPTH);
-         //i.setMaxDepth(GridItr::LEAF_DEPTH);
-         for (; i.test(); ++i)
+         openvdb::BBoxd worldBoundingBox(openvdb::Vec3d(bbBox.min.x,bbBox.min.y,bbBox.min.z), openvdb::Vec3d(bbBox.max.x,bbBox.max.y,bbBox.max.z));
+         GridPtr grid = mGrid;
+         openvdb::CoordBBox collideBox = grid->transform().worldToIndexCellCentered(worldBoundingBox);
+         for (int i = collideBox.min().x(), iend = collideBox.max().x() + 1; i < iend; ++i)
          {
-            if (i.isVoxelValue())
+            for (int j = collideBox.min().y(), jend = collideBox.max().y() + 1; j < jend; ++j)
             {
-               // Logging is all commented out here rather than using LOG_... because it's called from the physics engine and really should be fast.
-               openvdb::Coord coord = i.getCoord();
-               //std::cout << " Collision with voxel at index " << coord << std::endl;
-               openvdb::BBoxd iBox(openvdb::Vec3d(double(coord.x()), double(coord.y()), double(coord.z())), 0);
-               iBox.expand(0.5f);
-               openvdb::BBoxd voxelBBox = grid->transform().indexToWorld(iBox);
-               typename GridType::ConstAccessor& ca = mBoxCollider->GetAccessor();
-               bool activeNeighbors[6];
-               activeNeighbors[0] = ca.isValueOn(openvdb::Coord(coord.x()-1,coord.y(),coord.z()));
-               activeNeighbors[1] = ca.isValueOn(openvdb::Coord(coord.x(),coord.y(),coord.z()+1));
-               activeNeighbors[2] = ca.isValueOn(openvdb::Coord(coord.x()+1,coord.y(),coord.z()));
-               activeNeighbors[3] = ca.isValueOn(openvdb::Coord(coord.x(),coord.y(),coord.z()-1));
-               activeNeighbors[4] = ca.isValueOn(openvdb::Coord(coord.x(),coord.y()+1,coord.z()));
-               activeNeighbors[5] = ca.isValueOn(openvdb::Coord(coord.x(),coord.y()-1,coord.z()));
-               //std::cout << " Neighbors ";
-               //for (unsigned n = 0 ; n < 6 ; ++n) std::cout << activeNeighbors[n];
-               //std::cout << std::endl;
-               openvdb::math::Vec3<Float> min = voxelBBox.min();
-               openvdb::math::Vec3<Float> max = voxelBBox.max();
-               //std::cout << "voxel min max: " << min << max << std::endl;
-               Float cube_vertices[] =
-                     {
-                           min.x(),  max.y(),  max.z(),
-                           min.x(),  min.y(),  max.z(),
-                           min.x(),  min.y(),  min.z(),
-                           min.x(),  max.y(),  min.z(),
-                           max.x(),  min.y(),  max.z(),
-                           max.x(),  min.y(),  min.z(),
-                           max.x(),  max.y(),  max.z(),
-                           max.x(),  max.y(),  min.z()
-                     };
-               int triCount = 12;
-               for (int i=0; i < triCount; ++i)
+               for (int k = collideBox.min().z(), kend = collideBox.max().z() + 1; k < kend; ++k)
                {
-                  if (!activeNeighbors[i/2])
+                  typename GridType::ConstAccessor& ca = mAcc;
+                  openvdb::math::Coord coord(i, j, k);
+                  if (!ca.isValueOn(coord))
+                     continue;
+
+                  openvdb::BBoxd iBox(openvdb::Vec3d(double(coord.x()), double(coord.y()), double(coord.z())), 0);
+                  iBox.expand(0.5f);
+                  openvdb::BBoxd voxelBBox = grid->transform().indexToWorld(iBox);
+                  bool activeNeighbors[6];
+                  activeNeighbors[0] = ca.isValueOn(openvdb::Coord(coord.x()-1,coord.y(),coord.z()));
+                  activeNeighbors[1] = ca.isValueOn(openvdb::Coord(coord.x(),coord.y(),coord.z()+1));
+                  activeNeighbors[2] = ca.isValueOn(openvdb::Coord(coord.x()+1,coord.y(),coord.z()));
+                  activeNeighbors[3] = ca.isValueOn(openvdb::Coord(coord.x(),coord.y(),coord.z()-1));
+                  activeNeighbors[4] = ca.isValueOn(openvdb::Coord(coord.x(),coord.y()+1,coord.z()));
+                  activeNeighbors[5] = ca.isValueOn(openvdb::Coord(coord.x(),coord.y()-1,coord.z()));
+                  //std::cout << " Neighbors ";
+                  //for (unsigned n = 0 ; n < 6 ; ++n) std::cout << activeNeighbors[n];
+                  //std::cout << std::endl;
+                  openvdb::math::Vec3<Float> min = voxelBBox.min();
+                  openvdb::math::Vec3<Float> max = voxelBBox.max();
+                  //std::cout << "voxel min max: " << min << max << std::endl;
+                  Float cube_vertices[] =
+                        {
+                              min.x(),  max.y(),  max.z(),
+                              min.x(),  min.y(),  max.z(),
+                              min.x(),  min.y(),  min.z(),
+                              min.x(),  max.y(),  min.z(),
+                              max.x(),  min.y(),  max.z(),
+                              max.x(),  min.y(),  min.z(),
+                              max.x(),  max.y(),  max.z(),
+                              max.x(),  max.y(),  min.z()
+                        };
+                  int triCount = 12;
+                  for (int i=0; i < triCount; ++i)
                   {
-                     palTriangle tri;
-                     //std::cout << "triangle ";
-                     for (unsigned j = 0; j < 3; ++j)
+                     if (!activeNeighbors[i/2])
                      {
-                        tri.vertices[j].x = cube_vertices[3 * faces[3*i + j] + 0];
-                        tri.vertices[j].y = cube_vertices[3 * faces[3*i + j] + 1];
-                        tri.vertices[j].z = cube_vertices[3 * faces[3*i + j] + 2];
-                        //std::cout << "[" << tri.vertices[j].x << " " << tri.vertices[j].y << " " << tri.vertices[j].z << "]";
+                        palTriangle tri;
+                        //std::cout << "triangle ";
+                        for (unsigned j = 0; j < 3; ++j)
+                        {
+                           tri.vertices[j].x = cube_vertices[3 * faces[3*i + j] + 0];
+                           tri.vertices[j].y = cube_vertices[3 * faces[3*i + j] + 1];
+                           tri.vertices[j].z = cube_vertices[3 * faces[3*i + j] + 2];
+                           //std::cout << "[" << tri.vertices[j].x << " " << tri.vertices[j].y << " " << tri.vertices[j].z << "]";
+                        }
+                        //std::cout << std::endl;
+                        trianglesOut.push_back(tri);
                      }
-                     //std::cout << std::endl;
-                     trianglesOut.push_back(tri);
                   }
                }
-            }
-            else
-            {
-               //std::cout << "not a voxel\n";
-
             }
          }
       }
 
-      boost::shared_ptr<IntersectorType> mBoxCollider;
+      GridPtr mGrid;
+      typename GridPtr::ConstAccessor mAcc;
    };
 
    class DT_VOXEL_EXPORT VoxelGeometry : public dtPhysics::Geometry
