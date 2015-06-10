@@ -46,8 +46,15 @@ namespace dtVoxel
 
       void Intersect()
       {
-         mHitGrid = typename GridType::Ptr(new GridType);
-         mHitGrid->setTransform(mGrid->transformPtr());
+         if (mHitGrid == nullptr)
+         {
+            mHitGrid = typename GridType::Ptr(new GridType);
+            mHitGrid->setTransform(mGrid->transformPtr());
+         }
+         else
+         {
+            mHitGrid->clear();
+         }
          typename GridType::Accessor hitAcc = mHitGrid->getAccessor();
          //mHitGrid->fill(mCollideBox, true, true);
          //mHitGrid->topologyIntersection(*mGrid);
