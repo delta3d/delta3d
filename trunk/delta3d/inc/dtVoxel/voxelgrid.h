@@ -60,7 +60,8 @@ namespace dtVoxel
       VoxelBlock* GetBlockFromIndex(int index);
       VoxelBlock* GetBlockFromIndex(int x, int y, int z);
       VoxelBlock* GetBlockFromPos(const osg::Vec3& pos);
-      
+      osg::Vec3i GetIndexFromPos(const osg::Vec3& pos);
+
       /*virtual*/ osg::Node* GetOSGNode();
       /*virtual*/ const osg::Node* GetOSGNode() const;
 

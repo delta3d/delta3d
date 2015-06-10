@@ -35,6 +35,35 @@
 
 namespace dtVoxel
 {
+   class FindVoxelCellVisitor : public osg::NodeVisitor
+   {
+   public:
+
+      FindVoxelCellVisitor(const std::string& name) 
+         : osg::NodeVisitor(TRAVERSE_ALL_CHILDREN)
+         , mFoundNode(nullptr)
+         , mName(name)
+      {
+
+      }
+
+      virtual void apply(osg::Group& group)
+      {
+         if (group.getName() == mName)
+         {
+            mFoundNode = &group;
+         }
+         else
+         {
+            traverse(group);
+         }
+      }
+
+      osg::Group* mFoundNode;
+      std::string mName;
+   };
+
+
 
    VoxelBlock::VoxelBlock()
       : mIsAllocated(false)      
@@ -60,6 +89,15 @@ namespace dtVoxel
       mWSCellDimensions = cellSize;
 
       mVolume = new osg::Group();
+
+      mGridDimensions.set(
+         1.0 + int(std::floor(mWSDimensions[0] / mWSCellDimensions[0])),
+         1.0 + int(std::floor(mWSDimensions[1] / mWSCellDimensions[1])),
+         1.0 + int(std::floor(mWSDimensions[2] / mWSCellDimensions[2])));
+
+      mNumCells = mGridDimensions[0] * mGridDimensions[1] * mGridDimensions[2];
+      
+      mCells = new VoxelCell[mNumCells];
    }
    
    void VoxelBlock::DeAllocate()
@@ -117,80 +155,140 @@ namespace dtVoxel
 
    void VoxelBlock::RegenerateAABB(VoxelActor& voxelActor, const osg::BoundingBox& bb, const osg::Vec3i& textureResolution)
    {
-      osg::Vec3 newDim;
-      newDim[0] = bb.xMax() - bb.xMin();
-      newDim[1] = bb.yMax() - bb.yMin();
-      newDim[2] = bb.zMax() - bb.zMin();
+      osg::BoundingBox bounds(mOffset, mOffset + mWSDimensions);
 
-      int blocksX = int(std::floor(newDim.x() / mWSCellDimensions.x()));
-      int blocksY = int(std::floor(newDim.y() / mWSCellDimensions.y()));
-      int blocksZ = int(std::floor(newDim.z() / mWSCellDimensions.z()));
+      //reduce bounding volume to only include our region
+      osg::BoundingBox dirtyBounds = bb.intersect(bounds);
 
-      //std::cout << "Blocks X " << blocksX << " Blocks Y " << blocksY << " Blocks Z " << blocksZ << std::endl;
+      osg::Vec3i startIndex = GetIndexFromPos(bb._min);
+      osg::Vec3i endIndex = GetIndexFromPos(bb._max);
 
-      osg::Vec3 bboffset = bb._min - mOffset;
-      int startX = int(std::floor(bboffset.x() / mWSDimensions.x()));
-      int startY = int(std::floor(bboffset.y() / mWSDimensions.y()));
-      int startZ = int(std::floor(bboffset.z() / mWSDimensions.z()));
+      //std::cout << std::endl << "start index " << startIndex.x() << ", " << startIndex.y() << ", " << startIndex.z() << std::endl;
+      //std::cout << std::endl << "end index " << endIndex.x() << ", " << endIndex.y() << ", " << endIndex.z() << std::endl;
 
-      //std::cout << "start X " << startX << " start Y " << startY << " start Z " << startZ << std::endl;
 
-      int endX = startX + blocksX;
-      int endY = startY + blocksY;
-      int endZ = startZ + blocksZ;
-
-      for (int z = startZ; z < endZ; z++)
+      for (int z = startIndex.z(); z <= endIndex.z(); z++)
       {
-         for (int y = startY; y < endY; y++)
+         for (int y = startIndex.y(); y <= endIndex.y(); y++)
          {
-            for (int x = startX; x < endX; x++)
+            for (int x = startIndex.x(); x <= endIndex.x(); x++)
             {
-               VoxelCell* vc = GetCellFromIndex(x, y, z);
-               if (vc != nullptr)
+               if (z >= 0 && z < mGridDimensions.z())
                {
-                  osg::Vec3 pos(x * mWSCellDimensions[0], y * mWSCellDimensions[1], z * mWSCellDimensions[2]);
-                  osg::Vec3 offsetFrom = pos + mOffset;
-                  osg::Vec3 offsetTo = offsetFrom + mWSCellDimensions;
-
-                  osg::Matrix transform;
-                  transform.makeScale(1.0f, 1.0f, 1.0f); //compute offset
-                  transform.setTrans(offsetFrom);
-
-                  //todo using local grid should be faster
-                  osg::BoundingBox bb(offsetFrom, offsetTo);
-                  openvdb::GridBase::Ptr vdbGrid = voxelActor.CollideWithAABB(bb);
-                  
-                  if (mVolume->getNumChildren() > 0)
+                  if (y >= 0 && y < mGridDimensions.y())
                   {
-                     osg::LOD* lod = dynamic_cast<osg::LOD*>(mVolume->getChild(0));
-                     if (lod != nullptr)
+                     if (x >= 0 && x < mGridDimensions.x())
                      {
-                        osg::Group* lodChild0 = lod->getChild(0)->asGroup();
-               
-                        if (vc->IsAllocated())
-                        {
-                           lodChild0->removeChild(vc->GetOSGNode());
-                        }
+                        VoxelCell* vc = GetCellFromIndex(x, y, z);
 
-                        if (vdbGrid != NULL && !vdbGrid->empty())
+                        if (vc != nullptr)
                         {
-                           vc->CreateMesh(voxelActor, vdbGrid, transform, mWSCellDimensions, textureResolution);
-                           lodChild0->addChild(vc->GetOSGNode());
+                           //std::cout << "Regenerating Cell " << x << ", " << y << ", " << z << std::endl;
+
+                           osg::Vec3 pos(x * mWSCellDimensions[0], y * mWSCellDimensions[1], z * mWSCellDimensions[2]);
+                           osg::Vec3 offsetFrom = pos + mOffset;
+                           osg::Vec3 offsetTo = offsetFrom + mWSCellDimensions;
+
+                           osg::Matrix transform;
+                           transform.makeScale(1.0f, 1.0f, 1.0f); //compute offset
+                           transform.setTrans(offsetFrom);
+
+                           FindVoxelCellVisitor fv(GetCellName(x, y, z));
+                           GetOSGNode()->accept(fv);
+
+                           if (fv.mFoundNode != nullptr)
+                           {
+                              dtCore::RefPtr<osg::Group> nodeToRemove = fv.mFoundNode;
+                              dtCore::RefPtr<osg::Group> parent = nodeToRemove->getParent(0);
+
+                              //std::cout << "Removing child geode." << std::endl;
+
+                              parent->removeChild(nodeToRemove);
+                              
+                              bool wasAllocated = false;
+                              if (vc->IsAllocated())
+                              {                   
+                                 wasAllocated = true;
+                                 vc->DeAllocate();
+                              }
+
+                              //todo using local grid should be faster
+                              osg::BoundingBox bb(offsetFrom, offsetTo);
+                              openvdb::GridBase::Ptr vdbGrid = voxelActor.CollideWithAABB(bb);
+
+                              if (vdbGrid != NULL && !vdbGrid->empty())
+                              {
+                                 //std::cout << "Creating new mesh." << std::endl;
+
+                                 vc->CreateMesh(voxelActor, vdbGrid, transform, mWSCellDimensions, textureResolution);
+                                 vc->GetOSGNode()->setName(fv.mName);
+                                 parent->addChild(vc->GetOSGNode());
+                                 
+                                 if (!wasAllocated)
+                                 {
+                                    osg::Group* pt = mVolume->getChild(0)->asGroup();
+                                    osg::PagedLOD* lod = dynamic_cast<osg::PagedLOD*>(pt);
+
+                                    //std::cout << "looking for paged lod" << std::endl;
+
+                                    //find the paged lod child                                 
+                                    while (pt != nullptr && lod == nullptr && pt->getNumChildren() > 0)
+                                    {
+                                       //std::cout << "executing loop" << std::endl;
+
+                                       pt = pt->getChild(0)->asGroup();
+                                       lod = dynamic_cast<osg::PagedLOD*>(pt);
+                                    }
+
+                                    //std::cout << "found lod node" << std::endl;
+
+
+                                    if (lod != nullptr)// && lod->getNumChildren() > 1)
+                                    {
+                                       lod->removeChildren(1, lod->getNumChildren());
+                                       lod->setNumChildrenThatCannotBeExpired(1);
+                                       lod->setRange(0, 0.0f, 750.0f); //todo- need view distance
+                                       //std::cout << "Marking child 0 to not expire, deleting rest of children" << std::endl;
+                                    }
+                                    //else
+                                    //{
+                                    //   if (lod == nullptr)
+                                    //   {
+                                    //      std::cout << "lod is null" << std::endl;
+                                    //   }
+                                    //   
+                                    //   if (pt == nullptr)
+                                    //   {
+                                    //      std::cout << "child ptr is null" << lod->getNumChildren() << std::endl;
+
+                                    //   }
+
+                                    //   {
+                                    //      std::cout << "lod num children " << lod->getNumChildren() << std::endl;
+                                    //   }
+
+                                    //}
+                                 }
+
+                              }
+                              else
+                              {
+                                 //std::cout << "new voxel cell is empty." << std::endl;
+
+                              }
+                           }
+                           else
+                           {
+                              //LOG_ERROR("Error finding LOD node, cannot regenerate mesh.");
+                           }
+                           
+                        }
+                        else
+                        {
+                           LOG_ERROR("Invalid data voxel cell is NULL");
                         }
                      }
-                     else
-                     {
-                        LOG_ERROR("Error finding LOD node, cannot regenerate mesh.");
-                     }
                   }
-                  else
-                  {
-                     LOG_ERROR("Voxel Block is unallocated, cannot regenerate mesh.");
-                  }
-               }
-               else
-               {
-                  LOG_ERROR("Error calculating VoxelCell AABB region");
                }
             }
          }
@@ -220,20 +318,19 @@ namespace dtVoxel
                //todo using local grid should be faster
                osg::BoundingBox bb(offsetFrom, offsetTo);
                openvdb::GridBase::Ptr vdbGrid = voxelActor.CollideWithAABB(bb);
-               //bool collides = voxelActor.FastSampleWithAABB(bb, osg::Vec3i(25, 25, 10));
 
                if (vdbGrid != NULL && !vdbGrid->empty())
                {
                   //keeping a pointer and incrementing it should be much faster for a large contiguous dataset
                   int cellIndex = (z * gridDimensions[1] * gridDimensions[0]) + (y * gridDimensions[0]) + x;
                   
-                  mCells[cellIndex].CreateMesh(voxelActor, vdbGrid, transform, mWSCellDimensions, textureResolution);
+                  VoxelCell& vc = mCells[cellIndex];
+                  vc.CreateMesh(voxelActor, vdbGrid, transform, mWSCellDimensions, textureResolution);
 
-                  //todo- should these be spatialized?
-                  parentNode.addChild(mCells[cellIndex].GetOSGNode());
+                  vc.GetOSGNode()->setName(GetCellName(x, y, z));
+                  parentNode.addChild(vc.GetOSGNode());
                }
 
-               //++cellToInit;
             }
          }
       }
@@ -253,35 +350,24 @@ namespace dtVoxel
 
    void VoxelBlock::AllocateLODMesh(VoxelActor& voxelActor, const osg::Vec3i& resolution0, float dist0, const osg::Vec3i& resolution1, float dist1, const osg::Vec3i& resolution2, float dist2, const osg::Vec3i& resolution3, float viewDistance)
    {
-      osg::Vec3 gridDim(
-         1.0 + int(std::floor(mWSDimensions[0] / mWSCellDimensions[0])),
-         1.0 + int(std::floor(mWSDimensions[1] / mWSCellDimensions[1])),
-         1.0 + int(std::floor(mWSDimensions[2] / mWSCellDimensions[2])));
-
-      mNumCells = gridDim[0] * gridDim[1] * gridDim[2];
-      //todo catch out of memory exception here
-      mCells = new VoxelCell[mNumCells];
-
-
       dtCore::RefPtr<osg::LOD> lodNode = new osg::LOD();
 
       dtCore::RefPtr<osg::Group> node0 = new osg::Group;
       dtCore::RefPtr<osg::Group> node1 = new osg::Group;
       dtCore::RefPtr<osg::Group> node2 = new osg::Group;
-      dtCore::RefPtr<osg::Group> node3 = new osg::Group;
+      //dtCore::RefPtr<osg::Group> node3 = new osg::Group;
 
           
-      //AllocateCells(voxelActor, *node0, gridDim, resolution0);
-      AllocateCombinedMesh(voxelActor, *node0, gridDim, resolution0);
-      AllocateCombinedMesh(voxelActor, *node1, gridDim, resolution1);
-      AllocateCombinedMesh(voxelActor, *node2, gridDim, resolution2);
-      AllocateCombinedMesh(voxelActor, *node3, gridDim, resolution3);
+      AllocateCells(voxelActor, *node0, mGridDimensions, resolution0);
+      AllocateCombinedMesh(voxelActor, *node1, mGridDimensions, resolution1);
+      AllocateCombinedMesh(voxelActor, *node2, mGridDimensions, resolution2);
+      //AllocateCombinedMesh(voxelActor, *node3, mGridDimensions, resolution3);
       
 
       lodNode->addChild(node0, 0.0f, dist0);
       lodNode->addChild(node1, dist0, dist1);
       lodNode->addChild(node2, dist1, dist2);
-      lodNode->addChild(node3, dist2, viewDistance);
+      //lodNode->addChild(node3, dist2, viewDistance);
 
       mVolume->addChild(lodNode);
       
@@ -290,16 +376,6 @@ namespace dtVoxel
 
    void VoxelBlock::WritePagedLOD(VoxelActor& voxelActor, int index, const std::string& filePath, const osg::Vec3i& resolution0, float dist0, const osg::Vec3i& resolution1, float dist1, const osg::Vec3i& resolution2, float dist2, const osg::Vec3i& resolution3, float viewDistance)
    {
-      osg::Vec3 gridDim(
-         1.0 + int(std::floor(mWSDimensions[0] / mWSCellDimensions[0])),
-         1.0 + int(std::floor(mWSDimensions[1] / mWSCellDimensions[1])),
-         1.0 + int(std::floor(mWSDimensions[2] / mWSCellDimensions[2])));
-
-      mNumCells = gridDim[0] * gridDim[1] * gridDim[2];
-      //todo catch out of memory exception here
-      mCells = new VoxelCell[mNumCells];
-
-
       dtCore::RefPtr<osg::PagedLOD> lodNode = new osg::PagedLOD();
       lodNode->setDatabasePath(filePath);
       lodNode->setRadius(2.0 * mWSDimensions.length());
@@ -311,8 +387,7 @@ namespace dtVoxel
       dtCore::RefPtr<osg::Group> node3 = new osg::Group;
 
 
-      //AllocateCells(voxelActor, *node0, gridDim, resolution0);
-      AllocateCombinedMesh(voxelActor, *node0, gridDim, resolution0);      
+      AllocateCells(voxelActor, *node0, mGridDimensions, resolution0);
       std::string fileName = SaveCachedModel(filePath, *node0, index, 0);
       if (!fileName.empty())
       {
@@ -324,7 +399,7 @@ namespace dtVoxel
          LOG_ERROR("Error writing paged lod node 0.");
       }
 
-      AllocateCombinedMesh(voxelActor, *node1, gridDim, resolution1);      
+      AllocateCombinedMesh(voxelActor, *node1, mGridDimensions, resolution1);
       fileName = SaveCachedModel(filePath, *node1, index, 1);
       if (!fileName.empty())
       {
@@ -336,7 +411,7 @@ namespace dtVoxel
          LOG_ERROR("Error writing paged lod node 1.");
       }
 
-      AllocateCombinedMesh(voxelActor, *node2, gridDim, resolution2);      
+      AllocateCombinedMesh(voxelActor, *node2, mGridDimensions, resolution2);
       fileName = SaveCachedModel(filePath, *node2, index, 2);
       if (!fileName.empty())
       {
@@ -348,7 +423,7 @@ namespace dtVoxel
          LOG_ERROR("Error writing paged lod node 2.");
       }
 
-      AllocateCombinedMesh(voxelActor, *node3, gridDim, resolution3);
+      AllocateCombinedMesh(voxelActor, *node3, mGridDimensions, resolution3);
       fileName = SaveCachedModel(filePath, *node3, index, 3);
       if (!fileName.empty())
       {
@@ -425,9 +500,9 @@ namespace dtVoxel
       /*dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
       simplifier->setSampleRatio(0.2);
       simplifier->setDoTriStrip(true);
-      parentNode.accept(*simplifier);
+      parentNode.accept(*simplifier);*/
       
-      osgUtil::Optimizer opt;
+      /*osgUtil::Optimizer opt;
       opt.optimize(&parentNode, osgUtil::Optimizer::MAKE_FAST_GEOMETRY);*/
 
 
@@ -449,21 +524,32 @@ namespace dtVoxel
    {
       VoxelCell* cell = NULL;
 
-      osg::Vec3 gridDim(
-         int(std::floor(mWSDimensions[0] / mWSCellDimensions[0])),
-         int(std::floor(mWSDimensions[1] / mWSCellDimensions[1])),
-         int(std::floor(mWSDimensions[2] / mWSCellDimensions[2])));
-
-      int numCells = gridDim[0] * gridDim[1] * gridDim[2];
-      int cellIndex = (z * gridDim[1] * gridDim[0]) + (y * gridDim[0]) + x;
+      int numCells = mGridDimensions[0] * mGridDimensions[1] * mGridDimensions[2];
+      int cellIndex = (z * mGridDimensions[1] * mGridDimensions[0]) + (y * mGridDimensions[0]) + x;
 
       if (cellIndex >= 0 && cellIndex < numCells)
       {
          cell = &mCells[cellIndex];
       }
+      else
+      {
+         std::cout << "Cell index out of bounds " << x << ", " << y << ", " << z << std::endl;
+      }
 
       return cell;
    }
+
+   osg::Vec3i VoxelBlock::GetIndexFromPos(const osg::Vec3& pos)
+   {
+      osg::Vec3 localPos = pos - mOffset;
+
+      int indexX = int(std::floor(localPos[0] / mWSCellDimensions[0]));
+      int indexY = int(std::floor(localPos[1] / mWSCellDimensions[1]));
+      int indexZ = int(std::floor(localPos[2] / mWSCellDimensions[2]));
+
+      return osg::Vec3i(indexX, indexY, indexZ);
+   }
+
 
    VoxelCell* VoxelBlock::GetCellFromPos(const osg::Vec3& pos)
    {
@@ -475,13 +561,8 @@ namespace dtVoxel
       int indexY = int(std::floor(localPos[1] / mWSCellDimensions[1]));
       int indexZ = int(std::floor(localPos[2] / mWSCellDimensions[2]));
 
-      osg::Vec3 gridDim(
-         int(std::floor(mWSDimensions[0] / mWSCellDimensions[0])),
-         int(std::floor(mWSDimensions[1] / mWSCellDimensions[1])),
-         int(std::floor(mWSDimensions[2] / mWSCellDimensions[2])));
-
-      int numCells = gridDim[0] * gridDim[1] * gridDim[2];
-      int cellIndex = (indexZ * gridDim[1] * gridDim[0]) + (indexY * gridDim[0]) + indexX;
+      int numCells = mGridDimensions[0] * mGridDimensions[1] * mGridDimensions[2];
+      int cellIndex = (indexZ * mGridDimensions[1] * mGridDimensions[0]) + (indexY * mGridDimensions[0]) + indexX;
 
       if (cellIndex > 0 && cellIndex < numCells)
       {
@@ -547,6 +628,12 @@ namespace dtVoxel
          osg::Node* n = dtUtil::FileUtils::GetInstance().ReadNode(fileName.str());
          if (n != nullptr)
          {
+            /*osg::PagedLOD* lod = dynamic_cast<osg::PagedLOD*>(n->asGroup()->getChild(0));
+            if (lod)
+            {
+               std::cout << "Changing lod options" << std::endl;
+            }*/
+
             mVolume->addChild(n);
                
             mIsAllocated = true;
@@ -620,6 +707,14 @@ namespace dtVoxel
       }
 
       return result;
+   }
+
+   std::string VoxelBlock::GetCellName(int x, int y, int z)
+   {
+      std::stringstream strs;
+      strs << x << y << z << "_VoxelCell";
+
+      return strs.str();
    }
 
 
