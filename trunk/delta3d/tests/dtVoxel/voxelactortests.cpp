@@ -28,6 +28,11 @@
 #include <dtVoxel/aabbintersector.h>
 #include "../dtGame/basegmtests.h"
 
+#include <dtVoxel/voxelmessagetype.h>
+#include <dtVoxel/volumeupdatemessage.h>
+
+#include <dtCore/system.h>
+
 namespace dtVoxel
 {
    class VoxelActorTests : public dtGame::BaseGMTestFixture
@@ -37,6 +42,7 @@ namespace dtVoxel
 
          CPPUNIT_TEST(testVolumeLibraryExtRegistration);
          CPPUNIT_TEST(testVoxelActor);
+         CPPUNIT_TEST(testVoxelActorRemoteUpdate);
          CPPUNIT_TEST(testVoxelColliderAABB);
 
       CPPUNIT_TEST_SUITE_END();
@@ -76,6 +82,81 @@ namespace dtVoxel
             CPPUNIT_FAIL(ex.ToString());
          }
       }
+
+      void testVoxelActorRemoteUpdate()
+      {
+          try
+          {
+             dtCore::RefPtr<dtVoxel::VoxelActor> voxelActor;
+             mGM->CreateActor(*VoxelActorRegistry::VOXEL_ACTOR_TYPE, voxelActor);
+             CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(0U));
+             voxelActor->SetDatabase(dtCore::ResourceDescriptor("Volumes:delta3d_island.vdb"));
+             CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(1U));
+             mGM->AddActor(*voxelActor, false, false);
+             openvdb::BoolGrid::Ptr grid = boost::dynamic_pointer_cast<openvdb::BoolGrid>(voxelActor->GetGrid(0));
+             CPPUNIT_ASSERT(grid);
+             auto accessor = grid->getAccessor();
+
+             dtCore::RefPtr<VolumeUpdateMessage> msg;
+             mGM->GetMessageFactory().CreateMessage(VoxelMessageType::INFO_VOLUME_CHANGED, msg);
+             CPPUNIT_ASSERT(msg.valid());
+             dtCore::RefPtr<dtGame::MachineInfo> testMI = new dtGame::MachineInfo("blah");
+             msg->SetSource(*testMI);
+             msg->AddChangedValue<bool>(osg::Vec3(1.0f, 3.0f, 92.0f), true);
+             msg->AddChangedValue<bool>(osg::Vec3(9.0f, 4.0f, 93.0f), false);
+             msg->AddChangedValue<bool>(osg::Vec3(-71.0f, -8.0f, -96.0f), true);
+
+             mGM->SendMessage(*msg);
+             dtCore::System::GetInstance().Step(0.016f);
+
+             CPPUNIT_ASSERT_MESSAGE("The actor only registers for messages about itself.", !accessor.isValueOn(openvdb::Coord(1,3,92)));
+             msg->SetAboutActorId(voxelActor->GetId());
+
+             voxelActor->SetLocalActorUpdatePolicy(dtGame::GameActorProxy::LocalActorUpdatePolicy::IGNORE_ALL);
+
+             mGM->SendMessage(*msg);
+             dtCore::System::GetInstance().Step(0.016f);
+
+             CPPUNIT_ASSERT_MESSAGE("The actor doesn't want updates.", !accessor.isValueOn(openvdb::Coord(1,3,92)));
+             voxelActor->SetLocalActorUpdatePolicy(dtGame::GameActorProxy::LocalActorUpdatePolicy::ACCEPT_ALL);
+
+             mGM->SendMessage(*msg);
+             dtCore::System::GetInstance().Step(0.016f);
+
+             CPPUNIT_ASSERT(accessor.isValueOn(openvdb::Coord(1,3,92)));
+             CPPUNIT_ASSERT(accessor.getValue(openvdb::Coord(1,3,92)));
+
+             CPPUNIT_ASSERT(accessor.isValueOn(openvdb::Coord(9,4,93)));
+             CPPUNIT_ASSERT(!accessor.getValue(openvdb::Coord(9,4,93)));
+
+             CPPUNIT_ASSERT(accessor.isValueOn(openvdb::Coord(-71,-8,-96)));
+             CPPUNIT_ASSERT(accessor.getValue(openvdb::Coord(-71,-8,-96)));
+
+             msg = NULL;
+
+             mGM->GetMessageFactory().CreateMessage(VoxelMessageType::INFO_VOLUME_CHANGED, msg);
+             CPPUNIT_ASSERT(msg.valid());
+             msg->SetSource(*testMI);
+             msg->SetAboutActorId(voxelActor->GetId());
+             msg->AddDeactivatedIndex(osg::Vec3(1.0f, 3.0f, 92.0f));
+             msg->AddDeactivatedIndex(osg::Vec3(9.0f, 4.0f, 93.0f));
+             msg->AddDeactivatedIndex(osg::Vec3(-71.0f, -8.0f, -96.0f));
+
+             mGM->SendMessage(*msg);
+             dtCore::System::GetInstance().Step(0.016f);
+
+             CPPUNIT_ASSERT(!accessor.isValueOn(openvdb::Coord(1,3,92)));
+
+             CPPUNIT_ASSERT(!accessor.isValueOn(openvdb::Coord(9,4,93)));
+
+             CPPUNIT_ASSERT(!accessor.isValueOn(openvdb::Coord(-71,-8,-96)));
+          }
+          catch(const dtUtil::Exception& ex)
+          {
+             CPPUNIT_FAIL(ex.ToString());
+          }
+       }
+
       void testVoxelColliderAABB()
       {
          try

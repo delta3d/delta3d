@@ -78,6 +78,10 @@ namespace dtVoxel
       void CreateDrawable() override;
 
    private:
+      template<typename GridTypePtr>
+      void UpdateGrid(GridTypePtr grid, const dtCore::NamedArrayParameter* indices, const dtCore::NamedArrayParameter* values,
+            const dtCore::NamedArrayParameter* indicesDeactivated);
+
       dtCore::RefPtr<VoxelGrid> mGrid;
       openvdb::GridPtrVecPtr mGrids;
    };

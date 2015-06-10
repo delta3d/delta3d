@@ -11,7 +11,8 @@
 #include <dtVoxel/export.h>
 #include <dtGame/message.h>
 #include <dtGame/messagemacros.h>
-#include <dtUtil/getsetmacros.h>
+#include <dtUtil/typetraits.h>
+#include <dtCore/typetoactorproperty.h>
 #include <dtCore/namedarrayparameter.h>
 #include <osg/Vec3>
 #include <openvdb/openvdb.h>
@@ -36,31 +37,22 @@ namespace dtVoxel
 
       typedef dtCore::NamedArrayParameter ArrayT;
 
-      const ArrayT* GetIndicesChanged() const
+      template<typename ValueType>
+      void AddChangedValue(const osg::Vec3& idx, typename dtUtil::TypeTraits<ValueType>::param_type value)
       {
-         return static_cast<const ArrayT*>(GetParameter(VolumeUpdateMessage::PARAM_INDICES_CHANGED));
-      }
-      const ArrayT* GetValuesChanged() const
-      {
-         return static_cast<const ArrayT*>(GetParameter(VolumeUpdateMessage::PARAM_VALUES_CHANGED));
-      }
-      const ArrayT* GetIndicesDeactivated() const
-      {
-         return static_cast<const ArrayT*>(GetParameter(VolumeUpdateMessage::PARAM_INDICES_DEACTIVATED));
+         GetIndicesChanged()->AddParameter(*new dtCore::NamedVec3Parameter("x", idx));
+         GetValuesChanged()->AddParameter(*new typename dtCore::TypeToActorProperty<ValueType>::named_parameter_type("x", value));
       }
 
-      ArrayT* GetIndicesChanged()
-      {
-         return static_cast<ArrayT*>(GetParameter(VolumeUpdateMessage::PARAM_INDICES_CHANGED));
-      }
-      ArrayT* GetValuesChanged()
-      {
-         return static_cast<ArrayT*>(GetParameter(VolumeUpdateMessage::PARAM_VALUES_CHANGED));
-      }
-      ArrayT* GetIndicesDeactivated()
-      {
-         return static_cast<ArrayT*>(GetParameter(VolumeUpdateMessage::PARAM_INDICES_DEACTIVATED));
-      }
+      void AddDeactivatedIndex(const osg::Vec3& idx);
+
+      const ArrayT* GetIndicesChanged() const;
+      const ArrayT* GetValuesChanged() const;
+      const ArrayT* GetIndicesDeactivated() const;
+
+      ArrayT* GetIndicesChanged();
+      ArrayT* GetValuesChanged();
+      ArrayT* GetIndicesDeactivated();
 
    protected:
       ~VolumeUpdateMessage() override;

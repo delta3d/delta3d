@@ -28,5 +28,37 @@ namespace dtVoxel
 
    }
 
+   void VolumeUpdateMessage::AddDeactivatedIndex(const osg::Vec3& idx)
+   {
+      GetIndicesDeactivated()->AddParameter(*new dtCore::NamedVec3Parameter("x", idx));
+   }
+
+   const VolumeUpdateMessage::ArrayT* VolumeUpdateMessage::GetIndicesChanged() const
+   {
+      return static_cast<const VolumeUpdateMessage::ArrayT*>(GetParameter(VolumeUpdateMessage::PARAM_INDICES_CHANGED));
+   }
+   const VolumeUpdateMessage::ArrayT* VolumeUpdateMessage::GetValuesChanged() const
+   {
+      return static_cast<const VolumeUpdateMessage::ArrayT*>(GetParameter(VolumeUpdateMessage::PARAM_VALUES_CHANGED));
+   }
+   const VolumeUpdateMessage::ArrayT* VolumeUpdateMessage::GetIndicesDeactivated() const
+   {
+      return static_cast<const VolumeUpdateMessage::ArrayT*>(GetParameter(VolumeUpdateMessage::PARAM_INDICES_DEACTIVATED));
+   }
+
+   VolumeUpdateMessage::ArrayT* VolumeUpdateMessage::GetIndicesChanged()
+   {
+      return static_cast<VolumeUpdateMessage::ArrayT*>(GetParameter(VolumeUpdateMessage::PARAM_INDICES_CHANGED));
+   }
+   VolumeUpdateMessage::ArrayT* VolumeUpdateMessage::GetValuesChanged()
+   {
+      return static_cast<VolumeUpdateMessage::ArrayT*>(GetParameter(VolumeUpdateMessage::PARAM_VALUES_CHANGED));
+   }
+   VolumeUpdateMessage::ArrayT* VolumeUpdateMessage::GetIndicesDeactivated()
+   {
+      return static_cast<VolumeUpdateMessage::ArrayT*>(GetParameter(VolumeUpdateMessage::PARAM_INDICES_DEACTIVATED));
+   }
+
+
 
 } /* namespace dtVoxel */
