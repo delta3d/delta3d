@@ -60,7 +60,8 @@ namespace dtVoxel
       
       VoxelCell* GetCellFromIndex(int x, int y, int z);      
       VoxelCell* GetCellFromPos(const osg::Vec3& pos);
-      
+      osg::Vec3i GetIndexFromPos(const osg::Vec3& pos);
+
       osg::Group* GetOSGNode();      
       const osg::Group* GetOSGNode() const;
       
@@ -75,6 +76,8 @@ namespace dtVoxel
       bool LoadCachedModel(const std::string& folderName, int index);
       bool LoadPagedLODModel(const std::string& folderName, int index);
 
+      std::string GetCellName(int x, int y, int z);
+
    protected:
       void AllocateCells(VoxelActor& voxelActor, osg::Group& parentNode, const osg::Vec3& gridDimensions, const osg::Vec3i& textureResolution);
       void AllocateCombinedMesh(VoxelActor& voxelActor, osg::Group& parentNode, const osg::Vec3& gridDimensions, const osg::Vec3i& textureResolution);
@@ -82,6 +85,7 @@ namespace dtVoxel
       openvdb::GridBase::Ptr ConvertToLocalResolutionGrid(openvdb::GridBase::Ptr);
 
    private:
+      osg::Vec3 mGridDimensions;
       osg::Vec3 mWSDimensions;
       osg::Vec3 mWSCellDimensions;
       osg::Vec3 mOffset;

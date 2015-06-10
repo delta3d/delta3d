@@ -126,63 +126,63 @@ namespace dtVoxel
    }
 
    void VoxelGrid::MarkDirtyAABB(const osg::BoundingBox& bb)
-   {      
-      osg::Vec3 newDim;
-      newDim[0] = bb.xMax() - bb.xMin();
-      newDim[1] = bb.yMax() - bb.yMin();
-      newDim[2] = bb.zMax() - bb.zMin();
+   {            
+      //std::cout << "Mark Dirty AABB, offset " << mGridOffset << std::endl;
+      osg::BoundingBox bounds(mGridOffset, mGridOffset + mWSDimensions);
+      osg::BoundingBox dirtyBounds = bb.intersect(bounds);
 
-      int blocksX = int(std::floor(newDim.x() / mBlockDimensions.x()));
-      int blocksY = int(std::floor(newDim.y() / mBlockDimensions.y()));
-      int blocksZ = int(std::floor(newDim.z() / mBlockDimensions.z()));
+      osg::Vec3i startIndex = GetIndexFromPos(dirtyBounds._min);
+      osg::Vec3i endIndex = GetIndexFromPos(dirtyBounds._max);
 
-      //std::cout << "Blocks X " << blocksX << " Blocks Y " << blocksY << " Blocks Z " << blocksZ << std::endl;
+      //std::cout << std::endl << "start index " << startIndex.x() << ", " << startIndex.y() << ", " << startIndex.z() << std::endl;
+      //std::cout << std::endl << "end index " << endIndex.x() << ", " << endIndex.y() << ", " << endIndex.z() << std::endl;
 
-      osg::Vec3 bboffset = bb._min - mGridOffset;
-      int startX = int(std::floor(bboffset.x() / mBlockDimensions.x()));
-      int startY = int(std::floor(bboffset.y() / mBlockDimensions.y()));
-      int startZ = int(std::floor(bboffset.z() / mBlockDimensions.z()));
 
-      //std::cout << "start X " << startX << " start Y " << startY << " start Z " << startZ << std::endl;
-
-      int endX = startX + blocksX;
-      int endY = startY + blocksY;
-      int endZ = startZ + blocksZ;
-
-      //std::cout << "end X " << endX << " end Y " << endY << " end Z " << endZ << std::endl;
-
-      for (int z = startZ; z < endZ; z++)
+      for (int z = startIndex.z(); z <= endIndex.z(); z++)
       {
-         for (int y = startY; y < endY; y++)
+         for (int y = startIndex.y(); y <= endIndex.y(); y++)
          {
-            for (int x = startX; x < endX; x++)
+            for (int x = startIndex.x(); x <= endIndex.x(); x++)
             {
-               VoxelBlock* curBlock = GetBlockFromIndex(x, y, z);
-
-               if (curBlock != nullptr)
+               if (z >= 0 && z < mBlocksZ)
                {
-                  if (curBlock->IsAllocated())
+                  if (y >= 0 && y < mBlocksY)
                   {
-                     //temporarily just recreating the whole block
-                     //curBlock->RegenerateAABB(*mVoxelActor, bb, mTextureResolution);                     
-                     
-                     curBlock->DeAllocate();
-                     curBlock->AllocateLODMesh(*mVoxelActor, mRes0, mDist0, mRes1, mDist1, mRes2, mDist2, mRes3, mViewDistance);
+                     if (x >= 0 && x < mBlocksX)
+                     {
+                        VoxelBlock* curBlock = GetBlockFromIndex(x, y, z);
 
-                  }
-                  else
-                  {
-                     curBlock->SetDirty(true);
+                        if (curBlock != nullptr)
+                        {
+                           //std::cout << "Found block to regenerate" << std::endl;
+                           if (curBlock->IsAllocated())
+                           {
+                              //std::cout << "block is allocated, regenerating" << std::endl;
+
+                              curBlock->RegenerateAABB(*mVoxelActor, bb, mTextureResolution);
+                           }
+                           else
+                           {
+                              //std::cout << "block is not allocated, marking dirty" << std::endl;
+
+                              curBlock->SetDirty(true);
+                           }
+                        }
+                     }
                   }
                }
             }
          }
       }
+      
+
+           
    }
 
 
    void VoxelGrid::UpdateGrid(const osg::Vec3& newCameraPos)
    {   
+      //currently doing nothing
       return;
 
       osg::BoundingBox newBounds = ComputeWorldBounds(newCameraPos);
@@ -587,13 +587,24 @@ namespace dtVoxel
       return block;
    }
 
+   osg::Vec3i VoxelGrid::GetIndexFromPos(const osg::Vec3& pos)
+   {
+      osg::Vec3 offset = pos - mGridOffset;
+      int cellX = int(std::floor(offset[0] / mBlockDimensions[0]));
+      int cellY = int(std::floor(offset[1] / mBlockDimensions[1]));
+      int cellZ = int(std::floor(offset[2] / mBlockDimensions[2]));
+         
+      return osg::Vec3i(cellX, cellY, cellZ);
+
+   }
+
    VoxelBlock* VoxelGrid::GetBlockFromPos(const osg::Vec3& pos)
    {
       VoxelBlock* block = NULL;
       //osg::Vec3 offset = pos - mGridOffset;
-      int cellX = int(std::floor(pos[0] / mBlockDimensions[0]));
-      int cellY = int(std::floor(pos[1] / mBlockDimensions[1]));
-      int cellZ = int(std::floor(pos[2] / mBlockDimensions[2]));
+      int cellX = int(std::floor(offset[0] / mBlockDimensions[0]));
+      int cellY = int(std::floor(offset[1] / mBlockDimensions[1]));
+      int cellZ = int(std::floor(offset[2] / mBlockDimensions[2]));
 
       int index = (cellZ * mBlocksY * mBlocksX) + (cellY * mBlocksX) + cellX;
 

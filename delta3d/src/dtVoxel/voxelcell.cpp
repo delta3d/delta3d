@@ -220,6 +220,7 @@ namespace dtVoxel
       dtCore::RefPtr<osg::Geometry> geom = new osg::Geometry();
       dtCore::RefPtr<osg::Vec3Array> vertArray = new osg::Vec3Array();
       dtCore::RefPtr<osg::Vec3Array> normalArray = new osg::Vec3Array();
+      dtCore::RefPtr<osg::Vec3Array> colorArray = new osg::Vec3Array();
       dtCore::RefPtr<osg::DrawElementsUInt> drawElements = new osg::DrawElementsUInt(GL_TRIANGLES);
 
       mImpl->mOffset = transform.getTrans();
@@ -227,7 +228,9 @@ namespace dtVoxel
       osg::Vec3 texelSize(cellSize[0] / float(resolution[0]), cellSize[1] / float(resolution[1]), cellSize[2] / float(resolution[2]));
 
 
-      openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(localGrid);
+      //openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(localGrid);
+      openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(voxelActor.GetGrid(0));
+
 
       openvdb::FloatGrid::ConstAccessor accessor = gridB->getConstAccessor();
 
@@ -276,15 +279,15 @@ namespace dtVoxel
                grid.val[7] = SampleCoord(grid.p[7].x(), grid.p[7].y(), grid.p[7].z(), fastSampler);
 
                bool allSamplesZero = true;
-               bool enablePrintOuts = true;
-               for (int s = 0; s < 8 && enablePrintOuts; ++s)
+               bool enablePrintOuts = false;
+               /*for (int s = 0; s < 8 && enablePrintOuts; ++s)
                {
                   if (grid.val[s] < 0.0)// && grid.val[s] != 1)
                   {
                      allSamplesZero = false;
                      break;
                   }
-               }
+               }*/
 
                if (!allSamplesZero)
                {
@@ -324,8 +327,6 @@ namespace dtVoxel
                   normalArray->push_back(triangles[n].n[0]);
                   normalArray->push_back(triangles[n].n[1]);
                   normalArray->push_back(triangles[n].n[2]);
-
-                  //colorArray->push_back(osg::Vec3(1.0f, 1.0f, 1.0f));
                }
             }
          }
@@ -337,8 +338,6 @@ namespace dtVoxel
       geom->setNormalArray(normalArray);
       geom->setNormalBinding(osg::Geometry::BIND_PER_VERTEX);
 
-      //geom->setColorArray(colorArray);
-      //geom->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
       geom->addPrimitiveSet(drawElements);
       
       mImpl->mMeshNode->addDrawable(geom);
