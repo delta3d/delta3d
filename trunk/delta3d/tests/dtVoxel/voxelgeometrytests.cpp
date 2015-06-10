@@ -65,9 +65,9 @@ namespace dtVoxel
             CPPUNIT_ASSERT(geometry.valid());
             po->CreateFromGeometry(*geometry);
 
-            for (float i = 0; i < 12.0f; i += 0.25)
+            for (float i = 0; i < 12.0f; i += 0.01)
             {
-               for (float j = 0; j < 12.0f; j += 0.25)
+               for (float j = 0; j < 12.0f; j += 0.01)
                {
                   dtPhysics::RayCast ray;
                   ray.SetOrigin(dtPhysics::VectorType(i, j, 220.0f));

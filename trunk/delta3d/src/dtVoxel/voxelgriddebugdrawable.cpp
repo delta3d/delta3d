@@ -77,7 +77,7 @@ namespace dtVoxel
 
       for (int blockCount = 0; blockCount < numBlocks; ++blockCount)
       {
-         osg::Vec3 offset = grid.GetGridOffset();
+         //osg::Vec3 offset = grid.GetGridOffset();
 
          dtVoxel::VoxelBlock* curBlock = grid.GetBlockFromIndex(blockCount);
          if (curBlock->IsAllocated())

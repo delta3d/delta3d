@@ -50,7 +50,7 @@ namespace dtGame
           * The base class data will be read by the caller before it calls this method.
           * @param toFill the string to fill.
           */
-         void ToString(std::string& toFill) const;
+         virtual void ToString(std::string& toFill) const;
 
          /**
           * This should read all of the subclass specific data from the string.
@@ -59,14 +59,14 @@ namespace dtGame
           * @return true if it was able to assign the value based on the string or false if not.
           * @param source the string to pull the data from.
           */
-         bool FromString(const std::string& source);
+         virtual bool FromString(const std::string& source);
 
          /**
           * This should write all of the subclass specific data to the stream.
           * The base class data will be read by the caller before it calls this method.
           * @param stream the stream to fill.
           */
-         void ToDataStream(dtUtil::DataStream& stream) const;
+         virtual void ToDataStream(dtUtil::DataStream& stream) const;
 
          /**
           * This should read all of the subclass specific data from the stream.
@@ -75,7 +75,7 @@ namespace dtGame
           * @return true if it was able to assign the value based on the stream or false if not.
           * @param stream the stream to pull the data from.
           */
-         bool FromDataStream(dtUtil::DataStream& stream);
+         virtual bool FromDataStream(dtUtil::DataStream& stream);
 
          /**
           * Non-const version of getter to return a message parameter by name.
