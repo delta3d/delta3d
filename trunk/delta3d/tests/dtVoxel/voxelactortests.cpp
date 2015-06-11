@@ -43,6 +43,7 @@ namespace dtVoxel
          CPPUNIT_TEST(testVolumeLibraryExtRegistration);
          CPPUNIT_TEST(testVoxelActor);
          CPPUNIT_TEST(testVoxelActorRemoteUpdate);
+         CPPUNIT_TEST(testVolumeUpdateMessageToFromStream);
          CPPUNIT_TEST(testVoxelColliderAABB);
 
       CPPUNIT_TEST_SUITE_END();
@@ -159,6 +160,44 @@ namespace dtVoxel
              CPPUNIT_FAIL(ex.ToString());
           }
        }
+
+      void testVolumeUpdateMessageToFromStream()
+      {
+          try
+          {
+             dtCore::RefPtr<VolumeUpdateMessage> msg, msgResult;
+             mGM->GetMessageFactory().CreateMessage(VoxelMessageType::INFO_VOLUME_CHANGED, msg);
+             mGM->GetMessageFactory().CreateMessage(VoxelMessageType::INFO_VOLUME_CHANGED, msgResult);
+             CPPUNIT_ASSERT(msg.valid());
+             CPPUNIT_ASSERT(msgResult.valid());
+             dtCore::RefPtr<dtGame::MachineInfo> testMI = new dtGame::MachineInfo("blah");
+             msg->SetSource(*testMI);
+             msgResult->SetSource(*testMI);
+             msg->AddChangedValue<bool>(osg::Vec3(1.0f, 3.0f, 92.0f), true);
+             msg->AddChangedValue<bool>(osg::Vec3(9.0f, 4.0f, 93.0f), false);
+             msg->AddChangedValue<bool>(osg::Vec3(-71.0f, -8.0f, -96.0f), true);
+             msg->AddDeactivatedIndex(osg::Vec3(2.0f, 4.0f, 98.0f));
+             msg->AddDeactivatedIndex(osg::Vec3(9.0f, 5.0f, 94.0f));
+             msg->AddDeactivatedIndex(osg::Vec3(-78.0f, -9.0f, -7.0f));
+             msg->AddDeactivatedIndex(osg::Vec3(-79.0f, 32.0f, -1.0f));
+
+             dtUtil::DataStream ds;
+
+             msg->ToDataStream(ds);
+
+             msgResult->FromDataStream(ds);
+
+             CPPUNIT_ASSERT_EQUAL(size_t(3U), msg->GetIndicesChanged()->GetSize());
+             CPPUNIT_ASSERT_EQUAL(size_t(3U), msg->GetValuesChanged()->GetSize());
+             CPPUNIT_ASSERT_EQUAL(size_t(4U), msg->GetIndicesDeactivated()->GetSize());
+
+          }
+          catch(const dtUtil::Exception& ex)
+          {
+             CPPUNIT_FAIL(ex.ToString());
+          }
+       }
+
 
       void testVoxelColliderAABB()
       {
