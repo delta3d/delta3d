@@ -667,10 +667,32 @@ namespace dtGame
 
 
    /////////////////////////////////////////////////////////////////////////////
+   // HELPER STRUCT
+   struct ActorCompPropCollectorPred
+   {
+      std::vector<dtUtil::RefString>& mPropList;
+
+      ActorCompPropCollectorPred(std::vector<dtUtil::RefString>& outPropList)
+         : mPropList(outPropList)
+      {}
+
+      bool operator() (dtGame::ActorComponent& actComp)
+      {
+         actComp.GetPartialUpdateProperties(mPropList);
+         return true;
+      }
+   };
+
+   /////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::NotifyPartialActorUpdate(bool flagAsPartial /*= true*/)
    {
       std::vector<dtUtil::RefString> propNames;
       GetPartialUpdateProperties(propNames);
+
+      // Get partial update properties for actor components.
+      ActorCompPropCollectorPred pred(propNames);
+      ForEachComponent(pred);
+
       NotifyPartialActorUpdate(propNames, flagAsPartial);
    }
 

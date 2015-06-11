@@ -179,6 +179,14 @@ namespace dtGame
       /// Remove this method when ActorComponent has been promoted to dtCore.
       virtual bool IsActorComponent() const { return true; }
 
+      /**
+      * Override this and add whatever properties you want to go out when you call
+      * NotifyPartialActorUpdate(). Note - you should not use NotifyPartialActorUpdate()
+      * without overriding this - the default implementation logs a warning.
+      * Note - This will do nothing if the actor is Remote.
+      */
+      virtual void GetPartialUpdateProperties(std::vector<dtUtil::RefString>& outPropNames) {}
+
    protected:
 
       virtual ~ActorComponent();
