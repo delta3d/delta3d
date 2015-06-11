@@ -236,8 +236,10 @@ namespace dtVoxel
          {
             auto indexVp = static_cast<const dtCore::NamedVec3Parameter*>(indexP);
             osg::Vec3 idxVec = indexVp->GetValue();
-            bb.expandBy(idxVec);
-            openvdb::Coord c(std::round(idxVec.x()), std::round(idxVec.y()), std::round(idxVec.z()));
+            openvdb::Vec3d idxOVDBVec(idxVec.x(), idxVec.y(), idxVec.z());
+            openvdb::Vec3d worldVec = grid->transform().indexToWorld(idxOVDBVec);
+            bb.expandBy(osg::Vec3(worldVec.x(), worldVec.y(), worldVec.z()));
+            openvdb::Coord c(openvdb::Coord::round(idxOVDBVec));
             accessor.setValueOff(c, grid->background());
          }
          else
@@ -246,7 +248,7 @@ namespace dtVoxel
          }
       }
       //re-add when not busted
-      //MarkVisualDirty(bb, 0);
+      MarkVisualDirty(bb, 0);
    }
 
    /////////////////////////////////////////////////////
