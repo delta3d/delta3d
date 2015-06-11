@@ -146,10 +146,13 @@ namespace dtVoxel
              dtCore::System::GetInstance().Step(0.016f);
 
              CPPUNIT_ASSERT(!accessor.isValueOn(openvdb::Coord(1,3,92)));
+             CPPUNIT_ASSERT_EQUAL(accessor.getValue(openvdb::Coord(1,3,92)), grid->background());
 
              CPPUNIT_ASSERT(!accessor.isValueOn(openvdb::Coord(9,4,93)));
+             CPPUNIT_ASSERT_EQUAL(accessor.isValueOn(openvdb::Coord(9,4,93)), grid->background());
 
              CPPUNIT_ASSERT(!accessor.isValueOn(openvdb::Coord(-71,-8,-96)));
+             CPPUNIT_ASSERT_EQUAL(accessor.isValueOn(openvdb::Coord(-71,-8,-96)), grid->background());
           }
           catch(const dtUtil::Exception& ex)
           {

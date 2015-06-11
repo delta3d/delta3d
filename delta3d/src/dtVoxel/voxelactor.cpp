@@ -238,7 +238,7 @@ namespace dtVoxel
             osg::Vec3 idxVec = indexVp->GetValue();
             bb.expandBy(idxVec);
             openvdb::Coord c(std::round(idxVec.x()), std::round(idxVec.y()), std::round(idxVec.z()));
-            accessor.setValueOff(c);
+            accessor.setValueOff(c, grid->background());
          }
          else
          {
