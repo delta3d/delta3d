@@ -687,11 +687,12 @@ namespace dtGame
    void GameActorProxy::NotifyPartialActorUpdate(bool flagAsPartial /*= true*/)
    {
       std::vector<dtUtil::RefString> propNames;
-      GetPartialUpdateProperties(propNames);
 
       // Get partial update properties for actor components.
       ActorCompPropCollectorPred pred(propNames);
       ForEachComponent(pred);
+
+      GetPartialUpdateProperties(propNames);
 
       NotifyPartialActorUpdate(propNames, flagAsPartial);
    }
