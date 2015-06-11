@@ -66,6 +66,7 @@
 #include <dtActors/triggervolumeactorproxy.h>
 #include <dtActors/directoractor.h>
 #include <dtActors/positiondataactor.h>
+#include <dtActors/dynamicparticlesactorcomponent.h>
 
 
 #include <dtGame/defaultnetworkpublishingcomponent.h>
@@ -242,6 +243,8 @@ namespace dtActors
       mActorFactory->RegisterType<dtGame::ShaderActorComponent>();
       mActorFactory->RegisterType<dtGame::DRPublishingActComp>();
       mActorFactory->RegisterType<dtGame::CascadingDeleteActorComponent>();
+
+      mActorFactory->RegisterType<dtActors::DynamicParticlesActorComponent>();
 
    }
 
