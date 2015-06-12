@@ -514,7 +514,7 @@ namespace dtActors
       DynamicParticlesActor* actor = nullptr;
 
       int index = GetParticleDataIndex(name);
-      if (index > 0)
+      if (index > -1)
       {
          actor = mParticleDataArray[index]->GetDynamicParticlesActor();
       }
