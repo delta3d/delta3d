@@ -193,6 +193,45 @@ namespace dtVoxel
       mGrid = new VoxelGrid();
       SetDrawable(*mGrid);
 
+      //bind multimap texture
+      osg::Node* n = mGrid->GetOSGNode();
+
+      osg::StateSet* ss = n->getOrCreateStateSet();
+
+      osg::Uniform* diffuseTexture = new osg::Uniform(osg::Uniform::SAMPLER_2D, "diffuseTexture");
+      diffuseTexture->set(0);
+      ss->addUniform(diffuseTexture);
+      //ss->setTextureAttributeAndModes(0, diffuseTexture, osg::StateAttribute::ON);
+
+      osg::Uniform* normalTexture = new osg::Uniform(osg::Uniform::SAMPLER_2D, "normalTexture");
+      normalTexture->set(1);
+      ss->addUniform(normalTexture);
+      //ss->setTextureAttributeAndModes(1, normalTexture, osg::StateAttribute::ON);
+
+      osg::Uniform* specularTexture = new osg::Uniform(osg::Uniform::SAMPLER_2D, "specularTexture");
+      specularTexture->set(2);
+      ss->addUniform(specularTexture);
+      //ss->setTextureAttributeAndModes(2, specularTexture, osg::StateAttribute::ON);
+
+      osg::Uniform* alphaTexture = new osg::Uniform(osg::Uniform::SAMPLER_2D, "alphaTexture");
+      alphaTexture->set(3);
+      ss->addUniform(alphaTexture);
+      //ss->setTextureAttributeAndModes(3, alphaTexture, osg::StateAttribute::ON);
+
+      osg::Uniform* illumTexture = new osg::Uniform(osg::Uniform::SAMPLER_2D, "illumTexture");
+      illumTexture->set(4);
+      ss->addUniform(illumTexture);
+      //ss->setTextureAttributeAndModes(4, alphaTexture, osg::StateAttribute::ON);
+
+      osg::Uniform* shadowTexture = new osg::Uniform(osg::Uniform::SAMPLER_2D, "shadowTexture");
+      shadowTexture->set(5);
+      ss->addUniform(shadowTexture);
+      //ss->setTextureAttributeAndModes(5, shadowTexture, osg::StateAttribute::ON);
+
+      osg::Uniform* d3d_ReflectionCubeMap = new osg::Uniform(osg::Uniform::SAMPLER_2D, "d3d_ReflectionCubeMap");
+      d3d_ReflectionCubeMap->set(10);
+      ss->addUniform(d3d_ReflectionCubeMap);
+      //ss->setTextureAttributeAndModes(5, shadowTexture, osg::StateAttribute::ON);
    }
 
    /////////////////////////////////////////////////////
