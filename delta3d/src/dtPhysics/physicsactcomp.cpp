@@ -53,7 +53,7 @@ namespace dtPhysics
 
    DT_IMPLEMENT_ARRAY_ACCESSOR(PhysicsActComp, dtCore::RefPtr<JointDesc>, Joint, Joints, new JointDesc);
    DT_IMPLEMENT_ARRAY_ACCESSOR_WITH_ON_ADD_REMOVE(PhysicsActComp, TransformJointUpdaterPtr, TransformJointUpdater, TransformJointUpdaters, nullptr, \
-         {value->AddProperties(*this);\
+         {value->AddProperties(*this, true/*send in partial update*/);\
          dtGame::GameActorProxy* parent = nullptr; \
          GetOwner(parent); \
          if (parent != nullptr) \
