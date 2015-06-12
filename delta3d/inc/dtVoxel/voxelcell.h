@@ -42,7 +42,7 @@ namespace dtVoxel
    class DT_VOXEL_EXPORT CreateMeshTask : public dtUtil::ThreadPoolTask
    {
    public:
-      CreateMeshTask(const osg::Vec3& offset, const osg::Vec3& texelSize, const osg::Vec3i& resolution, openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>& sampler);
+      CreateMeshTask(const osg::Vec3& offset, const osg::Vec3& texelSize, const osg::Vec3i& resolution, openvdb::FloatGrid::Ptr grid);
 
       osg::Geometry* TakeGeometry();
 
@@ -50,7 +50,7 @@ namespace dtVoxel
 
       virtual void operator()();
 
-      double SampleCoord(double x, double y, double z, openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>& fastSampler);
+      double SampleCoord(double x, double y, double z, openvdb::tools::GridSampler<openvdb::FloatGrid, openvdb::tools::PointSampler>& fastSampler);
 
 
    private:
@@ -61,8 +61,9 @@ namespace dtVoxel
       osg::Vec3i mResolution;
       dtCore::RefPtr<osg::Geometry> mMesh;
 
-      openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler> mSampler;
-      
+      openvdb::FloatGrid::Ptr mGrid;
+      openvdb::tools::GridSampler<openvdb::FloatGrid, openvdb::tools::PointSampler> mSampler;
+
    };
 
    /***

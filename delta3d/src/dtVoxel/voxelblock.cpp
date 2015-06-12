@@ -655,7 +655,7 @@ namespace dtVoxel
       opt.optimize(&parentNode, osgUtil::Optimizer::MAKE_FAST_GEOMETRY);*/
 
 
-      osg::StateSet* ss = parentNode.getOrCreateStateSet();
+      //osg::StateSet* ss = parentNode.getOrCreateStateSet();
 
       /*osg::ref_ptr<osg::PolygonMode> polymode = new osg::PolygonMode;
       polymode->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);

@@ -38,15 +38,15 @@
 namespace dtVoxel
 {
 
-   CreateMeshTask::CreateMeshTask(const osg::Vec3& offset, const osg::Vec3& texelSize, const osg::Vec3i& resolution, openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>& sampler)
+   CreateMeshTask::CreateMeshTask(const osg::Vec3& offset, const osg::Vec3& texelSize, const osg::Vec3i& resolution, openvdb::FloatGrid::Ptr grid)
       : mIsDone(false)
       , mOffset(offset)
       , mTexelSize(texelSize)
       , mResolution(resolution)
       , mMesh(new osg::Geometry())
-      , mSampler(sampler)
+      , mGrid(grid)
+      , mSampler(*grid)
    {
-
    }
 
    bool CreateMeshTask::IsDone() const
@@ -145,7 +145,7 @@ namespace dtVoxel
       mIsDone = true;
    }
 
-   double CreateMeshTask::SampleCoord(double x, double y, double z, openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>& fastSampler)
+   double CreateMeshTask::SampleCoord(double x, double y, double z, openvdb::tools::GridSampler<openvdb::FloatGrid, openvdb::tools::PointSampler>& fastSampler)
    {
       double result = (fastSampler.wsSample(openvdb::Vec3R(x, y, z)));
       dtUtil::Clamp(result, -0.33, 0.36);
@@ -347,26 +347,22 @@ namespace dtVoxel
 
    void VoxelCell::CreateMeshWithTask(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution)
    {
-      
-      mImpl->mOffset = transform.getTrans();
+      {
+         mImpl->mOffset = transform.getTrans();
 
-      osg::Vec3 texelSize(cellSize[0] / float(resolution[0]), cellSize[1] / float(resolution[1]), cellSize[2] / float(resolution[2]));
-
-
-      //openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(localGrid);
-      openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(voxelActor.GetGrid(0));
+         osg::Vec3 texelSize(cellSize[0] / float(resolution[0]), cellSize[1] / float(resolution[1]), cellSize[2] / float(resolution[2]));
 
 
-      openvdb::FloatGrid::ConstAccessor accessor = gridB->getConstAccessor();
-
-      openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>
-         fastSampler(accessor, gridB->transform());
+         //openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(localGrid);
+         openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(voxelActor.GetGrid(0));
 
 
-      mImpl->mCreateMeshTask = new CreateMeshTask(mImpl->mOffset, texelSize, resolution, fastSampler);
+         mImpl->mCreateMeshTask = new CreateMeshTask(mImpl->mOffset, texelSize, resolution, gridB);
 
-      dtUtil::ThreadPool::AddTask(*mImpl->mCreateMeshTask, dtUtil::ThreadPool::IMMEDIATE); 
-      dtUtil::ThreadPool::ExecuteTasks();
+      }
+      dtUtil::ThreadPool::AddTask(*mImpl->mCreateMeshTask, dtUtil::ThreadPool::BACKGROUND);
+      //dtUtil::ThreadPool::ExecuteTasks();
+
    }
 
    void VoxelCell::TakeGeometry()
@@ -380,13 +376,13 @@ namespace dtVoxel
 
    bool VoxelCell::CheckTaskStatus()
    {
-      if (mImpl->mCreateMeshTask->IsDone())
-      {
-         if (mImpl->mCreateMeshTask->WaitUntilComplete(2))
+//      if (mImpl->mCreateMeshTask->IsDone())
+//      {
+         if (mImpl->mCreateMeshTask->WaitUntilComplete(100))
          {
             return true;
          }
-      }
+//      }
       return false;   
    }
 
@@ -464,8 +460,8 @@ namespace dtVoxel
                grid.val[7] = SampleCoord(grid.p[7].x(), grid.p[7].y(), grid.p[7].z(), fastSampler);
 
                bool allSamplesZero = true;
-               bool enablePrintOuts = false;
-               /*for (int s = 0; s < 8 && enablePrintOuts; ++s)
+               /*bool enablePrintOuts = false;
+               for (int s = 0; s < 8 && enablePrintOuts; ++s)
                {
                   if (grid.val[s] < 0.0)// && grid.val[s] != 1)
                   {

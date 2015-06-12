@@ -179,7 +179,7 @@ namespace dtVoxel
    void VoxelGrid::UpdateGrid(const osg::Vec3& newCameraPos)
    {   
       
-      int cellsToUpdate = mDirtyCells.size();
+      //int cellsToUpdate = mDirtyCells.size();
 
       //std::cout << "Regenerating " << cellsToUpdate << " cells." << std::endl;
       std::vector<VoxelCellUpdateInfo>::iterator iter = mDirtyCells.begin();
