@@ -801,9 +801,14 @@ namespace dtPhysics
       physicsObject->SetSkinThickness(1.2f);
       CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Skin thickness should have changed!", 1.2f, physicsObject->GetSkinThickness(), 1e-3f);
 
+      CPPUNIT_ASSERT(physicsObject->GetCollisionResponseEnabled());
+      physicsObject->SetCollisionResponseEnabled(false);
+      CPPUNIT_ASSERT(!physicsObject->GetCollisionResponseEnabled());
       ///////// CREATE //////////////
       CPPUNIT_ASSERT_MESSAGE("Should be able to call CreateFromPrimitive on a physics object",
                physicsObject->Create());
+
+      CPPUNIT_ASSERT(!physicsObject->GetCollisionResponseEnabled());
 
       CPPUNIT_ASSERT_MESSAGE("The Material should default to, of all things, the default one.",
                physicsObject->GetMaterial() == materials.GetMaterial(PhysicsMaterials::DEFAULT_MATERIAL_NAME));
@@ -913,6 +918,7 @@ namespace dtPhysics
       CPPUNIT_ASSERT(!physicsObject->IsGravityEnabled());
       CPPUNIT_ASSERT(!physicsObject->GetGenericBodyWrapper()->IsGravityEnabled());
 
+      physicsObject->SetCollisionResponseEnabled(true);
       CPPUNIT_ASSERT(physicsObject->IsCollisionResponseEnabled());
       CPPUNIT_ASSERT(physicsObject->GetGenericBodyWrapper()->GetPalGenericBody().IsCollisionResponseEnabled());
 
@@ -1326,10 +1332,15 @@ namespace dtPhysics
       CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("All activation settings should have changed",
                po->GetActivationTimeThreshold(), Real(5.0), Real(0.1));
 
+      po->SetCollisionResponseEnabled(false);
+      po->SetNotifyCollisions(true);
 
       // Create from geometry this time to make sure it, too, sets activation correctly.
       dtCore::RefPtr<Geometry> geom = Geometry::CreateBoxGeometry(TransformType(), VectorType(1.0, 1.0, 1.0), 1.0f);
       po->CreateFromGeometry(*geom);
+
+      CPPUNIT_ASSERT(!po->GetCollisionResponseEnabled());
+      CPPUNIT_ASSERT(po->GetNotifyCollisions());
 
       palActivationSettings* activationImpl = dynamic_cast<palActivationSettings*>(&po->GetBodyWrapper()->GetPalBodyBase());
 
