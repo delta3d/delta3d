@@ -403,6 +403,10 @@ namespace dtPhysics
       DT_REGISTER_PROPERTY_WITH_NAME(MeshScale, "PhysicsMeshScale",
                "If a physics mesh is set, it can be scaled with this property.",
                 PropRegType, propRegHelper);
+
+      DT_REGISTER_PROPERTY(CollisionResponseEnabled,
+               "True for normal collision response.  False for collision detection only.",
+                PropRegType, propRegHelper);
    }
 
    void PhysicsObject::CalculateBoundsAndOrigin(const osg::Node* nodeToLoad, bool calcDimensions, bool adjustOriginOffsetForGeometry)
@@ -600,7 +604,9 @@ namespace dtPhysics
       {
          SetMaterial(PhysicsWorld::GetInstance().GetMaterials().GetMaterial(PhysicsMaterials::DEFAULT_MATERIAL_NAME));
       }
+      SetSkinThickness(mDataMembers->mSkinThickness);
       SetNotifyCollisions(GetNotifyCollisions());
+      SetCollisionResponseEnabled(mDataMembers->mCollisionResponseEnabled);
 
       CreateWithBody(*mDataMembers->mGenericBody);
 
