@@ -43,10 +43,6 @@
 
 #include <dtUtil/functor.h>
 
-#include <osg/Texture2D>
-#include <osg/Image>
-#include <osgDB/ReadFile>
-
 namespace dtVoxel
 {
 
@@ -185,27 +181,6 @@ namespace dtVoxel
       }
    }
 
-   dtCore::RefPtr<osg::Texture2D> VoxelActor::LoadTexture(std::string texFile)
-   {
-      osg::Image* newImage = osgDB::readImageFile(texFile);
-      if (newImage == nullptr)
-      {
-         LOG_ERROR("Failed to load texture from file [" + texFile + "].");
-         return nullptr;
-      }
-
-
-      dtCore::RefPtr<osg::Texture2D> tex = new osg::Texture2D();
-      tex->setImage(newImage);
-      tex->dirtyTextureObject();
-      tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
-      tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
-      tex->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
-      tex->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
-      tex->setUnRefImageDataAfterApply(true);
-
-      return tex;
-   }
 
    /////////////////////////////////////////////////////
    void VoxelActor::CreateDrawable()
@@ -218,68 +193,6 @@ namespace dtVoxel
       mGrid = new VoxelGrid();
       SetDrawable(*mGrid);
 
-      //bind multimap texture
-      osg::Node* n = mGrid->GetOSGNode();
-
-      osg::StateSet* ss = n->getOrCreateStateSet();
-
-      const std::string filePath = dtCore::Project::GetInstance().GetContext() + std::string("/Textures/ShadersBase/");
-           
-      dtCore::RefPtr<osg::Texture2D> diffuse = LoadTexture(filePath + std::string("Snow_DIFF.png"));
-      
-      if (diffuse != nullptr)
-      {
-         osg::Uniform* diffuseTexture = new osg::Uniform(osg::Uniform::SAMPLER_2D, "diffuseTexture");
-         diffuseTexture->set(0);
-         ss->addUniform(diffuseTexture);
-         ss->setTextureAttributeAndModes(0, diffuse, osg::StateAttribute::ON);
-      }
-
-      dtCore::RefPtr<osg::Texture2D> normal = LoadTexture(filePath + std::string("Snow_NORM.png"));
-
-      if (normal != nullptr)
-      {
-         osg::Uniform* normalTexture = new osg::Uniform(osg::Uniform::SAMPLER_2D, "normalTexture");
-         normalTexture->set(1);
-         ss->addUniform(normalTexture);
-         ss->setTextureAttributeAndModes(1, normal, osg::StateAttribute::ON);
-      }
-
-
-      dtCore::RefPtr<osg::Texture2D> spec = LoadTexture(filePath + std::string("Snow_SPEC.png"));
-
-      if (spec != nullptr)
-      {
-         osg::Uniform* specularTexture = new osg::Uniform(osg::Uniform::SAMPLER_2D, "specularTexture");
-         specularTexture->set(2);
-         ss->addUniform(specularTexture);
-         ss->setTextureAttributeAndModes(2, spec, osg::StateAttribute::ON);
-      }
-
-      /*dtCore::RefPtr<osg::Texture2D> alph = LoadTexture(filePath + std::string("Snow_SPEC.png"));
-
-      if (spec != nullptr)
-      {
-         osg::Uniform* alphaTexture = new osg::Uniform(osg::Uniform::SAMPLER_2D, "alphaTexture");
-         alphaTexture->set(3);
-         ss->addUniform(alphaTexture);
-         //ss->setTextureAttributeAndModes(3, alphaTexture, osg::StateAttribute::ON);
-      }
-
-      osg::Uniform* illumTexture = new osg::Uniform(osg::Uniform::SAMPLER_2D, "illumTexture");
-      illumTexture->set(4);
-      ss->addUniform(illumTexture);
-      //ss->setTextureAttributeAndModes(4, alphaTexture, osg::StateAttribute::ON);
-
-      osg::Uniform* shadowTexture = new osg::Uniform(osg::Uniform::SAMPLER_2D, "shadowTexture");
-      shadowTexture->set(5);
-      ss->addUniform(shadowTexture);
-      //ss->setTextureAttributeAndModes(5, shadowTexture, osg::StateAttribute::ON);
-
-      osg::Uniform* d3d_ReflectionCubeMap = new osg::Uniform(osg::Uniform::SAMPLER_2D, "d3d_ReflectionCubeMap");
-      d3d_ReflectionCubeMap->set(10);
-      ss->addUniform(d3d_ReflectionCubeMap);
-      //ss->setTextureAttributeAndModes(5, shadowTexture, osg::StateAttribute::ON);*/
    }
 
    /////////////////////////////////////////////////////
