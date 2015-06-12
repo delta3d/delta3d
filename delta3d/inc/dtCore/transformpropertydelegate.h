@@ -34,12 +34,12 @@ namespace dtCore
 
       void SetRotation(const osg::Vec3& hpr) const;
 
-      dtCore::RefPtr<dtCore::Vec3ActorProperty> CreateTranslationProperty() const;
-      dtCore::RefPtr<dtCore::Vec3ActorProperty> CreateRotationProperty() const;
+      dtCore::RefPtr<dtCore::Vec3ActorProperty> CreateTranslationProperty(bool partialUpdateFlag = false) const;
+      dtCore::RefPtr<dtCore::Vec3ActorProperty> CreateRotationProperty(bool partialUpdateFlag = false) const;
       dtUtil::RefString GetTranslationPropertyName() const;
       dtUtil::RefString GetRotationPropertyName() const;
 
-      virtual void AddProperties(dtCore::PropertyContainer& pc) const;
+      virtual void AddProperties(dtCore::PropertyContainer& pc, bool partialUpdateFlag = false) const;
       virtual void RemoveProperties(dtCore::PropertyContainer& pc) const;
 
    protected:
