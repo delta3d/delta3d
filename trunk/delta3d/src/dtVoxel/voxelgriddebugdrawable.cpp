@@ -137,6 +137,9 @@ namespace dtVoxel
       openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>
          fastSampler(accessor, gridB->transform());
 
+      //reusing this improves performance by quite a bit 
+      osg::Vec3 vertlist[12];
+
       float isolevel = 1.0f;
 
       for (float i = 0; i < resolution[0]; i += stepSize[0])
@@ -205,7 +208,7 @@ namespace dtVoxel
                   std::cout << std::endl;
                }
 
-               int numTriangles = PolygonizeCube(grid, isolevel, triangles);
+               int numTriangles = PolygonizeCube(grid, isolevel, triangles, &vertlist[0]);
 
 
                if (!allSamplesZero)

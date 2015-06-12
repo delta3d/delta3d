@@ -38,6 +38,122 @@
 namespace dtVoxel
 {
 
+   CreateMeshTask::CreateMeshTask(const osg::Vec3& offset, const osg::Vec3& texelSize, const osg::Vec3i& resolution, openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>& sampler)
+      : mIsDone(false)
+      , mOffset(offset)
+      , mTexelSize(texelSize)
+      , mResolution(resolution)
+      , mMesh(new osg::Geometry())
+      , mSampler(sampler)
+   {
+
+   }
+
+   bool CreateMeshTask::IsDone() const
+   {
+      return mIsDone;
+   }
+
+
+   osg::Geometry* CreateMeshTask::TakeGeometry()
+   {
+      return mMesh.release();
+   }
+
+   void CreateMeshTask::operator()()
+   {      
+      dtCore::RefPtr<osg::Vec3Array> vertArray = new osg::Vec3Array();
+      dtCore::RefPtr<osg::Vec3Array> normalArray = new osg::Vec3Array();
+      dtCore::RefPtr<osg::Vec3Array> colorArray = new osg::Vec3Array();
+      dtCore::RefPtr<osg::DrawElementsUInt> drawElements = new osg::DrawElementsUInt(GL_TRIANGLES);
+
+
+      //reusing this improves performance by quite a bit 
+      osg::Vec3 vertlist[12];
+
+      float isolevel = 1.0f;
+
+      for (int i = 0; i < mResolution[0] + 1; ++i)
+      {
+         for (int j = 0; j < mResolution[1] + 1; ++j)
+         {
+            for (int k = 0; k < mResolution[2] + 1; ++k)
+            {
+               double worldX = mOffset[0] + (i * mTexelSize[0]);
+               double worldY = mOffset[1] + (j * mTexelSize[1]);
+               double worldZ = mOffset[2] + (k * mTexelSize[2]);
+
+               osg::Vec3 from(worldX, worldY, worldZ);
+
+               GRIDCELL grid;
+               TRIANGLE triangles[5];
+
+               grid.p[0] = from;
+               grid.val[0] = SampleCoord(grid.p[0].x(), grid.p[0].y(), grid.p[0].z(), mSampler);
+
+               grid.p[1].set(from[0] + mTexelSize[0], from[1], from[2]);
+               grid.val[1] = SampleCoord(grid.p[1].x(), grid.p[1].y(), grid.p[1].z(), mSampler);
+
+               grid.p[2].set(from[0] + mTexelSize[0], from[1] + mTexelSize[1], from[2]);
+               grid.val[2] = SampleCoord(grid.p[2].x(), grid.p[2].y(), grid.p[2].z(), mSampler);
+
+               grid.p[3].set(from[0], from[1] + mTexelSize[1], from[2]);
+               grid.val[3] = SampleCoord(grid.p[3].x(), grid.p[3].y(), grid.p[3].z(), mSampler);
+
+               grid.p[4].set(from[0], from[1], from[2] + mTexelSize[2]);
+               grid.val[4] = SampleCoord(grid.p[4].x(), grid.p[4].y(), grid.p[4].z(), mSampler);
+
+               grid.p[5].set(from[0] + mTexelSize[0], from[1], from[2] + mTexelSize[2]);
+               grid.val[5] = SampleCoord(grid.p[5].x(), grid.p[5].y(), grid.p[5].z(), mSampler);
+
+               grid.p[6].set(from[0] + mTexelSize[0], from[1] + mTexelSize[1], from[2] + mTexelSize[2]);
+               grid.val[6] = SampleCoord(grid.p[6].x(), grid.p[6].y(), grid.p[6].z(), mSampler);
+
+               grid.p[7].set(from[0], from[1] + mTexelSize[1], from[2] + mTexelSize[2]);
+               grid.val[7] = SampleCoord(grid.p[7].x(), grid.p[7].y(), grid.p[7].z(), mSampler);
+
+
+               int numTriangles = PolygonizeCube(grid, isolevel, triangles, &vertlist[0]);
+               
+               for (int n = 0; n < numTriangles; ++n)
+               {
+                  drawElements->addElement(vertArray->size());
+                  vertArray->push_back(triangles[n].p[0]);
+
+                  drawElements->addElement(vertArray->size());
+                  vertArray->push_back(triangles[n].p[1]);
+
+                  drawElements->addElement(vertArray->size());
+                  vertArray->push_back(triangles[n].p[2]);
+
+                  normalArray->push_back(triangles[n].n[0]);
+                  normalArray->push_back(triangles[n].n[1]);
+                  normalArray->push_back(triangles[n].n[2]);
+               }
+            }
+         }
+      }
+
+
+
+      mMesh->setVertexArray(vertArray);
+      mMesh->setNormalArray(normalArray);
+      mMesh->setNormalBinding(osg::Geometry::BIND_PER_VERTEX);
+
+      mMesh->addPrimitiveSet(drawElements);
+
+      mIsDone = true;
+   }
+
+   double CreateMeshTask::SampleCoord(double x, double y, double z, openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>& fastSampler)
+   {
+      double result = (fastSampler.wsSample(openvdb::Vec3R(x, y, z)));
+      dtUtil::Clamp(result, -0.33, 0.36);
+
+      result = dtUtil::MapRangeValue(result, -0.33, 0.36, 0.0, 1.0);
+      return result;
+   }
+
    class VoxelCellImpl
    {
    public:
@@ -53,6 +169,8 @@ namespace dtVoxel
 
       osg::Vec3 mOffset;
       dtCore::RefPtr<osg::Geode> mMeshNode;
+      dtCore::RefPtr<CreateMeshTask> mCreateMeshTask;
+
       dtCore::RefPtr<osgVolume::ImageLayer> mImage;
       dtCore::RefPtr<osgVolume::VolumeTile> mVolumeTile;
    };
@@ -66,6 +184,22 @@ namespace dtVoxel
    {
       delete mImpl;
       mImpl = NULL;
+   }
+
+
+   bool VoxelCell::IsDirty() const
+   {
+      return mImpl->mIsDirty;
+   }
+
+   void VoxelCell::SetDirty(bool b)
+   {
+      mImpl->mIsDirty = b;
+   }
+
+   void VoxelCell::SetAllocated(bool b)
+   {
+      mImpl->mIsAllocated = b;
    }
 
    bool VoxelCell::IsAllocated() const
@@ -106,6 +240,9 @@ namespace dtVoxel
 
       openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>
          fastSampler(accessor, gridB->transform());
+
+      //reusing this improves performance by quite a bit 
+      osg::Vec3 vertlist[12];
 
       float isolevel = 1.0f;
 
@@ -175,7 +312,7 @@ namespace dtVoxel
                   std::cout << std::endl;
                }
 
-               int numTriangles = PolygonizeCube(grid, isolevel, triangles);
+               int numTriangles = PolygonizeCube(grid, isolevel, triangles, &vertlist[0]);
 
 
                if (!allSamplesZero)
@@ -208,6 +345,51 @@ namespace dtVoxel
 
    }
 
+   void VoxelCell::CreateMeshWithTask(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution)
+   {
+      
+      mImpl->mOffset = transform.getTrans();
+
+      osg::Vec3 texelSize(cellSize[0] / float(resolution[0]), cellSize[1] / float(resolution[1]), cellSize[2] / float(resolution[2]));
+
+
+      //openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(localGrid);
+      openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(voxelActor.GetGrid(0));
+
+
+      openvdb::FloatGrid::ConstAccessor accessor = gridB->getConstAccessor();
+
+      openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>
+         fastSampler(accessor, gridB->transform());
+
+
+      mImpl->mCreateMeshTask = new CreateMeshTask(mImpl->mOffset, texelSize, resolution, fastSampler);
+
+      dtUtil::ThreadPool::AddTask(*mImpl->mCreateMeshTask, dtUtil::ThreadPool::IMMEDIATE); 
+      dtUtil::ThreadPool::ExecuteTasks();
+   }
+
+   void VoxelCell::TakeGeometry()
+   {
+      mImpl->mMeshNode = new osg::Geode();
+
+      mImpl->mMeshNode->addDrawable(mImpl->mCreateMeshTask->TakeGeometry());
+
+      mImpl->mIsAllocated = true;
+   }
+
+   bool VoxelCell::CheckTaskStatus()
+   {
+      if (mImpl->mCreateMeshTask->IsDone())
+      {
+         if (mImpl->mCreateMeshTask->WaitUntilComplete(2))
+         {
+            return true;
+         }
+      }
+      return false;   
+   }
+
 
    void VoxelCell::CreateMesh(VoxelActor& voxelActor, openvdb::GridBase::Ptr localGrid, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution)
    {
@@ -237,6 +419,9 @@ namespace dtVoxel
       openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>
          fastSampler(accessor, gridB->transform());
 
+      //reusing this improves performance by quite a bit 
+      osg::Vec3 vertlist[12];
+      
       float isolevel = 1.0f;
 
       for (int i = 0; i < resolution[0] + 1; ++i)
@@ -303,9 +488,9 @@ namespace dtVoxel
                   }
 
                   std::cout << std::endl;
-               }
+               }               
 
-               int numTriangles = PolygonizeCube(grid, isolevel, triangles);
+               int numTriangles = PolygonizeCube(grid, isolevel, triangles, &vertlist[0]);
 
 
                if (!allSamplesZero)

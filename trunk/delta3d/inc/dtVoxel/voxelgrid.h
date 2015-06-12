@@ -28,7 +28,8 @@
 #include <osg/Group>
 
 namespace dtVoxel
-{
+{   
+
     /***
     *  A VoxelGrid represents a 3d grid of VoxelBlocks.  
     */
@@ -113,6 +114,7 @@ namespace dtVoxel
       dtCore::ObserverPtr<VoxelActor> mVoxelActor;
       std::string mCacheFolder;
       std::vector<bool> mBlockVisibility;
+      std::vector<VoxelCellUpdateInfo> mDirtyCells;
       VoxelBlock* mBlocks;
       
    };
