@@ -226,6 +226,7 @@ namespace dtPhysics
       void SetCollisionResponseEnabled(bool enabled);
       /// @return true if this body and whatever collides with it responds to collisions.
       bool IsCollisionResponseEnabled() const;
+      bool GetCollisionResponseEnabled() const { return IsCollisionResponseEnabled(); }
 
       BodyWrapper* GetBodyWrapper();
       GenericBodyWrapper* GetGenericBodyWrapper();
