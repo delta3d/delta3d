@@ -24,27 +24,31 @@ namespace dtCore
    {
    }
 
-   dtCore::RefPtr<dtCore::Vec3ActorProperty> TransformPropertyDelegate::CreateTranslationProperty() const
+   dtCore::RefPtr<dtCore::Vec3ActorProperty> TransformPropertyDelegate::CreateTranslationProperty(bool partialUpdateFlag) const
    {
       dtUtil::RefString propName(GetTranslationPropertyName());
-      return new dtCore::Vec3ActorProperty(propName, propName,
-            dtCore::Vec3ActorProperty::SetFuncType(this, &TransformPropertyDelegate::SetTranslation),
-            dtCore::Vec3ActorProperty::GetFuncType(this, &TransformPropertyDelegate::GetTranslation),
-            "Transform subnode control property for rotation");
+      dtCore::RefPtr<dtCore::Vec3ActorProperty> result = new dtCore::Vec3ActorProperty(propName, propName,
+                  dtCore::Vec3ActorProperty::SetFuncType(this, &TransformPropertyDelegate::SetTranslation),
+                  dtCore::Vec3ActorProperty::GetFuncType(this, &TransformPropertyDelegate::GetTranslation),
+                  "Transform subnode control property for rotation");
+      result->SetSendInPartialUpdate(partialUpdateFlag);
+      return result;
    }
-   dtCore::RefPtr<dtCore::Vec3ActorProperty> TransformPropertyDelegate::CreateRotationProperty() const
+   dtCore::RefPtr<dtCore::Vec3ActorProperty> TransformPropertyDelegate::CreateRotationProperty(bool partialUpdateFlag) const
    {
       dtUtil::RefString propName(GetRotationPropertyName());
-      return new dtCore::Vec3ActorProperty(propName, propName,
+      dtCore::RefPtr<dtCore::Vec3ActorProperty> result = new dtCore::Vec3ActorProperty(propName, propName,
             dtCore::Vec3ActorProperty::SetFuncType(this, &TransformPropertyDelegate::SetRotation),
             dtCore::Vec3ActorProperty::GetFuncType(this, &TransformPropertyDelegate::GetRotation),
             "Transform subnode control property for rotation.");
+      result->SetSendInPartialUpdate(partialUpdateFlag);
+      return result;
    }
 
-   void TransformPropertyDelegate::AddProperties(dtCore::PropertyContainer& pc) const
+   void TransformPropertyDelegate::AddProperties(dtCore::PropertyContainer& pc, bool partialUpdateFlag) const
    {
-      pc.AddProperty(CreateTranslationProperty().get());
-      pc.AddProperty(CreateRotationProperty().get());
+      pc.AddProperty(CreateTranslationProperty(partialUpdateFlag).get());
+      pc.AddProperty(CreateRotationProperty(partialUpdateFlag).get());
    }
 
    void TransformPropertyDelegate::RemoveProperties(dtCore::PropertyContainer& pc) const
