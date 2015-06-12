@@ -26,6 +26,8 @@
 //Really need to fine grain this.
 #include <openvdb/openvdb.h>
 #include <osg/BoundingBox>
+#include <osg/Texture2D>
+
 
 namespace dtVoxel
 {
@@ -46,6 +48,8 @@ namespace dtVoxel
       openvdb::GridPtrVecPtr GetGrids();
       openvdb::GridBase::Ptr GetGrid(int i);
       size_t GetNumGrids() const;
+
+      dtCore::RefPtr<osg::Texture2D> LoadTexture(std::string tex);
 
       virtual void OnEnteredWorld();
       virtual void OnTickLocal(const dtGame::TickMessage& tickMessage);
