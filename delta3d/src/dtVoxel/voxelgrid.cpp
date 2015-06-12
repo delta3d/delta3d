@@ -184,7 +184,7 @@ namespace dtVoxel
       //std::cout << "Regenerating " << cellsToUpdate << " cells." << std::endl;
       std::vector<VoxelCellUpdateInfo>::iterator iter = mDirtyCells.begin();
 
-      for (; iter < mDirtyCells.end(); ++iter)
+      for (; iter != mDirtyCells.end(); ++iter)
       {
          VoxelCellUpdateInfo& updateInfo = *iter;
          //std::cout << "Checking task status" << std::endl;
