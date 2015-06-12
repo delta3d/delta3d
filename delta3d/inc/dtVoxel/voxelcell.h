@@ -23,6 +23,7 @@
 #include <dtVoxel/export.h>
 #include <dtVoxel/voxelactor.h>
 #include <dtUtil/getsetmacros.h>
+#include <dtUtil/threadpool.h>
 
 #include <osg/Vec3>
 #include <osg/Matrix>
@@ -34,11 +35,39 @@
 
 namespace dtVoxel
 {
-    /***
-    *  A VoxelCell represents a 3d grid of individual voxels stored in a 3d texture.    
-    */
+    
    class VoxelCellImpl;
+   class VoxelCell;
+   
+   class DT_VOXEL_EXPORT CreateMeshTask : public dtUtil::ThreadPoolTask
+   {
+   public:
+      CreateMeshTask(const osg::Vec3& offset, const osg::Vec3& texelSize, const osg::Vec3i& resolution, openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>& sampler);
 
+      osg::Geometry* TakeGeometry();
+
+      bool IsDone() const;
+
+      virtual void operator()();
+
+      double SampleCoord(double x, double y, double z, openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>& fastSampler);
+
+
+   private:
+   
+      bool mIsDone;
+      osg::Vec3 mOffset;
+      osg::Vec3 mTexelSize;
+      osg::Vec3i mResolution;
+      dtCore::RefPtr<osg::Geometry> mMesh;
+
+      openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler> mSampler;
+      
+   };
+
+   /***
+   *  A VoxelCell represents a 3d grid of individual voxels stored in a 3d texture.
+   */
    class DT_VOXEL_EXPORT VoxelCell
    {
    public:
@@ -49,8 +78,19 @@ namespace dtVoxel
       
       void CreateMesh(VoxelActor& voxelActor, openvdb::GridBase::Ptr localGrid, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution);
       
+      void CreateMeshWithTask(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution);
+      
+      bool CheckTaskStatus();
+
+      void TakeGeometry();
+
+
       bool IsAllocated() const;
+      void SetAllocated(bool b);
       void DeAllocate();
+
+      bool IsDirty() const;
+      void SetDirty(bool b);
 
       osg::Vec3 GetOffset() const;
 

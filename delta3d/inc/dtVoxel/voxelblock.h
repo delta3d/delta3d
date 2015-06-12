@@ -27,6 +27,19 @@
 
 namespace dtVoxel
 {
+   class VoxelBlock;
+
+   class DT_VOXEL_EXPORT VoxelCellUpdateInfo
+   {
+   public:
+      VoxelBlock* mBlock;
+      VoxelCell* mCell;
+      osg::Group* mNodeToUpdate;
+
+      osg::Vec3i mCellIndex;
+   };
+
+
     /***
     *  A VoxelBlock represents a 3d block of VoxelCells.
     */
@@ -55,12 +68,17 @@ namespace dtVoxel
       void WritePagedLOD(VoxelActor& voxelActor, int index, const std::string& filePath, const osg::Vec3i& resolution0, float dist0, const osg::Vec3i& resolution1, float dist1, const osg::Vec3i& resolution2, float dist2, const osg::Vec3i& resolution3, float viewDistance);
 
       void RegenerateAABB(VoxelActor& voxelActor, const osg::BoundingBox& bb, const osg::Vec3i& textureResolution);
+      void RegenerateCell(VoxelActor& voxelActor, VoxelCell* cell, osg::Group* nodeToUpdate, const osg::Vec3i& cellIndex, const osg::Vec3i& textureResolution, float viewDistance);
+
+      void CollectDirtyCells(VoxelActor& voxelActor, const osg::BoundingBox& bb, const osg::Vec3i& textureResolution, std::vector<VoxelCellUpdateInfo>& dirtyCells);
+
 
       //void AllocateCell(const osg::Vec3& pos, const osg::Vec3i& textureResolution);
       
       VoxelCell* GetCellFromIndex(int x, int y, int z);      
       VoxelCell* GetCellFromPos(const osg::Vec3& pos);
       osg::Vec3i GetIndexFromPos(const osg::Vec3& pos);
+      osg::Vec3 GetPosFromIndex(const osg::Vec3i& inde);
 
       osg::Group* GetOSGNode();      
       const osg::Group* GetOSGNode() const;

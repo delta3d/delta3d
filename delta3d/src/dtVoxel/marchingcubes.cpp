@@ -55,11 +55,11 @@ namespace dtVoxel
       return p;      
    }
 
-   int PolygonizeCube(GRIDCELL g, float iso, TRIANGLE *tri)
+   int PolygonizeCube(GRIDCELL g, float iso, TRIANGLE *tri, osg::Vec3* vertArray)
    {
       int i, ntri = 0;
       int cubeindex;
-      osg::Vec3 vertlist[12];
+
       /*
       int edgeTable[256].  It corresponds to the 2^8 possible combinations of
       of the eight (n) vertices either existing inside or outside (2^n) of the
@@ -428,47 +428,47 @@ namespace dtVoxel
 
       /* Find the vertices where the surface intersects the cube */
       if (edgeTable[cubeindex] & 1) {
-         vertlist[0] = VertexInterp(iso, g.p[0], g.p[1], g.val[0], g.val[1]);
+         vertArray[0] = VertexInterp(iso, g.p[0], g.p[1], g.val[0], g.val[1]);
       }
       if (edgeTable[cubeindex] & 2) {
-         vertlist[1] = VertexInterp(iso, g.p[1], g.p[2], g.val[1], g.val[2]);
+         vertArray[1] = VertexInterp(iso, g.p[1], g.p[2], g.val[1], g.val[2]);
       }
       if (edgeTable[cubeindex] & 4) {
-         vertlist[2] = VertexInterp(iso, g.p[2], g.p[3], g.val[2], g.val[3]);
+         vertArray[2] = VertexInterp(iso, g.p[2], g.p[3], g.val[2], g.val[3]);
       }
       if (edgeTable[cubeindex] & 8) {
-         vertlist[3] = VertexInterp(iso, g.p[3], g.p[0], g.val[3], g.val[0]);
+         vertArray[3] = VertexInterp(iso, g.p[3], g.p[0], g.val[3], g.val[0]);
       }
       if (edgeTable[cubeindex] & 16) {
-         vertlist[4] = VertexInterp(iso, g.p[4], g.p[5], g.val[4], g.val[5]);
+         vertArray[4] = VertexInterp(iso, g.p[4], g.p[5], g.val[4], g.val[5]);
       }
       if (edgeTable[cubeindex] & 32) {
-         vertlist[5] = VertexInterp(iso, g.p[5], g.p[6], g.val[5], g.val[6]);
+         vertArray[5] = VertexInterp(iso, g.p[5], g.p[6], g.val[5], g.val[6]);
       }
       if (edgeTable[cubeindex] & 64) {
-         vertlist[6] = VertexInterp(iso, g.p[6], g.p[7], g.val[6], g.val[7]);
+         vertArray[6] = VertexInterp(iso, g.p[6], g.p[7], g.val[6], g.val[7]);
       }
       if (edgeTable[cubeindex] & 128) {
-         vertlist[7] = VertexInterp(iso, g.p[7], g.p[4], g.val[7], g.val[4]);
+         vertArray[7] = VertexInterp(iso, g.p[7], g.p[4], g.val[7], g.val[4]);
       }
       if (edgeTable[cubeindex] & 256) {
-         vertlist[8] = VertexInterp(iso, g.p[0], g.p[4], g.val[0], g.val[4]);
+         vertArray[8] = VertexInterp(iso, g.p[0], g.p[4], g.val[0], g.val[4]);
       }
       if (edgeTable[cubeindex] & 512) {
-         vertlist[9] = VertexInterp(iso, g.p[1], g.p[5], g.val[1], g.val[5]);
+         vertArray[9] = VertexInterp(iso, g.p[1], g.p[5], g.val[1], g.val[5]);
       }
       if (edgeTable[cubeindex] & 1024) {
-         vertlist[10] = VertexInterp(iso, g.p[2], g.p[6], g.val[2], g.val[6]);
+         vertArray[10] = VertexInterp(iso, g.p[2], g.p[6], g.val[2], g.val[6]);
       }
       if (edgeTable[cubeindex] & 2048) {
-         vertlist[11] = VertexInterp(iso, g.p[3], g.p[7], g.val[3], g.val[7]);
+         vertArray[11] = VertexInterp(iso, g.p[3], g.p[7], g.val[3], g.val[7]);
       }
 
       /* Create the triangles */
       for (i = 0; triTable[cubeindex][i] != -1; i += 3) {
-         tri[ntri].p[0] = vertlist[triTable[cubeindex][i]];
-         tri[ntri].p[1] = vertlist[triTable[cubeindex][i + 1]];
-         tri[ntri].p[2] = vertlist[triTable[cubeindex][i + 2]];
+         tri[ntri].p[0] = vertArray[triTable[cubeindex][i]];
+         tri[ntri].p[1] = vertArray[triTable[cubeindex][i + 1]];
+         tri[ntri].p[2] = vertArray[triTable[cubeindex][i + 2]];
 
          //generate normals         
          osg::Vec3 normal(tri[ntri].p[1] - tri[ntri].p[0]);
