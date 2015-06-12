@@ -67,9 +67,9 @@ namespace dtActors
       , mUpdateFrequency(1.0f)
       , mOwnerSpeedMin(1.0f)
       , mOwnerSpeedMax(10.0f)
-      , mLastInterpRatio(0.0f)
       , mRelativeToParent(false)
       , mAttachDirectly(false)
+      , mLastInterpRatio(0.0f)
       , mUpdateTimer(0.0f)
    {
       const dtUtil::RefString GROUPNAME("DynamicParticlesPropertyContainer");
