@@ -181,4 +181,110 @@ namespace dtGame
 
       return handled;
    }
+
+   ////////////////////////////////////////////////////////////////////
+   void BaseInputComponent::ConvertToKeypadEquivalent(int& key)
+   {
+      switch(key)
+      {
+      case osgGA::GUIEventAdapter::KEY_0:
+      {
+          key = osgGA::GUIEventAdapter::KEY_KP_0;
+          break;
+      }
+      case osgGA::GUIEventAdapter::KEY_1:
+      {
+          key = osgGA::GUIEventAdapter::KEY_KP_1;
+          break;
+      }
+      case osgGA::GUIEventAdapter::KEY_2:
+      {
+          key = osgGA::GUIEventAdapter::KEY_KP_2;
+          break;
+      }
+      case osgGA::GUIEventAdapter::KEY_3:
+      {
+          key = osgGA::GUIEventAdapter::KEY_KP_3;
+          break;
+      }
+      case osgGA::GUIEventAdapter::KEY_4:
+      {
+          key = osgGA::GUIEventAdapter::KEY_KP_4;
+          break;
+      }
+      case osgGA::GUIEventAdapter::KEY_5:
+      {
+          key = osgGA::GUIEventAdapter::KEY_KP_5;
+          break;
+      }
+      case osgGA::GUIEventAdapter::KEY_6:
+      {
+          key = osgGA::GUIEventAdapter::KEY_KP_6;
+          break;
+      }
+      case osgGA::GUIEventAdapter::KEY_7:
+      {
+          key = osgGA::GUIEventAdapter::KEY_KP_7;
+          break;
+      }
+      case osgGA::GUIEventAdapter::KEY_8:
+      {
+          key = osgGA::GUIEventAdapter::KEY_KP_8;
+          break;
+      }
+      case osgGA::GUIEventAdapter::KEY_9:
+      {
+          key = osgGA::GUIEventAdapter::KEY_KP_9;
+          break;
+      }
+      case osgGA::GUIEventAdapter::KEY_Left:
+      {
+          key = osgGA::GUIEventAdapter::KEY_KP_Left;
+          break;
+      }
+      case osgGA::GUIEventAdapter::KEY_Right:
+      {
+          key = osgGA::GUIEventAdapter::KEY_KP_Right;
+          break;
+      }
+      case osgGA::GUIEventAdapter::KEY_Up:
+      {
+          key = osgGA::GUIEventAdapter::KEY_KP_Up;
+          break;
+      }
+      case osgGA::GUIEventAdapter::KEY_Down:
+      {
+          key = osgGA::GUIEventAdapter::KEY_KP_Down;
+          break;
+      }
+      case osgGA::GUIEventAdapter::KEY_Page_Up:
+      {
+          key = osgGA::GUIEventAdapter::KEY_KP_Page_Up;
+          break;
+      }
+      case osgGA::GUIEventAdapter::KEY_Page_Down:
+      {
+          key = osgGA::GUIEventAdapter::KEY_KP_Page_Down;
+          break;
+      }
+      case osgGA::GUIEventAdapter::KEY_Begin:
+      {
+          key = osgGA::GUIEventAdapter::KEY_KP_Begin;
+          break;
+      }
+      case osgGA::GUIEventAdapter::KEY_End:
+      {
+          key = osgGA::GUIEventAdapter::KEY_KP_End;
+          break;
+      }
+      case osgGA::GUIEventAdapter::KEY_Backslash:
+      {
+          key = osgGA::GUIEventAdapter::KEY_KP_Insert;
+          break;
+      }
+      default:
+         break;
+      }
+
+   }
 }

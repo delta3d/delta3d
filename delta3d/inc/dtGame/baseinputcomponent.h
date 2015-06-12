@@ -222,6 +222,14 @@ namespace dtGame
          return false;
       }
 
+      /**
+       * Converts a key to the keypad equivalent. This is handy for keyboards that don't have keypads (Apple) and need to
+       * simulate it.  It also will convert \ to insert if you need that key.
+       * One suggestion on OS X is to use the command key to switch numbers and arrows to the keypad ones, which is the super mod
+       * key in the OSG keys struct.
+       */
+      static void ConvertToKeypadEquivalent(int& key);
+
    protected:
 
       /// Destructor
