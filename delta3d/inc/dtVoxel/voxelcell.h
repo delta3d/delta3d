@@ -44,7 +44,7 @@ namespace dtVoxel
    public:
       CreateMeshTask(const osg::Vec3& offset, const osg::Vec3& texelSize, const osg::Vec3i& resolution, openvdb::FloatGrid::Ptr grid);
 
-      osg::Geometry* TakeGeometry();
+      osg::Geode* TakeGeometry();
 
       bool IsDone() const;
 
@@ -59,7 +59,7 @@ namespace dtVoxel
       osg::Vec3 mOffset;
       osg::Vec3 mTexelSize;
       osg::Vec3i mResolution;
-      dtCore::RefPtr<osg::Geometry> mMesh;
+      dtCore::RefPtr<osg::Geode> mMesh;
 
       openvdb::FloatGrid::Ptr mGrid;
       openvdb::tools::GridSampler<openvdb::FloatGrid, openvdb::tools::PointSampler> mSampler;
