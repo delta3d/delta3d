@@ -184,7 +184,7 @@ namespace dtVoxel
       //std::cout << "Regenerating " << cellsToUpdate << " cells." << std::endl;
       std::vector<VoxelCellUpdateInfo>::iterator iter = mDirtyCells.begin();
 
-      for (; iter != mDirtyCells.end(); ++iter)
+      for (; iter != mDirtyCells.end();)
       {
          VoxelCellUpdateInfo& updateInfo = *iter;
          //std::cout << "Checking task status" << std::endl;
@@ -195,9 +195,11 @@ namespace dtVoxel
             updateInfo.mBlock->RegenerateCell(*mVoxelActor, updateInfo.mCell, updateInfo.mNodeToUpdate, updateInfo.mCellIndex, mTextureResolution, mViewDistance);
             iter = mDirtyCells.erase(iter);
          }
+         else
+         {
+            ++iter;
+         }
       }
-
-      mDirtyCells.clear();
 
       //osg::BoundingBox newBounds = ComputeWorldBounds(newCameraPos);
       //

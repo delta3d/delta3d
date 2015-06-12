@@ -43,7 +43,7 @@ namespace dtVoxel
       , mOffset(offset)
       , mTexelSize(texelSize)
       , mResolution(resolution)
-      , mMesh(new osg::Geometry())
+      , mMesh(new osg::Geode())
       , mGrid(grid)
       , mSampler(*grid)
    {
@@ -55,13 +55,14 @@ namespace dtVoxel
    }
 
 
-   osg::Geometry* CreateMeshTask::TakeGeometry()
+   osg::Geode* CreateMeshTask::TakeGeometry()
    {
       return mMesh.release();
    }
 
    void CreateMeshTask::operator()()
    {      
+      dtCore::RefPtr<osg::Geometry> geom = new osg::Geometry();
       dtCore::RefPtr<osg::Vec3Array> vertArray = new osg::Vec3Array();
       dtCore::RefPtr<osg::Vec3Array> normalArray = new osg::Vec3Array();
       dtCore::RefPtr<osg::Vec3Array> colorArray = new osg::Vec3Array();
@@ -135,12 +136,14 @@ namespace dtVoxel
       }
 
 
+      
+      geom->setVertexArray(vertArray);
+      geom->setNormalArray(normalArray);
+      geom->setNormalBinding(osg::Geometry::BIND_PER_VERTEX);
 
-      mMesh->setVertexArray(vertArray);
-      mMesh->setNormalArray(normalArray);
-      mMesh->setNormalBinding(osg::Geometry::BIND_PER_VERTEX);
+      geom->addPrimitiveSet(drawElements);
 
-      mMesh->addPrimitiveSet(drawElements);
+      mMesh->addDrawable(geom);
 
       mIsDone = true;
    }
@@ -168,7 +171,7 @@ namespace dtVoxel
       bool mIsDirty;
 
       osg::Vec3 mOffset;
-      dtCore::RefPtr<osg::Geode> mMeshNode;
+      dtCore::RefPtr<osg::Group> mMeshNode;
       dtCore::RefPtr<CreateMeshTask> mCreateMeshTask;
 
       dtCore::RefPtr<osgVolume::ImageLayer> mImage;
@@ -367,22 +370,22 @@ namespace dtVoxel
 
    void VoxelCell::TakeGeometry()
    {
-      mImpl->mMeshNode = new osg::Geode();
+      mImpl->mMeshNode = new osg::Group();
 
-      mImpl->mMeshNode->addDrawable(mImpl->mCreateMeshTask->TakeGeometry());
+      mImpl->mMeshNode->addChild(mImpl->mCreateMeshTask->TakeGeometry());
 
       mImpl->mIsAllocated = true;
    }
 
    bool VoxelCell::CheckTaskStatus()
    {
-//      if (mImpl->mCreateMeshTask->IsDone())
-//      {
-         if (mImpl->mCreateMeshTask->WaitUntilComplete(100))
+      if (mImpl->mCreateMeshTask->IsDone())
+      {
+         if (mImpl->mCreateMeshTask->WaitUntilComplete(2))
          {
             return true;
          }
-//      }
+      }
       return false;   
    }
 
@@ -393,7 +396,7 @@ namespace dtVoxel
 
       //std::cout << "Creating Voxel Cell " << mesh_count++ << std::endl;
 
-      mImpl->mMeshNode = new osg::Geode();
+      mImpl->mMeshNode = new osg::Group();
 
       dtCore::RefPtr<osg::Geometry> geom = new osg::Geometry();
       dtCore::RefPtr<osg::Vec3Array> vertArray = new osg::Vec3Array();
@@ -521,7 +524,10 @@ namespace dtVoxel
 
       geom->addPrimitiveSet(drawElements);
       
-      mImpl->mMeshNode->addDrawable(geom);
+      dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
+      geode->addDrawable(geom);
+
+      mImpl->mMeshNode->addChild(geode);
 
       /*dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
       simplifier->setMaximumLength(100.0f);
