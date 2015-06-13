@@ -118,24 +118,6 @@ namespace dtPhysics
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   struct CreateFromPropsPhysObj
-   {
-      void operator()(dtCore::RefPtr<PhysicsObject>& po)
-      {
-         if (po->GetMaterial() == nullptr)
-         {
-            const MaterialActor* mat = mPac->LookupMaterialActor();
-            if (mat != nullptr)
-            {
-               po->SetMaterial(mat->GetMaterial());
-            }
-         }
-         po->Create();
-      }
-      PhysicsActComp* mPac;
-   };
-
-   /////////////////////////////////////////////////////////////////////////////
    void PhysicsActComp::OnEnteredWorld()
    {
       RegisterWithGMComponent();
@@ -146,12 +128,21 @@ namespace dtPhysics
          DefaultPrePhysicsUpdate();
       }
 
-      if (GetAutoCreateOnEnteringWorld())
-      {
-         CreateFromPropsPhysObj creatFunc;
-         creatFunc.mPac = this;
-         ForEachPhysicsObject(creatFunc);
-      }
+      ForEachPhysicsObject([&](dtCore::RefPtr<dtPhysics::PhysicsObject>& po)
+            {
+               if (po->GetMaterial() == nullptr)
+               {
+                  const MaterialActor* mat = this->LookupMaterialActor();
+                  if (mat != nullptr)
+                  {
+                     po->SetMaterial(mat->GetMaterial());
+                  }
+               }
+               if (GetAutoCreateOnEnteringWorld())
+               {
+                  po->Create();
+               }
+            });
    }
 
    /////////////////////////////////////////////////////////////////////////////
