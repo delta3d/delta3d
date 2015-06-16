@@ -76,7 +76,8 @@ namespace {
             "    -f,            convert to a float grid or tree.\n" <<
             "    -r{N},         voxel size in x,y,z (Z can be overridden).\n" <<
             "    -z{N},         z Thickness, or use the -r value by default.\n"<<
-            "    -t{N},         Mesh thickness.  How thick to make the mesh walls internally.\n" <<
+            "    -t{N},         Mesh thickness (internal).  How thick to make the mesh walls internally.\n" <<
+            "    -x{N},         Exterior mesh thickness.  Thickness on the outward side of the mesh.\n" <<
             "    -s{N},         subdivisions to break the file into.  This will also reduce he memory usage at create time..\n";
       exit(exitStatus);
    }
@@ -167,7 +168,7 @@ namespace {
        int mLastPercent;
    };
 
-   FloatGrid::Ptr convertToLevelSet(std::vector<Vec3s> pointList, std::vector<Vec4I> triList, float resolution, float zres, float thickness, const std::string& filename)
+   FloatGrid::Ptr convertToLevelSet(std::vector<Vec3s> pointList, std::vector<Vec4I> triList, float resolution, float zres, float interiorThickness, float exteriorThickness, const std::string& filename)
    {
 
       Mat4R m;
@@ -185,8 +186,8 @@ namespace {
             ptnXForm.run();
          }
 
-         float exWidth(0.01f);
-         float inWidth(thickness - exWidth);
+         float exWidth(exteriorThickness);
+         float inWidth(interiorThickness);
 
 
          math::Transform::Ptr transform = xform->copy();
@@ -207,7 +208,7 @@ namespace {
    /// If @a metadata is true, include file-level metadata key, value pairs.
    template<typename LevelSetType>
    inline
-   void printLongListing(const StringVec& filenames, float resolution, float zres, size_t splits, float thickness)
+   void printLongListing(const StringVec& filenames, float resolution, float zres, size_t splits, float interiorThickness, float exteriorThickness)
    {
       bool oneFile = (filenames.size() == 1), firstFile = true;
 
@@ -255,7 +256,7 @@ namespace {
                triList.push_back(tri);
             }
 
-            FloatGrid::Ptr gridInitial = convertToLevelSet(pointList, triList, resolution, zres, thickness, filename);
+            FloatGrid::Ptr gridInitial = convertToLevelSet(pointList, triList, resolution, zres, interiorThickness, exteriorThickness, filename);
 
             pointList.clear();
             triList.clear();
@@ -393,7 +394,7 @@ main(int argc, char *argv[])
    if (argc == 1) usage();
 
    bool useBoolean = false, useFloat = false, useGrid = true;
-   float gridResolution = 1.0f, zres = -1.0f, thickness = 0.15f;
+   float gridResolution = 1.0f, zres = -1.0f, thickness = 0.15f, exterior = 0.15f;
    unsigned subdivisions = 1;
    StringVec filenames;
    for (int i = 1; i < argc; ++i) {
@@ -467,6 +468,21 @@ main(int argc, char *argv[])
                std::cerr << gProgName << ": \"" << arg << "\" requires an int as argument.\n";
                usage();
             }
+         } else if (arg.substr(0,2) == "-x") {
+            if (arg.length() == 2 && i + 1 < argc)
+            {
+               exterior = dtUtil::ToType<int>(argv[i+1]);
+               ++i;
+            }
+            else if (arg.length() > 2)
+            {
+               exterior = dtUtil::ToType<int>(arg.substr(2));
+            }
+            else
+            {
+               std::cerr << gProgName << ": \"" << arg << "\" requires an int as argument.\n";
+               usage();
+            }
          } else if (arg == "-h" || arg == "-help" || arg == "--help") {
             usage(EXIT_SUCCESS);
          } else {
@@ -503,11 +519,11 @@ main(int argc, char *argv[])
       {
          if (useFloat)
          {
-            printLongListing<FloatGrid>(filenames, gridResolution, zres, subdivisions, thickness);
+            printLongListing<FloatGrid>(filenames, gridResolution, zres, subdivisions, thickness, exterior);
          }
          else
          {
-            printLongListing<BoolGrid>(filenames, gridResolution, zres, subdivisions, thickness);
+            printLongListing<BoolGrid>(filenames, gridResolution, zres, subdivisions, thickness, exterior);
          }
       }
       //        else
