@@ -32,6 +32,8 @@
 #include <dtABC/application.h>
 #include <dtCore/actorproxy.h>
 
+#include <dtQt/nodetreepanel.h>
+
 #include <vector>
 
 #include "MotionModelToolbar.h"
@@ -59,6 +61,10 @@ namespace dtAnim
 {
    class CharDrawable;
 }
+
+
+
+typedef dtQt::NodeTreePanel::OsgNodePtr OsgNodePtr;
 
 
 
@@ -97,6 +103,7 @@ public slots:
    void OnSetGenerateTangentAttribute(bool shouldGenerate);
    void OnToggleGrid(bool shouldDisplay);
    void OnNextStatistics();
+   void OnNodeSelected(OsgNodePtr node);
 
    // Lighting slots
    void OnFixLights();
@@ -144,6 +151,7 @@ private:
    dtCore::RefPtr<dtCore::Object> mObject;
    dtCore::RefPtr<dtAnim::CharDrawable> mCharacter;
    dtCore::RefPtr<dtCore::Compass> mCompass;
+   dtCore::RefPtr<dtCore::PointAxis> mNodeAxis;
 
    dtCore::RefPtr<dtCore::MotionModel> mMotionModel;
    std::vector<dtCore::RefPtr<dtCore::ObjectMotionModel> > mLightMotion;

@@ -31,6 +31,7 @@
 #include <dtCore/spotlight.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/shadermanager.h>
+#include <dtCore/pointaxis.h>
 
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/stringutils.h>
@@ -264,6 +265,14 @@ void ObjectViewer::Config()
    // Add the compass (3d basis axes) to the bottom left of the screen
    mCompass = new dtCore::Compass(GetCamera());
    GetScene()->GetSceneNode()->addChild(mCompass->GetOSGNode());
+
+   mNodeAxis = new dtCore::PointAxis;
+   mNodeAxis->SetLength(dtCore::PointAxis::X, 1.0f);
+   mNodeAxis->SetLength(dtCore::PointAxis::Y, 1.0f);
+   mNodeAxis->SetLength(dtCore::PointAxis::Z, 1.0f);
+   mNodeAxis->Enable(dtCore::PointAxis::LABEL_X);
+   mNodeAxis->Enable(dtCore::PointAxis::LABEL_Y);
+   mNodeAxis->Enable(dtCore::PointAxis::LABEL_Z);
 
    OnMotionModelSelected(MotionModelType::ORBIT.GetValue());
 
@@ -686,6 +695,9 @@ void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnUnloadGeometryFile()
 {
+   // Detach the axis.
+   OnNodeSelected(nullptr);
+
    if (mObject.valid())
    {
       mShadeDecorator->removeChild(mObject->GetOSGNode());
@@ -1292,4 +1304,22 @@ void ObjectViewer::OnNextStatistics()
 {
    SetNextStatisticsType();
 }
+
+//////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnNodeSelected(OsgNodePtr node)
+{
+   osg::Node* axisNode = mNodeAxis->GetOSGNode();
+   while (axisNode->getNumParents() > 0)
+   {
+      osg::Group* parent = axisNode->getParent(0);
+      parent->removeChild(axisNode);
+   }
+
+   osg::Group* newParent = dynamic_cast<osg::Group*>(node.get());
+   if (newParent != nullptr)
+   {
+      newParent->addChild(axisNode);
+   }
+}
+
 

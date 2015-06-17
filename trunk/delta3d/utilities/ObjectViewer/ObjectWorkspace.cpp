@@ -906,6 +906,9 @@ void ObjectWorkspace::SetupConnectionsWithViewer()
    connect(resObj, SIGNAL(UnloadGeometry()),
       this, SLOT(OnGeometryChanged()));
 
+   connect(mNodeTree, SIGNAL(SignalNodeSelected(OsgNodePtr)),
+      mViewer, SLOT(OnNodeSelected(OsgNodePtr)));
+
    // Toolbar connections
    connect((QObject*)this->mShadedAction, SIGNAL(triggered()), mViewer, SLOT(OnSetShaded()));
    connect((QObject*)this->mWireframeAction, SIGNAL(triggered()), mViewer, SLOT(OnSetWireframe()));
