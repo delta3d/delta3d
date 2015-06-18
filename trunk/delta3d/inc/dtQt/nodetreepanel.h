@@ -74,6 +74,9 @@ namespace dtQt
    public slots:
       void UpdateColumns();
       void OnItemSelectionChanged();
+      void OnNodeFilterClicked();
+
+      void OnItemChanged(QTreeWidgetItem* item, int column);
 
    protected:
       virtual void CreateConnections();

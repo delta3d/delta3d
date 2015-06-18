@@ -12,7 +12,9 @@
       <file>icons/actors/drawable.png</file>
       <file>icons/actors/transform.png</file>
       <file>icons/nodes/bone.png</file>
+      <file>icons/nodes/dof.png</file>
       <file>icons/nodes/geode.png</file>
+      <file>icons/nodes/geometry.png</file>
       <file>icons/nodes/group.png</file>
       <file>icons/nodes/matrix.png</file>
       <file>icons/nodes/skeleton.png</file>
