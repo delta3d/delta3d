@@ -69,7 +69,7 @@ namespace dtCore
    {
    public:
       TransformableImpl(Transformable::TransformableNode& node)
-      : mGeomGeod(NULL)
+      : mGeomGeod(nullptr)
       , mNode(&node)
       , mRenderingGeometry(false)
       , mRenderProxyNode(false)
@@ -139,15 +139,15 @@ Transformable::~Transformable()
 {
    if (mImpl->mPointAxis.valid())
    {
-      SetProxyNode(NULL);
+      SetProxyNode(nullptr);
       RemoveChild(mImpl->mPointAxis.get());
-      mImpl->mPointAxis = NULL;
+      mImpl->mPointAxis = nullptr;
    }
 
    DeregisterInstance(this);
 
    delete mImpl;
-   mImpl = NULL;
+   mImpl = nullptr;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -160,27 +160,6 @@ osg::Node* Transformable::GetOSGNode()
 const osg::Node* Transformable::GetOSGNode() const
 {
    return mImpl->mNode.get();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-bool GetAbsoluteMatrixOld(const osg::Node* node, osg::Matrix& wcMatrix)
-{
-   if(node != NULL)
-   {
-      dtCore::CollectParentPaths cpp(NULL);
-      const_cast<osg::Node*>(node)->accept(cpp);
-      const osg::NodePathList& nodePathList = cpp._nodePaths;
-
-      if(!nodePathList.empty())
-      {
-         const osg::NodePath& nodePath = nodePathList[0];
-
-         wcMatrix.set(osg::computeLocalToWorld(nodePath));
-         return true;
-      }
-   }
-
-   return false;
 }
 
 // Debug class that lets you get statistics on exit for how many nodes you have in the tree.
@@ -199,10 +178,11 @@ bool GetAbsoluteMatrixOld(const osg::Node* node, osg::Matrix& wcMatrix)
 //
 //static DepthStorage depthStorage;
 
+
 ////////////////////////////////////////////////////////////////////////////////
-bool GetAbsoluteMatrixNew(const osg::Node* node, osg::Matrix& wcMatrix)
+bool Transformable::GetAbsoluteMatrix(const osg::Node* node, osg::Matrix& wcMatrix, const osg::Node* stopNode)
 {
-   if (node != NULL)
+   if (node != nullptr)
    {
       wcMatrix.makeIdentity();
 
@@ -214,10 +194,10 @@ bool GetAbsoluteMatrixNew(const osg::Node* node, osg::Matrix& wcMatrix)
       nodePath.clear();
 
       osg::Node* curNode = const_cast<osg::Node*>(node);
-      while (curNode != NULL)
+      while (curNode != nullptr && curNode != stopNode)
       {
          osg::Transform* txNode = curNode->asTransform();
-         if (txNode != NULL)
+         if (txNode != nullptr)
          {
 #if defined(OSG_VERSION_GREATER_OR_EQUAL)
   #if OSG_VERSION_GREATER_OR_EQUAL(3, 1, 0)
@@ -231,9 +211,9 @@ bool GetAbsoluteMatrixNew(const osg::Node* node, osg::Matrix& wcMatrix)
             osg::Camera* camera = dynamic_cast<osg::Camera*>(curNode);
 #endif
 
-            if (camera != NULL && (camera->getReferenceFrame() != osg::Transform::RELATIVE_RF || camera->getNumParents() == 0))
+            if (camera != nullptr && (camera->getReferenceFrame() != osg::Transform::RELATIVE_RF || camera->getNumParents() == 0))
             {
-               curNode = NULL;
+               curNode = nullptr;
             }
             else
             {
@@ -242,14 +222,14 @@ bool GetAbsoluteMatrixNew(const osg::Node* node, osg::Matrix& wcMatrix)
             }
          }
 
-         if (curNode != NULL && curNode->getNumParents() > 0U)
+         if (curNode != nullptr && curNode->getNumParents() > 0U)
          {
             curNode = curNode->getParent(0);
             // Stop when you get to a camera.
          }
          else
          {
-            curNode = NULL;
+            curNode = nullptr;
          }
       }
 
@@ -270,7 +250,7 @@ bool GetAbsoluteMatrixNew(const osg::Node* node, osg::Matrix& wcMatrix)
             osg::Transform* curTran = *i;
             // Print out the transform hierarchy.
             //printf("node: %s - ", curTran->getName().c_str());
-            if (curTran != NULL && !curTran->computeLocalToWorldMatrix(wcMatrix, NULL))
+            if (curTran != nullptr && !curTran->computeLocalToWorldMatrix(wcMatrix, nullptr))
             {
                break;
             }
@@ -283,24 +263,6 @@ bool GetAbsoluteMatrixNew(const osg::Node* node, osg::Matrix& wcMatrix)
    }
 
    return false;
-}
-
-namespace dtCore
-{
-   bool DT_CORE_EXPORT UseNewAbsoluteMatrixCode = true;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-bool Transformable::GetAbsoluteMatrix(const osg::Node* node, osg::Matrix& wcMatrix)
-{
-   if (UseNewAbsoluteMatrixCode)
-   {
-      return GetAbsoluteMatrixNew(node, wcMatrix);
-   }
-   else
-   {
-      return GetAbsoluteMatrixOld(node, wcMatrix);
-   }
 }
 
 
@@ -452,7 +414,7 @@ void Transformable::RenderProxyNode(const bool enable)
       if (mImpl->mPointAxis.valid())
       {
          RemoveChild(mImpl->mPointAxis.get());
-         mImpl->mPointAxis = NULL;
+         mImpl->mPointAxis = nullptr;
       }
    }
 
@@ -472,7 +434,7 @@ void Transformable::SetNormalRescaling(const bool enable)
    osg::StateAttribute::GLModeValue state;
    state = (enable) ? osg::StateAttribute::ON : osg::StateAttribute::OFF;
 
-   if(GetOSGNode() != NULL)
+   if(GetOSGNode() != nullptr)
    {
       GetOSGNode()->getOrCreateStateSet()->setMode(GL_RESCALE_NORMAL, state);
    }
@@ -481,7 +443,7 @@ void Transformable::SetNormalRescaling(const bool enable)
 ////////////////////////////////////////////////////////////////////////////////
 bool Transformable::GetNormalRescaling() const
 {
-   if (GetOSGNode() != NULL && GetOSGNode()->getStateSet() != NULL)
+   if (GetOSGNode() != nullptr && GetOSGNode()->getStateSet() != nullptr)
    {
       osg::StateAttribute::GLModeValue state = GetOSGNode()->getStateSet()->getMode(GL_RESCALE_NORMAL);
       return (state & osg::StateAttribute::ON) ? true : false;
@@ -506,6 +468,6 @@ void Transformable::AddedToScene(Scene* scene)
    }
    else
    {
-      DeltaDrawable::AddedToScene(NULL);
+      DeltaDrawable::AddedToScene(nullptr);
    }
 }
