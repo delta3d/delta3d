@@ -31,6 +31,7 @@ SET( LIB_SOURCES
     ${SOURCE_PATH}/noisetexture.cpp
     ${SOURCE_PATH}/polardecomp.cpp
 #    ${SOURCE_PATH}/precomp.cpp
+    ${SOURCE_PATH}/readnodethreadpooltask.cpp
     ${SOURCE_PATH}/refstring.cpp
     ${SOURCE_PATH}/seamlessnoise.cpp
     ${SOURCE_PATH}/serializer.cpp
