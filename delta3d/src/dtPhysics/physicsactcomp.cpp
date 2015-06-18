@@ -755,7 +755,7 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////////////////////////////////
-   palLink* PhysicsActComp::CreateJoint(dtPhysics::JointDesc& desc, osg::Transform* refNode, bool setBody2VisualToBody)
+   palLink* PhysicsActComp::CreateJoint(dtPhysics::JointDesc& desc, osg::Transform* refNode, const osg::Node* rootNode, bool setBody2VisualToBody)
    {
       TransformType frameParent, visualToBody;
       dtPhysics::PhysicsObject* body1 = GetPhysicsObject(desc.GetBody1Name());
@@ -765,7 +765,14 @@ namespace dtPhysics
       if (refNode != nullptr)
       {
          body1->GetVisualToBodyTransform(visualToBody);
-         ComputeLocalOffsetMatrixForNode(frameParent, *refNode, visualToBody);
+         // This is not right yet.
+//         if (rootNode == nullptr)
+//         {
+//            dtGame::GameActorProxy* gap = GetOwner<dtGame::GameActorProxy>();
+//            dtCore::DeltaDrawable* dd = gap != nullptr ? gap->GetDrawable() : nullptr;
+//            rootNode = dd != nullptr ? dd->GetOSGNode() : nullptr;
+//         }
+         ComputeLocalOffsetMatrixForNode(frameParent, *refNode, visualToBody, rootNode);
          desc.SetBody1Frame(frameParent);
       }
 
@@ -791,11 +798,16 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////////////////////////////////
-   void PhysicsActComp::ComputeLocalOffsetMatrixForNode(TransformType& frameOut, const osg::Node& node, const TransformType& visualToBodyTransform, const osg::Vec3& externalScale)
+   void PhysicsActComp::ComputeLocalOffsetMatrixForNode(TransformType& frameOut, const osg::Node& node, const TransformType& visualToBodyTransform, const osg::Node* root, const osg::Vec3& externalScale)
    {
       osg::Matrix wcMatrix, vtb;
       frameOut.Get(wcMatrix);
-      if (node.getNumParents() > 0)
+
+      if (root != nullptr)
+      {
+         dtCore::Transformable::GetAbsoluteMatrix(&node, wcMatrix, root);
+      }
+      else if (node.getNumParents() > 0)
       {
          const osg::Transform* parentNode = node.getParent(0)->asTransform();
          if (parentNode != nullptr)
@@ -809,7 +821,8 @@ namespace dtPhysics
 
       visualToBodyTransform.Get(vtb);
       vtb.invert(vtb);
-      wcMatrix.preMult(vtb);
+      //wcMatrix.invert(wcMatrix);
+      wcMatrix.postMult(vtb);
       frameOut.Set(wcMatrix);
    }
 

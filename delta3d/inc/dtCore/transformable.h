@@ -164,9 +164,10 @@ namespace dtCore
        *
        * @param node The node to start from
        * @param wcMatrix The matrix to fill
+       * @param stopNode if the code hits this optional node, it will stop and compute the matrix up to, but not including, the stopNode.
        * @return Success
        */
-      static bool GetAbsoluteMatrix(const osg::Node* node, osg::Matrix& wcMatrix);
+      static bool GetAbsoluteMatrix(const osg::Node* node, osg::Matrix& wcMatrix, const osg::Node* stopNode = NULL);
 
       ///Automatically rescales normals if you scale your objects.
       void SetNormalRescaling(bool enable);

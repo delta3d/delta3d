@@ -169,14 +169,15 @@ namespace dtPhysics
           *  Creates a joint object based on the description, sets the parent frame to match that on the given node.
           *  It's templated on the updater type so it can be subclassed, though it must be a subclass of TransformJointUpdater.
           *  This version will add the properties of the updater to the actor
+          *  @param rootNode root node is the node on which to stop when computing the local transform of the refNode.
           */
          template<typename UpdaterType = TransformJointUpdater>
-         UpdaterType* CreateJointAndRegisterUpdater(dtPhysics::JointDesc& desc, osg::Transform& refNodeToUpdate)
+         UpdaterType* CreateJointAndRegisterUpdater(dtPhysics::JointDesc& desc, osg::Transform& refNodeToUpdate, const osg::Node* rootNode = nullptr)
          {
             dtCore::RefPtr<UpdaterType> result;
-            palLink* newLink = CreateJoint(desc, &refNodeToUpdate);
-            if (newLink == NULL)
-               return NULL;
+            palLink* newLink = CreateJoint(desc, &refNodeToUpdate, rootNode);
+            if (newLink == nullptr)
+               return nullptr;
 
             result = new UpdaterType(refNodeToUpdate,*newLink);
 
@@ -195,7 +196,7 @@ namespace dtPhysics
           * means that the visualToBodyTransform will be used as entered in the property values, but the visual model can be still scaled without messing
           * up the joints, visually speaking.
           */
-         static void ComputeLocalOffsetMatrixForNode(TransformType& frameOut, const osg::Node& node, const TransformType& visualToBodyTransform, const osg::Vec3& externalScale = osg::Vec3(1.0f,1.0f,1.0f));
+         static void ComputeLocalOffsetMatrixForNode(TransformType& frameOut, const osg::Node& node, const TransformType& visualToBodyTransform, const osg::Node* root = nullptr, const osg::Vec3& externalScale = osg::Vec3(1.0f,1.0f,1.0f));
 
          /**
           * This virtual method allows the user to move a complete set of perhaps
@@ -317,12 +318,12 @@ namespace dtPhysics
          /**
           * This is like the CreateJoint on PhysicsObject except that it looks up the physics objects, and set
           * the joint description body1frame to match the transform in the ref node.
-          *
+          * @param rootNode the node on which to stop when computing the local transfrom of the ref node.  The root node transform, if it has one, is not included.
           * @param setBody2VisualToBody if true, This code assumes the visual to body transform of body 1 is correct,
           * and if the visual to body transform of body 2 so that it will put it at the joint origin position.
           * That way, if the transform of the system is set, the body will be warped in a reset position.
           */
-         palLink* CreateJoint(dtPhysics::JointDesc& desc, osg::Transform* refNode = NULL, bool setBody2VisualToBody = true);
+         palLink* CreateJoint(dtPhysics::JointDesc& desc, osg::Transform* refNode = nullptr, const osg::Node* rootNode = nullptr, bool setBody2VisualToBody = true);
 
          //////////////////////////////////////////////////////////////////////////////////////
          //                                    Utilities                                     //
