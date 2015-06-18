@@ -18,7 +18,9 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////
    static const QString ICON_NODE("");
    static const QString ICON_BONE(":dtQt/icons/nodes/bone.png");
+   static const QString ICON_DOF(":dtQt/icons/nodes/dof.png");
    static const QString ICON_GEODE(":dtQt/icons/nodes/geode.png");
+   static const QString ICON_GEOMETRY(":dtQt/icons/nodes/geometry.png");
    static const QString ICON_GROUP(":dtQt/icons/nodes/group.png");
    static const QString ICON_MATRIX(":dtQt/icons/nodes/matrix.png");
    static const QString ICON_SKELETON(":dtQt/icons/nodes/skeleton.png");
@@ -61,7 +63,7 @@ namespace dtQt
          
          StrArray& descriptions = mNode->getDescriptions();
 
-         const std::string* curDesc = NULL;
+         const std::string* curDesc = nullptr;
          StrArray::const_iterator curIter = descriptions.begin();
          StrArray::const_iterator endIter = descriptions.end();
          for (size_t i = 0; curIter != endIter; ++curIter, ++i)
@@ -84,6 +86,65 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
+   class NodeFilter : public osg::Referenced
+   {
+   public:
+      NodeFilter()
+         : mFilterOutDOFs(false)
+         , mFilterOutGeodes(false)
+         , mFilterOutGroups(false)
+         , mFilterOutTransforms(false)
+      {}
+
+      bool IsNodeAllowed(osg::Node& node) const
+      {
+         bool answer = true;
+
+         std::string nodeType(node.className());
+
+         if (nodeType.compare("MatrixTransform") == 0)
+         {
+            answer = ! mFilterOutTransforms;
+         }
+         else if (nodeType.compare("Group") == 0)
+         {
+            answer = ! mFilterOutGroups;
+         }
+         else if (nodeType.compare("Geode") == 0
+            || nodeType.compare("Geometry") == 0)
+         {
+            answer = ! mFilterOutGeodes;
+         }
+         else if (nodeType.compare("DOFTransform") == 0)
+         {
+            answer = ! mFilterOutDOFs;
+         }
+
+         return answer;
+      }
+
+      bool IsEnabled() const
+      {
+         return mFilterOutDOFs
+            || mFilterOutGeodes
+            || mFilterOutGroups
+            || mFilterOutTransforms;
+      }
+
+      bool mFilterOutDOFs;
+      bool mFilterOutGeodes;
+      bool mFilterOutGroups;
+      bool mFilterOutTransforms;
+
+   protected:
+      virtual ~NodeFilter() {}
+   };
+
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   /////////////////////////////////////////////////////////////////////////////
    class NodeTreeBuilder : public osg::NodeVisitor
    {
    public:
@@ -91,21 +152,22 @@ namespace dtQt
 
       typedef std::map<osg::Node*, NodeTreeItem*> NodeItemMap;
 
-      NodeTreeBuilder(QTreeWidget& targetTree)
+      NodeTreeBuilder(QTreeWidget& targetTree, NodeFilter* filter = nullptr)
          : BaseClass(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
          , mTree(&targetTree)
+         , mNodeFilter(filter)
       {}
 
       NodeTreeItem* GetItem(osg::Node& node)
       {
          NodeItemMap::iterator foundItem = mNodeItemMap.find(&node);
 
-         return (foundItem != mNodeItemMap.end() ? foundItem->second : NULL);
+         return (foundItem != mNodeItemMap.end() ? foundItem->second : nullptr);
       }
 
       NodeTreeItem* GetParentItem(osg::Node& node)
       {
-         return node.getParents().empty() ? NULL
+         return node.getParents().empty() ? nullptr
             : GetItem(*node.getParents().front());
       }
 
@@ -117,7 +179,7 @@ namespace dtQt
          QIcon icon(GetIconForNodeType(node));
          item->setIcon(0, icon);
 
-         if (node.getStateSet() != NULL)
+         if (node.getStateSet() != nullptr)
          {
             QIcon statesetIcon(ICON_STATESET);
             item->setIcon(1, statesetIcon);
@@ -132,12 +194,12 @@ namespace dtQt
       {
          NodeTreeItem* item = GetItem(node);
 
-         if (item == NULL)
+         if (item == nullptr)
          {
             item = CreateItem(node);
 
             QTreeWidgetItem* parentItem = GetParentItem(node);
-            if (parentItem != NULL)
+            if (parentItem != nullptr)
             {
                parentItem->addChild(item);
             }
@@ -168,6 +230,14 @@ namespace dtQt
          {
             icon = &ICON_GEODE;
          }
+         else if (nodeType.compare("Geometry") == 0)
+         {
+            icon = &ICON_GEOMETRY;
+         }
+         else if (nodeType.compare("DOFTransform") == 0)
+         {
+            icon = &ICON_DOF;
+         }
          else if (nodeType.compare("Bone") == 0)
          {
             icon = &ICON_BONE;
@@ -182,18 +252,23 @@ namespace dtQt
 
       virtual void apply(osg::Node& node)
       {
-         NodeTreeItem* item = GetOrCreateItem(node);
-         QString qname(node.getName().c_str());
+         bool allowNode = ! mNodeFilter.valid() || mNodeFilter->IsNodeAllowed(node);
 
-         if (qname.isEmpty())
+         if (allowNode)
          {
-            qname = "[Node]";
+            NodeTreeItem* item = GetOrCreateItem(node);
+            QString qname(node.getName().c_str());
+
+            if (qname.isEmpty())
+            {
+               qname = "[Node]";
+            }
+
+            item->setText(0, qname);
+
+            QString qnodeType(node.className());
+            item->setToolTip(0, qnodeType);
          }
-
-         item->setText(0, qname);
-
-         QString qnodeType(node.className());
-         item->setToolTip(0, qnodeType);
 
          traverse(node);
       }
@@ -205,6 +280,7 @@ namespace dtQt
 
       QTreeWidget* mTree;
       NodeItemMap mNodeItemMap;
+      dtCore::RefPtr<NodeFilter> mNodeFilter;
    };
 
 
@@ -226,7 +302,7 @@ namespace dtQt
    NodeTreePanel::~NodeTreePanel()
    {
       delete mUI;
-      mUI = NULL;
+      mUI = nullptr;
    }
 
    void NodeTreePanel::CreateConnections()
@@ -242,9 +318,21 @@ namespace dtQt
       connect(mUI->mButtonCollapseAll, SIGNAL(clicked()),
          this, SLOT(UpdateColumns()));
 
+      connect(mUI->mButtonFilterDOFs, SIGNAL(clicked()),
+         this, SLOT(OnNodeFilterClicked()));
+      connect(mUI->mButtonFilterGeodes, SIGNAL(clicked()),
+         this, SLOT(OnNodeFilterClicked()));
+      connect(mUI->mButtonFilterGroups, SIGNAL(clicked()),
+         this, SLOT(OnNodeFilterClicked()));
+      connect(mUI->mButtonFilterTransforms, SIGNAL(clicked()),
+         this, SLOT(OnNodeFilterClicked()));
+
       // ITEMS
       connect(mUI->mTree, SIGNAL(itemSelectionChanged()),
          this, SLOT(OnItemSelectionChanged()));
+
+      connect(mUI->mTree, SIGNAL(itemChanged(QTreeWidgetItem*, int)),
+         this, SLOT(OnItemChanged(QTreeWidgetItem*, int)));
    }
 
    void NodeTreePanel::UpdateUI()
@@ -253,7 +341,19 @@ namespace dtQt
 
       if (mNode.valid())
       {
-         NodeTreeBuilder builder(*mUI->mTree);
+         // Determine if node types should be filtered.
+         dtCore::RefPtr<NodeFilter> filter = new NodeFilter;
+         filter->mFilterOutDOFs = mUI->mButtonFilterDOFs->isChecked();
+         filter->mFilterOutGeodes = mUI->mButtonFilterGeodes->isChecked();
+         filter->mFilterOutGroups = mUI->mButtonFilterGroups->isChecked();
+         filter->mFilterOutTransforms = mUI->mButtonFilterTransforms->isChecked();
+         if ( ! filter->IsEnabled())
+         {
+            filter = nullptr;
+         }
+
+         // Create node items for tree view.
+         NodeTreeBuilder builder(*mUI->mTree, filter.get());
          mNode->accept(builder);
 
          QString qstr = QString::number(builder.GetNodeCount());
@@ -276,16 +376,16 @@ namespace dtQt
       typedef QList<QTreeWidgetItem*> NodeItemsArray;
       const NodeItemsArray items = mUI->mTree->selectedItems();
 
-      NodeTreeItem* curItem = NULL;
+      NodeTreeItem* curItem = nullptr;
       NodeItemsArray::const_iterator curIter = items.begin();
       NodeItemsArray::const_iterator endIter = items.end();
       for (; curIter != endIter; ++curIter)
       {
          curItem = dynamic_cast<NodeTreeItem*>(*curIter);
-         if (curItem != NULL)
+         if (curItem != nullptr)
          {
             osg::Node* node = curItem->GetNode();
-            if (node != NULL)
+            if (node != nullptr)
             {
                nodeArray.push_back(node);
             }
@@ -300,6 +400,11 @@ namespace dtQt
          // Signal for multiple nodes.
          emit SignalNodesSelected(nodeArray);
       }
+   }
+
+   void NodeTreePanel::OnNodeFilterClicked()
+   {
+      UpdateUI();
    }
 
    void NodeTreePanel::SetNode(osg::Node* node, bool updateUI)
@@ -322,6 +427,17 @@ namespace dtQt
    osg::Node* NodeTreePanel::GetNode() const
    {
       return mNode.get();
+   }
+
+   void NodeTreePanel::OnItemChanged(QTreeWidgetItem* item, int column)
+   {
+      NodeTreeItem* nodeItem = static_cast<NodeTreeItem*>(item);
+
+      osg::Node* node = nodeItem->GetNode();
+      if (node != nullptr)
+      {
+         node->setName(nodeItem->text(0).toStdString());
+      }
    }
 
 }
