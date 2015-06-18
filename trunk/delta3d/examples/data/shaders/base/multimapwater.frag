@@ -18,7 +18,6 @@ uniform float UnderWaterViewDistance;
 
 varying vec3 vNormal;
 varying vec3 vTangent;
-varying vec3 vBitangent;
 varying vec3 vLightDir;
 varying vec3 vLightDir2;
 varying vec3 vPos;
@@ -125,7 +124,7 @@ void main(void)
    f.color = gl_Color;
    f.sceneLuminance = d3d_SceneLuminance;
    f.tbn[0] = normalize(vTangent);
-   f.tbn[1] = normalize(vBitangent);
+   f.tbn[1] = normalize(cross(f.tbn[0], f.normal));
    f.tbn[2] = f.normal;
    
    EffectParams e;
@@ -142,7 +141,7 @@ void main(void)
    m.specular.rgb = texture2D(specularTexture, uv).rgb;
    m.specular.a = alpha.g;
    m.illum.rgb = texture2D(illumTexture, uv).rgb * illumScale;
-   m.normal.rgb = normalize(texture2D(normalTexture, uv).rgb);
+   m.normal.rgb = texture2D(normalTexture, uv).rgb;
    m.irradiance = vec4(0,0,0,0);
    m.refractionIndex = alpha.b;
    

@@ -4,7 +4,6 @@ varying vec3 vLightDir;
 varying vec3 vLightDir2;
 varying vec3 vNormal;
 varying vec3 vTangent;
-varying vec3 vBitangent;
 varying vec3 vPos;
 varying vec3 vCamera;
 varying vec4 vViewPos;
@@ -35,7 +34,6 @@ void main()
    vTangent = normalize(inverseView3x3 * gl_NormalMatrix * gl_MultiTexCoord1.xyz);
    
    vTangent = normalize(vTangent - dot(vTangent, vNormal) * vNormal);
-   vBitangent = normalize(cross(vNormal, vTangent));
 
    vLightDir = normalize(inverseView3x3 * gl_LightSource[0].position.xyz);
    vLightDir2 = normalize(inverseView3x3 * gl_LightSource[1].position.xyz);
