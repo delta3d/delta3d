@@ -161,11 +161,14 @@ namespace dtActors
       /*override*/ void BuildPropertyMap();
 
       /*override*/ void OnEnteredWorld();
+      /*override*/ void OnRemovedFromWorld();
 
       /*override*/ void OnRemovedFromActor(dtCore::BaseActorObject& actor);
 
    protected:
       virtual ~DynamicParticlesActorComponent();
+
+      void ClearParticleData();
 
    private:
       int mCurrentIndex;

@@ -154,6 +154,7 @@ namespace dtActors
          virtual void BuildPropertyMap();
 
          virtual void OnEnteredWorld();
+         virtual void OnRemovedFromWorld();
 
          virtual void TickLocal(const dtGame::Message& tickMessage);
 
