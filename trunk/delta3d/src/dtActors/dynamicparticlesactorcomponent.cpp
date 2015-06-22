@@ -685,8 +685,10 @@ namespace dtActors
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void DynamicParticlesActorComponent::OnRemovedFromActor(dtCore::BaseActorObject& actor)
+   void DynamicParticlesActorComponent::ClearParticleData()
    {
+      UnregisterForTick();
+
       // Clear all the particle systems.
       DynamicParticlesDataArray::const_iterator curIter = mParticleDataArray.begin();
       DynamicParticlesDataArray::const_iterator endIter = mParticleDataArray.end();
@@ -694,6 +696,20 @@ namespace dtActors
       {
          curIter->get()->ClearParticleSystem();
       }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void DynamicParticlesActorComponent::OnRemovedFromWorld()
+   {
+      ClearParticleData();
+
+      BaseClass::OnRemovedFromWorld();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void DynamicParticlesActorComponent::OnRemovedFromActor(dtCore::BaseActorObject& actor)
+   {
+      ClearParticleData();
 
       BaseClass::OnRemovedFromActor(actor);
    }
