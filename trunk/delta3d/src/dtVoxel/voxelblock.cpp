@@ -747,15 +747,13 @@ namespace dtVoxel
    bool VoxelBlock::HasCachedModel(const std::string& folderName, int index)
    {
       bool result = false;
-
-      std::string filePath = dtCore::Project::GetInstance().GetContext() + "/" + folderName + "/";
-
+      
       std::string indexString;
       std::stringstream fileName;
 
       dtUtil::MakeIndexString(index, indexString, 8);
 
-      fileName << filePath << "VoxelGrid_cache" << indexString << "_paged.osgt";
+      fileName << folderName << "VoxelGrid_cache" << indexString << "_paged.osgt";
 
       if (dtUtil::FileUtils::GetInstance().FileExists(fileName.str()))
       {
@@ -768,15 +766,13 @@ namespace dtVoxel
    bool VoxelBlock::LoadCachedModel(const std::string& folderName, int index)
    {
       bool result = false;
-
-      std::string filePath = dtCore::Project::GetInstance().GetContext() + "/" + folderName + "/";
-
+      
       std::string indexString;
       std::stringstream fileName;
 
       dtUtil::MakeIndexString(index, indexString, 8);
 
-      fileName << filePath << "VoxelGrid_cache" << indexString << "_paged.osgt";
+      fileName << folderName << "VoxelGrid_cache" << indexString << "_paged.osgt";
 
       if (dtUtil::FileUtils::GetInstance().FileExists(fileName.str()))
       {
@@ -812,16 +808,14 @@ namespace dtVoxel
    {
       bool result = false;
 
-      std::string filePath = dtCore::Project::GetInstance().GetContext() + "/" + folderName + "/";
-
       std::string indexString;
       std::stringstream fileName;
 
       dtUtil::MakeIndexString(index, indexString, 8);
 
-      fileName << filePath << "VoxelGrid_cache" << indexString << "_paged.osgt";
+      fileName << folderName << "VoxelGrid_cache" << indexString << "_paged.osgt";
 
-      if (dtUtil::FileUtils::GetInstance().DirExists(filePath))
+      if (dtUtil::FileUtils::GetInstance().DirExists(folderName))
       {
          result = osgDB::writeNodeFile(*mVolume, fileName.str());
 
@@ -835,8 +829,6 @@ namespace dtVoxel
    {
       std::string result;
 
-      std::string filePath = dtCore::Project::GetInstance().GetContext() + "/" + folderName + "/";
-
       std::string indexString;
       std::string lodString;
       std::stringstream fileName;
@@ -846,15 +838,15 @@ namespace dtVoxel
 
       fileName << "VoxelGrid_cache" << indexString << "_lod" << lodString << ".osgb";
 
-      if (dtUtil::FileUtils::GetInstance().DirExists(filePath))
+      if (dtUtil::FileUtils::GetInstance().DirExists(folderName))
       {
-         bool success = osgDB::writeNodeFile(n, filePath + fileName.str());
+         bool success = osgDB::writeNodeFile(n, folderName + fileName.str());
 
          if (success)
          {
             //result will be empty string if this fails
             result = fileName.str();
-            std::cout << "Writing lod " << lod << " for block num " << index << " to model   cache " << filePath + fileName.str() << std::endl;
+            std::cout << "Writing lod " << lod << " for block num " << index << " to model   cache " << folderName + fileName.str() << std::endl;
          }
          else
          {
