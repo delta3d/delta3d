@@ -139,7 +139,7 @@ namespace dtVoxel
 
       osg::Vec3i startIndex = GetIndexFromPos(dirtyBounds._min);
       osg::Vec3i endIndex = GetIndexFromPos(dirtyBounds._max);
-
+      
       //std::cout << std::endl << "start index " << startIndex.x() << ", " << startIndex.y() << ", " << startIndex.z() << std::endl;
       //std::cout << std::endl << "end index " << endIndex.x() << ", " << endIndex.y() << ", " << endIndex.z() << std::endl;
 
@@ -181,7 +181,7 @@ namespace dtVoxel
       
       //int cellsToUpdate = mDirtyCells.size();
 
-      //std::cout << "Regenerating " << cellsToUpdate << " cells." << std::endl;
+      //std::cout << "UpdateGrid " << mDirtyCells.size() << " dirty cells." << std::endl;
       std::vector<VoxelCellUpdateInfo>::iterator iter = mDirtyCells.begin();
 
       for (; iter != mDirtyCells.end();)
@@ -303,7 +303,7 @@ namespace dtVoxel
       
       mVoxelActor = &voxelActor;
       
-      std::cout << std::endl << "Creating Voxel Grid with " << mNumBlocks << " Voxel Blocks" << std::endl;
+      //std::cout << std::endl << "Creating Voxel Grid with " << mNumBlocks << " Voxel Blocks" << std::endl;
 
       GenerateCacheString();
 
@@ -649,7 +649,7 @@ namespace dtVoxel
    
    bool VoxelGrid::ReadBlockVisibility()
    {
-      std::string filePath = dtCore::Project::GetInstance().GetContext() + "/" + mCacheFolder + "/";
+      std::string filePath = mCacheFolder;
       std::string filename("VisibilityCache.dat");
       std::ifstream inFile(filePath + filename, std::ios::in | std::ios::binary);
 
@@ -714,8 +714,9 @@ namespace dtVoxel
 
    bool VoxelGrid::WriteBlockVisibility()
    {      
-      std::string filePath = dtCore::Project::GetInstance().GetContext() + "/" + mCacheFolder + "/";
+      std::string filePath = mCacheFolder;
       std::string filename("VisibilityCache.dat");
+      std::cout << "Writing visibility cache to " << filePath + filename << std::endl;
       std::ofstream outFile(filePath + filename, std::ios::out | std::ios::binary);
       
       if (!outFile.fail())
@@ -748,15 +749,38 @@ namespace dtVoxel
 
    void VoxelGrid::GenerateCacheString()
    {
+      dtCore::Project& proj = dtCore::Project::GetInstance();
+      dtUtil::FileUtils&  fileUtil = dtUtil::FileUtils::GetInstance();
+
+      std::string projectPath = proj.GetContext();
+
       std::stringstream folderName;
 
-      folderName << "Volumes/cache/" << mVoxelActor->GetDatabase().GetResourceName() << "_" << mBlocksX << mBlocksY << mBlocksZ;
+      folderName << projectPath << "/Volumes/cache/" << mVoxelActor->GetDatabase().GetResourceName();
 
-      mCacheFolder = folderName.str();
+      try{
 
-      std::string filePath = dtCore::Project::GetInstance().GetContext() + "/" + mCacheFolder + "/";
+         std::cout << std::endl << "Creating directory " << folderName.str() << std::endl;
+         fileUtil.MakeDirectory(folderName.str());
 
-      dtUtil::FileUtils::GetInstance().MakeDirectory(filePath);
+         folderName << "/BlockDim_x" << mBlocksX << "_y" << mBlocksY << "_z" << mBlocksZ;
+         std::cout << "Creating directory " << folderName.str() << std::endl;
+         fileUtil.MakeDirectory(folderName.str());
+
+         folderName << "/Offset_x" << int(mGridOffset.x()) << "_y" << int(mGridOffset.y()) << "_z" << int(mGridOffset.z());
+         std::cout << "Creating directory " << folderName.str() << std::endl;
+         fileUtil.MakeDirectory(folderName.str());
+
+         folderName << "/Resolution_x" << int(mTextureResolution.x()) << "_y" << int(mTextureResolution.y()) << "_z" << int(mTextureResolution.z()) << "/";
+         std::cout << "Creating directory " << folderName.str() << std::endl;
+         fileUtil.MakeDirectory(folderName.str());
+
+         mCacheFolder = folderName.str();
+      }
+      catch (dtUtil::Exception& e)
+      {
+         LOG_ERROR("Error generating cache directory for VoxelGrid." + e.What());
+      }
 
    }
 
@@ -764,13 +788,14 @@ namespace dtVoxel
    {
       bool result = false;
 
-      std::string filePath = mCacheFolder;
-      
       std::stringstream fileName;
 
-      fileName << filePath << DATABASE_FILENAME;
+      fileName << mCacheFolder << DATABASE_FILENAME;
 
-      if (dtUtil::FileUtils::GetInstance().FileExists(fileName.str()))
+      std::cout << "Writing voxel database to " << fileName.str() << std::endl;
+
+
+      if (dtUtil::FileUtils::GetInstance().DirExists(mCacheFolder))
       {
          result = osgDB::writeNodeFile(*mRootNode, fileName.str());
 

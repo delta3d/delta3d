@@ -38,6 +38,9 @@
 namespace dtVoxel
 {
 
+   //todo- make property
+   float isolevel = 1.0f;
+
    CreateMeshTask::CreateMeshTask(const osg::Vec3& offset, const osg::Vec3& texelSize, const osg::Vec3i& resolution, openvdb::FloatGrid::Ptr grid)
       : mIsDone(false)
       , mOffset(offset)
@@ -71,8 +74,6 @@ namespace dtVoxel
 
       //reusing this improves performance by quite a bit 
       osg::Vec3 vertlist[12];
-
-      float isolevel = 1.0f;
 
       for (int i = 0; i < mResolution[0] + 1; ++i)
       {
@@ -135,6 +136,7 @@ namespace dtVoxel
          }
       }
 
+      //std::cout << "Num Verts " << vertArray->getNumElements() << std::endl;
 
       
       geom->setVertexArray(vertArray);
@@ -151,9 +153,12 @@ namespace dtVoxel
    double CreateMeshTask::SampleCoord(double x, double y, double z, openvdb::tools::GridSampler<openvdb::FloatGrid, openvdb::tools::PointSampler>& fastSampler)
    {
       double result = (fastSampler.wsSample(openvdb::Vec3R(x, y, z)));
-      dtUtil::Clamp(result, -0.33, 0.36);
+      
+      if (result < 0.0f) std::cout << "CreateMeshTask::SampleCoord- Result is negative" << std::endl;
 
-      result = dtUtil::MapRangeValue(result, -0.33, 0.36, 0.0, 1.0);
+      dtUtil::Clamp(result, 0.0, 0.15);            
+
+      result = dtUtil::MapRangeValue(result, 0.0, 0.15, 0.0, 1.0);
       return result;
    }
 
@@ -226,7 +231,7 @@ namespace dtVoxel
       double result = (fastSampler.wsSample(openvdb::Vec3R(x, y, z)));
       dtUtil::Clamp(result, -0.33, 0.36);
       
-      result = dtUtil::MapRangeValue(result, -0.33, 0.36, 0.0, 1.0);
+      result = dtUtil::MapRangeValue(result, 0.0, 0.15, 0.0, 1.0);
       return result;
    }
 
@@ -246,8 +251,6 @@ namespace dtVoxel
 
       //reusing this improves performance by quite a bit 
       osg::Vec3 vertlist[12];
-
-      float isolevel = 1.0f;
 
       for (int i = 0; i < resolution[0] + 1; ++i)
       {
@@ -288,40 +291,7 @@ namespace dtVoxel
                grid.p[7].set(from[0], from[1] + texelSize[1], from[2] + texelSize[2]);
                grid.val[7] = SampleCoord(grid.p[7].x(), grid.p[7].y(), grid.p[7].z(), fastSampler);
 
-               bool allSamplesZero = true;
-               bool enablePrintOuts = true;
-               for (int s = 0; s < 8 && enablePrintOuts; ++s)
-               {
-                  if (grid.val[s] < 0.0)// && grid.val[s] != 1)
-                  {
-                     allSamplesZero = false;
-                     break;
-                  }
-               }
-
-               if (!allSamplesZero)
-               {
-                  std::cout << std::endl << "Texel i" << i << ", j " << j << ", k " << k << std::endl;
-                  std::cout << "Pos (" << worldX << ", " << worldY << ", " << worldZ << ")" << std::endl;
-
-
-                  for (int p = 0; p < 8; ++p)
-                  {
-                     std::cout << std::endl;
-
-                     std::cout << "Sample Value: " << grid.val[p];
-                  }
-
-                  std::cout << std::endl;
-               }
-
                int numTriangles = PolygonizeCube(grid, isolevel, triangles, &vertlist[0]);
-
-
-               if (!allSamplesZero)
-               {
-                  std::cout << "NumTriangles " << numTriangles << std::endl << std::endl;
-               }
 
                for (int n = 0; n < numTriangles; ++n)
                {
@@ -421,8 +391,6 @@ namespace dtVoxel
       //reusing this improves performance by quite a bit 
       osg::Vec3 vertlist[12];
       
-      float isolevel = 1.0f;
-
       for (int i = 0; i < resolution[0] + 1; ++i)
       {
          for (int j = 0; j < resolution[1] + 1; ++j)
@@ -462,40 +430,7 @@ namespace dtVoxel
                grid.p[7].set(from[0], from[1] + texelSize[1], from[2] + texelSize[2]);
                grid.val[7] = SampleCoord(grid.p[7].x(), grid.p[7].y(), grid.p[7].z(), fastSampler);
 
-               bool allSamplesZero = true;
-               /*bool enablePrintOuts = false;
-               for (int s = 0; s < 8 && enablePrintOuts; ++s)
-               {
-                  if (grid.val[s] < 0.0)// && grid.val[s] != 1)
-                  {
-                     allSamplesZero = false;
-                     break;
-                  }
-               }*/
-
-               if (!allSamplesZero)
-               {
-                  std::cout << std::endl << "Texel i" << i << ", j " << j << ", k " << k << std::endl;
-                  std::cout << "Pos (" << worldX << ", " << worldY << ", " << worldZ << ")" << std::endl;
-
-
-                  for (int p = 0; p < 8; ++p)
-                  {
-                     std::cout << std::endl;
-
-                     std::cout << "Sample Value: " << grid.val[p];
-                  }
-
-                  std::cout << std::endl;
-               }               
-
                int numTriangles = PolygonizeCube(grid, isolevel, triangles, &vertlist[0]);
-
-
-               if (!allSamplesZero)
-               {
-                  std::cout << "NumTriangles " << numTriangles << std::endl << std::endl;
-               }
 
                for (int n = 0; n < numTriangles; ++n)
                {
