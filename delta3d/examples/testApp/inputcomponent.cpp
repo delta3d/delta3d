@@ -1414,7 +1414,15 @@ namespace dtExample
 
    dtRender::SceneManager* InputComponent::GetSceneManager()
    {
-      return dynamic_cast<dtRender::SceneManager*>(GetGameManager()->GetEnvironmentActor()->GetDrawable());
+      dtGame::IEnvGameActorProxy* envActor = GetGameManager()->GetEnvironmentActor();
+      if (envActor != NULL)
+      {
+         return dynamic_cast<dtRender::SceneManager*>(envActor->GetDrawable());
+      }
+      else
+      {
+         return NULL;
+      }
    }
 
    void InputComponent::AttachBanner()
