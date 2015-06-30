@@ -87,11 +87,11 @@ namespace dtVoxel
       //reusing this improves performance by quite a bit 
       osg::Vec3 vertlist[12];
 
-      for (int i = 0; i < mResolution[0] + 1; ++i)
+      for (int i = 0; i < mResolution[0]; ++i)
       {
-         for (int j = 0; j < mResolution[1] + 1; ++j)
+         for (int j = 0; j < mResolution[1]; ++j)
          {
-            for (int k = 0; k < mResolution[2] + 1; ++k)
+            for (int k = 0; k < mResolution[2]; ++k)
             {
                double worldX = mOffset[0] + (i * mTexelSize[0]);
                double worldY = mOffset[1] + (j * mTexelSize[1]);
@@ -270,11 +270,11 @@ namespace dtVoxel
       //reusing this improves performance by quite a bit 
       osg::Vec3 vertlist[12];
 
-      for (int i = 0; i < resolution[0] + 1; ++i)
+      for (int i = 0; i < resolution[0]; ++i)
       {
-         for (int j = 0; j < resolution[1] + 1; ++j)
+         for (int j = 0; j < resolution[1]; ++j)
          {
-            for (int k = 0; k < resolution[2] + 1; ++k)
+            for (int k = 0; k < resolution[2]; ++k)
             {
                double worldX = mImpl->mOffset[0] + (i * texelSize[0]);
                double worldY = mImpl->mOffset[1] + (j * texelSize[1]);

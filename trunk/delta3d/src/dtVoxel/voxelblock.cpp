@@ -91,9 +91,9 @@ namespace dtVoxel
       mVolume = new osg::Group();
 
       mGridDimensions.set(
-         1.0 + int(std::floor(mWSDimensions[0] / mWSCellDimensions[0])),
-         1.0 + int(std::floor(mWSDimensions[1] / mWSCellDimensions[1])),
-         1.0 + int(std::floor(mWSDimensions[2] / mWSCellDimensions[2])));
+         int(std::floor(mWSDimensions[0] / mWSCellDimensions[0])),
+         int(std::floor(mWSDimensions[1] / mWSCellDimensions[1])),
+         int(std::floor(mWSDimensions[2] / mWSCellDimensions[2])));
 
       mNumCells = mGridDimensions[0] * mGridDimensions[1] * mGridDimensions[2];
       
