@@ -478,10 +478,10 @@ namespace dtVoxel
 
       std::cout << std::endl << "Done Creating Voxel Grid" << std::endl;
 
-      /*std::cout << std::endl << "Optimizing Grid" << std::endl;
+      std::cout << std::endl << "Optimizing Grid" << std::endl;
       osgUtil::Optimizer opt;
       opt.optimize(mRootNode, osgUtil::Optimizer::SPATIALIZE_GROUPS);
-      std::cout << std::endl << "Done Optimizing" << std::endl;*/
+      std::cout << std::endl << "Done Optimizing" << std::endl;
    }
 
 

@@ -369,7 +369,7 @@ namespace dtVoxel
                               {
                                  //std::cout << "Creating new mesh." << std::endl;
 
-                                 vc->CreateMesh(voxelActor, vdbGrid, transform, mWSCellDimensions, textureResolution);
+                                 vc->CreateMesh(voxelActor, transform, mWSCellDimensions, textureResolution);
                                  vc->GetOSGNode()->setName(fv.mName);
                                  parent->addChild(vc->GetOSGNode());
                                  
@@ -474,7 +474,7 @@ namespace dtVoxel
                   int cellIndex = (z * gridDimensions[1] * gridDimensions[0]) + (y * gridDimensions[0]) + x;
                   
                   VoxelCell& vc = mCells[cellIndex];
-                  vc.CreateMesh(voxelActor, vdbGrid, transform, mWSCellDimensions, textureResolution);
+                  vc.CreateMesh(voxelActor, transform, mWSCellDimensions, textureResolution);
 
                   vc.GetOSGNode()->setName(GetCellName(x, y, z));
                   parentNode.addChild(vc.GetOSGNode());
@@ -484,15 +484,9 @@ namespace dtVoxel
          }
       }
 
-      //simplify mesh
-      //dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
-      //simplifier->setMaximumLength(1000.0f);
-      //simplifier->setDoTriStrip(true);
-      //parentNode.accept(*simplifier);
-
-      /*spatialize
+      //spatialize
       osgUtil::Optimizer opt;
-      opt.optimize(&parentNode, osgUtil::Optimizer::SPATIALIZE_GROUPS);*/
+      opt.optimize(&parentNode, osgUtil::Optimizer::SPATIALIZE_GROUPS);
 
       mIsAllocated = true;
    }
@@ -527,13 +521,13 @@ namespace dtVoxel
    {
       dtCore::RefPtr<osg::PagedLOD> lodNode = new osg::PagedLOD();
       lodNode->setDatabasePath(filePath);
-      lodNode->setRadius(2.0 * mWSDimensions.length());
+      lodNode->setRadius(0.5 * mWSDimensions.length());
       lodNode->setCenter(mOffset + (mWSDimensions * 0.5f));
 
       dtCore::RefPtr<osg::Group> node0 = new osg::Group;
       dtCore::RefPtr<osg::Group> node1 = new osg::Group;
-      dtCore::RefPtr<osg::Group> node2 = new osg::Group;
-      dtCore::RefPtr<osg::Group> node3 = new osg::Group;
+      /*dtCore::RefPtr<osg::Group> node2 = new osg::Group;
+      dtCore::RefPtr<osg::Group> node3 = new osg::Group;*/
 
 
       AllocateCells(voxelActor, *node0, mGridDimensions, resolution0);
@@ -548,19 +542,20 @@ namespace dtVoxel
          LOG_ERROR("Error writing paged lod node 0.");
       }
 
-      AllocateCombinedMesh(voxelActor, *node1, mGridDimensions, resolution1);
+      //we sample at the same resolution and simplify later, to be refactored into properties
+      AllocateCombinedMesh(voxelActor, *node1, mGridDimensions, resolution0);
       fileName = SaveCachedModel(filePath, *node1, index, 1);
       if (!fileName.empty())
       {
          lodNode->setFileName(1, fileName);
-         lodNode->setRange(1, dist0, dist1);
+         lodNode->setRange(1, dist0, viewDistance);// dist1);
       }
       else
       {
          LOG_ERROR("Error writing paged lod node 1.");
       }
 
-      AllocateCombinedMesh(voxelActor, *node2, mGridDimensions, resolution2);
+      /*AllocateCombinedMesh(voxelActor, *node2, mGridDimensions, resolution2);
       fileName = SaveCachedModel(filePath, *node2, index, 2);
       if (!fileName.empty())
       {
@@ -582,7 +577,7 @@ namespace dtVoxel
       else
       {
          LOG_ERROR("Error writing paged lod node 3.");
-      }
+      }*/
 
 
       mVolume->addChild(lodNode);
@@ -598,9 +593,7 @@ namespace dtVoxel
       std::cout << "Allocating Combined Voxel Block" << std::endl;
 
       dtCore::RefPtr<osg::Geometry> geom = new osg::Geometry();
-      dtCore::RefPtr<osg::Vec3Array> vertArray = new osg::Vec3Array();
-      dtCore::RefPtr<osg::Vec3Array> normalArray = new osg::Vec3Array();
-      dtCore::RefPtr<osg::Vec3Array> colorArray = new osg::Vec3Array();
+      dtCore::RefPtr<osg::Vec3Array> vertArray = new osg::Vec3Array();            
       dtCore::RefPtr<osg::DrawElementsUInt> drawElements = new osg::DrawElementsUInt(GL_TRIANGLES);
 
       //VoxelCell* cellToInit = &mCells[0];
@@ -621,13 +614,12 @@ namespace dtVoxel
                //todo using local grid should be faster
                osg::BoundingBox bb(offsetFrom, offsetTo);
                openvdb::GridBase::Ptr vdbGrid = voxelActor.CollideWithAABB(bb);
-               //bool collides = voxelActor.FastSampleWithAABB(bb, osg::Vec3i(25, 25, 10));
-
+               
                if (vdbGrid != NULL && !vdbGrid->empty())
                {
                   //keeping a pointer and incrementing it should be much faster for a large contiguous dataset
                   int cellIndex = (z * gridDimensions[1] * gridDimensions[0]) + (y * gridDimensions[0]) + x;
-                  mCells[cellIndex].AddGeometry(voxelActor, vdbGrid, transform, mWSCellDimensions, textureResolution, vertArray, normalArray, colorArray, drawElements);
+                  mCells[cellIndex].AddGeometry(voxelActor, transform, mWSCellDimensions, textureResolution, vertArray, drawElements);
                }
 
                //++cellToInit;
@@ -637,32 +629,19 @@ namespace dtVoxel
 
 
       geom->setVertexArray(vertArray);
-      geom->setNormalArray(normalArray);
-      geom->setNormalBinding(osg::Geometry::BIND_PER_VERTEX);
-
       geom->addPrimitiveSet(drawElements);
 
       osg::Geode* geode = new osg::Geode();
       geode->addDrawable(geom);
       parentNode.addChild(geode);      
 
-      /*dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
-      simplifier->setSampleRatio(0.2);
-      simplifier->setDoTriStrip(true);
-      parentNode.accept(*simplifier);*/
+      dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
+      simplifier->setSampleRatio(0.02f);
+      simplifier->setDoTriStrip(false);
+      parentNode.accept(*simplifier);
       
-      /*osgUtil::Optimizer opt;
-      opt.optimize(&parentNode, osgUtil::Optimizer::MAKE_FAST_GEOMETRY);*/
-
-
-      //osg::StateSet* ss = parentNode.getOrCreateStateSet();
-
-      /*osg::ref_ptr<osg::PolygonMode> polymode = new osg::PolygonMode;
-      polymode->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
-      ss->setAttributeAndModes(polymode.get(), osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);*/
-
-      /*ss->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);*/
-
+      osgUtil::Optimizer opt;
+      opt.optimize(&parentNode, osgUtil::Optimizer::MAKE_FAST_GEOMETRY);     
       
       mIsAllocated = true;
    }
