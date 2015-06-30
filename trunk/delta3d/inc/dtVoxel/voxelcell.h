@@ -29,6 +29,8 @@
 #include <osg/Matrix>
 #include <osg/Geometry>
 
+#include <map>
+
 #include <openvdb/tools/Interpolation.h>
 
 #include <openvdb/openvdb.h>
@@ -60,7 +62,7 @@ namespace dtVoxel
       osg::Vec3 mTexelSize;
       osg::Vec3i mResolution;
       dtCore::RefPtr<osg::Geode> mMesh;
-
+      std::map<osg::Vec3, int> mVectorMap;
       openvdb::FloatGrid::Ptr mGrid;
       openvdb::tools::GridSampler<openvdb::FloatGrid, openvdb::tools::PointSampler> mSampler;
 
@@ -77,7 +79,7 @@ namespace dtVoxel
 
       void CreateImage(VoxelActor& voxelActor, openvdb::GridBase::Ptr localGrid, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& texture_resolution);
       
-      void CreateMesh(VoxelActor& voxelActor, openvdb::GridBase::Ptr localGrid, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution);
+      void CreateMesh(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution);
       
       void CreateMeshWithTask(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution);
       
@@ -100,13 +102,12 @@ namespace dtVoxel
 
       double SampleCoord(double x, double y, double z, openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>& fastSampler);
          
-      void AddGeometry(VoxelActor& voxelActor, openvdb::GridBase::Ptr localGrid, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution, osg::Vec3Array* vertArray, osg::Vec3Array* normalArray, osg::Vec3Array* colorArray, osg::DrawElementsUInt* drawElements);
+      void AddGeometry(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution, osg::Vec3Array* vertArray, osg::DrawElementsUInt* drawElements);
 
    protected:
       
       void AllocateImage(VoxelActor& voxelActor, openvdb::GridBase::Ptr gridPtr, const osg::Vec3& cellSize, int width, int height, int slices);
-      void AllocateMesh(VoxelActor& voxelActor, openvdb::GridBase::Ptr gridPtr, const osg::Vec3& cellSize, int width, int height, int slices);
-
+      
    
    private:
       VoxelCellImpl* mImpl;
