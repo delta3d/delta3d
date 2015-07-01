@@ -260,7 +260,7 @@ namespace dtVoxel
          fastSampler(accessor, gridB->transform());
 
       //Insert items into map
-      for (int i = 0; i < vertArray->getNumElements(); ++i)
+      for (unsigned i = 0; i < vertArray->getNumElements(); ++i)
       {
          osg::Vec3 pos = vertArray->operator[](i);
          
