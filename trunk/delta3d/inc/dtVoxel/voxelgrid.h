@@ -112,6 +112,7 @@ namespace dtVoxel
       osg::Vec3i mTextureResolution;
       dtCore::RefPtr<osg::Group> mRootNode;
       dtCore::ObserverPtr<VoxelActor> mVoxelActor;
+      std::string mFullPathToFileCache;
       std::string mCacheFolder;
       std::vector<bool> mBlockVisibility;
       std::vector<VoxelCellUpdateInfo> mDirtyCells;

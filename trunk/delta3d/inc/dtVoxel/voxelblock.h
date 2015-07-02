@@ -65,7 +65,7 @@ namespace dtVoxel
 
       void AllocateLODMesh(VoxelActor& voxelActor, const osg::Vec3i& resolution0, float dist0, const osg::Vec3i& resolution1, float dist1, const osg::Vec3i& resolution2, float dist2, const osg::Vec3i& resolution3, float viewDistance);
 
-      void WritePagedLOD(VoxelActor& voxelActor, int index, const std::string& filePath, const osg::Vec3i& resolution0, float dist0, const osg::Vec3i& resolution1, float dist1, const osg::Vec3i& resolution2, float dist2, const osg::Vec3i& resolution3, float viewDistance);
+      void WritePagedLOD(VoxelActor& voxelActor, int index, const std::string& filePath, const std::string& databasePath, const osg::Vec3i& resolution0, float dist0, const osg::Vec3i& resolution1, float dist1, const osg::Vec3i& resolution2, float dist2, const osg::Vec3i& resolution3, float viewDistance);
 
       void RegenerateAABB(VoxelActor& voxelActor, const osg::BoundingBox& bb, const osg::Vec3i& textureResolution);
       void RegenerateCell(VoxelActor& voxelActor, VoxelCell* cell, osg::Group* nodeToUpdate, const osg::Vec3i& cellIndex, const osg::Vec3i& textureResolution, float viewDistance);

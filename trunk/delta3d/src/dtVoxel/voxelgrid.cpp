@@ -62,7 +62,7 @@ namespace dtVoxel
       , mTextureResolution()
       , mRootNode(new osg::Group())
       , mVoxelActor()
-      , mCacheFolder()
+      , mFullPathToFileCache()
       , mBlockVisibility()
       , mDirtyCells()
       , mBlocks(nullptr)
@@ -254,7 +254,7 @@ namespace dtVoxel
       //                     curBlock->AllocateLODMesh(*mVoxelActor, mRes0, mDist0, mRes1, mDist1, mRes2, mDist2, mRes3, mViewDistance);
       //                     mRootNode->addChild(curBlock->GetOSGNode());
       //                  }
-      //                  else if (curBlock->LoadCachedModel(mCacheFolder, index))
+      //                  else if (curBlock->LoadCachedModel(mFullPathToFileCache, index))
       //                  {
       //                     mRootNode->addChild(curBlock->GetOSGNode());
       //                  }                        
@@ -262,7 +262,7 @@ namespace dtVoxel
       //                  {
       //                     LOG_ERROR("No data found for block " + dtUtil::ToString(index) );
       //                     //curBlock->AllocateCombinedMesh(*mVoxelActor, mTextureResolution);
-      //                     //curBlock->SaveCachedModel(mCacheFolder, index);
+      //                     //curBlock->SaveCachedModel(mFullPathToFileCache, index);
       //                  }
 
       //               }                     
@@ -344,14 +344,14 @@ namespace dtVoxel
                   if (mAllocatedBounds.contains(GetCenterOfBlock(x, y, z)))
                   {
                      //attempt to load from cache
-                     if (!curBlock->LoadCachedModel(mCacheFolder, index))
+                     if (!curBlock->LoadCachedModel(mFullPathToFileCache, index))
                      {
                         //allocate this block
                         //curBlock->AllocateCombinedMesh(*mVoxelActor, mTextureResolution);
                         
                         curBlock->AllocateLODMesh(*mVoxelActor, mRes0, mDist0, mRes1, mDist1, mRes2, mDist2, mRes3, mViewDistance);
 
-                        curBlock->SaveCachedModel(mCacheFolder, index);
+                        curBlock->SaveCachedModel(mFullPathToFileCache, index);
 
                      }
 
@@ -359,13 +359,13 @@ namespace dtVoxel
                   }
                   else
                   {
-                     if (!curBlock->HasCachedModel(mCacheFolder, index))
+                     if (!curBlock->HasCachedModel(mFullPathToFileCache, index))
                      {
                         std::cout << "Caching model for later use" << std::endl;
                         //curBlock->AllocateCombinedMesh(*mVoxelActor, mTextureResolution);
                         curBlock->AllocateLODMesh(*mVoxelActor, mRes0, mDist0, mRes1, mDist1, mRes2, mDist2, mRes3, mViewDistance);
 
-                        curBlock->SaveCachedModel(mCacheFolder, index);
+                        curBlock->SaveCachedModel(mFullPathToFileCache, index);
 
                         curBlock->DeAllocate();
                      }
@@ -452,12 +452,12 @@ namespace dtVoxel
                      if (!ReadFirstFile)
                      {
                         OpenThreads::ScopedLock<OpenThreads::Mutex> addChildMutex(m);
-                        ReadFirstFile = ReadFirstFile || curBlock->LoadCachedModel(mCacheFolder, index);
+                        ReadFirstFile = ReadFirstFile || curBlock->LoadCachedModel(mFullPathToFileCache, index);
                      }
 
-                     if (!curBlock->LoadCachedModel(mCacheFolder, index))
+                     if (!curBlock->LoadCachedModel(mFullPathToFileCache, index))
                      {
-                        curBlock->WritePagedLOD(*mVoxelActor, index, mCacheFolder, mRes0, mDist0, mRes1, mDist1, mRes2, mDist2, mRes3, mViewDistance);
+                        curBlock->WritePagedLOD(*mVoxelActor, index, mFullPathToFileCache, mCacheFolder, mRes0, mDist0, mRes1, mDist1, mRes2, mDist2, mRes3, mViewDistance);
                      }
 
                      {
@@ -649,7 +649,7 @@ namespace dtVoxel
    
    bool VoxelGrid::ReadBlockVisibility()
    {
-      std::string filePath = mCacheFolder;
+      std::string filePath = mFullPathToFileCache;
       std::string filename("VisibilityCache.dat");
       std::ifstream inFile(filePath + filename, std::ios::in | std::ios::binary);
 
@@ -714,7 +714,7 @@ namespace dtVoxel
 
    bool VoxelGrid::WriteBlockVisibility()
    {      
-      std::string filePath = mCacheFolder;
+      std::string filePath = mFullPathToFileCache;
       std::string filename("VisibilityCache.dat");
       std::cout << "Writing visibility cache to " << filePath + filename << std::endl;
       std::ofstream outFile(filePath + filename, std::ios::out | std::ios::binary);
@@ -755,27 +755,29 @@ namespace dtVoxel
       std::string projectPath = proj.GetContext();
 
       std::stringstream folderName;
-
-      folderName << projectPath << "/Volumes/cache/" << mVoxelActor->GetDatabase().GetResourceName();
+      
+      folderName << "/Volumes/cache/" << mVoxelActor->GetDatabase().GetResourceName();
 
       try{
 
-         std::cout << std::endl << "Creating directory " << folderName.str() << std::endl;
-         fileUtil.MakeDirectory(folderName.str());
+         //std::cout << std::endl << "Creating directory " << folderName.str() << std::endl;
+         fileUtil.MakeDirectory(projectPath + folderName.str());
 
          folderName << "/BlockDim_x" << mBlocksX << "_y" << mBlocksY << "_z" << mBlocksZ;
-         std::cout << "Creating directory " << folderName.str() << std::endl;
-         fileUtil.MakeDirectory(folderName.str());
+         //std::cout << "Creating directory " << folderName.str() << std::endl;
+         fileUtil.MakeDirectory(projectPath + folderName.str());
 
          folderName << "/Offset_x" << int(mGridOffset.x()) << "_y" << int(mGridOffset.y()) << "_z" << int(mGridOffset.z());
-         std::cout << "Creating directory " << folderName.str() << std::endl;
-         fileUtil.MakeDirectory(folderName.str());
+         //std::cout << "Creating directory " << folderName.str() << std::endl;
+         fileUtil.MakeDirectory(projectPath + folderName.str());
 
          folderName << "/Resolution_x" << int(mTextureResolution.x()) << "_y" << int(mTextureResolution.y()) << "_z" << int(mTextureResolution.z()) << "/";
-         std::cout << "Creating directory " << folderName.str() << std::endl;
-         fileUtil.MakeDirectory(folderName.str());
+         //std::cout << "Creating directory " << folderName.str() << std::endl;
+         fileUtil.MakeDirectory(projectPath + folderName.str());
 
          mCacheFolder = folderName.str();
+         mFullPathToFileCache = projectPath + folderName.str();
+
       }
       catch (dtUtil::Exception& e)
       {
@@ -790,12 +792,12 @@ namespace dtVoxel
 
       std::stringstream fileName;
 
-      fileName << mCacheFolder << DATABASE_FILENAME;
+      fileName << mFullPathToFileCache << DATABASE_FILENAME;
 
       std::cout << "Writing voxel database to " << fileName.str() << std::endl;
 
 
-      if (dtUtil::FileUtils::GetInstance().DirExists(mCacheFolder))
+      if (dtUtil::FileUtils::GetInstance().DirExists(mFullPathToFileCache))
       {
          result = osgDB::writeNodeFile(*mRootNode, fileName.str());
 
@@ -809,7 +811,7 @@ namespace dtVoxel
    {
       bool result = false;
 
-      std::string filePath = mCacheFolder;
+      std::string filePath = mFullPathToFileCache;
 
       std::stringstream fileName;
 
