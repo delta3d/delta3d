@@ -517,10 +517,10 @@ namespace dtVoxel
       mIsAllocated = true;
    }
 
-   void VoxelBlock::WritePagedLOD(VoxelActor& voxelActor, int index, const std::string& filePath, const osg::Vec3i& resolution0, float dist0, const osg::Vec3i& resolution1, float dist1, const osg::Vec3i& resolution2, float dist2, const osg::Vec3i& resolution3, float viewDistance)
+   void VoxelBlock::WritePagedLOD(VoxelActor& voxelActor, int index, const std::string& filePath, const std::string& databasePath, const osg::Vec3i& resolution0, float dist0, const osg::Vec3i& resolution1, float dist1, const osg::Vec3i& resolution2, float dist2, const osg::Vec3i& resolution3, float viewDistance)
    {
       dtCore::RefPtr<osg::PagedLOD> lodNode = new osg::PagedLOD();
-      lodNode->setDatabasePath(filePath);
+      lodNode->setDatabasePath(databasePath);
       lodNode->setRadius(0.5 * mWSDimensions.length());
       lodNode->setCenter(mOffset + (mWSDimensions * 0.5f));
 
