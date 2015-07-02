@@ -543,7 +543,7 @@ namespace dtVoxel
       }
 
       //we sample at the same resolution and simplify later, to be refactored into properties
-      AllocateCombinedMesh(voxelActor, *node1, mGridDimensions, resolution0);
+      AllocateCombinedMesh(voxelActor, *node1, mGridDimensions, resolution1);
       fileName = SaveCachedModel(filePath, *node1, index, 1);
       if (!fileName.empty())
       {
@@ -635,10 +635,10 @@ namespace dtVoxel
       geode->addDrawable(geom);
       parentNode.addChild(geode);      
 
-      dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
-      simplifier->setSampleRatio(0.02f);
+      /*dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
+      simplifier->setSampleRatio(0.2f);
       simplifier->setDoTriStrip(false);
-      parentNode.accept(*simplifier);
+      parentNode.accept(*simplifier);*/
       
       osgUtil::Optimizer opt;
       opt.optimize(&parentNode, osgUtil::Optimizer::MAKE_FAST_GEOMETRY);     

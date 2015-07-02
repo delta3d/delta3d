@@ -400,10 +400,10 @@ namespace dtVoxel
 
       mImpl->mMeshNode->addChild(geode);
 
-      dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
-      simplifier->setSampleRatio(0.1f);
+      /*dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
+      simplifier->setSampleRatio(0.2f);
       simplifier->setDoTriStrip(false);
-      mImpl->mMeshNode->accept(*simplifier);
+      mImpl->mMeshNode->accept(*simplifier);*/
       
       mImpl->mIsAllocated = true;
    }
