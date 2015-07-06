@@ -17,16 +17,21 @@
 #include <osg/Node>
 #include <osg/Switch>
 
-using namespace dtCore;
+// For Tangents
+#include <dtUtil/geometrycollector.h>
+#include <osg/Geometry>
+#include <osgUtil/TangentSpaceGenerator>
+
+
 using namespace dtUtil;
 
-IMPLEMENT_MANAGEMENT_LAYER(DeltaDrawable)
 
 namespace dtCore
 {
-   class DeltaDrawablePrivate
-   {
-   public:
+   IMPLEMENT_MANAGEMENT_LAYER(DeltaDrawable)
+         class DeltaDrawablePrivate
+         {
+         public:
       DeltaDrawablePrivate();
       ~DeltaDrawablePrivate();
 
@@ -78,7 +83,7 @@ namespace dtCore
 
       void ApplyShaderGroup();
 
-   private:
+         private:
       ///Insert a new Switch Node above GetOSGNode() and below it's parents
       void InsertSwitchNode(osg::Node *node);
 
@@ -95,7 +100,7 @@ namespace dtCore
       bool mIsActive; ///<Is this DeltaDrawable active (rendering)
       std::string mDescription; ///<description string
       std::string mShaderGroup;
-   };
+         };
 
    ////////////////////////////////////////////////////////////////////////////////
    void DeltaDrawablePrivate::SetOwner(DeltaDrawable* owner)
@@ -221,8 +226,8 @@ namespace dtCore
 
    ////////////////////////////////////////////////////////////////////////////////
    void DeltaDrawablePrivate::GetBoundingSphere(osg::Vec3& center,
-                                                float& radius,
-                                                osg::Node* node)
+         float& radius,
+         osg::Node* node)
    {
       if (node != NULL)
       {
@@ -398,31 +403,31 @@ namespace dtCore
       if (node == NULL)
       {
          LOG_ERROR("Cannot assign shader group \"" + mShaderGroup
-            + "\" to actor \"" + mOwner->GetName()
-            + "\" because it has no drawable.");
+               + "\" to actor \"" + mOwner->GetName()
+               + "\" because it has no drawable.");
          return;
       }
 
       // Unassign any old setting on this, if any - works regardless if there's a node or not
-      dtCore::ShaderManager::GetInstance().UnassignShaderFromNode(*node);
+      ShaderManager::GetInstance().UnassignShaderFromNode(*node);
 
       //First get the shader group assigned to this actor.
-      const dtCore::ShaderGroup* shaderGroup =
-         dtCore::ShaderManager::GetInstance().FindShaderGroupPrototype(mShaderGroup);
+      const ShaderGroup* shaderGroup =
+            ShaderManager::GetInstance().FindShaderGroupPrototype(mShaderGroup);
 
       if (shaderGroup == NULL)
       {
          LOG_INFO("Could not find shader group \""
-            + mShaderGroup + "\" for actor \"" + mOwner->GetName() +"\"");
+               + mShaderGroup + "\" for actor \"" + mOwner->GetName() +"\"");
          return;
       }
 
       // TODO: Find an explicit shader instead of just the default;
       //shaderGroup->FindShader();
 
-      bool editMode = dtCore::Project::GetInstance().GetEditMode();
+      bool editMode = Project::GetInstance().GetEditMode();
 
-      const dtCore::ShaderProgram* defaultShader = NULL;
+      const ShaderProgram* defaultShader = NULL;
 
       if(editMode)
       {
@@ -439,7 +444,7 @@ namespace dtCore
       {
          if (defaultShader != NULL)
          {
-            dtCore::ShaderManager::GetInstance().AssignShaderFromPrototype(*defaultShader, *node);
+            ShaderManager::GetInstance().AssignShaderFromPrototype(*defaultShader, *node);
          }
          else
          {
@@ -450,7 +455,7 @@ namespace dtCore
       catch (const dtUtil::Exception& e)
       {
          LOG_WARNING("Caught Exception while assigning shader group \""
-            + mShaderGroup + "\": " + e.ToString());
+               + mShaderGroup + "\": " + e.ToString());
          return;
       }
    }
@@ -463,8 +468,8 @@ namespace dtCore
       mParentScene = scene;
 
       for (ChildList::iterator itr = mChildList.begin();
-         itr != mChildList.end();
-         ++itr)
+            itr != mChildList.end();
+            ++itr)
       {
          (*itr)->AddedToScene(scene);
       }
@@ -490,8 +495,8 @@ namespace dtCore
       mParentScene = NULL;
 
       for (ChildList::iterator itr = mChildList.begin();
-         itr != mChildList.end();
-         ++itr)
+            itr != mChildList.end();
+            ++itr)
       {
          (*itr)->RemovedFromScene(scene);
       }
@@ -543,10 +548,10 @@ namespace dtCore
 
    ////////////////////////////////////////////////////////////////////////////////
    DeltaDrawablePrivate::DeltaDrawablePrivate()
-      : mOwner(NULL)
-      , mParent(NULL)
-      , mParentScene(NULL)
-      , mIsActive(true)
+   : mOwner(NULL)
+   , mParent(NULL)
+   , mParentScene(NULL)
+   , mIsActive(true)
    {
    }
 
@@ -554,316 +559,365 @@ namespace dtCore
    DeltaDrawablePrivate::~DeltaDrawablePrivate()
    {
    }
-}//namespace dtCore
 
 
 
 
 
-//////////////////////////////////////////////////////////////////////////
-DeltaDrawable::DeltaDrawable(const std::string& name)
+   //////////////////////////////////////////////////////////////////////////
+   DeltaDrawable::DeltaDrawable(const std::string& name)
    : Base(name)
    , mPvt(new DeltaDrawablePrivate())
-{
-   mPvt->SetOwner(this);
-
-   RegisterInstance(this);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-DeltaDrawable::~DeltaDrawable()
-{
-   DeregisterInstance(this);
-
-   for (unsigned int i = 0; i < mPvt->GetNumChildren(); ++i)
    {
-      DeltaDrawable* child = mPvt->GetChild(i);
-      child->OnOrphaned();
+      mPvt->SetOwner(this);
+
+      RegisterInstance(this);
    }
 
-   mPvt->SetOwner(NULL);
-   delete mPvt;
-}
-
-/** This virtual method can be overwritten
- *  to perform specific functionality.  The default method will
- *  store the child in a list and set the child's parent.
- * @param child : The child to add to this Drawable
- * @return : Successfully added this child or not
- */
-bool DeltaDrawable::AddChild(DeltaDrawable* child)
-{
-   if (CanBeChild(child))
+   ////////////////////////////////////////////////////////////////////////////////
+   DeltaDrawable::~DeltaDrawable()
    {
-      return mPvt->AddChild(child, this);
-   }
-   else
-   {
-      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__,
-         "DeltaDrawable: '%s' cannot be added as a child to '%s'",
-         child->GetName().c_str(), this->GetName().c_str());
-      return false;
-   }
-}
+      DeregisterInstance(this);
 
-//////////////////////////////////////////////////////////////////////////
-DeltaDrawable* DeltaDrawable::GetChild(unsigned int idx)
-{
-   return mPvt->GetChild(idx);
-}
+      for (unsigned int i = 0; i < mPvt->GetNumChildren(); ++i)
+      {
+         DeltaDrawable* child = mPvt->GetChild(i);
+         child->OnOrphaned();
+      }
 
-
-//////////////////////////////////////////////////////////////////////////
-const DeltaDrawable* DeltaDrawable::GetChild(unsigned int idx) const
-{
-   return mPvt->GetChild(idx);
-}
-
-/*!
-* Remove a child from this DeltaDrawable.  This will detach the child from its
-* parent so that its free to be repositioned on its own.
-*
-* @param *child : The child DeltaDrawable to be removed
-*/
-void DeltaDrawable::RemoveChild(DeltaDrawable* child)
-{
-   if (child->GetParent() != this && child->GetParent() != NULL)
-   {
-      return;
+      mPvt->SetOwner(NULL);
+      delete mPvt;
    }
 
-   return mPvt->RemoveChild(child);
-}
-
-/**
- * Return a value between
- * 0 and the number of children-1 if found, if not found then
- * return the number of children.
- */
-unsigned int DeltaDrawable::GetChildIndex(const DeltaDrawable* child) const
-{
-   return mPvt->GetChildIndex(child);
-}
-
-bool DeltaDrawable::HasChild(const DeltaDrawable* child) const
-{
-   return GetChildIndex(child) < GetNumChildren();
-}
-
-/*!
- * Check to see if the supplied DeltaDrawable can be a child to this instance.
- * To be valid, it can't already have a parent, can't be this instance, and
- * can't be the parent of this instance.
- *
- * @param *child : The candidate child to be tested
- *
- * @return bool  : True if it can be a child, false otherwise
- */
-bool DeltaDrawable::CanBeChild(DeltaDrawable* child) const
-{
-   if (this == child)
+   /** This virtual method can be overwritten
+    *  to perform specific functionality.  The default method will
+    *  store the child in a list and set the child's parent.
+    * @param child : The child to add to this Drawable
+    * @return : Successfully added this child or not
+    */
+   bool DeltaDrawable::AddChild(DeltaDrawable* child)
    {
-      return false;
-   }
-   else
-   {
-      return mPvt->CanBeChild(child);
-   }
-}
-
-void DeltaDrawable::RenderProxyNode(bool enable)
-{
-   mPvt->RenderProxyNode(enable);
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool dtCore::DeltaDrawable::GetIsRenderingProxyNode() const
-{
-   return mPvt->GetIsRenderingProxyNode();
-}
-
-/**
- * Notifies this drawable object that it has been added to
- * a scene.  This is typically called from Scene::AddChild().
- *
- * This method will iterate through the list of children DeltaDrawable's (if any)
- * and call AddedToScene() with the supplied Scene.
- *
- * @param scene the scene to which this drawable object has
- * been added.  Note: NULL indicates removal.
- */
-void DeltaDrawable::AddedToScene(Scene* scene)
-{
-   mPvt->AddedToScene(scene, GetOSGNode());
-}
-
-/**
- * Notifies this drawable object that it has been removed from
- * a scene.  This is typically called from Scene::RemoveDrawable().
- *
- * This method will iterate through the list of children DeltaDrawable's (if any)
- * and call RemovedFromScene() with the supplied Scene.
- *
- * @param scene the scene to which this drawable object has
- * been added.  Note: scene should not be NULL.
- */
-void DeltaDrawable::RemovedFromScene(Scene* scene)
-{
-   assert(scene);
-   mPvt->RemovedFromScene(scene, GetOSGNode());
-}
-
-/** Remove this DeltaDrawable from it's parent DeltaDrawable if it has one.
-  * Each DeltaDrawable may have only one parent and it must be removed from
-  * it's parent before adding it as a child to another.
-  * @see RemoveChild()
-  */
-void DeltaDrawable::Emancipate()
-{
-   mPvt->Emancipate(this);
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-void DeltaDrawable::SetProxyNode(osg::Node* proxyNode)
-{
-   mPvt->SetProxyNode(proxyNode);
-}
-
-//////////////////////////////////////////////////////////////////////////
-void DeltaDrawable::OnOrphaned()
-{
-   mPvt->OnOrphaned();
-}
-
-//////////////////////////////////////////////////////////////////////////
-void DeltaDrawable::GetBoundingSphere(osg::Vec3& center, float& radius)
-{
-   mPvt->GetBoundingSphere(center, radius, GetOSGNode());
-}
-
-//////////////////////////////////////////////////////////////////////////
-osg::BoundingBox DeltaDrawable::GetBoundingBox()
-{
-   osg::Node* topNode = this->GetOSGNode();
-
-   if (topNode == NULL)
-   {
-      LOG_WARNING("Can't calculate Bounding Box, there is no geometry associated with this DeltaDrawable");
-      osg::BoundingBox bb;
-      return bb;
+      if (CanBeChild(child))
+      {
+         return mPvt->AddChild(child, this);
+      }
+      else
+      {
+         Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__,
+               "DeltaDrawable: '%s' cannot be added as a child to '%s'",
+               child->GetName().c_str(), this->GetName().c_str());
+         return false;
+      }
    }
 
-   osg::ComputeBoundsVisitor cbv;
-   topNode->accept(cbv);
-
-   return cbv.getBoundingBox();
-}
-
-//////////////////////////////////////////////////////////////////////////
-void DeltaDrawable::SetActive(bool enable)
-{
-   mPvt->SetActive(enable, GetOSGNode());
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool DeltaDrawable::GetActive() const
-{
-   return mPvt->GetActive();
-}
-
-//////////////////////////////////////////////////////////////////////////
-void dtCore::DeltaDrawable::SetParent(DeltaDrawable* parent)
-{
-   mPvt->SetParent(parent);
-}
-
-//////////////////////////////////////////////////////////////////////////
-DeltaDrawable* dtCore::DeltaDrawable::GetParent()
-{
-   return mPvt->GetParent();
-}
-
-//////////////////////////////////////////////////////////////////////////
-const DeltaDrawable* dtCore::DeltaDrawable::GetParent() const
-{
-   return mPvt->GetParent();
-}
-
-//////////////////////////////////////////////////////////////////////////
-Scene* dtCore::DeltaDrawable::GetSceneParent()
-{
-   return mPvt->GetSceneParent();
-}
-
-//////////////////////////////////////////////////////////////////////////
-const Scene* dtCore::DeltaDrawable::GetSceneParent() const
-{
-   return mPvt->GetSceneParent();
-}
-
-//////////////////////////////////////////////////////////////////////////
-unsigned int dtCore::DeltaDrawable::GetNumChildren() const
-{
-   return mPvt->GetNumChildren();
-}
-
-/////////////////////////////////////////////////////////////////////////////
-unsigned int dtCore::DeltaDrawable::GetChildren(dtCore::DeltaDrawable::DrawableList& outDrawables)
-{
-   unsigned int count = mPvt->GetNumChildren();
-   for (unsigned int i = 0; i < count; ++i)
+   //////////////////////////////////////////////////////////////////////////
+   DeltaDrawable* DeltaDrawable::GetChild(unsigned int idx)
    {
-      outDrawables.push_back(GetChild(i));
+      return mPvt->GetChild(idx);
    }
 
-   return count;
-}
 
-//////////////////////////////////////////////////////////////////////////
-osg::Node* dtCore::DeltaDrawable::GetProxyNode()
-{
-   return mPvt->GetProxyNode();
-}
+   //////////////////////////////////////////////////////////////////////////
+   const DeltaDrawable* DeltaDrawable::GetChild(unsigned int idx) const
+   {
+      return mPvt->GetChild(idx);
+   }
 
-//////////////////////////////////////////////////////////////////////////
-const osg::Node* dtCore::DeltaDrawable::GetProxyNode() const
-{
-   return mPvt->GetProxyNode();
-}
+   /*!
+    * Remove a child from this DeltaDrawable.  This will detach the child from its
+    * parent so that its free to be repositioned on its own.
+    *
+    * @param *child : The child DeltaDrawable to be removed
+    */
+   void DeltaDrawable::RemoveChild(DeltaDrawable* child)
+   {
+      if (child->GetParent() != this && child->GetParent() != NULL)
+      {
+         return;
+      }
 
-////////////////////////////////////////////////////////////////////////////////
-void dtCore::DeltaDrawable::SetDescription(const std::string& description)
-{
-   mPvt->SetDescription(description);
-}
+      return mPvt->RemoveChild(child);
+   }
 
-////////////////////////////////////////////////////////////////////////////////
-const std::string& dtCore::DeltaDrawable::GetDescription() const
-{
-   return mPvt->GetDescription();
-}
+   /**
+    * Return a value between
+    * 0 and the number of children-1 if found, if not found then
+    * return the number of children.
+    */
+   unsigned int DeltaDrawable::GetChildIndex(const DeltaDrawable* child) const
+   {
+      return mPvt->GetChildIndex(child);
+   }
 
-/////////////////////////////////////////////////////////////////////////////
-void dtCore::DeltaDrawable::SetShaderGroup(const std::string& groupName)
-{
-   mPvt->SetShaderGroup(groupName);
-}
+   bool DeltaDrawable::HasChild(const DeltaDrawable* child) const
+   {
+      return GetChildIndex(child) < GetNumChildren();
+   }
 
-/////////////////////////////////////////////////////////////////////////////
-std::string dtCore::DeltaDrawable::GetShaderGroup() const
-{
-   return mPvt->GetShaderGroup();
-}
+   /*!
+    * Check to see if the supplied DeltaDrawable can be a child to this instance.
+    * To be valid, it can't already have a parent, can't be this instance, and
+    * can't be the parent of this instance.
+    *
+    * @param *child : The candidate child to be tested
+    *
+    * @return bool  : True if it can be a child, false otherwise
+    */
+   bool DeltaDrawable::CanBeChild(DeltaDrawable* child) const
+   {
+      if (this == child)
+      {
+         return false;
+      }
+      else
+      {
+         return mPvt->CanBeChild(child);
+      }
+   }
 
-/////////////////////////////////////////////////////////////////////////////
-void dtCore::DeltaDrawable::ApplyShaderGroup()
-{
-   return mPvt->ApplyShaderGroup();
-}
+   void DeltaDrawable::RenderProxyNode(bool enable)
+   {
+      mPvt->RenderProxyNode(enable);
+   }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-void dtCore::DeltaDrawable::OnShaderGroupChanged()
-{
-   // OVERRIDE:
-}
+   //////////////////////////////////////////////////////////////////////////
+   bool DeltaDrawable::GetIsRenderingProxyNode() const
+   {
+      return mPvt->GetIsRenderingProxyNode();
+   }
+
+   /**
+    * Notifies this drawable object that it has been added to
+    * a scene.  This is typically called from Scene::AddChild().
+    *
+    * This method will iterate through the list of children DeltaDrawable's (if any)
+    * and call AddedToScene() with the supplied Scene.
+    *
+    * @param scene the scene to which this drawable object has
+    * been added.  Note: NULL indicates removal.
+    */
+   void DeltaDrawable::AddedToScene(Scene* scene)
+   {
+      mPvt->AddedToScene(scene, GetOSGNode());
+   }
+
+   /**
+    * Notifies this drawable object that it has been removed from
+    * a scene.  This is typically called from Scene::RemoveDrawable().
+    *
+    * This method will iterate through the list of children DeltaDrawable's (if any)
+    * and call RemovedFromScene() with the supplied Scene.
+    *
+    * @param scene the scene to which this drawable object has
+    * been added.  Note: scene should not be NULL.
+    */
+   void DeltaDrawable::RemovedFromScene(Scene* scene)
+   {
+      assert(scene);
+      mPvt->RemovedFromScene(scene, GetOSGNode());
+   }
+
+   /** Remove this DeltaDrawable from it's parent DeltaDrawable if it has one.
+    * Each DeltaDrawable may have only one parent and it must be removed from
+    * it's parent before adding it as a child to another.
+    * @see RemoveChild()
+    */
+   void DeltaDrawable::Emancipate()
+   {
+      mPvt->Emancipate(this);
+   }
+
+
+   //////////////////////////////////////////////////////////////////////////
+   void DeltaDrawable::SetProxyNode(osg::Node* proxyNode)
+   {
+      mPvt->SetProxyNode(proxyNode);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DeltaDrawable::OnOrphaned()
+   {
+      mPvt->OnOrphaned();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DeltaDrawable::GetBoundingSphere(osg::Vec3& center, float& radius)
+   {
+      mPvt->GetBoundingSphere(center, radius, GetOSGNode());
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   osg::BoundingBox DeltaDrawable::GetBoundingBox()
+   {
+      osg::Node* topNode = this->GetOSGNode();
+
+      if (topNode == NULL)
+      {
+         LOG_WARNING("Can't calculate Bounding Box, there is no geometry associated with this DeltaDrawable");
+         osg::BoundingBox bb;
+         return bb;
+      }
+
+      osg::ComputeBoundsVisitor cbv;
+      topNode->accept(cbv);
+
+      return cbv.getBoundingBox();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DeltaDrawable::SetActive(bool enable)
+   {
+      mPvt->SetActive(enable, GetOSGNode());
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool DeltaDrawable::GetActive() const
+   {
+      return mPvt->GetActive();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DeltaDrawable::SetParent(DeltaDrawable* parent)
+   {
+      mPvt->SetParent(parent);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   DeltaDrawable* DeltaDrawable::GetParent()
+   {
+      return mPvt->GetParent();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const DeltaDrawable* DeltaDrawable::GetParent() const
+   {
+      return mPvt->GetParent();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   Scene* DeltaDrawable::GetSceneParent()
+   {
+      return mPvt->GetSceneParent();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const Scene* DeltaDrawable::GetSceneParent() const
+   {
+      return mPvt->GetSceneParent();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   unsigned int DeltaDrawable::GetNumChildren() const
+   {
+      return mPvt->GetNumChildren();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   unsigned int DeltaDrawable::GetChildren(DeltaDrawable::DrawableList& outDrawables)
+   {
+      unsigned int count = mPvt->GetNumChildren();
+      for (unsigned int i = 0; i < count; ++i)
+      {
+         outDrawables.push_back(GetChild(i));
+      }
+
+      return count;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   osg::Node* DeltaDrawable::GetProxyNode()
+   {
+      return mPvt->GetProxyNode();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const osg::Node* DeltaDrawable::GetProxyNode() const
+   {
+      return mPvt->GetProxyNode();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DeltaDrawable::SetDescription(const std::string& description)
+   {
+      mPvt->SetDescription(description);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const std::string& DeltaDrawable::GetDescription() const
+   {
+      return mPvt->GetDescription();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void DeltaDrawable::SetShaderGroup(const std::string& groupName)
+   {
+      mPvt->SetShaderGroup(groupName);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   std::string DeltaDrawable::GetShaderGroup() const
+   {
+      return mPvt->GetShaderGroup();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void DeltaDrawable::ApplyShaderGroup()
+   {
+      return mPvt->ApplyShaderGroup();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////
+   void DeltaDrawable::OnShaderGroupChanged()
+   {
+      // OVERRIDE:
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool DeltaDrawable::GenerateTangents()
+   {
+      bool success = false;
+
+      // Get all geometry in the graph to apply the shader to
+      osg::ref_ptr<dtUtil::GeometryCollector> geomCollector = new dtUtil::GeometryCollector;
+      GetOSGNode()->accept(*geomCollector);
+
+      // Calculate tangent vectors for all faces and store them as vertex attributes
+      for (size_t geomIndex = 0; geomIndex < geomCollector->mGeomList.size(); ++geomIndex)
+      {
+         osg::Geometry* geom = geomCollector->mGeomList[geomIndex];
+
+         // Force display lists to OFF and VBO's to ON so that vertex
+         // attributes can be set without disturbing the graphics driver
+         geom->setSupportsDisplayList(false);
+         geom->setUseDisplayList(false);
+         geom->setUseVertexBufferObjects(true);
+
+         osg::ref_ptr<osgUtil::TangentSpaceGenerator> tsg = new osgUtil::TangentSpaceGenerator;
+         tsg->generate(geom, 0);
+         osg::Array* tangentArray = tsg->getTangentArray();
+
+         if ( ! geom->getTexCoordArray(1))
+         {
+            if (tangentArray != NULL)
+            {
+               geom->setTexCoordArray(1, tangentArray);
+
+               success = true;
+            }
+            else
+            {
+               LOGN_WARNING("deltadrawable.cpp", "Could not generate tangent space for object: " + GetName()
+                     + " - Geometry: " + geom->getName());
+            }
+         }
+         else
+         {
+            LOGN_INFO("deltadrawable.cpp", "Tangent space data may already exist for object: " + GetName()
+                  + " - Geometry: " + geom->getName());
+         }
+      }
+
+      return success;
+   }
+
+}//namespace dtCore

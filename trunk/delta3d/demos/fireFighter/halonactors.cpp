@@ -29,29 +29,7 @@
 using dtCore::RefPtr;
 
 ////////////////////////////////////////////////////////
-PrimaryHalonActorProxy::PrimaryHalonActorProxy()
-{
-
-}
-
-PrimaryHalonActorProxy::~PrimaryHalonActorProxy()
-{
-
-}
-
-void PrimaryHalonActorProxy::BuildPropertyMap()
-{
-   GameItemActorProxy::BuildPropertyMap();
-}
-
-void PrimaryHalonActorProxy::BuildInvokables()
-{
-   GameItemActorProxy::BuildInvokables();
-}
-
-////////////////////////////////////////////////////////
-PrimaryHalonActor::PrimaryHalonActor(dtGame::GameActorProxy& parent)
-   : GameItemActor(parent)
+PrimaryHalonActor::PrimaryHalonActor()
 {
 
 }
@@ -79,7 +57,7 @@ void PrimaryHalonActor::Activate(bool enable)
       throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);
    }
 
-   dtGame::GameManager& mgr = *GetGameActorProxy().GetGameManager();
+   dtGame::GameManager& mgr = *GetGameManager();
    RefPtr<dtGame::Message> msg =
       mgr.GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
 
@@ -89,36 +67,12 @@ void PrimaryHalonActor::Activate(bool enable)
 }
 
 ////////////////////////////////////////////////////////
-SecondaryHalonActorProxy::SecondaryHalonActorProxy()
+SecondaryHalonActor::SecondaryHalonActor()
 {
-
-}
-
-SecondaryHalonActorProxy::~SecondaryHalonActorProxy()
-{
-
-}
-
-void SecondaryHalonActorProxy::BuildPropertyMap()
-{
-   GameItemActorProxy::BuildPropertyMap();
-}
-
-void SecondaryHalonActorProxy::BuildInvokables()
-{
-   GameItemActorProxy::BuildInvokables();
-}
-
-////////////////////////////////////////////////////////
-SecondaryHalonActor::SecondaryHalonActor(dtGame::GameActorProxy& parent) :
-   GameItemActor(parent)
-{
-
 }
 
 SecondaryHalonActor::~SecondaryHalonActor()
 {
-
 }
 
 void SecondaryHalonActor::Activate(bool enable)
@@ -139,7 +93,7 @@ void SecondaryHalonActor::Activate(bool enable)
       throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);
    }
 
-   dtGame::GameManager& mgr = *GetGameActorProxy().GetGameManager();
+   dtGame::GameManager& mgr = *GetGameManager();
    RefPtr<dtGame::Message> msg =
       mgr.GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
 

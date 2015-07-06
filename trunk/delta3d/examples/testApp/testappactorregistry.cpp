@@ -25,14 +25,11 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include "testappactorregistry.h"
-#include "civilianactor.h"
 #include "civilianaiactorcomponent.h"
 #include "fireworkactor.h"
 #include "lightactorcomponent.h"
-#include "meshlampactor.h"
-#include "meshobjectactor.h"
 #include "terrainactor.h"
-#include "vesselactor.h"
+#include "surfacevesselactorcomponent.h"
 #include <dtActors/engineactorregistry.h>
 #include <dtAnim/animactorregistry.h>
 #include <dtCore/shadermanager.h>
@@ -50,16 +47,8 @@ namespace dtExample
       new dtCore::ActorType("Empty", "dtExample", "This is a simple empty actor."));
    RefPtr<dtCore::ActorType> TestAppActorRegistry::TERRAIN_ACTOR_TYPE(
       new dtCore::ActorType("Terrain", "dtExample", "This is an example terrain actor with physics."));
-   RefPtr<dtCore::ActorType> TestAppActorRegistry::CIVILIAN_ACTOR_TYPE(
-      new dtCore::ActorType("Civilian", "dtExample", "This is an example animated civilian with AI.", dtAnim::AnimActorRegistry::ANIMATION_ACTOR_TYPE));
    RefPtr<dtCore::ActorType> TestAppActorRegistry::FIREWORK_ACTOR_TYPE(
       new dtCore::ActorType("Firework", "dtExample", "This is an example timed particle system effect."));
-   RefPtr<dtCore::ActorType> TestAppActorRegistry::MESH_OBJECT_ACTOR_TYPE(
-      new dtCore::ActorType("Mesh Object", "dtExample", "Mesh object with automated physics.", dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE));
-   RefPtr<dtCore::ActorType> TestAppActorRegistry::MESH_LAMP_ACTOR_TYPE(
-      new dtCore::ActorType("Mesh Lamp", "dtExample", "Mesh object with automated physics AND light properties.", TestAppActorRegistry::MESH_OBJECT_ACTOR_TYPE));
-   RefPtr<dtCore::ActorType> TestAppActorRegistry::VESSEL_ACTOR_TYPE(
-      new dtCore::ActorType("Vessel", "dtExample", "Mesh object with automated physics AND surface vessel properties.", TestAppActorRegistry::MESH_OBJECT_ACTOR_TYPE));
   
 
 
@@ -90,16 +79,22 @@ namespace dtExample
    }
 
    ///////////////////////////////////////////////////////////////////////////
+   void TestAppActorRegistry::GetReplacementActorTypes(ActorTypeReplacements& replacements) const
+   {
+      replacements.push_back(std::make_pair("dtExample.Mesh Lamp", dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE->GetFullName()));
+      replacements.push_back(std::make_pair("dtExample.Vessel", dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE->GetFullName()));
+      replacements.push_back(std::make_pair("dtExample.Mesh Object", dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE->GetFullName()));
+      replacements.push_back(std::make_pair("dtExample.Civilian", dtAnim::AnimActorRegistry::ANIMATION_ACTOR_TYPE->GetFullName()));
+   }
+
+   ///////////////////////////////////////////////////////////////////////////
    void TestAppActorRegistry::RegisterActorTypes()
    {
       mActorFactory->RegisterType<TerrainActor>(TERRAIN_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<CivilianActor>(CIVILIAN_ACTOR_TYPE.get());
       mActorFactory->RegisterType<FireworkActor>(FIREWORK_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<MeshObjectActor>(MESH_OBJECT_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<MeshLampActor>(MESH_LAMP_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<VesselActor>(VESSEL_ACTOR_TYPE.get());
 
-      mActorFactory->RegisterType<CivilianAIActorComponent>(CivilianAIActorComponent::TYPE.get());
-      mActorFactory->RegisterType<LightActorComponent>(LightActorComponent::TYPE.get());
+      mActorFactory->RegisterType<CivilianAIActorComponent>();
+      mActorFactory->RegisterType<LightActorComponent>();
+      mActorFactory->RegisterType<SurfaceVesselActorComponent>();
    }
 }

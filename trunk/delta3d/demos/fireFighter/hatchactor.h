@@ -23,6 +23,7 @@
 
 #include <fireFighter/gameitemactor.h>
 #include <fireFighter/export.h>
+#include <dtCore/observerptr.h>
 
 namespace dtAudio
 {
@@ -38,51 +39,27 @@ class FIRE_FIGHTER_EXPORT HatchActor : public GameItemActor
 {
    public:
 
-      /// Constructer
-      HatchActor(dtGame::GameActorProxy& parent);
+      /// Constructor
+      HatchActor();
 
       /**
        * Activates this game item
        */
-      virtual void Activate(bool enable = true);
+      void Activate(bool enable = true) override;
 
       /// Called when this actor is added to the scene
       virtual void OnEnteredWorld();
 
       /// Invokable called when the GameMap is loaded
-      void OnMapLoaded(const dtGame::Message &msg);
+      void OnMapLoaded(const dtGame::Message& msg);
 
    protected:
 
       /// Destructor
       virtual ~HatchActor();
 
-   private:
-
-      osg::MatrixTransform *mHatchNode;
+      dtCore::ObserverPtr<osg::MatrixTransform> mHatchNode;
       bool mGameMapLoaded;
-};
-
-class FIRE_FIGHTER_EXPORT HatchActorProxy : public GameItemActorProxy
-{
-   public:
-
-      /// Constructor
-      HatchActorProxy();
-
-      /// Builds the properties
-      virtual void BuildPropertyMap();
-
-      /// Builds invokables
-      virtual void BuildInvokables();
-
-      /// Instantiates the actor
-      virtual void CreateDrawable() { SetDrawable(*new HatchActor(*this)); }
-
-   protected:
-
-      /// Destructor
-      virtual ~HatchActorProxy();
 };
 
 #endif

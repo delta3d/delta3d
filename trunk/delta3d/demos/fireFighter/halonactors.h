@@ -24,17 +24,18 @@
 #include <fireFighter/gameitemactor.h>
 #include <fireFighter/export.h>
 
+
 class FIRE_FIGHTER_EXPORT PrimaryHalonActor : public GameItemActor
 {
    public:
 
       /// Constructor
-      PrimaryHalonActor(dtGame::GameActorProxy& parent);
+      PrimaryHalonActor();
 
       /**
        * Activates this game item
        */
-      virtual void Activate(bool enable = true);
+      void Activate(bool enable = true) override;
 
    protected:
 
@@ -42,66 +43,23 @@ class FIRE_FIGHTER_EXPORT PrimaryHalonActor : public GameItemActor
       virtual ~PrimaryHalonActor();
 };
 
-class FIRE_FIGHTER_EXPORT PrimaryHalonActorProxy : public GameItemActorProxy
-{
-   public:
-
-      /// Constructor
-      PrimaryHalonActorProxy();
-
-      /// Builds the actor properties
-      virtual void BuildPropertyMap();
-
-      /// Builds the invokables
-      virtual void BuildInvokables();
-
-      /// Instantiates the actor
-      virtual void CreateDrawable() { SetDrawable(*new PrimaryHalonActor(*this)); }
-
-   protected:
-
-      /// Destructor
-      virtual ~PrimaryHalonActorProxy();
-};
 
 class FIRE_FIGHTER_EXPORT SecondaryHalonActor : public GameItemActor
 {
    public:
 
       /// Constructor
-      SecondaryHalonActor(dtGame::GameActorProxy& parent);
+      SecondaryHalonActor();
 
       /**
        * Activates this game item
        */
-      virtual void Activate(bool enable = true);
+      void Activate(bool enable = true) override;
 
    protected:
 
       /// Destructor
       virtual ~SecondaryHalonActor();
-};
-
-class FIRE_FIGHTER_EXPORT SecondaryHalonActorProxy : public GameItemActorProxy
-{
-   public:
-
-      /// Constructor
-      SecondaryHalonActorProxy();
-
-      /// Builds the actor properties
-      virtual void BuildPropertyMap();
-
-      /// Builds the invokables
-      virtual void BuildInvokables();
-
-      /// Instantiates the actor
-      virtual void CreateDrawable() { SetDrawable(*new SecondaryHalonActor(*this)); }
-
-   protected:
-
-      /// Destructor
-      virtual ~SecondaryHalonActorProxy();
 };
 
 #endif

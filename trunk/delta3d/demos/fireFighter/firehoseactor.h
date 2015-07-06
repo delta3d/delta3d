@@ -39,7 +39,13 @@ class FIRE_FIGHTER_EXPORT FireHoseActor : public GameItemActor
    public:
 
       /// Constructor
-      FireHoseActor(dtGame::GameActorProxy& parent);
+      FireHoseActor();
+
+      /// Builds the actor properties
+      virtual void BuildPropertyMap();
+
+      /// Builds the invokables
+      virtual void BuildInvokables();
 
       virtual void Activate(bool enable = true);
 
@@ -61,32 +67,7 @@ class FIRE_FIGHTER_EXPORT FireHoseActor : public GameItemActor
       virtual ~FireHoseActor();
 
    private:
-
       dtCore::RefPtr<dtCore::ParticleSystem> mParticleSystem;
-};
-
-class FIRE_FIGHTER_EXPORT FireHoseActorProxy : public GameItemActorProxy
-{
-   public:
-
-      /// Constructor
-      FireHoseActorProxy();
-
-      /// Builds the actor properties
-      virtual void BuildPropertyMap();
-
-      /// Builds the invokables
-      virtual void BuildInvokables();
-
-      /// Creates the actor
-      virtual void CreateDrawable() { SetDrawable(*new FireHoseActor(*this)); }
-
-   protected:
-
-      /// Destructor
-      virtual ~FireHoseActorProxy();
-
-   private:
 
 };
 

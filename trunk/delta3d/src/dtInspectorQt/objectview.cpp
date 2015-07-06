@@ -115,7 +115,7 @@ void dtInspectorQt::ObjectView::OnFilenameChanged()
 {
    if (mOperateOn.valid())
    {
-      mOperateOn->RecenterGeometryUponLoad(mUI->objRecenterToggle->isChecked());
+      mOperateOn->SetRecenterGeometryUponLoad(mUI->objRecenterToggle->isChecked());
 
       const QString text = mUI->objectFilenameEdit->text();
       mOperateOn->LoadFile(text.toStdString());

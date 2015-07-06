@@ -46,7 +46,6 @@ namespace dtActors
        static dtCore::RefPtr<dtCore::ActorType> INFINITE_LIGHT_ACTOR_TYPE;
        static dtCore::RefPtr<dtCore::ActorType> POSITIONAL_LIGHT_ACTOR_TYPE;
        static dtCore::RefPtr<dtCore::ActorType> SPOT_LIGHT_ACTOR_TYPE;
-       static dtCore::RefPtr<dtCore::ActorType> STATIC_MESH_ACTOR_TYPE;
        static dtCore::RefPtr<dtCore::ActorType> PARTICLE_SYSTEM_ACTOR_TYPE;
        static dtCore::RefPtr<dtCore::ActorType> DYNAMIC_PARTICLE_SYSTEM_ACTOR_TYPE;
        static dtCore::RefPtr<dtCore::ActorType> INFINITE_TERRAIN_ACTOR_TYPE;
@@ -101,6 +100,7 @@ namespace dtActors
     private:
        static dtCore::RefPtr<dtCore::ActorType> ENVIRONMENT_ACTOR_TYPE; ///<deprecated 3/18/09
        static dtCore::RefPtr<dtCore::ActorType> ENV_ACTOR_TYPE; ///<deprecated 3/18/09
+       static dtCore::RefPtr<dtCore::ActorType> STATIC_MESH_ACTOR_TYPE; // <deprecated 7/1/2015
 
     };
 }

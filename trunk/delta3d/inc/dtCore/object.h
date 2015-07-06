@@ -28,10 +28,12 @@
 #include <dtCore/loadable.h>
 #include <dtCore/model.h>
 #include <dtCore/transformable.h>
+#include <dtCore/resourcedescriptor.h>
 #include <osg/MatrixTransform>
 #include <osg/NodeCallback>
 #include <osg/Vec3>
 #include <dtUtil/macros.h>
+#include <dtUtil/getsetmacros.h>
 
 namespace dtCore
 {
@@ -44,6 +46,7 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(Object)
 
       public:
+         typedef Transformable BaseClass;
 
          Object(const std::string& name = "Object");
 
@@ -56,17 +59,37 @@ namespace dtCore
          Object(TransformableNode& node, const std::string& name = "Object");
 
          /*!
-          * Load a geometry from a file using any supplied data file paths set in
-          * dtCore::SetDataFilePathList().  Additional calls to this method will replace
-          * the first geometry for the next.
-          *
-          * @param filename : The name of the file to be loaded
-          * @param useCache : If true, use OSG's file cache
+          * Load Geometry from the following resource.  It won't load until the object is added to the scene.
           */
-         virtual osg::Node* LoadFile(const std::string& filename, bool useCache = true);
+         DT_DECLARE_ACCESSOR(dtCore::ResourceDescriptor, MeshResource);
 
-         ///recenters the object geometry on LoadFile
-         void RecenterGeometryUponLoad( const bool enable = true ) { mRecenterGeometry = enable; }
+
+         /// Loads the mesh when it's added to the scene.
+         void AddedToScene(dtCore::Scene* scene) override;
+
+         /**
+          * This is the file version.  Set the MeshResource instead.
+          */
+         osg::Node* LoadFile(const std::string& filename, bool useCache = true) override;
+
+         /**
+          * Sets whether we will use the cache when we load files.  This must be set
+          * before loading the mesh or it will have no effect.  To make this work, the
+          * model is now loaded on entering the world the first time.
+          * @param value new use cache value (default is true)
+          */
+         DT_DECLARE_ACCESSOR(bool, UseCache)
+
+         /**
+          * Recenter the geometry about the origin by setting the model transform properties
+          * This gets the bounding box and finds the center of it.  This only works if set before the model is loaded.
+          */
+         DT_DECLARE_ACCESSOR(bool, RecenterGeometryUponLoad);
+
+         /**
+          * Generate Tangents for the mesh on load.
+          */
+         DT_DECLARE_ACCESSOR(bool, GenerateTangents);
 
          /**
           * Sets the scale on this object
@@ -125,8 +148,6 @@ namespace dtCore
          void Ctor();
 
          dtCore::RefPtr<Model> mModel;
-
-         bool mRecenterGeometry;///<if we want to recenter the geometry of the object about the origin upon load
    };
 }
 

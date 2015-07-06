@@ -30,9 +30,6 @@
 
 #include "export.h"
 
-#include <dtActors/deltaobjectactorproxy.h>
-#include <dtActors/staticmeshactorproxy.h>
-
 #include <dtCore/actorproxy.h>
 #include <dtCore/gameevent.h>
 #include <dtCore/plugin_export.h>

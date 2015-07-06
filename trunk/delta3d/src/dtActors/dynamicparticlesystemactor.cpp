@@ -386,8 +386,6 @@ namespace dtActors
    void DynamicParticleSystemActor::OnRemovedFromWorld()
    {
       BaseClass::OnRemovedFromWorld();
-
-      UnregisterForMessages(dtGame::MessageType::TICK_LOCAL);
    }
 
    //////////////////////////////////////////////////////////////////////////

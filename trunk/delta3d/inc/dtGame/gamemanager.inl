@@ -90,7 +90,7 @@ namespace dtGame
    };
 
    template <typename UnaryFunctor>
-   inline void GameManager::ForEachActor(UnaryFunctor& func, bool applyOnlyToGameActors /*= false*/)
+   inline void GameManager::ForEachActor(UnaryFunctor func, bool applyOnlyToGameActors /*= false*/)
    {
       if (!applyOnlyToGameActors)
       {
@@ -107,14 +107,14 @@ namespace dtGame
    }
 
    template <typename UnaryFunctor>
-   inline void GameManager::ForEachPrototype(UnaryFunctor& func) const
+   inline void GameManager::ForEachPrototype(UnaryFunctor func) const
    {
       BindActor<UnaryFunctor, GMImpl::GameActorMap::value_type> gameActorMapBindFunc(func);
       std::for_each(mGMImpl->mPrototypeActors.begin(), mGMImpl->mPrototypeActors.end(), gameActorMapBindFunc);
    }
 
    template <typename FindFunctor>
-   inline void GameManager::FindActorsIf(FindFunctor& ifFunc, dtCore::ActorPtrVector& toFill)
+   inline void GameManager::FindActorsIf(FindFunctor ifFunc, dtCore::ActorPtrVector& toFill)
    {
       toFill.clear();
       FindFuncWrapper<FindFunctor> findWrapper(ifFunc, toFill);
@@ -122,7 +122,7 @@ namespace dtGame
    }
 
    template <typename FindFunctor>
-   inline void GameManager::FindPrototypesIf(FindFunctor& ifFunc, dtCore::ActorPtrVector& toFill) const
+   inline void GameManager::FindPrototypesIf(FindFunctor ifFunc, dtCore::ActorPtrVector& toFill) const
    {
       toFill.clear();
       FindFuncWrapper<FindFunctor> findWrapper(ifFunc, toFill);

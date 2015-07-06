@@ -22,57 +22,30 @@
 #define _MESH_TERRAIN_ACTOR_PROXY_H_
 
 #include <dtCore/plugin_export.h>
-#include <dtActors/deltaobjectactorproxy.h>
-#include <dtCore/object.h>
 
-namespace dtCore
-{
-   class Scene;
-}
+#include <dtActors/gamemeshactor.h>
 
 namespace dtActors
 {
-   class DT_PLUGIN_EXPORT MeshTerrainActor : public dtCore::Object
-   {
-      public:
-
-         /// Constructor
-         MeshTerrainActor();
-
-         virtual void AddedToScene(dtCore::Scene* scene);
-
-      protected:
-
-         /// Destructor
-         virtual ~MeshTerrainActor();
-
-   };
    /**
-    * @class MeshTerrainActorProxy
+    * @class MeshTerrainActor
     * @brief This proxy wraps mesh terrains
     */
-   class DT_PLUGIN_EXPORT MeshTerrainActorProxy : public dtActors::DeltaObjectActorProxy
+   class DT_PLUGIN_EXPORT MeshTerrainActor : public GameMeshActor
    {
       public:
+
+         typedef GameMeshActor BaseClass;
 
          /**
           * Constructor
           */
-         MeshTerrainActorProxy();
+         MeshTerrainActor();
 
          /**
           * Adds the properties that are common to all mesh terrain objects.
           */
-         virtual void BuildPropertyMap();
-
-         /**
-          * Loads a mesh file which contains terrain.
-          * @param fileName The file of the terrain mesh to load.
-          * @note Although terrain meshes are the same "type" of file as static meshes
-          *  and other geometry, mesh terrains have a special resource of type
-          *  DataType::TERRAIN.
-          */
-         virtual void LoadFile(const std::string &fileName);
+         void BuildPropertyMap() override;
 
          /**
           * Gets the method by which this terrain mesh is rendered.
@@ -81,22 +54,17 @@ namespace dtActors
           *  there is geometry assigned to this static mesh, RenderMode::DRAW_ACTOR
           *  is returned.
           */
-         virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode();
+         const dtCore::BaseActorObject::RenderMode& GetRenderMode() override;
 
          /**
           * Gets the billboard used to represent terrain meshes if this proxy's
           * render mode is RenderMode::DRAW_BILLBOARD_ICON.
           * @return
           */
-         virtual dtCore::ActorProxyIcon* GetBillBoardIcon();
+         dtCore::ActorProxyIcon* GetBillBoardIcon() override;
 
       protected:
-         /**
-          * Creates a mesh terrain instance.
-          */
-         virtual void CreateDrawable();
-
-         virtual ~MeshTerrainActorProxy() {}
+         ~MeshTerrainActor() override {}
    };
 }
 

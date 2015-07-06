@@ -43,7 +43,21 @@ class FIRE_FIGHTER_EXPORT FireActor : public GameItemActor
    public:
 
       /// Constructor
-      FireActor(dtGame::GameActorProxy& parent);
+      FireActor();
+
+      /// Builds the properties of this actor
+      virtual void BuildPropertyMap();
+
+      /// Builds the invokables of this actor
+      virtual void BuildInvokables();
+
+      // Used in STAGE
+      dtCore::ActorProxyIcon* GetBillBoardIcon();
+
+      virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode()
+      {
+         return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR;
+      }
 
       /**
        * Sets the filename of the flame particle system.
@@ -161,16 +175,16 @@ class FIRE_FIGHTER_EXPORT FireActor : public GameItemActor
        */
       osg::Vec3 GetLightTranslation() const;
 
+
    protected:
 
       /// Called when the actor is added to the game manager
-      virtual void OnEnteredWorld();
+      void OnEnteredWorld() override;
 
       /// Destructor
       virtual ~FireActor();
 
    private:
-
       dtCore::RefPtr<dtCore::ParticleSystem> mFlameSystem, mSparkSystem, mSmokeSystem, mCeilingSystem;
 
       dtCore::RefPtr<dtCore::PositionalLight> mLight;
@@ -183,41 +197,6 @@ class FIRE_FIGHTER_EXPORT FireActor : public GameItemActor
 
       /// The boundary planes that limit the particle systems.
       std::vector<osg::Vec4> mBoundaryPlanes;
-};
-
-class FIRE_FIGHTER_EXPORT FireActorProxy : public GameItemActorProxy
-{
-   public:
-
-      /// Constructor
-      FireActorProxy();
-
-      /// Builds the properties of this actor
-      virtual void BuildPropertyMap();
-
-      /// Builds the invokables of this actor
-      virtual void BuildInvokables();
-
-      /// Instantiates the actor itself
-      virtual void CreateDrawable() { SetDrawable(*new FireActor(*this)); }
-
-      // Used in STAGE
-      dtCore::ActorProxyIcon* GetBillBoardIcon();
-
-      virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode()
-      {
-         return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR;
-      }
-
-   protected:
-
-      /// Called when the actor is added to the game manager
-      virtual void OnEnteredWorld();
-
-      /// Destructor
-      virtual ~FireActorProxy();
-
-   private:
 };
 
 #endif

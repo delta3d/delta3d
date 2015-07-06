@@ -26,5 +26,5 @@ TestActorLibraryRegistry::TestActorLibraryRegistry()
 ////////////////////////////////////////////////////////////////////////////////
 void TestActorLibraryRegistry::RegisterActorTypes()
 {
-   mActorFactory->RegisterType<ComponentGameActorProxy>(COMPONENT_GAME_ACTOR_TYPE.get());
+   mActorFactory->RegisterType<ComponentGameActor>(COMPONENT_GAME_ACTOR_TYPE.get());
 }

@@ -85,7 +85,7 @@ DT_IMPLEMENT_ACCESSOR(ExampleTestPropertyProxy, dtCore::RefPtr<TestPropertyConta
 
 void ExampleTestPropertyProxy::BuildPropertyMap()
 {
-   DeltaObjectActorProxy::BuildPropertyMap();
+   BaseClass::BuildPropertyMap();
 
    Object* obj = dynamic_cast<Object*>(GetDrawable());
    if (obj == NULL)

@@ -25,8 +25,8 @@
 #include <dtCore/resourcedescriptor.h>
 #include <dtCore/actorproxyicon.h>
 #include <dtUtil/log.h>
+#include <dtCore/object.h>
 
-using namespace dtCore;
 using namespace dtCore;
 
 namespace dtActors
@@ -34,48 +34,29 @@ namespace dtActors
 
 
    ///////////////////////////////////////////////////////////////////////////////
-   MeshTerrainActorProxy::MeshTerrainActorProxy()
+   MeshTerrainActor::MeshTerrainActor()
    {
       SetClassName("dtCore::Object");
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void MeshTerrainActorProxy::BuildPropertyMap()
+   void MeshTerrainActor::BuildPropertyMap()
    {
       const std::string& GROUPNAME = "Terrain";
-      DeltaObjectActorProxy::BuildPropertyMap();
+      BaseClass::BuildPropertyMap();
 
+      RemoveProperty("static mesh");
+      dtCore::Object* drawable = GetDrawable<dtCore::Object>();
 
       AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::TERRAIN,
-            "terrain mesh", "Terrain Mesh",
-            dtCore::ResourceActorProperty::SetFuncType(this, &MeshTerrainActorProxy::LoadFile),
-            "The mesh that defines the geometry of the terrain.", GROUPNAME));
+         "terrain mesh", "Terrain Mesh",
+         dtCore::ResourceActorProperty::SetDescFuncType(drawable, &dtCore::Object::SetMeshResource),
+         dtCore::ResourceActorProperty::GetDescFuncType(drawable, &dtCore::Object::GetMeshResource),
+         "The static mesh resource that defines the geometry", GROUPNAME));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void MeshTerrainActorProxy::CreateDrawable()
-   {
-      SetDrawable(*new MeshTerrainActor);
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void MeshTerrainActorProxy::LoadFile(const std::string& fileName)
-   {
-      dtCore::Object *obj = GetDrawable<dtCore::Object>();
-
-      if (obj->LoadFile(fileName, false) == NULL)
-      {
-         if (!fileName.empty())
-            LOG_ERROR("Error loading terrain mesh file: " + fileName);
-
-         return;
-      }
-
-
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   const dtCore::BaseActorObject::RenderMode& MeshTerrainActorProxy::GetRenderMode()
+   const dtCore::BaseActorObject::RenderMode& MeshTerrainActor::GetRenderMode()
    {
       dtCore::ResourceDescriptor resource = dynamic_cast<dtCore::ResourceActorProperty*>(GetProperty("terrain mesh"))->GetValue();
       if (resource.IsEmpty() == false)
@@ -90,7 +71,7 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtCore::ActorProxyIcon* MeshTerrainActorProxy::GetBillBoardIcon()
+   dtCore::ActorProxyIcon* MeshTerrainActor::GetBillBoardIcon()
    {
       if (!mBillBoardIcon.valid())
       {
@@ -100,29 +81,4 @@ namespace dtActors
       return mBillBoardIcon.get();
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   MeshTerrainActor::MeshTerrainActor()
-   {
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   MeshTerrainActor::~MeshTerrainActor()
-   {
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   void MeshTerrainActor::AddedToScene(dtCore::Scene* scene)
-   {
-      dtCore::Object::AddedToScene(scene);
-
-      // Don't load the file if we're not
-      // really being added to the scene
-      if (scene != NULL)
-      {
-         if (!GetFilename().empty())
-         {
-            LoadFile(GetFilename());
-         }
-      }
-   }
 }

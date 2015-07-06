@@ -27,7 +27,6 @@
 #include "guicomponent.h"
 #include "guilistitem.h"
 #include "inputcomponent.h"
-#include "meshobjectactor.h"
 #include "testappactorregistry.h"
 #include "testappconstants.h"
 #include "testappgamestates.h"

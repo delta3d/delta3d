@@ -24,44 +24,23 @@
 #include <fireFighter/gameitemactor.h>
 #include <fireFighter/export.h>
 
+
 class FIRE_FIGHTER_EXPORT FireSuitActor : public GameItemActor
 {
    public:
 
       /// Constructor
-      FireSuitActor(dtGame::GameActorProxy& parent);
+      FireSuitActor();
 
       /**
        * Activates this game item
        */
-      virtual void Activate(bool enable = true);
+      void Activate(bool enable = true) override;
 
    protected:
 
       /// Destructor
-      virtual ~FireSuitActor();
-};
-
-class FIRE_FIGHTER_EXPORT FireSuitActorProxy : public GameItemActorProxy
-{
-   public:
-
-      /// Constructor
-      FireSuitActorProxy();
-
-      /// Builds the properties
-      virtual void BuildPropertyMap();
-
-      /// Builds the invokables
-      virtual void BuildInvokables();
-
-      /// Instantiates the actor
-      virtual void CreateDrawable() { SetDrawable(*new FireSuitActor(*this)); }
-
-   protected:
-
-      /// Destructor
-      virtual ~FireSuitActorProxy();
+      ~FireSuitActor() override;
 };
 
 #endif

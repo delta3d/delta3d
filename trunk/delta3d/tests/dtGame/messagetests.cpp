@@ -255,7 +255,6 @@ void MessageTests::createActors(dtCore::Map& map)
    actorTypes.push_back(dtActors::EngineActorRegistry::INFINITE_LIGHT_ACTOR_TYPE.get());
    actorTypes.push_back(dtActors::EngineActorRegistry::POSITIONAL_LIGHT_ACTOR_TYPE.get());
    actorTypes.push_back(dtActors::EngineActorRegistry::SPOT_LIGHT_ACTOR_TYPE.get());
-   actorTypes.push_back(dtActors::EngineActorRegistry::STATIC_MESH_ACTOR_TYPE.get());
    actorTypes.push_back(dtActors::EngineActorRegistry::PARTICLE_SYSTEM_ACTOR_TYPE.get());
    actorTypes.push_back(dtActors::EngineActorRegistry::MESH_TERRAIN_ACTOR_TYPE.get());
    actorTypes.push_back(dtActors::EngineActorRegistry::BEZIER_NODE_ACTOR_TYPE.get());

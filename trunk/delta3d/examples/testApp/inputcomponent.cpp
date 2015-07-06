@@ -26,7 +26,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "inputcomponent.h"
 #include "lightactorcomponent.h"
-#include "meshlampactor.h"
 #include "testappmessages.h"
 #include "testappmessagetypes.h"
 
@@ -58,6 +57,7 @@
 #include <dtGame/basemessages.h>
 #include <dtGame/gamestatemessages.h>
 #include <dtGame/messagefactory.h>
+#include <dtGame/gamemanager.inl>
 #include <dtCore/gameevent.h>
 
 #include <dtRender/scenemanager.h>
@@ -1006,23 +1006,18 @@ namespace dtExample
       ActorList actors;
 
       dtGame::GameManager* gm = GetGameManager();
-      gm->GetAllActors(actors);
+      gm->ForEachActor([intensity](dtCore::BaseActorObject& baseActor)
+            {
+               baseActor.IsGameActor();
+               dtGame::GameActorProxy& actor = static_cast<dtGame::GameActorProxy&>(baseActor);
 
-      dtExample::MeshLampActor* curLamp = NULL;
-      ActorList::iterator curIter = actors.begin();
-      ActorList::iterator endIter = actors.end();
-      for ( ; curIter != endIter; ++curIter)
-      {
-         curLamp = dynamic_cast<dtExample::MeshLampActor*>(*curIter);
-
-         if (curLamp != NULL)
-         {
-            LightActorComponent* lac = NULL;
-            curLamp->GetComponent(lac);
-
-            lac->SetLightIntensity(intensity);
-         }
-      }
+               LightActorComponent* lac = nullptr;
+               actor.GetComponent(lac);
+               if (lac != nullptr)
+               {
+                  lac->SetLightIntensity(intensity);
+               }
+            }, true);
    }
 
    void InputComponent::ReloadShaders()

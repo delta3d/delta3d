@@ -33,88 +33,58 @@
 #include <dtGame/gamemanager.h>
 
 ////////////////////////////////////////////////////////////
-GameItemActorProxy::GameItemActorProxy()
-{
-
-}
-
-GameItemActorProxy::~GameItemActorProxy()
-{
-
-}
-
-void GameItemActorProxy::BuildPropertyMap()
-{
-   dtActors::GameMeshActor::BuildPropertyMap();
-
-   GameItemActor& gia = *GetDrawable<GameItemActor>();
-
-   AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::SOUND,
-      "InventorySound", "InventorySound",
-      dtUtil::MakeFunctor(&GameItemActor::SetInventoryAddSnd, gia),
-      "Sets the inventory sound for this item"));
-
-   AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::SOUND,
-      "ItemUseSound", "ItemUseSound",
-      dtUtil::MakeFunctor(&GameItemActor::SetItemUseSnd, gia),
-      "Sets the inventory sound for this item"));
-
-   AddProperty(new dtCore::BooleanActorProperty("Activate", "Activate",
-      dtUtil::MakeFunctor(&GameItemActor::Activate, gia),
-      dtUtil::MakeFunctor(&GameItemActor::IsActivated, gia),
-      "Activates this item"));
-
-   AddProperty(new dtCore::BooleanActorProperty("Collectable", "Collectable",
-      dtUtil::MakeFunctor(&GameItemActor::SetCollectable, gia),
-      dtUtil::MakeFunctor(&GameItemActor::IsCollectable, gia),
-      "Returns true if this item is collectable"));
-}
-
-void GameItemActorProxy::BuildInvokables()
-{
-   dtActors::GameMeshActor::BuildInvokables();
-}
-
-dtCore::ActorProxyIcon* GameItemActorProxy::GetBillBoardIcon()
-{
-   if (!mBillBoardIcon.valid())
-   {
-      mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
-   }
-   return mBillBoardIcon.get();
-}
-
-////////////////////////////////////////////////////////////
-GameItemActor::GameItemActor(dtGame::GameActorProxy& parent)
-   : dtActors::GameMeshDrawable(parent)
-   , mInventoryAddSnd(dtAudio::AudioManager::GetInstance().NewSound())
-   , mItemUseSnd(dtAudio::AudioManager::GetInstance().NewSound())
-   , mItemIndex(-1)
-   , mCollectable(false)
-   , mIsActivated(false)
+GameItemActor::GameItemActor()
+: mInventoryAddSnd(dtAudio::AudioManager::GetInstance().NewSound())
+, mItemUseSnd(dtAudio::AudioManager::GetInstance().NewSound())
+, mItemIndex(-1)
+, mCollectable(false)
+, mIsActivated(false)
 {
 
 }
 
 GameItemActor::~GameItemActor()
 {
-   /*
-   dtAudio::Sound* snd = mInventoryAddSnd.release();
-   if (snd != NULL)
-   {
-      dtAudio::AudioManager::GetInstance().FreeSound(snd);
-   }
-   snd = mItemUseSnd.release();
-   if (snd != NULL)
-   {
-      dtAudio::AudioManager::GetInstance().FreeSound(snd);
-   }
-   //*/
+
 }
 
-void GameItemActor::OnEnteredWorld()
+void GameItemActor::BuildPropertyMap()
 {
+   dtActors::GameMeshActor::BuildPropertyMap();
 
+   AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::SOUND,
+      "InventorySound", "InventorySound",
+      dtUtil::MakeFunctor(&GameItemActor::SetInventoryAddSnd, this),
+      "Sets the inventory sound for this item"));
+
+   AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::SOUND,
+      "ItemUseSound", "ItemUseSound",
+      dtUtil::MakeFunctor(&GameItemActor::SetItemUseSnd, this),
+      "Sets the inventory sound for this item"));
+
+   AddProperty(new dtCore::BooleanActorProperty("Activate", "Activate",
+      dtUtil::MakeFunctor(&GameItemActor::Activate, this),
+      dtUtil::MakeFunctor(&GameItemActor::IsActivated, this),
+      "Activates this item"));
+
+   AddProperty(new dtCore::BooleanActorProperty("Collectable", "Collectable",
+      dtUtil::MakeFunctor(&GameItemActor::SetCollectable, this),
+      dtUtil::MakeFunctor(&GameItemActor::IsCollectable, this),
+      "Returns true if this item is collectable"));
+}
+
+void GameItemActor::BuildInvokables()
+{
+   dtActors::GameMeshActor::BuildInvokables();
+}
+
+dtCore::ActorProxyIcon* GameItemActor::GetBillBoardIcon()
+{
+   if (!mBillBoardIcon.valid())
+   {
+      mBillBoardIcon = new dtCore::ActorProxyIcon(dtCore::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
+   }
+   return mBillBoardIcon.get();
 }
 
 void GameItemActor::SetItemUseSnd(const std::string& fileName)
@@ -126,7 +96,7 @@ void GameItemActor::SetItemUseSnd(const std::string& fileName)
    }
 
    mItemUseSnd->LoadFile(fileName.c_str());
-   AddChild(mItemUseSnd.get());
+   GetDrawable()->AddChild(mItemUseSnd.get());
 }
 
 void GameItemActor::SetInventoryAddSnd(const std::string& fileName)
@@ -138,7 +108,7 @@ void GameItemActor::SetInventoryAddSnd(const std::string& fileName)
    }
 
    mInventoryAddSnd->LoadFile(fileName.c_str());
-   AddChild(mInventoryAddSnd.get());
+   GetDrawable()->AddChild(mInventoryAddSnd.get());
 }
 
 void GameItemActor::Activate(bool enable)

@@ -47,69 +47,76 @@
 using dtCore::RefPtr;
 
 /////////////////////////////////////////////////
-FireActorProxy::FireActorProxy()
+FireActor::FireActor()
+: mFlameSystem(new dtCore::ParticleSystem)
+, mSparkSystem(new dtCore::ParticleSystem)
+, mSmokeSystem(new dtCore::ParticleSystem)
+, mCeilingSystem(new dtCore::ParticleSystem)
+, mLight(new dtCore::PositionalLight(5))
+, mRadius(1.0f)
+, mIntensity(10.0f)
+{
+   mItemUseSnd->SetLooping(true);
+}
+
+FireActor::~FireActor()
 {
 
 }
 
-FireActorProxy::~FireActorProxy()
+void FireActor::BuildPropertyMap()
 {
-
-}
-
-void FireActorProxy::BuildPropertyMap()
-{
-   GameItemActorProxy::BuildPropertyMap();
+   GameItemActor::BuildPropertyMap();
 
    FireActor& fa = *GetDrawable<FireActor>();
 
    AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::PARTICLE_SYSTEM,
-      "FlameFileName", "FlameFileName",
-      dtCore::ResourceActorProperty::SetFuncType(&fa, &FireActor::SetFlameFilename),
-      "Sets the flame file name"));
+         "FlameFileName", "FlameFileName",
+         dtCore::ResourceActorProperty::SetFuncType(&fa, &FireActor::SetFlameFilename),
+         "Sets the flame file name"));
 
    AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::PARTICLE_SYSTEM,
-      "SparkFileName", "SparkFileName",
-      dtCore::ResourceActorProperty::SetFuncType(&fa, &FireActor::SetSparkFilename),
-      "Sets the spark file name"));
+         "SparkFileName", "SparkFileName",
+         dtCore::ResourceActorProperty::SetFuncType(&fa, &FireActor::SetSparkFilename),
+         "Sets the spark file name"));
 
    AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::PARTICLE_SYSTEM,
-      "SmokeFileName", "SmokeFileName",
-      dtCore::ResourceActorProperty::SetFuncType(&fa, &FireActor::SetSmokeFilename),
-      "Sets the smoke file name"));
+         "SmokeFileName", "SmokeFileName",
+         dtCore::ResourceActorProperty::SetFuncType(&fa, &FireActor::SetSmokeFilename),
+         "Sets the smoke file name"));
 
    AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::PARTICLE_SYSTEM,
-      "SmokeCeilingFileName", "SmokeCeilingFileName",
-      dtCore::ResourceActorProperty::SetFuncType(&fa, &FireActor::SetSmokeCeilingFilename),
-      "Sets the smoke ceiling file name"));
+         "SmokeCeilingFileName", "SmokeCeilingFileName",
+         dtCore::ResourceActorProperty::SetFuncType(&fa, &FireActor::SetSmokeCeilingFilename),
+         "Sets the smoke ceiling file name"));
 
    AddProperty(new dtCore::FloatActorProperty("Radius", "Radius",
-      dtCore::FloatActorProperty::SetFuncType(&fa, &FireActor::SetRadius),
-      dtCore::FloatActorProperty::GetFuncType(&fa, &FireActor::GetRadius),
-      "Sets the fire radius"));
+         dtCore::FloatActorProperty::SetFuncType(&fa, &FireActor::SetRadius),
+         dtCore::FloatActorProperty::GetFuncType(&fa, &FireActor::GetRadius),
+         "Sets the fire radius"));
 
    AddProperty(new dtCore::FloatActorProperty("Intensity", "Intensity",
-      dtCore::FloatActorProperty::SetFuncType(&fa, &FireActor::SetIntensity),
-      dtCore::FloatActorProperty::GetFuncType(&fa, &FireActor::GetIntensity),
-      "Sets the fire intensity"));
+         dtCore::FloatActorProperty::SetFuncType(&fa, &FireActor::SetIntensity),
+         dtCore::FloatActorProperty::GetFuncType(&fa, &FireActor::GetIntensity),
+         "Sets the fire intensity"));
 
    AddProperty(new dtCore::Vec3ActorProperty("LightRotation", "LightRotation",
-      dtCore::Vec3ActorProperty::SetFuncType(&fa, &FireActor::SetLightRotation),
-      dtCore::Vec3ActorProperty::GetFuncType(&fa, &FireActor::GetLightRotation),
-      "Sets the light rotation"));
+         dtCore::Vec3ActorProperty::SetFuncType(&fa, &FireActor::SetLightRotation),
+         dtCore::Vec3ActorProperty::GetFuncType(&fa, &FireActor::GetLightRotation),
+         "Sets the light rotation"));
 
    AddProperty(new dtCore::Vec3ActorProperty("LightTranslation", "LightTranslation",
-      dtCore::Vec3ActorProperty::SetFuncType(&fa, &FireActor::SetLightTranslation),
-      dtCore::Vec3ActorProperty::GetFuncType(&fa, &FireActor::GetLightTranslation),
-      "Sets the light translation"));
+         dtCore::Vec3ActorProperty::SetFuncType(&fa, &FireActor::SetLightTranslation),
+         dtCore::Vec3ActorProperty::GetFuncType(&fa, &FireActor::GetLightTranslation),
+         "Sets the light translation"));
 }
 
-void FireActorProxy::BuildInvokables()
+void FireActor::BuildInvokables()
 {
    dtGame::GameActorProxy::BuildInvokables();
 }
 
-dtCore::ActorProxyIcon* FireActorProxy::GetBillBoardIcon()
+dtCore::ActorProxyIcon* FireActor::GetBillBoardIcon()
 {
    if (!mBillBoardIcon.valid())
    {
@@ -118,15 +125,21 @@ dtCore::ActorProxyIcon* FireActorProxy::GetBillBoardIcon()
    return mBillBoardIcon.get();
 }
 
-void FireActorProxy::OnEnteredWorld()
+void FireActor::OnEnteredWorld()
 {
-   FireActor& fa = *GetDrawable<FireActor>();
+   dtCore::Object& fa = *GetDrawable<dtCore::Object>();
+   fa.AddChild(mFlameSystem.get());
+   fa.AddChild(mSmokeSystem.get());
+   fa.AddChild(mSparkSystem.get());
+   fa.AddChild(mCeilingSystem.get());
+   fa.AddChild(mLight.get());
+
 
    dtGame::Invokable* playSoundInvoke = new dtGame::Invokable("PlaySound",
-      dtUtil::MakeFunctor(&FireActor::PlayFireSound, fa));
+         dtUtil::MakeFunctor(&FireActor::PlayFireSound, this));
 
    dtGame::Invokable* stopSoundInvoke = new dtGame::Invokable("StopSounds",
-      dtUtil::MakeFunctor(&FireActor::StopSounds, fa));
+         dtUtil::MakeFunctor(&FireActor::StopSounds, this));
 
    AddInvokable(*playSoundInvoke);
    AddInvokable(*stopSoundInvoke);
@@ -135,43 +148,29 @@ void FireActorProxy::OnEnteredWorld()
    RegisterForMessages(FireFighterMessageType::ITEM_ACTIVATED,   "PlaySound");
    RegisterForMessages(FireFighterMessageType::ITEM_DEACTIVATED, "PlaySound");
    RegisterForMessages(FireFighterMessageType::GAME_STATE_CHANGED, "StopSounds");
-}
 
-/////////////////////////////////////////////////
-FireActor::FireActor(dtGame::GameActorProxy& parent)
-   : GameItemActor(parent)
-   , mFlameSystem(new dtCore::ParticleSystem)
-   , mSparkSystem(new dtCore::ParticleSystem)
-   , mSmokeSystem(new dtCore::ParticleSystem)
-   , mCeilingSystem(new dtCore::ParticleSystem)
-   , mLight(new dtCore::PositionalLight(5))
-   , mRadius(1.0f)
-   , mIntensity(10.0f)
-{
-   mItemUseSnd->SetLooping(true);
+   osg::Vec4 leftWall(0, -1, 0, 0.337), rightWall(-1, 0, 0, 18.271),
+         ceiling(0, 0, -1, 2.459), back(1, 0, 0, -5.31),
+         side(0, 1, 0, 5.96);
 
-   AddChild(mFlameSystem.get());
-   AddChild(mSmokeSystem.get());
-   AddChild(mSparkSystem.get());
-   AddChild(mCeilingSystem.get());
-   AddChild(mLight.get());
-}
-
-FireActor::~FireActor()
-{
+   AddBoundaryPlane(leftWall);
+   AddBoundaryPlane(rightWall);
+   AddBoundaryPlane(ceiling);
+   AddBoundaryPlane(back);
+   AddBoundaryPlane(side);
 
 }
 
 void FireActor::PlayFireSound(const dtGame::Message& msg)
 {
    // Check to see if the actor is the door to the fire room
-   dtGame::GameActorProxy* proxy = GetGameActorProxy().GetGameManager()->FindGameActorById(msg.GetAboutActorId());
+   dtGame::GameActorProxy* proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
    if (proxy == NULL)
    {
       return;
    }
 
-   HatchActor* ha = dynamic_cast<HatchActor*>(proxy->GetDrawable());
+   HatchActor* ha = dynamic_cast<HatchActor*>(proxy);
    if (ha == NULL)
    {
       return;
@@ -181,20 +180,6 @@ void FireActor::PlayFireSound(const dtGame::Message& msg)
    ha->IsActivated() ? mItemUseSnd->Play() : mItemUseSnd->Stop();
 }
 
-void FireActor::OnEnteredWorld()
-{
-   GameItemActor::OnEnteredWorld();
-
-   osg::Vec4 leftWall(0, -1, 0, 0.337), rightWall(-1, 0, 0, 18.271),
-             ceiling(0, 0, -1, 2.459), back(1, 0, 0, -5.31),
-             side(0, 1, 0, 5.96);
-
-   AddBoundaryPlane(leftWall);
-   AddBoundaryPlane(rightWall);
-   AddBoundaryPlane(ceiling);
-   AddBoundaryPlane(back);
-   AddBoundaryPlane(side);
-}
 
 void FireActor::SetFlameFilename(const std::string& filename)
 {
@@ -257,9 +242,9 @@ void FireActor::DecreaseIntensity(float intensity)
             throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);
          }
 
-         dtGame::GameManager& mgr = *GetGameActorProxy().GetGameManager();
+         dtGame::GameManager& mgr = *GetGameManager();
          RefPtr<dtGame::Message> msg =
-            mgr.GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
+               mgr.GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
 
          dtGame::GameEventMessage& gem = static_cast<dtGame::GameEventMessage&>(*msg);
          gem.SetGameEvent(*event);
@@ -331,7 +316,7 @@ void FireActor::StopSounds(const dtGame::Message& msg)
 {
    const GameStateChangedMessage& gscm = static_cast<const GameStateChangedMessage&>(msg);
    if (gscm.GetNewState() == GameState::STATE_DEBRIEF ||
-      gscm.GetNewState() == GameState::STATE_MENU)
+         gscm.GetNewState() == GameState::STATE_MENU)
    {
       StopItemUseSnd();
    }

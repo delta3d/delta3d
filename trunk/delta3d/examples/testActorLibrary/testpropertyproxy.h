@@ -28,7 +28,7 @@
 #ifndef DELTA_EXAMPLETESTPROPERTYPROXY
 #define DELTA_EXAMPLETESTPROPERTYPROXY
 
-#include <dtActors/staticmeshactorproxy.h>
+#include <dtActors/gamemeshactor.h>
 
 #include <dtCore/actorproxy.h>
 #include <dtCore/arrayactorproperty.h>
@@ -47,9 +47,11 @@ namespace dtCore
     class Scene;
 }
 
-class DT_PLUGIN_EXPORT ExampleTestPropertyProxy : public dtActors::StaticMeshActorProxy
+class DT_PLUGIN_EXPORT ExampleTestPropertyProxy : public dtActors::GameMeshActor
 {
 public:
+   typedef dtActors::GameMeshActor BaseClass;
+
    ExampleTestPropertyProxy();
    virtual void BuildPropertyMap();
 

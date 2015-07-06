@@ -31,29 +31,7 @@
 using dtCore::RefPtr;
 
 ////////////////////////////////////////////////////
-SCBAActorProxy::SCBAActorProxy()
-{
-
-}
-
-SCBAActorProxy::~SCBAActorProxy()
-{
-
-}
-
-void SCBAActorProxy::BuildPropertyMap()
-{
-   GameItemActorProxy::BuildPropertyMap();
-}
-
-void SCBAActorProxy::BuildInvokables()
-{
-   GameItemActorProxy::BuildInvokables();
-}
-
-////////////////////////////////////////////////////
-SCBAActor::SCBAActor(dtGame::GameActorProxy& parent)
-   : GameItemActor(parent)
+SCBAActor::SCBAActor()
 {
    mItemIndex = 2;
 }
@@ -62,7 +40,6 @@ SCBAActor::~SCBAActor()
 {
 
 }
-
 void SCBAActor::OnEnteredWorld()
 {
    mItemUseSnd->SetLooping(true);
@@ -87,7 +64,7 @@ void SCBAActor::Activate(bool enable)
       throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);
    }
 
-   dtGame::GameManager& mgr = *GetGameActorProxy().GetGameManager();
+   dtGame::GameManager& mgr = *GetGameManager();
    RefPtr<dtGame::Message> msg =
       mgr.GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
 

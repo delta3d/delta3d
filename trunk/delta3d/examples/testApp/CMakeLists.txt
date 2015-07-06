@@ -1,7 +1,6 @@
 INCLUDE_DIRECTORIES(${PAL_INCLUDE_DIR})
 
 SET(TARGET_SRC testapp.cpp
-               civilianactor.cpp
                civilianaiactorcomponent.cpp
                fireworkactor.cpp
                guicomponent.cpp
@@ -9,8 +8,6 @@ SET(TARGET_SRC testapp.cpp
                guiscreen.cpp
                inputcomponent.cpp
                lightactorcomponent.cpp
-               meshlampactor.cpp
-               meshobjectactor.cpp
                surfacevesselactorcomponent.cpp
                terrainactor.cpp
                testappactorregistry.cpp
@@ -19,7 +16,6 @@ SET(TARGET_SRC testapp.cpp
                testappmessages.cpp
                testappmessagetypes.cpp
                testapputils.cpp
-               vesselactor.cpp
                wateractorheightquery.cpp
                Nodes/ApplicationNode.cpp
                Nodes/ChangeStance.cpp
@@ -35,7 +31,7 @@ SET(TARGET_SRC testapp.cpp
                readme.txt
                config.xml)
 
-SET(TARGET_H civilianactor.h
+SET(TARGET_H 
              civilianaiactorcomponent.h
              fireworkactor.h
              guicomponent.h
@@ -43,8 +39,6 @@ SET(TARGET_H civilianactor.h
              guiscreen.h
              inputcomponent.h
              lightactorcomponent.h
-             meshlampactor.h
-             meshobjectactor.h
              surfacevesselactorcomponent.h
              terrainactor.h
              testappactorregistry.h
@@ -53,7 +47,6 @@ SET(TARGET_H civilianactor.h
              testappmessages.h
              testappmessagetypes.h
              testapputils.h
-             vesselactor.h
              wateractorheightquery.h
              Nodes/ApplicationNode.h
              Nodes/ChangeStance.h

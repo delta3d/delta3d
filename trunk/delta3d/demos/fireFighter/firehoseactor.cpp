@@ -32,37 +32,8 @@
 using dtCore::RefPtr;
 
 ////////////////////////////////////////////////////////
-FireHoseActorProxy::FireHoseActorProxy()
-{
-
-}
-
-FireHoseActorProxy::~FireHoseActorProxy()
-{
-
-}
-
-void FireHoseActorProxy::BuildPropertyMap()
-{
-   GameItemActorProxy::BuildPropertyMap();
-
-   FireHoseActor* fha;
-   GetDrawable(fha);
-
-   AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::PARTICLE_SYSTEM,
-      "StreamFile", "StreamFile",
-      dtUtil::MakeFunctor(&FireHoseActor::SetStreamFilename, fha),
-      "Sets the stream file particle system"));
-}
-
-void FireHoseActorProxy::BuildInvokables()
-{
-   GameItemActorProxy::BuildInvokables();
-}
-
-FireHoseActor::FireHoseActor(dtGame::GameActorProxy& parent) :
-   GameItemActor(parent),
-   mParticleSystem(new dtCore::ParticleSystem)
+FireHoseActor::FireHoseActor()
+: mParticleSystem(new dtCore::ParticleSystem)
 {
    mItemUseSnd->SetLooping(true);
    mItemIndex = 1;
@@ -71,6 +42,21 @@ FireHoseActor::FireHoseActor(dtGame::GameActorProxy& parent) :
 FireHoseActor::~FireHoseActor()
 {
 
+}
+
+void FireHoseActor::BuildPropertyMap()
+{
+   GameItemActor::BuildPropertyMap();
+
+   AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::PARTICLE_SYSTEM,
+      "StreamFile", "StreamFile",
+      dtUtil::MakeFunctor(&FireHoseActor::SetStreamFilename, this),
+      "Sets the stream file particle system"));
+}
+
+void FireHoseActor::BuildInvokables()
+{
+   GameItemActor::BuildInvokables();
 }
 
 void FireHoseActor::Activate(bool enable)

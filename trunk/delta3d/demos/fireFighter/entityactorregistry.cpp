@@ -66,16 +66,16 @@ EntityActorRegistry::EntityActorRegistry() : dtCore::ActorPluginRegistry("FireFi
 void EntityActorRegistry::RegisterActorTypes()
 {
    mActorFactory->RegisterType<FlySequenceActorProxy>(TYPE_FLY_SEQUENCE.get());
-   mActorFactory->RegisterType<FireActorProxy>(TYPE_FIRE_ACTOR.get());
+   mActorFactory->RegisterType<FireActor>(TYPE_FIRE_ACTOR.get());
    mActorFactory->RegisterType<DDGActorProxy>(TYPE_DDG_ACTOR.get());
    mActorFactory->RegisterType<PlayerActorProxy>(TYPE_PLAYER_ACTOR.get());
    mActorFactory->RegisterType<GameLevelActorProxy>(TYPE_GAME_LEVEL_ACTOR.get());
-   mActorFactory->RegisterType<FireHoseActorProxy>(TYPE_FIRE_HOSE_ACTOR.get());
-   mActorFactory->RegisterType<FireSuitActorProxy>(TYPE_FIRE_SUIT_ACTOR.get());
-   mActorFactory->RegisterType<SCBAActorProxy>(TYPE_SCBA_ACTOR.get());
-   mActorFactory->RegisterType<PrimaryHalonActorProxy>(TYPE_PRIMARY_HALON_ACTOR.get());
-   mActorFactory->RegisterType<SecondaryHalonActorProxy>(TYPE_SECONDARY_HALON_ACTOR.get());
-   mActorFactory->RegisterType<HatchActorProxy>(TYPE_HATCH_ACTOR.get());
-   mActorFactory->RegisterType<FuelValveActorProxy>(TYPE_FUEL_VALVE_ACTOR.get());
-   mActorFactory->RegisterType<FuelValveActorProxy>(TYPE_COLLIDABLE_ACTOR.get());
+   mActorFactory->RegisterType<FireHoseActor>(TYPE_FIRE_HOSE_ACTOR.get());
+   mActorFactory->RegisterType<FireSuitActor>(TYPE_FIRE_SUIT_ACTOR.get());
+   mActorFactory->RegisterType<SCBAActor>(TYPE_SCBA_ACTOR.get());
+   mActorFactory->RegisterType<PrimaryHalonActor>(TYPE_PRIMARY_HALON_ACTOR.get());
+   mActorFactory->RegisterType<SecondaryHalonActor>(TYPE_SECONDARY_HALON_ACTOR.get());
+   mActorFactory->RegisterType<HatchActor>(TYPE_HATCH_ACTOR.get());
+   mActorFactory->RegisterType<FuelValveActor>(TYPE_FUEL_VALVE_ACTOR.get());
+   mActorFactory->RegisterType<FuelValveActor>(TYPE_COLLIDABLE_ACTOR.get());
 }

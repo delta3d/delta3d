@@ -1,16 +1,18 @@
-#pragma once
+#ifndef DT_COMPONENT_GAME_ACTOR
+#define DT_COMPONENT_GAME_ACTOR
 
 #include <dtActors/gamemeshactor.h>
 
 
-class ComponentGameActor : public dtActors::GameMeshDrawable
+class ComponentGameActor : public dtActors::GameMeshActor
 {
-  
 public:
 
-   ComponentGameActor(dtGame::GameActorProxy& parent);
+   /// Builds the actor properties
+   void BuildPropertyMap() override;
 
    virtual void Interaction();
+   void BuildActorComponents() override;
 
    // only for testing
    void SetSomeProperty(int p) {}
@@ -18,15 +20,4 @@ public:
 
 };
 
-class ComponentGameActorProxy : public dtActors::GameMeshActor
-{
-public:
-
-   /// Builds the actor properties
-   virtual void BuildPropertyMap();
-
-   /// Instantiates the actor
-   virtual void CreateDrawable();
-
-};
-
+#endif

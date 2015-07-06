@@ -21,8 +21,6 @@
  */
 #include <dtActors/engineactorregistry.h>
 #include <dtActors/infinitelightactorproxy.h>
-#include <dtActors/deltaobjectactorproxy.h>
-#include <dtActors/staticmeshactorproxy.h>
 #include <dtActors/particlesystemactorproxy.h>
 #include <dtActors/dynamicparticlesystemactor.h>
 #include <dtActors/positionallightactorproxy.h>
@@ -94,7 +92,6 @@ namespace dtActors
    dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::INFINITE_LIGHT_ACTOR_TYPE(new dtCore::ActorType("Infinite Light", "dtcore.Lights","Directional light actor."));
    dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::POSITIONAL_LIGHT_ACTOR_TYPE(new dtCore::ActorType("Positional Light", "dtcore.Lights", "Positional light actor."));
    dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::SPOT_LIGHT_ACTOR_TYPE(new dtCore::ActorType("Spotlight", "dtcore.Lights", "Spotlight light actor."));
-   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::STATIC_MESH_ACTOR_TYPE(new dtCore::ActorType("Static Mesh", "dtcore", "Loadable static mesh actor."));
    dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::PARTICLE_SYSTEM_ACTOR_TYPE(new dtCore::ActorType("Particle System", "dtcore", "dtCore::ParticleSystem actor."));
    dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::DYNAMIC_PARTICLE_SYSTEM_ACTOR_TYPE(new dtCore::ActorType("Dynamic Particle System", "dtcore", "dtCore::DynamicParticleSystem actor."));
    dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::INFINITE_TERRAIN_ACTOR_TYPE(new dtCore::ActorType("Infinite Terrain", "dtcore.Terrain", "dtCore::InfiniteTerrain actor."));
@@ -134,6 +131,7 @@ namespace dtActors
    /// deprecated types
    dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::ENVIRONMENT_ACTOR_TYPE(new dtCore::ActorType("Environment", "dtcore.Environment", "dtCore::BasicEnvironment Actor."));
    dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::ENV_ACTOR_TYPE(new dtCore::ActorType("Env", "dtcore.Environment", "dtCore::Environment Actor."));
+   dtCore::RefPtr<dtCore::ActorType> EngineActorRegistry::STATIC_MESH_ACTOR_TYPE(new dtCore::ActorType("Static Mesh", "dtcore", "Loadable static mesh actor."));
 
 
    extern "C" DT_PLUGIN_EXPORT dtCore::ActorPluginRegistry* CreatePluginRegistry()
@@ -182,15 +180,13 @@ namespace dtActors
       mActorFactory->RegisterType<PositionalLightActorProxy>(POSITIONAL_LIGHT_ACTOR_TYPE.get());
       // Spotlight...
       mActorFactory->RegisterType<SpotlightActorProxy>(SPOT_LIGHT_ACTOR_TYPE.get());
-      // Static Mesh...
-      mActorFactory->RegisterType<StaticMeshActorProxy>(STATIC_MESH_ACTOR_TYPE.get());
       // Particle Systems...
       mActorFactory->RegisterType<ParticleSystemActor>(PARTICLE_SYSTEM_ACTOR_TYPE.get());
       mActorFactory->RegisterType<DynamicParticleSystemActor>(DYNAMIC_PARTICLE_SYSTEM_ACTOR_TYPE.get());
       // Infinite terrain...
       mActorFactory->RegisterType<InfiniteTerrainActorProxy>(INFINITE_TERRAIN_ACTOR_TYPE.get());
       // Terrain mesh actor...
-      mActorFactory->RegisterType<MeshTerrainActorProxy>(MESH_TERRAIN_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<MeshTerrainActor>(MESH_TERRAIN_ACTOR_TYPE.get());
       // Skybox actor...
       mActorFactory->RegisterType<SkyBoxActorProxy>(SKY_BOX_ACTOR_TYPE.get());
       // Skybox actor...
@@ -255,5 +251,6 @@ namespace dtActors
    {
       replacements.push_back(std::make_pair(ENVIRONMENT_ACTOR_TYPE->GetFullName(), WEATHER_ENVIRONMENT_ACTOR_TYPE->GetFullName()));
       replacements.push_back(std::make_pair(ENV_ACTOR_TYPE->GetFullName(), SKY_DOME_ACTOR_TYPE->GetFullName()));
+      replacements.push_back(std::make_pair(STATIC_MESH_ACTOR_TYPE->GetFullName(), GAME_MESH_ACTOR_TYPE->GetFullName()));
    }
 } // namespace dtActors

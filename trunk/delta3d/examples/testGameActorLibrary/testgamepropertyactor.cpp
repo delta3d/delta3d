@@ -27,8 +27,6 @@
 */
 #include "testgamepropertyactor.h"
 
-#include <dtActors/deltaobjectactorproxy.h>
-
 #include <dtCore/scene.h>
 #include <dtCore/object.h>
 
@@ -51,7 +49,6 @@
 
 using namespace dtCore;
 using namespace dtCore;
-using namespace dtActors;
 
 const std::string TestGamePropertyActor::GROUPNAME("Example Game Properties");
 
