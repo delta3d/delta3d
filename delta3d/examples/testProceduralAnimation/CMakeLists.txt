@@ -1,26 +1,11 @@
+SET(LIB_NAME     testProceduralAnimation)
 
-SET(LIB_NAME testProceduralAnimation)
-
-SET(LIB_SOURCES
-    proceduralanimationactor.cpp
-	proceduralanimationactor.h
-	proceduralanimationcomponent.cpp
-	proceduralanimationcomponent.h
-	readme.txt
-	testactorlibraryregistry.cpp
-	testactorlibraryregistry.h
-	testentrypoint.cpp
-	testentrypoint.h
-	testexport.h
-)
+file(GLOB TARGET_SRC "*.cpp" "*.txt")
+file(GLOB TARGET_H "*.h")
 
 INCLUDE_DIRECTORIES( ${CAL3D_INCLUDE_DIR} )#for dtAnim
 
-ADD_LIBRARY(${LIB_NAME} SHARED
-   ${LIB_SOURCES}
-)
-
-TARGET_LINK_LIBRARIES(${LIB_NAME}
+BUILD_LIB_EXAMPLE(${LIB_NAME} TEST_PROCEDURAL_ANIM_LIBRARY
                       ${DTUTIL_LIBRARY}
                       ${DTCORE_LIBRARY}
                       ${DTABC_LIBRARY}
@@ -28,7 +13,4 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
                       ${DTAI_LIBRARY}
                       ${DTGAME_LIBRARY}
                       ${DTACTORS_LIBRARY}
-                   )
-
-SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL TEST_PROCEDURAL_ANIM_LIBRARY)
+                      )
