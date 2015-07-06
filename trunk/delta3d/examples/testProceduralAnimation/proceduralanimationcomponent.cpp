@@ -29,8 +29,8 @@
 #include <dtAnim/basemodeldata.h>
 #include <dtGame/messagetype.h>
 #include <dtAnim/modeldatabase.h>
-#include <dtActors/staticmeshactorproxy.h>
 #include <dtActors/engineactorregistry.h>
+#include <dtActors/gamemeshactor.h>
 #include <dtUtil/mathdefines.h>
 
 #include <cal3d/model.h>
@@ -202,13 +202,13 @@ void ProceduralAnimationComponent::InitializeIKActors()
 ////////////////////////////////////////////////////////////////////////////////
 dtCore::Transformable* ProceduralAnimationComponent::GetTerrain()
 {
-   dtActors::StaticMeshActorProxy* terrainProxy = NULL;
-   GetGameManager()->FindActorByType(*dtActors::EngineActorRegistry::STATIC_MESH_ACTOR_TYPE, terrainProxy);
+   dtActors::GameMeshActor* meshActor = NULL;
+   GetGameManager()->FindActorByType(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, meshActor);
 
-   if (terrainProxy)
+   if (meshActor)
    {
       dtCore::Transformable* terrain = NULL;
-      terrainProxy->GetDrawable(terrain);
+      meshActor->GetDrawable(terrain);
 
       return terrain;
    }
