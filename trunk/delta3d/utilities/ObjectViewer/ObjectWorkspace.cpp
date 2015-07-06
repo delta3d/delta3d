@@ -7,6 +7,8 @@
 #include <dtQt/nodetreepanel.h>
 #include <dtQt/osggraphicswindowqt.h>
 #include <dtQt/projectcontextdialog.h>
+#include <dtQt/propertypanel.h>
+#include <dtQt/propertypanelbuilder.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/xercesparser.h>
 #include <dtCore/datatype.h>
@@ -14,6 +16,7 @@
 #include <dtCore/map.h>
 #include <dtCore/project.h>
 #include <dtCore/shaderprogram.h>
+//#include <dtCore/shaderpropertycontainer.h>
 
 #include <QtGui/QMenuBar>
 #include <QtGui/QAction>
@@ -31,12 +34,31 @@
 #include <QtGui/QDragEnterEvent>
 #include <QtOpenGL/QGLWidget>
 
+#include <osgDB/Registry>
 #include <cassert>
 
+////////////////////////////////////////////////////////////////////////////////
+// CONSTANTS
+////////////////////////////////////////////////////////////////////////////////
+static const QString ORGINIZATION("delta3d");
+static const QString APP_TITLE("Object Viewer");
+
+static const QString GROUP_VIEWS("Views");
+static const QString SETTING_ANIMATION_DOCK_VIS("AnimControlDock.Visible");
+static const QString SETTING_NODETOOLS_DOCK_VIS("NodeToolsDock.Visible");
+static const QString SETTING_PROPERTIES_DOCK_VIS("PropertiesDock.Visible");
+static const QString SETTING_RESOURCE_DOCK_VIS("ResourceDock.Visible");
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// CLASS CODE
 ////////////////////////////////////////////////////////////////////////////////
 ObjectWorkspace::ObjectWorkspace()
   : mLoadShaderDefAction(NULL)
   , mLoadGeometryAction(NULL)
+  , mSaveAsAction(NULL)
+  , mChangeContextAction(NULL)
   , mExitAct(NULL)
 {
    resize(1024, 768);
@@ -53,6 +75,12 @@ ObjectWorkspace::ObjectWorkspace()
    // Additional dock object setup
    mNodeTree = new dtQt::NodeTreePanel();
    mNodeToolsDock->setWidget(mNodeTree);
+
+   // Properties dock setup
+   /*mPropertyPanel = new dtQt::PropertyPanel();
+   mPropertiesDock = new QDockWidget;
+   mPropertiesDock->setWidget(mPropertyPanel);
+   addDockWidget(Qt::RightDockWidgetArea, mPropertiesDock);*/
 
    // Create all program actions
    CreateFileMenuActions();
@@ -151,6 +179,12 @@ void ObjectWorkspace::dropEvent(QDropEvent *event)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::closeEvent(QCloseEvent* eventClose)
+{
+   OnShutdown();
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::CreateMenus()
 {
    QMenu* windowMenu   = menuBar()->addMenu("&File");
@@ -161,6 +195,7 @@ void ObjectWorkspace::CreateMenus()
 
    windowMenu->addAction(mLoadShaderDefAction);
    windowMenu->addAction(mLoadGeometryAction);
+   windowMenu->addAction(mSaveAsAction);
    windowMenu->addAction(mChangeContextAction);
 
    QAction* toggleShadeToolbarAction = toolBarMenu->addAction(tr("Shading toolbar"));
@@ -180,6 +215,7 @@ void ObjectWorkspace::CreateMenus()
    viewMenu->addAction(mToggleDockAnimationControl);
    viewMenu->addAction(mToggleDockResources);
    viewMenu->addAction(mToggleDockNodeTools);
+   viewMenu->addAction(mToggleDockProperties);
    
    connect(mToggleDockAnimationControl, SIGNAL(toggled(bool)), mAnimationControlDock, SLOT(setVisible(bool)));
    connect(mAnimationControlDock, SIGNAL(visibilityChanged(bool)), mToggleDockAnimationControl, SLOT(setChecked(bool)));
@@ -189,6 +225,9 @@ void ObjectWorkspace::CreateMenus()
 
    connect(mToggleDockNodeTools, SIGNAL(toggled(bool)), mNodeToolsDock, SLOT(setVisible(bool)));
    connect(mNodeToolsDock, SIGNAL(visibilityChanged(bool)), mToggleDockNodeTools, SLOT(setChecked(bool)));
+
+   //connect(mToggleDockProperties, SIGNAL(toggled(bool)), mPropertiesDock, SLOT(setVisible(bool)));
+   //connect(mPropertiesDock, SIGNAL(visibilityChanged(bool)), mToggleDockProperties, SLOT(setChecked(bool)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -207,6 +246,10 @@ void ObjectWorkspace::CreateFileMenuActions()
    mLoadGeometryAction->setStatusTip(tr("Open an existing shader definition file."));
    connect(mLoadGeometryAction, SIGNAL(triggered()), this, SLOT(OnLoadGeometry()));
 
+   mSaveAsAction = new QAction(tr("&Save As..."), this);
+   mSaveAsAction->setStatusTip(tr("Save a model as a different file name or format."));
+   connect(mSaveAsAction, SIGNAL(triggered()), this, SLOT(OnSaveAs()));
+
    mChangeContextAction = new QAction(tr("Change Project..."), this);
    mChangeContextAction->setStatusTip(tr("Change the project context directory."));
    connect(mChangeContextAction, SIGNAL(triggered()), this, SLOT(OnChangeContext()));
@@ -222,6 +265,10 @@ void ObjectWorkspace::CreateFileMenuActions()
    mToggleDockNodeTools = new QAction(tr("Node Tools"), this);
    mToggleDockNodeTools->setCheckable(true);
    mToggleDockNodeTools->setChecked(true);
+
+   mToggleDockProperties = new QAction(tr("Properties"), this);
+   mToggleDockProperties->setCheckable(true);
+   mToggleDockProperties->setChecked(true);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -335,7 +382,10 @@ void ObjectWorkspace::CreateToolbars()
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnInitialization()
 {
-   QSettings settings("MOVES", "Object Viewer");
+   QSettings settings(ORGINIZATION, APP_TITLE);
+
+   LoadSettings();
+
    QStringList files = settings.value("projectContextPath").toStringList();
 
    if (files.empty())
@@ -363,6 +413,12 @@ void ObjectWorkspace::OnInitialization()
    SaveCurrentContextPath();
    SaveCurrentShaderFiles();
    UpdateResourceLists();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::OnShutdown()
+{
+   SaveSettings();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -677,6 +733,55 @@ void ObjectWorkspace::OnLoadGeometry(const std::string& fullName)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::OnSaveAs()
+{
+   // Build the supported 3D format list.
+   std::ostringstream filterStr;
+   filterStr << "OpenSceneGraph(*.osg *.ive);;Object(*.obj);;OpenFlight (*.flt);;3DStudio (*.3ds)";
+   osgDB::Registry* reg = osgDB::Registry::instance();
+   
+   if (reg->getReaderWriterForExtension("dae"))
+   {
+      filterStr << ";;Collada (*.dae)";
+   }
+
+   if (reg->getReaderWriterForExtension("fbx"))
+   {
+      filterStr << ";;Autodesk FBX (*.fbx)";
+   }
+
+   // Determine the target file path.
+   QString filename = QFileDialog::getSaveFileName(this,
+      tr("Save As File"),
+      mContextPath.c_str(),
+      tr(filterStr.str().c_str()));
+
+   QString statusMessage;
+
+   if ( ! filename.isEmpty())
+   {
+      dtCore::Object* obj = mViewer->GetDeltaObject();
+      if (obj != nullptr && obj->GetOSGNode() != nullptr)
+      {
+         osgDB::ReaderWriter::WriteResult result = reg->writeNode(*obj->GetOSGNode(), filename.toStdString(), nullptr);
+
+         // TODO:
+      }
+      else
+      {
+         QString msg = "Could not save file: " + filename;
+         QMessageBox::warning(this, tr("Save Failed"), msg);
+      }
+   }
+   else
+   {
+      statusMessage = QString(tr("Unable to save file: %1")).arg(filename);
+   }
+
+   statusBar()->showMessage(statusMessage, 2000);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnGeometryChanged()
 {
    osg::Node* node = NULL;
@@ -731,7 +836,7 @@ std::string ObjectWorkspace::GetContextPathFromUser()
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::SaveCurrentContextPath()
 {
-   QSettings settings("MOVES", "Object Viewer");
+   QSettings settings(ORGINIZATION, APP_TITLE);
 
    try
    {
@@ -755,7 +860,7 @@ void ObjectWorkspace::SaveCurrentContextPath()
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::SaveCurrentShaderFiles()
 {
-   QSettings settings("MOVES", "Object Viewer");
+   QSettings settings(ORGINIZATION, APP_TITLE);
 
    try
    {
@@ -800,14 +905,27 @@ void ObjectWorkspace::SetViewer(ObjectViewer* viewer)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::OnShaderApplied(dtCore::ShaderProgram* shaderProgram)
+void ObjectWorkspace::OnShaderApplied(ShaderProgramPtr shaderProgram)
 {
-   // TODO: Show properties on property panel. To be committed soon...
+   // Show properties on property panel. To be committed soon...
+   if (shaderProgram.valid())
+   {
+      /*dtCore::RefPtr<dtCore::ShaderPropertyContainer> shaderProps = new dtCore::ShaderPropertyContainer;
+      shaderProps->SetShaderProgram(shaderProgram);
+      mProperties = shaderProps.get();
+
+      mPropertyPanel->Clear();
+
+      dtCore::RefPtr<dtQt::PropertyPanelBuilder> propBuilder = new dtQt::PropertyPanelBuilder;
+      propBuilder->AddPropertiesToPanel(*mProperties, *mPropertyPanel);*/
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::SetupConnectionsWithViewer()
 {
+   // Main Window Events
+   this->
    // Menu connections
    connect(this, SIGNAL(LoadShaderDefinition(const QString&)),
       mViewer, SLOT(OnLoadShaderFile(const QString&)));
@@ -896,8 +1014,8 @@ void ObjectWorkspace::SetupConnectionsWithViewer()
    connect(resObj, SIGNAL(RemoveShaderDef(const std::string&)),
       this, SLOT(OnRemoveShaderDef(const std::string&)));
 
-   connect(mViewer, SIGNAL(SignalShaderApplied(dtCore::ShaderProgram*)),
-      this, SLOT(OnShaderApplied(dtCore::ShaderProgram*)));
+   connect(mViewer, SIGNAL(SignalShaderApplied(ShaderProgramPtr)),
+      this, SLOT(OnShaderApplied(ShaderProgramPtr)));
 
    // Node Tree Panel
    connect(resObj, SIGNAL(LoadGeometry(const std::string&)),
@@ -906,8 +1024,8 @@ void ObjectWorkspace::SetupConnectionsWithViewer()
    connect(resObj, SIGNAL(UnloadGeometry()),
       this, SLOT(OnGeometryChanged()));
 
-   connect(mNodeTree, SIGNAL(SignalNodeSelected(OsgNodePtr)),
-      mViewer, SLOT(OnNodeSelected(OsgNodePtr)));
+   connect(mNodeTree, SIGNAL(SignalNodesSelected(OsgNodeArray)),
+      mViewer, SLOT(OnNodesSelected(OsgNodeArray)));
 
    // Toolbar connections
    connect((QObject*)this->mShadedAction, SIGNAL(triggered()), mViewer, SLOT(OnSetShaded()));
@@ -922,4 +1040,36 @@ void ObjectWorkspace::SetupConnectionsWithViewer()
    connect((QObject*)this->mWorldSpaceAction, SIGNAL(triggered()), mViewer, SLOT(OnWorldSpaceMode()));
    connect((QObject*)this->mLocalSpaceAction, SIGNAL(triggered()), mViewer, SLOT(OnLocalSpaceMode()));
 }
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::LoadSettings()
+{
+   QSettings settings(ORGINIZATION, APP_TITLE);
+
+   if ( ! settings.contains(SETTING_NODETOOLS_DOCK_VIS))
+   {
+      return;
+   }
+
+   settings.beginGroup(GROUP_VIEWS);
+   mAnimationControlDock->setVisible(settings.value(SETTING_ANIMATION_DOCK_VIS, false).toBool());
+   mNodeToolsDock->setVisible(settings.value(SETTING_NODETOOLS_DOCK_VIS, true).toBool());
+   //mPropertiesDock->setVisible(settings.value(SETTING_PROPERTIES_DOCK_VIS, true).toBool());
+   mResourceDock->setVisible(settings.value(SETTING_RESOURCE_DOCK_VIS, true).toBool());
+   settings.endGroup();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::SaveSettings()
+{
+   QSettings settings(ORGINIZATION, APP_TITLE);
+
+   settings.beginGroup(GROUP_VIEWS);
+   settings.setValue(SETTING_ANIMATION_DOCK_VIS, mAnimationControlDock->isVisible());
+   settings.setValue(SETTING_NODETOOLS_DOCK_VIS, mNodeToolsDock->isVisible());
+   //settings.setValue(SETTING_PROPERTIES_DOCK_VIS, mPropertiesDock->isVisible());
+   settings.setValue(SETTING_RESOURCE_DOCK_VIS, mResourceDock->isVisible());
+   settings.endGroup();
+}
+
 

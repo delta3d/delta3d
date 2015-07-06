@@ -8,22 +8,25 @@ INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}
 
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/utilities/${APP_NAME})
 
-SET(PROG_HEADERS ${SOURCE_PATH}/GeometryTree.h
+SET(PROG_HEADERS ${SOURCE_PATH}/AnimationControlDock.h
+				 ${SOURCE_PATH}/GeometryTree.h
+                 ${SOURCE_PATH}/MotionModelToolbar.h
+                 ${SOURCE_PATH}/NodeHighlighter.h
                  ${SOURCE_PATH}/ObjectViewer.h
                  ${SOURCE_PATH}/ObjectViewerData.h
                  ${SOURCE_PATH}/ObjectWorkspace.h
-                 ${SOURCE_PATH}/AnimationControlDock.h
-                 ${SOURCE_PATH}/MotionModelToolbar.h
                  ${SOURCE_PATH}/ResourceDock.h
                  ${SOURCE_PATH}/ShaderTree.h
-                 ${SOURCE_PATH}/TextEdit.h)
+                 ${SOURCE_PATH}/TextEdit.h
+                 ${SOURCE_PATH}/Typedefs.h)
 
-SET(PROG_SOURCES ${SOURCE_PATH}/GeometryTree.cpp
-                 ${SOURCE_PATH}/main.cpp
+SET(PROG_SOURCES ${SOURCE_PATH}/main.cpp
+                 ${SOURCE_PATH}/AnimationControlDock.cpp
+				 ${SOURCE_PATH}/GeometryTree.cpp
+                 ${SOURCE_PATH}/MotionModelToolbar.cpp
+                 ${SOURCE_PATH}/NodeHighlighter.cpp
                  ${SOURCE_PATH}/ObjectViewer.cpp
                  ${SOURCE_PATH}/ObjectWorkspace.cpp
-                 ${SOURCE_PATH}/AnimationControlDock.cpp
-                 ${SOURCE_PATH}/MotionModelToolbar.cpp
                  ${SOURCE_PATH}/ResourceDock.cpp
                  ${SOURCE_PATH}/ShaderTree.cpp
                  ${SOURCE_PATH}/TextEdit.cpp

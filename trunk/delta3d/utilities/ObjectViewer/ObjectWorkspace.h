@@ -18,15 +18,22 @@
  *
  */
 
-#ifndef DELTA_OBJECTWORKSPACE
-#define DELTA_OBJECTWORKSPACE
+#ifndef DELTA_OBJECT_WORKSPACE_H
+#define DELTA_OBJECT_WORKSPACE_H
 
+////////////////////////////////////////////////////////////////////////////////
+// INCLUDE DIRECTIVES
+////////////////////////////////////////////////////////////////////////////////
 #include <QtGui/QMainWindow>
 #include <QtCore/QFileInfoList>
 #include <dtCore/refptr.h>
+#include "Typedefs.h"
 
-///////////////////////////////////////////////////////////////////////////////
 
+
+////////////////////////////////////////////////////////////////////////////////
+// FORWARD DECLARATIONS
+////////////////////////////////////////////////////////////////////////////////
 class AnimationControlDock;
 class MotionModelToolbar;
 class ResourceDock;
@@ -42,12 +49,16 @@ namespace dtCore
 namespace dtQt
 {
    class NodeTreePanel;
+   class PropertyPanel;
 }
-
-///////////////////////////////////////////////////////////////////////////////
 
 class ObjectViewer;
 
+
+
+////////////////////////////////////////////////////////////////////////////////
+// CLASS CODE
+////////////////////////////////////////////////////////////////////////////////
 class ObjectWorkspace : public QMainWindow
 {
    Q_OBJECT
@@ -59,6 +70,7 @@ public:
 
    virtual void dragEnterEvent(QDragEnterEvent* event);
    virtual void dropEvent(QDropEvent* event);
+   /*override*/ void closeEvent(QCloseEvent* eventClose);
 
 signals:
 
@@ -76,6 +88,7 @@ signals:
 public slots:
 
    void OnInitialization();
+   void OnShutdown();
    void OnToggleResourceDock();
    void OnToggleAnimationControlDock();
    void OnToggleNodeToolsDock();
@@ -88,8 +101,9 @@ public slots:
    void OnRemoveShaderDef(const std::string& filename);
    void OnLoadMap(const std::string& mapName);
    void OnLoadGeometry(const std::string& fullName);
+   void OnSaveAs();
    void OnGeometryChanged();
-   void OnShaderApplied(dtCore::ShaderProgram* shaderProgram);
+   void OnShaderApplied(ShaderProgramPtr shaderProgram);
 
 private:
 
@@ -98,6 +112,7 @@ private:
    // File menu
    QAction* mLoadShaderDefAction;
    QAction* mLoadGeometryAction;
+   QAction* mSaveAsAction;
    QAction* mChangeContextAction;
    QAction* mExitAct;
 
@@ -125,6 +140,7 @@ private:
    QAction* mToggleDockResources;
    QAction* mToggleDockAnimationControl;
    QAction* mToggleDockNodeTools;
+   QAction* mToggleDockProperties;
 
    QToolBar* mCoordinateToolbar;
    QToolBar* mDisplayToolbar;
@@ -136,6 +152,9 @@ private:
    ResourceDock* mResourceDock;
    QDockWidget* mNodeToolsDock;
    dtQt::NodeTreePanel* mNodeTree;
+   QDockWidget* mPropertiesDock;
+   //dtQt::PropertyPanel* mPropertyPanel;
+   //dtCore::RefPtr<dtCore::PropertyContainer> mProperties;
 
    std::string mContextPath;
    QString mShaderDefinitionName;
@@ -170,6 +189,9 @@ private slots:
    void SaveCurrentContextPath();
    void SaveCurrentShaderFiles();
    void SetupConnectionsWithViewer();
+
+   void LoadSettings();
+   void SaveSettings();
 };
 
-#endif // DELTA_OBJECTWORKSPACE
+#endif // DELTA_OBJECT_WORKSPACE_H

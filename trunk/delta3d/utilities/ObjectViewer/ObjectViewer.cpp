@@ -229,6 +229,9 @@ ObjectViewer::ObjectViewer()
 {
    mShadedScene   = new osg::Group;
    mUnShadedScene = new osg::Group;
+
+   mNodeHighlighter = new NodeHighlighter;
+   mNodeHighlighter->SetCacheEnabled(true);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -265,14 +268,6 @@ void ObjectViewer::Config()
    // Add the compass (3d basis axes) to the bottom left of the screen
    mCompass = new dtCore::Compass(GetCamera());
    GetScene()->GetSceneNode()->addChild(mCompass->GetOSGNode());
-
-   mNodeAxis = new dtCore::PointAxis;
-   mNodeAxis->SetLength(dtCore::PointAxis::X, 1.0f);
-   mNodeAxis->SetLength(dtCore::PointAxis::Y, 1.0f);
-   mNodeAxis->SetLength(dtCore::PointAxis::Z, 1.0f);
-   mNodeAxis->Enable(dtCore::PointAxis::LABEL_X);
-   mNodeAxis->Enable(dtCore::PointAxis::LABEL_Y);
-   mNodeAxis->Enable(dtCore::PointAxis::LABEL_Z);
 
    OnMotionModelSelected(MotionModelType::ORBIT.GetValue());
 
@@ -695,8 +690,8 @@ void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnUnloadGeometryFile()
 {
-   // Detach the axis.
-   OnNodeSelected(nullptr);
+   // Remove node highlights.
+   mNodeHighlighter->SetHighlightsDisabled();
 
    if (mObject.valid())
    {
@@ -737,16 +732,18 @@ void ObjectViewer::OnApplyShader(const std::string& groupName, const std::string
 {
    dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
 
-   dtCore::ShaderProgram* program = shaderManager.FindShaderPrototype(programName, groupName);
+   ShaderProgramPtr program = shaderManager.FindShaderPrototype(programName, groupName);
    assert(program);
 
    try
    {
-      dtCore::ShaderProgram* deltaProgram = shaderManager.AssignShaderFromPrototype(*program, *mShadedScene);
+      ShaderProgramPtr deltaProgram = shaderManager.AssignShaderFromPrototype(*program, *mShadedScene);
       osg::Program* osgProgram = deltaProgram->GetShaderProgram();
 
       // Bind the default location for tangents
       osgProgram->addBindAttribLocation("tangentAttrib", 6);
+
+      emit SignalShaderApplied(deltaProgram);
    }
    catch (const dtUtil::Exception &e)
    {
@@ -1283,6 +1280,7 @@ void ObjectViewer::GenerateTangentsForObject(dtCore::Object* object)
       osg::ref_ptr<osgUtil::TangentSpaceGenerator> tsg = new osgUtil::TangentSpaceGenerator;
       tsg->generate(geom, 0);
       osg::Array* tangentArray = tsg->getTangentArray();
+      tangentArray->setName("Tangents");
 
       if (!geom->getVertexAttribArray(6))
       {
@@ -1306,19 +1304,13 @@ void ObjectViewer::OnNextStatistics()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void ObjectViewer::OnNodeSelected(OsgNodePtr node)
+void ObjectViewer::OnNodesSelected(OsgNodeArray nodes)
 {
-   osg::Node* axisNode = mNodeAxis->GetOSGNode();
-   while (axisNode->getNumParents() > 0)
-   {
-      osg::Group* parent = axisNode->getParent(0);
-      parent->removeChild(axisNode);
-   }
+   mNodeHighlighter->SetHighlightsDisabled();
 
-   osg::Group* newParent = dynamic_cast<osg::Group*>(node.get());
-   if (newParent != nullptr)
+   if ( ! nodes.empty())
    {
-      newParent->addChild(axisNode);
+      mNodeHighlighter->SetHighlightsEnabled(nodes, true);
    }
 }
 

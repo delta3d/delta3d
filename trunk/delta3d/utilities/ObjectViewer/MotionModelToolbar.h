@@ -1,6 +1,5 @@
-/*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2008 MOVES Institute
+/* -*-c++-*-
+* Copyright (C) 2015, Caper Holdings LLC
 *
 * This library is free software; you can redistribute it and/or modify it under
 * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,11 +14,10 @@
 * You should have received a copy of the GNU Lesser General Public License
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
 */
 
-#ifndef DELTA_MOTION_MODEL_TOOLBAR
-#define DELTA_MOTION_MODEL_TOOLBAR
+#ifndef DELTA_MOTION_MODEL_TOOLBAR_H
+#define DELTA_MOTION_MODEL_TOOLBAR_H
 
 #include "ui_MotionModelToolbar.h"
 #include <dtUtil/enumeration.h>
