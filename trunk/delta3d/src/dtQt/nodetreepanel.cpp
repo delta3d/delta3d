@@ -25,6 +25,9 @@ namespace dtQt
    static const QString ICON_MATRIX(":dtQt/icons/nodes/matrix.png");
    static const QString ICON_SKELETON(":dtQt/icons/nodes/skeleton.png");
    static const QString ICON_STATESET(":dtQt/icons/nodes/stateset.png");
+
+   const static int ITEM_COLUMN_NAME = 0;
+   const static int ITEM_COLUMN_DETAILS = 1;
    
    
 
@@ -34,7 +37,9 @@ namespace dtQt
    NodeTreeItem::NodeTreeItem(osg::Node& node, QTreeWidget* parent)
       : BaseClass(parent)
       , mNode(&node)
+      , mVisibilityMask(1)
    {
+      UpdateUI();
       UpdateDescription();
    }
 
@@ -45,12 +50,63 @@ namespace dtQt
    {
       mNode = node;
 
+      UpdateUI();
       UpdateDescription();
    }
 
    osg::Node* NodeTreeItem::GetNode() const
    {
       return mNode.get();
+   }
+
+   void NodeTreeItem::UpdateData()
+   {
+      if (mNode.valid())
+      {
+         // Determine if the node name should change.
+         std::string itemText(text(ITEM_COLUMN_NAME).toStdString());
+         if (itemText != mNode->getName())
+         {
+            mNode->setName(itemText);
+         }
+
+         osg::Node::NodeMask masks = mNode->getNodeMask();
+
+         // Determine if the node should be visible.
+         if (checkState(ITEM_COLUMN_NAME) == Qt::Checked)
+         {
+            if (masks == 0x0)
+            {
+               mNode->setNodeMask(mVisibilityMask);
+            }
+         }
+         else // Unchecked
+         {
+            if (masks != 0x0)
+            {
+               mNode->setNodeMask(0x0);
+
+               // Keep track of masks used for visibility.
+               mVisibilityMask = masks;
+            }
+         }
+      }
+   }
+
+   void NodeTreeItem::UpdateUI()
+   {
+      bool nodeVisible = mNode.valid() && mNode->getNodeMask() != 0x0;
+
+      // Update Visibility Checkbox
+      setCheckState(ITEM_COLUMN_NAME, nodeVisible ? Qt::Checked : Qt::Unchecked);
+
+      // Update Text
+      std::string itemText(text(ITEM_COLUMN_NAME).toStdString());
+      if (mNode.valid() && itemText != mNode->getName())
+      {
+         QString qstr = mNode->getName().c_str();
+         setText(ITEM_COLUMN_NAME, qstr);
+      }
    }
 
    void NodeTreeItem::UpdateDescription()
@@ -174,17 +230,26 @@ namespace dtQt
       NodeTreeItem* CreateItem(osg::Node& node)
       {
          NodeTreeItem* item = new NodeTreeItem(node);
+         item->setFlags(item->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
+
          mNodeItemMap.insert(std::make_pair(&node, item));
 
+         // Icon
          QIcon icon(GetIconForNodeType(node));
-         item->setIcon(0, icon);
+         item->setIcon(ITEM_COLUMN_NAME, icon);
 
-         if (node.getStateSet() != nullptr)
+         // Details Field
+         osg::StateSet* ss = node.getStateSet();
+         if (ss != nullptr)
          {
+            int col = ITEM_COLUMN_DETAILS;
+
             QIcon statesetIcon(ICON_STATESET);
-            item->setIcon(1, statesetIcon);
-            QString qtip("Stateset");
-            item->setToolTip(1, qtip);
+            item->setIcon(col, statesetIcon);
+
+            std::string str = "Stateset (" + ss->getName() + ")";
+            QString qtip(str.c_str());
+            item->setToolTip(col, qtip);
          }
 
          return item;
@@ -432,12 +497,7 @@ namespace dtQt
    void NodeTreePanel::OnItemChanged(QTreeWidgetItem* item, int column)
    {
       NodeTreeItem* nodeItem = static_cast<NodeTreeItem*>(item);
-
-      osg::Node* node = nodeItem->GetNode();
-      if (node != nullptr)
-      {
-         node->setName(nodeItem->text(0).toStdString());
-      }
+      nodeItem->UpdateData();
    }
 
 }
