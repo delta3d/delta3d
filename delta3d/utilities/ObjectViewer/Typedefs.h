@@ -6,7 +6,7 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include <osg/Node>
-#include <dtCore/ShaderProgram.h>
+#include <dtCore/shaderprogram.h>
 
 
 
