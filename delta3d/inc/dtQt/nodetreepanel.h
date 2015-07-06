@@ -9,6 +9,7 @@
 #include <dtCore/refptr.h>
 #include <QtGui/qwidget.h>
 #include <QtGui/qtreewidget.h>
+#include <QtGui/qstyleditemdelegate.h>
 #include <osg/Node>
 
 
@@ -38,11 +39,47 @@ namespace dtQt
 
       void SetNode(osg::Node* node);
       osg::Node* GetNode() const;
+
+      /**
+       * Sets values on the node from values contained in the UI for this item.
+       */
+      void UpdateData();
+
+      /**
+       * Sets values on the UI from values  contained in the node.
+       */
+      void UpdateUI();
       
       void UpdateDescription();
 
    protected:
       dtCore::ObserverPtr<osg::Node> mNode;
+      osg::Node::NodeMask mVisibilityMask;
+   };
+
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   /////////////////////////////////////////////////////////////////////////////
+   class NodeItemDelegate : public QStyledItemDelegate
+   {
+      Q_OBJECT
+
+   public:
+      typedef QStyledItemDelegate BaseClass;
+
+      NodeItemDelegate(QObject* parent = 0);
+
+      QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
+         const QModelIndex& index) const;
+
+      void setEditorData(QWidget* editor, const QModelIndex& index) const;
+      void setModelData(QWidget* editor, QAbstractItemModel* model,
+         const QModelIndex& index) const;
+
+      void updateEditorGeometry(QWidget* editor,
+         const QStyleOptionViewItem& option, const QModelIndex& index) const;
    };
 
 
@@ -75,7 +112,7 @@ namespace dtQt
       void UpdateColumns();
       void OnItemSelectionChanged();
       void OnNodeFilterClicked();
-
+      
       void OnItemChanged(QTreeWidgetItem* item, int column);
 
    protected:
