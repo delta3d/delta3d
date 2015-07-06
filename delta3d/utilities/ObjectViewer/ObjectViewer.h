@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef DELTA_OBJECT_VIEWER
-#define DELTA_OBJECT_VIEWER
+#ifndef DELTA_OBJECT_VIEWER_H
+#define DELTA_OBJECT_VIEWER_H
 
 #include <QtCore/QObject>
 #include <QtCore/QTimer>
@@ -37,6 +37,8 @@
 #include <vector>
 
 #include "MotionModelToolbar.h"
+#include "NodeHighlighter.h"
+#include "Typedefs.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -61,10 +63,6 @@ namespace dtAnim
 {
    class CharDrawable;
 }
-
-
-
-typedef dtQt::NodeTreePanel::OsgNodePtr OsgNodePtr;
 
 
 
@@ -103,7 +101,7 @@ public slots:
    void OnSetGenerateTangentAttribute(bool shouldGenerate);
    void OnToggleGrid(bool shouldDisplay);
    void OnNextStatistics();
-   void OnNodeSelected(OsgNodePtr node);
+   void OnNodesSelected(OsgNodeArray nodes);
 
    // Lighting slots
    void OnFixLights();
@@ -126,6 +124,7 @@ public slots:
 
 signals:
 
+   void SignalShaderApplied(ShaderProgramPtr shaderProgram);
    void ShaderLoaded(const std::string& filename, const std::string& shaderGroup, const std::string& shaderName);
    void ErrorOccured(const QString& msg);
    void LightUpdate(const LightInfo& lightInfo);
@@ -151,7 +150,7 @@ private:
    dtCore::RefPtr<dtCore::Object> mObject;
    dtCore::RefPtr<dtAnim::CharDrawable> mCharacter;
    dtCore::RefPtr<dtCore::Compass> mCompass;
-   dtCore::RefPtr<dtCore::PointAxis> mNodeAxis;
+   dtCore::RefPtr<NodeHighlighter> mNodeHighlighter;
 
    dtCore::RefPtr<dtCore::MotionModel> mMotionModel;
    std::vector<dtCore::RefPtr<dtCore::ObjectMotionModel> > mLightMotion;
@@ -168,4 +167,4 @@ private:
    bool  mShouldGenerateTangents;
 };
 
-#endif // DELTA_OBJECT_VIEWER
+#endif // DELTA_OBJECT_VIEWER_H
