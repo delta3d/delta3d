@@ -251,7 +251,7 @@ namespace dtGame
             continue;
          }
 
-         dtGame::GameActor* drawable = NULL;
+         dtCore::Transformable* drawable = NULL;
          actor->GetDrawable(drawable);
          DeadReckoningActorComponent& helper = *i->second;
 
