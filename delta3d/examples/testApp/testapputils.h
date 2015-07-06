@@ -41,9 +41,6 @@ namespace dtExample
    {
    public:
       bool GenerateTangentsForObject(dtCore::BaseActorObject& actor) const;
-
-      bool GenerateTangentsForObject(dtCore::DeltaDrawable& drawable) const;
-
       bool IsAttachableActor(dtCore::BaseActorObject& actor) const;
    };
 

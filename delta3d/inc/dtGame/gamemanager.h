@@ -568,7 +568,7 @@ namespace dtGame
        * @note you must include dtGame/gamemanager.inl to use the method.
        */
       template <typename UnaryFunctor>
-      void ForEachActor(UnaryFunctor& func, bool applyOnlyToGameActors = false);
+      void ForEachActor(UnaryFunctor func, bool applyOnlyToGameActors = false);
 
       /**
        * Allows performing an operation on each prototype actor in the game manager.
@@ -576,7 +576,7 @@ namespace dtGame
        * @note you must include dtGame/gamemanager.inl to use the method.
        */
       template <typename UnaryFunctor>
-      void ForEachPrototype(UnaryFunctor& func) const;
+      void ForEachPrototype(UnaryFunctor func) const;
 
       /**
        * Allows custom searching on each non-prototype actor in the game manager.
@@ -586,7 +586,7 @@ namespace dtGame
        * @note you must include dtGame/gamemanager.inl to use the method.
        */
       template <typename FindFunctor>
-      void FindActorsIf(FindFunctor& ifFunc, dtCore::ActorPtrVector& toFill);
+      void FindActorsIf(FindFunctor ifFunc, dtCore::ActorPtrVector& toFill);
 
       /**
        * Allows custom searching on each prototype actor in the game manager.
@@ -596,7 +596,7 @@ namespace dtGame
        * @note you must include dtGame/gamemanager.inl to use the method.
        */
       template <typename FindFunctor>
-      void FindPrototypesIf(FindFunctor& ifFunc, dtCore::ActorPtrVector& toFill) const;
+      void FindPrototypesIf(FindFunctor ifFunc, dtCore::ActorPtrVector& toFill) const;
 
       /**
        * Fills a vector with the game proxys whose names match the name parameter

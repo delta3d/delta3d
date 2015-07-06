@@ -29,39 +29,17 @@ class FIRE_FIGHTER_EXPORT FuelValveActor : public GameItemActor
    public:
 
       /// Constructor
-      FuelValveActor(dtGame::GameActorProxy& parent);
+      FuelValveActor();
 
       /**
        * Activates this game item
        */
-      virtual void Activate(bool enable = true);
+      void Activate(bool enable = true) override;
 
    protected:
 
       /// Destructor
       virtual ~FuelValveActor();
-};
-
-class FIRE_FIGHTER_EXPORT FuelValveActorProxy : public GameItemActorProxy
-{
-   public:
-
-      /// Constructor
-      FuelValveActorProxy();
-
-      /// Builds the properties
-      virtual void BuildPropertyMap();
-
-      /// Builds the invokables
-      virtual void BuildInvokables();
-
-      /// Creates the actor
-      virtual void CreateDrawable() { SetDrawable(*new FuelValveActor(*this)); }
-
-   protected:
-
-      /// Destructor
-      virtual ~FuelValveActorProxy();
 };
 
 #endif

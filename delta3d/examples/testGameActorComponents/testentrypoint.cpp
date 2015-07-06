@@ -9,6 +9,7 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
+#include <dtCore/object.h>
 #include <dtCore/project.h>
 #include <dtUtil/datapathutils.h>
 #include <dtGame/baseinputcomponent.h>
@@ -133,16 +134,14 @@ public:
       dtCore::System::GetInstance().Step();
 
       // create a component game actor
-      dtCore::RefPtr<ComponentGameActorProxy> proxy;
-      gameManager.CreateActor(*TestActorLibraryRegistry::COMPONENT_GAME_ACTOR_TYPE.get(), proxy);
+      dtCore::RefPtr<ComponentGameActor> actor;
+      gameManager.CreateActor(*TestActorLibraryRegistry::COMPONENT_GAME_ACTOR_TYPE, actor);
       
       // set mesh property and translation of component game actor
-      ComponentGameActor* actor;
-      proxy->GetDrawable(actor);
-      actor->SetMesh("StaticMeshes/physics_happy_sphere.ive");
+      actor->GetDrawable<dtCore::Object>()->SetMeshResource(dtCore::ResourceDescriptor("StaticMeshes:physics_happy_sphere.ive"));
       dtCore::Transform xform;
       xform.SetTranslation(TARGET_XYZ);
-      actor->SetTransform(xform);
+      actor->GetDrawable<dtCore::Object>()->SetTransform(xform);
 
       // access text label component of actor
       TextLabelComponent* textcomp;
@@ -153,7 +152,7 @@ public:
 
       // WARNING: if you call AddACtor without the boolean arguments,
       // the OnEnteredWorld method of the game actor is not called!
-      gameManager.AddActor(*proxy.get(),false, false);
+      gameManager.AddActor(*actor,false, false);
    }
 
 };

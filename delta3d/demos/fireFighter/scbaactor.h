@@ -24,44 +24,21 @@
 #include <fireFighter/gameitemactor.h>
 #include <fireFighter/export.h>
 
+
 class FIRE_FIGHTER_EXPORT SCBAActor : public GameItemActor
 {
    public:
 
       /// Constructor
-      SCBAActor(dtGame::GameActorProxy& parent);
+      SCBAActor();
 
-      virtual void Activate(bool enable = true);
+      void OnEnteredWorld() override;
 
+      void Activate(bool enable = true) override;
    protected:
 
       /// Destructor
       virtual ~SCBAActor();
-
-      /// Called when the actor is added to the game manager
-      virtual void OnEnteredWorld();
-};
-
-class FIRE_FIGHTER_EXPORT SCBAActorProxy : public GameItemActorProxy
-{
-   public:
-
-      /// Constructor
-      SCBAActorProxy();
-
-      /// Builds the properties
-      virtual void BuildPropertyMap();
-
-      /// Builds the invokables
-      virtual void BuildInvokables();
-
-      /// Instantiates the actor
-      virtual void CreateDrawable() { SetDrawable(*new SCBAActor(*this)); }
-
-   protected:
-
-      /// Destructor
-      virtual ~SCBAActorProxy();
 };
 
 #endif

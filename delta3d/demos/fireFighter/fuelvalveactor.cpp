@@ -29,29 +29,7 @@
 using dtCore::RefPtr;
 
 ////////////////////////////////////////////////////////
-FuelValveActorProxy::FuelValveActorProxy()
-{
-
-}
-
-FuelValveActorProxy::~FuelValveActorProxy()
-{
-
-}
-
-void FuelValveActorProxy::BuildPropertyMap()
-{
-   GameItemActorProxy::BuildPropertyMap();
-}
-
-void FuelValveActorProxy::BuildInvokables()
-{
-   GameItemActorProxy::BuildInvokables();
-}
-
-////////////////////////////////////////////////////////
-FuelValveActor::FuelValveActor(dtGame::GameActorProxy& parent)
-   : GameItemActor(parent)
+FuelValveActor::FuelValveActor()
 {
 
 }
@@ -79,7 +57,7 @@ void FuelValveActor::Activate(bool enable)
       throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);
    }
 
-   dtGame::GameManager& mgr = *GetGameActorProxy().GetGameManager();
+   dtGame::GameManager& mgr = *GetGameManager();
    RefPtr<dtGame::Message> msg =
       mgr.GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
 

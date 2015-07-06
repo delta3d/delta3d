@@ -234,6 +234,12 @@ namespace dtCore
        */
       void ApplyShaderGroup();
 
+      /**
+       * Adds tangents to any osg::drawables that are under this object.
+       */
+      bool GenerateTangents();
+
+
    protected:
       DeltaDrawable(const std::string& name = "DeltaDrawable");
       virtual ~DeltaDrawable();

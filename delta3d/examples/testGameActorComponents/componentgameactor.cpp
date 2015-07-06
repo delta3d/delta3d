@@ -9,12 +9,6 @@
 #include <dtGame/messagetype.h>
 
 ////////////////////////////////////////////////////////////////////////////////
-ComponentGameActor::ComponentGameActor(dtGame::GameActorProxy& parent)
-: dtActors::GameMeshDrawable(parent)
-{
-}
-
-////////////////////////////////////////////////////////////////////////////////
 void ComponentGameActor::Interaction()
 {
    TextLabelComponent* tcomp;
@@ -24,29 +18,20 @@ void ComponentGameActor::Interaction()
 
 
 ////////////////////////////////////////////////////////////////////////////////
-void ComponentGameActorProxy::BuildPropertyMap()
+void ComponentGameActor::BuildPropertyMap()
 {
    dtActors::GameMeshActor::BuildPropertyMap();  
 
-   ComponentGameActor* actor = static_cast<ComponentGameActor*>(GetDrawable());
-
-   static const std::string GROUPNAME = "ComponentGameActor";
+   static const dtUtil::RefString GROUPNAME = "ComponentGameActor";
 
    AddProperty(new dtCore::IntActorProperty("Some Property", "Some Property",
-            dtCore::IntActorProperty::SetFuncType(actor, &ComponentGameActor::SetSomeProperty),
-            dtCore::IntActorProperty::GetFuncType(actor, &ComponentGameActor::GetSomeProperty),
+            dtCore::IntActorProperty::SetFuncType(this, &ComponentGameActor::SetSomeProperty),
+            dtCore::IntActorProperty::GetFuncType(this, &ComponentGameActor::GetSomeProperty),
             "", GROUPNAME));
 }
 
-
-////////////////////////////////////////////////////////////////////////////////
-void ComponentGameActorProxy::CreateDrawable() 
+void ComponentGameActor::BuildActorComponents()
 {
-   ComponentGameActor* actor = new ComponentGameActor(*this);
+   AddComponent(*new TextLabelComponent());
 
-   // add component to the actor. When done now, the component's properties
-   // are accessible in STAGE.
-   actor->AddComponent(*new TextLabelComponent());
-
-   SetDrawable(*actor); 
 }

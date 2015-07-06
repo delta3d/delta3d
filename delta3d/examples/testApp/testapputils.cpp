@@ -26,14 +26,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "testapputils.h"
 #include "testappactorregistry.h"
-#include "meshobjectactor.h"
 #include <dtActors/engineactorregistry.h>
+#include <dtActors/gamemeshactor.h>
+#include <dtAnim/animactorregistry.h>
 #include <dtCore/deltadrawable.h>
+#include <dtCore/object.h>
 #include <dtCore/resourcedescriptor.h>
-#include <dtUtil/geometrycollector.h>
-#include <dtUtil/log.h>
-#include <osg/Geometry>
-#include <osgUtil/TangentSpaceGenerator>
 
 
 
@@ -52,56 +50,7 @@ namespace dtExample
             + actor.GetName());
          return false;
       }
-
-      return GenerateTangentsForObject(*drawable);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   bool TestAppUtils::GenerateTangentsForObject(dtCore::DeltaDrawable& drawable) const
-   {
-      bool success = false;
-
-      // Get all geometry in the graph to apply the shader to
-      osg::ref_ptr<dtUtil::GeometryCollector> geomCollector = new dtUtil::GeometryCollector;
-      drawable.GetOSGNode()->accept(*geomCollector);
-
-      // Calculate tangent vectors for all faces and store them as vertex attributes
-      for (size_t geomIndex = 0; geomIndex < geomCollector->mGeomList.size(); ++geomIndex)
-      {
-         osg::Geometry* geom = geomCollector->mGeomList[geomIndex];
-
-         // Force display lists to OFF and VBO's to ON so that vertex
-         // attributes can be set without disturbing the graphics driver
-         geom->setSupportsDisplayList(false);
-         geom->setUseDisplayList(false);
-         geom->setUseVertexBufferObjects(true);
-
-         osg::ref_ptr<osgUtil::TangentSpaceGenerator> tsg = new osgUtil::TangentSpaceGenerator;
-         tsg->generate(geom, 0);
-         osg::Array* tangentArray = tsg->getTangentArray();
-
-         if ( ! geom->getTexCoordArray(1))
-         {
-            if (tangentArray != NULL)
-            {
-               geom->setTexCoordArray(1, tangentArray);
-
-               success = true;
-            }
-            else
-            {
-               LOG_WARNING("Could not generate tangent space for object: " + drawable.GetName()
-                  + " - Geometry: " + geom->getName());
-            }
-         }
-         else
-         {
-            LOG_INFO("Tangent space data may already exist for object: " + drawable.GetName()
-               + " - Geometry: " + geom->getName());
-         }
-      }
-
-      return success;
+      return drawable->GenerateTangents();
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -111,16 +60,16 @@ namespace dtExample
 
       const dtCore::ActorType* actorType = &actor.GetActorType();
 
-      if(actorType == TestAppActorRegistry::CIVILIAN_ACTOR_TYPE.get()
-         || actorType == TestAppActorRegistry::VESSEL_ACTOR_TYPE.get())
+      if(actorType == dtAnim::AnimActorRegistry::ANIMATION_ACTOR_TYPE.get())
       {
          result = true;
       }
-      else if (actorType == TestAppActorRegistry::MESH_OBJECT_ACTOR_TYPE.get())
+      else if (actorType == dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE.get())
       {
-         MeshObjectActor& meshActor = static_cast<MeshObjectActor&>(actor);
+         // This would be the perfect case to just be able to add a property to an actor.
+         dtActors::GameMeshActor& meshActor = static_cast<dtActors::GameMeshActor&>(actor);
 
-         dtCore::ResourceDescriptor res = meshActor.GetMeshResource();
+         dtCore::ResourceDescriptor res = meshActor.GetDrawable<dtCore::Object>()->GetMeshResource();
          const std::string& resName = res.GetDisplayName();
 
          // Search the resource descriptor string for a hint about the model.

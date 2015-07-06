@@ -4,6 +4,7 @@
 #include <prefix/dtcoreprefix.h>
 #include <dtCore/object.h>
 #include <dtCore/transform.h>
+#include <dtCore/project.h>
 
 #include <dtUtil/boundingshapeutils.h>
 
@@ -18,8 +19,10 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    Object::Object(const std::string& name)
       : Transformable(name)
+      , mUseCache(true)
+      , mRecenterGeometryUponLoad(false)
+      , mGenerateTangents(false)
       , mModel(new Model)
-      , mRecenterGeometry(false)
    {
       Ctor();
    }
@@ -27,8 +30,10 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    Object::Object(TransformableNode& node, const std::string& name)
       : Transformable(node, name)
+      , mUseCache(true)
+      , mRecenterGeometryUponLoad(false)
+      , mGenerateTangents(false)
       , mModel(new Model)
-      , mRecenterGeometry(false)
    {
       Ctor();
    }
@@ -36,7 +41,7 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    void Object::Ctor()
    {
-      RegisterInstance(this);
+      //RegisterInstance(this);
 
       osg::StateSet* stateSet = GetOSGNode()->getOrCreateStateSet();
       stateSet->setMode(GL_NORMALIZE, osg::StateAttribute::ON);
@@ -48,7 +53,7 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    Object::~Object()
    {
-      DeregisterInstance(this);
+      //DeregisterInstance(this);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -69,7 +74,7 @@ namespace dtCore
          //recenter the geometry about the origin by finding the center of it's
          //bounding box and adding a transform between the loaded group node
          //and the top transform which undo's any offsets
-         if (mRecenterGeometry)
+         if (mRecenterGeometryUponLoad)
          {
             dtUtil::BoundingBoxVisitor bbv;
             node->accept(bbv);
@@ -82,12 +87,58 @@ namespace dtCore
 
          mModel->GetMatrixTransform().addChild(node);
 
+         if (mGenerateTangents)
+         {
+            GenerateTangents();
+         }
+
          return node;
       }
       else
       {
          return NULL;
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void Object::AddedToScene(dtCore::Scene* scene)
+   {
+      BaseClass::AddedToScene(scene);
+
+      // Don't load the mesh if we're not
+      // really being added to the scene
+      if (scene != NULL)
+      {
+         if (mMeshResource != dtCore::ResourceDescriptor::NULL_RESOURCE)
+         {
+            LoadFile(dtCore::Project::GetInstance().GetResourcePath(mMeshResource), GetUseCache());
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   DT_IMPLEMENT_ACCESSOR(Object, bool, UseCache);
+   DT_IMPLEMENT_ACCESSOR(Object, bool, RecenterGeometryUponLoad);
+   DT_IMPLEMENT_ACCESSOR(Object, bool, GenerateTangents);
+
+
+   //////////////////////////////////////////////////////////////////////////
+   DT_IMPLEMENT_ACCESSOR_GETTER(Object, dtCore::ResourceDescriptor, MeshResource)
+   void Object::SetMeshResource(const dtCore::ResourceDescriptor& rd)
+   {
+      // Make sure the mesh changed.
+      if (mMeshResource != rd)
+      {
+         mMeshResource = rd;
+
+         // For the initial setting, load the mesh when we first enter the world so we can use the cache variable
+         if (GetSceneParent())
+         {
+            LoadFile(dtCore::Project::GetInstance().GetResourcePath(mMeshResource), GetUseCache());
+         }
+      }
+
+      mMeshResource = rd;
    }
 
    //////////////////////////////////////////////////////////////////////////////

@@ -39,20 +39,19 @@ namespace dtExample
 
          static dtCore::RefPtr<dtCore::ActorType> EMPTY_ACTOR_TYPE;
          static dtCore::RefPtr<dtCore::ActorType> TERRAIN_ACTOR_TYPE;
-         static dtCore::RefPtr<dtCore::ActorType> CIVILIAN_ACTOR_TYPE;
          static dtCore::RefPtr<dtCore::ActorType> FIREWORK_ACTOR_TYPE;
-         static dtCore::RefPtr<dtCore::ActorType> MESH_OBJECT_ACTOR_TYPE;
-         static dtCore::RefPtr<dtCore::ActorType> MESH_LAMP_ACTOR_TYPE;
-         static dtCore::RefPtr<dtCore::ActorType> VESSEL_ACTOR_TYPE;
          
          /// Constructor
          TestAppActorRegistry();
 
          /// Destructor
-         virtual ~TestAppActorRegistry();
+         ~TestAppActorRegistry() override;
 
          /// Registers all of the actor proxies to be exported
          void RegisterActorTypes();
+
+         void GetReplacementActorTypes(ActorTypeReplacements& replacements) const override;
+
       private:
 
    };

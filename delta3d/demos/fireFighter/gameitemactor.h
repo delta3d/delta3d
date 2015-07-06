@@ -22,16 +22,31 @@
 #define DELTA_FIRE_FIGHTER_GAME_ITEM_ACTOR
 
 #include <dtActors/gamemeshactor.h>
+#include <dtCore/object.h>
 #include <fireFighter/export.h>
 #include <dtAudio/sound.h>
 #include <dtCore/actorproxyicon.h>
 
-class FIRE_FIGHTER_EXPORT GameItemActor : public dtActors::GameMeshDrawable
+class FIRE_FIGHTER_EXPORT GameItemActor : public dtActors::GameMeshActor
 {
    public:
-      
+
       /// Constructor
-      GameItemActor(dtGame::GameActorProxy& parent);
+      GameItemActor();
+
+      /// Builds the actor properties
+      virtual void BuildPropertyMap();
+
+      /// Builds the invokables
+      virtual void BuildInvokables();
+
+      // Used in STAGE
+      dtCore::ActorProxyIcon* GetBillBoardIcon();
+
+      virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode()
+      {
+         return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR;
+      }
 
       /**
        * Base class method for activating a game item
@@ -111,52 +126,17 @@ class FIRE_FIGHTER_EXPORT GameItemActor : public dtActors::GameMeshDrawable
 
    protected:
 
-      /// Called when the actor is added to the GM
-      virtual void OnEnteredWorld();
-
       /// Destructor
       virtual ~GameItemActor();
 
-      dtCore::RefPtr<dtAudio::Sound> mInventoryAddSnd; 
-      dtCore::RefPtr<dtAudio::Sound> mItemUseSnd; 
+      dtCore::RefPtr<dtAudio::Sound> mInventoryAddSnd;
+      dtCore::RefPtr<dtAudio::Sound> mItemUseSnd;
       int mItemIndex;
 
    private:
-      
+
       bool mCollectable;
       bool mIsActivated;
- };
-
-class FIRE_FIGHTER_EXPORT GameItemActorProxy : public dtActors::GameMeshActor
-{
-   public:
-
-      /// Constructor
-      GameItemActorProxy();
-
-      /// Builds the actor properties
-      virtual void BuildPropertyMap();
-
-      /// Builds the invokables
-      virtual void BuildInvokables();
-
-      /// Instantiates the actor
-      virtual void CreateDrawable() { SetDrawable(*new GameItemActor(*this)); }
-
-      // Used in STAGE
-      dtCore::ActorProxyIcon* GetBillBoardIcon();
-
-      virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode()
-      {
-         return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR;
-      }
-
-   protected:
-
-      /// Destructor
-      virtual ~GameItemActorProxy();
-
-   private:
 };
 
 #endif

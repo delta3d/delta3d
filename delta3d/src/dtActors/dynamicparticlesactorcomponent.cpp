@@ -687,15 +687,13 @@ namespace dtActors
    /////////////////////////////////////////////////////////////////////////////
    void DynamicParticlesActorComponent::ClearParticleData()
    {
-      UnregisterForTick();
-
-      // Clear all the particle systems.
-      DynamicParticlesDataArray::const_iterator curIter = mParticleDataArray.begin();
-      DynamicParticlesDataArray::const_iterator endIter = mParticleDataArray.end();
-      for (int i = 0; curIter != endIter; ++curIter, ++i)
-      {
-         curIter->get()->ClearParticleSystem();
-      }
+//      // Clear all the particle systems.
+//      DynamicParticlesDataArray::const_iterator curIter = mParticleDataArray.begin();
+//      DynamicParticlesDataArray::const_iterator endIter = mParticleDataArray.end();
+//      for (int i = 0; curIter != endIter; ++curIter, ++i)
+//      {
+//         curIter->get()->ClearParticleSystem();
+//      }
    }
 
    /////////////////////////////////////////////////////////////////////////////

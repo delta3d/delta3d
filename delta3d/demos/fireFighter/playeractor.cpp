@@ -204,7 +204,7 @@ void PlayerActor::AddItemToInventory(GameItemActor& item)
       // Play the added to inventory sound and send out a message
       item.PlayInventoryAddSnd();
       RefPtr<dtGame::Message> msg = GetGameActorProxy().GetGameManager()->GetMessageFactory().CreateMessage(FireFighterMessageType::ITEM_ACQUIRED);
-      msg->SetAboutActorId(item.GetUniqueId());
+      msg->SetAboutActorId(item.GetId());
       GetGameActorProxy().GetGameManager()->SendMessage(*msg);
    }
 }
@@ -249,7 +249,7 @@ void PlayerActor::UseSelectedItem(bool use)
       mSelectedItem->second->Activate(use);
    }
    RefPtr<dtGame::Message> msg = GetGameActorProxy().GetGameManager()->GetMessageFactory().CreateMessage(use ? FireFighterMessageType::ITEM_ACTIVATED : FireFighterMessageType::ITEM_DEACTIVATED);
-   msg->SetAboutActorId(mSelectedItem->second->GetUniqueId());
+   msg->SetAboutActorId(mSelectedItem->second->GetId());
    GetGameActorProxy().GetGameManager()->SendMessage(*msg);
 }
 
@@ -278,7 +278,7 @@ void PlayerActor::UpdateSelectedItem(bool toTheLeft)
    }
 
    RefPtr<dtGame::Message> msg = GetGameActorProxy().GetGameManager()->GetMessageFactory().CreateMessage(FireFighterMessageType::ITEM_SELECTED);
-   msg->SetAboutActorId(mSelectedItem->second->GetUniqueId());
+   msg->SetAboutActorId(mSelectedItem->second->GetId());
    GetGameActorProxy().GetGameManager()->SendMessage(*msg);
 }
 
@@ -313,8 +313,9 @@ void PlayerActor::ComputeSceneIntersections(const float deltaSimTime)
       if (mFireHose->IsEnabled())
       {
          // Check for collision with the fire
-         FireActor* fa = dynamic_cast<FireActor*>(dd);
-         if (fa != NULL)
+         FireActor* fa = nullptr;
+         GetGameActorProxy().GetGameManager()->FindGameActorById(dd->GetUniqueId(), fa);
+         if (fa != nullptr)
          {
             fa->DecreaseIntensity(deltaSimTime);
          }
@@ -322,7 +323,8 @@ void PlayerActor::ComputeSceneIntersections(const float deltaSimTime)
 
       // Check for collision with a game item and send a message to show the
       // hand or not
-      GameItemActor* gia = dynamic_cast<GameItemActor*>(dd);
+      GameItemActor* gia = nullptr;
+      GetGameActorProxy().GetGameManager()->FindGameActorById(dd->GetUniqueId(), gia);
       if (gia == NULL)
       {
          SendItemIntersectedMessage(dtCore::UniqueId(""));
@@ -333,7 +335,7 @@ void PlayerActor::ComputeSceneIntersections(const float deltaSimTime)
 
       // Now we know we have intersected with a game item
       // we need to send an intersection message
-      SendItemIntersectedMessage(gia->GetUniqueId());
+      SendItemIntersectedMessage(gia->GetId());
     }
    else
    {

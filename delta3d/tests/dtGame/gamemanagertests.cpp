@@ -859,7 +859,7 @@ void GameManagerTests::TestComponentPriority()
 /////////////////////////////////////////////////
 void GameManagerTests::TestCreateRemoteActor()
 {
-   dtCore::RefPtr<const dtCore::ActorType> type = mGM->FindActorType("dtcore.examples", "Test All Properties");
+   dtCore::RefPtr<const dtCore::ActorType> type = mGM->FindActorType("dtActors", "LinkedPoints");
    dtCore::RefPtr<const dtCore::ActorType> gameActorType = mGM->FindActorType("ExampleActors","Test1Actor");
 
    //sanity check.
@@ -1202,19 +1202,6 @@ void GameManagerTests::TestGameActorTreeAddDelete()
    }
 }
 
-/////////////////////////////////////////////////
-struct IsRemoteFunc
-{
-   IsRemoteFunc():count(0){}
-
-   void operator()(dtCore::BaseActorObject& actor)
-   {
-      ++count;
-      CPPUNIT_ASSERT(actor.IsGameActor());
-      CPPUNIT_ASSERT(static_cast<dtGame::GameActorProxy&>(actor).IsRemote());
-   }
-   int count;
-};
 
 /////////////////////////////////////////////////
 void GameManagerTests::TestGameActorTreeRemote()
@@ -1231,9 +1218,15 @@ void GameManagerTests::TestGameActorTreeRemote()
    }
 
    mGM->AddActor(*actors[0], true, false);
-   IsRemoteFunc func;
-   mGM->ForEachActor(func, true);
-   CPPUNIT_ASSERT_EQUAL(10, func.count);
+   int count = 0;
+
+   mGM->ForEachActor([&count](dtCore::BaseActorObject& actor)
+      {
+         ++count;
+         CPPUNIT_ASSERT(actor.IsGameActor());
+         CPPUNIT_ASSERT(static_cast<dtGame::GameActorProxy&>(actor).IsRemote());
+      } , true);
+   CPPUNIT_ASSERT_EQUAL(10, count);
 }
 
 /////////////////////////////////////////////////

@@ -29,29 +29,7 @@
 using dtCore::RefPtr;
 
 ////////////////////////////////////////////////////
-FireSuitActorProxy::FireSuitActorProxy()
-{
-
-}
-
-FireSuitActorProxy::~FireSuitActorProxy()
-{
-
-}
-
-void FireSuitActorProxy::BuildPropertyMap()
-{
-   GameItemActorProxy::BuildPropertyMap();
-}
-
-void FireSuitActorProxy::BuildInvokables()
-{
-   GameItemActorProxy::BuildInvokables();
-}
-
-////////////////////////////////////////////////////
-FireSuitActor::FireSuitActor(dtGame::GameActorProxy& parent)
-   : GameItemActor(parent)
+FireSuitActor::FireSuitActor()
 {
    mItemIndex = 0;
 }
@@ -60,6 +38,7 @@ FireSuitActor::~FireSuitActor()
 {
 
 }
+////////////////////////////////////////////////////
 
 void FireSuitActor::Activate(bool enable)
 {
@@ -79,7 +58,7 @@ void FireSuitActor::Activate(bool enable)
       throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);
    }
 
-   dtGame::GameManager& mgr = *GetGameActorProxy().GetGameManager();
+   dtGame::GameManager& mgr = *GetGameManager();
    RefPtr<dtGame::Message> msg =
       mgr.GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
 

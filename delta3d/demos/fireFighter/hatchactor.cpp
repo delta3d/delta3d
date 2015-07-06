@@ -41,14 +41,14 @@ using dtCore::RefPtr;
 
 static osg::Node* FindNamedNode(const std::string& searchName, osg::Node* currNode)
 {
-   osg::Group* currGroup = NULL;
-   osg::Node*  foundNode = NULL;
+   osg::Group* currGroup = nullptr;
+   osg::Node*  foundNode = nullptr;
 
-   // check to see if we have a valid (non-NULL) node.
-   // if we do have a null node, return NULL.
-   if (currNode == NULL)
+   // check to see if we have a valid (non-nullptr) node.
+   // if we do have a null node, return nullptr.
+   if (currNode == nullptr)
    {
-      return NULL;
+      return nullptr;
    }
 
    // We have a valid node, check to see if this is the node we
@@ -64,52 +64,28 @@ static osg::Node* FindNamedNode(const std::string& searchName, osg::Node* currNo
    // If one of the recursive calls returns a non-null value we have
    // found the correct node, so return this node.
    // If we check all of the children and have not found the node,
-   // return NULL
-   currGroup = currNode->asGroup(); // returns NULL if not a group.
-   if (currGroup != NULL)
+   // return nullptr
+   currGroup = currNode->asGroup(); // returns nullptr if not a group.
+   if (currGroup != nullptr)
    {
       for (unsigned int i = 0; i < currGroup->getNumChildren(); i++)
       {
          foundNode = FindNamedNode(searchName, currGroup->getChild(i));
-         if (foundNode != NULL)
+         if (foundNode != nullptr)
          {
             return foundNode; // found a match!
          }
       }
-      return NULL; // We have checked each child node - no match found.
+      return nullptr; // We have checked each child node - no match found.
    }
    else
    {
-      return NULL; // leaf node, no match
+      return nullptr; // leaf node, no match
    }
 }
 
-////////////////////////////////////////////////
-HatchActorProxy::HatchActorProxy()
-{
-
-}
-
-HatchActorProxy::~HatchActorProxy()
-{
-
-}
-
-void HatchActorProxy::BuildPropertyMap()
-{
-   GameItemActorProxy::BuildPropertyMap();
-}
-
-void HatchActorProxy::BuildInvokables()
-{
-   GameItemActorProxy::BuildInvokables();
-}
-
-////////////////////////////////////////////////
-
-HatchActor::HatchActor(dtGame::GameActorProxy& parent)
-   : GameItemActor(parent)
-   , mHatchNode(NULL)
+HatchActor::HatchActor()
+   : mHatchNode(nullptr)
    , mGameMapLoaded(false)
 {
 
@@ -124,26 +100,21 @@ void HatchActor::OnEnteredWorld()
 {
    GameItemActor::OnEnteredWorld();
 
-   dtGame::Invokable* invoke = new dtGame::Invokable("MapLoaded",
-      dtUtil::MakeFunctor(&HatchActor::OnMapLoaded, *this));
-
-   GetGameActorProxy().AddInvokable(*invoke);
-
-   GetGameActorProxy().RegisterForMessages(dtGame::MessageType::INFO_MAP_LOADED, "MapLoaded");
-   GetGameActorProxy().RegisterForMessages(dtGame::MessageType::INFO_MAP_UNLOADED, "MapLoaded");
+   RegisterForMessages(dtGame::MessageType::INFO_MAP_LOADED, dtUtil::MakeFunctor(&HatchActor::OnMapLoaded, *this));
+   RegisterForMessages(dtGame::MessageType::INFO_MAP_UNLOADED, dtUtil::MakeFunctor(&HatchActor::OnMapLoaded, *this));
 }
 
 void HatchActor::Activate(bool enable)
 {
    GameItemActor::Activate(enable);
 
-   // If we are in STAGE, we have a NULL game manager. So peace out of here
-   if (GetGameActorProxy().IsInSTAGE())
+   // If we are in STAGE, we have a nullptr game manager. So peace out of here
+   if (IsInSTAGE())
    {
       return;
    }
 
-   if (mHatchNode != NULL)
+   if (mHatchNode != nullptr)
    {
       // Open or close the door
       osg::Matrix rotMat;
@@ -171,13 +142,13 @@ void HatchActor::Activate(bool enable)
    // in the player class.
    if (mGameMapLoaded)
    {
-      dtGame::GameManager& mgr = *GetGameActorProxy().GetGameManager();
+      dtGame::GameManager& mgr = *GetGameManager();
 
       RefPtr<dtGame::Message> msg =
          mgr.GetMessageFactory().CreateMessage(enable ? FireFighterMessageType::ITEM_ACTIVATED :
                                                         FireFighterMessageType::ITEM_DEACTIVATED);
 
-      msg->SetAboutActorId(GetUniqueId());
+      msg->SetAboutActorId(GetId());
       mgr.SendMessage(*msg);
    }
 
@@ -190,12 +161,12 @@ void HatchActor::Activate(bool enable)
    }
 
    dtCore::GameEvent* event = dtCore::GameEventManager::GetInstance().FindEvent(name);
-   if (event == NULL)
+   if (event == nullptr)
    {
       throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);
    }
 
-   dtGame::GameManager& mgr = *GetGameActorProxy().GetGameManager();
+   dtGame::GameManager& mgr = *GetGameManager();
    RefPtr<dtGame::Message> msg =
       mgr.GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
 
@@ -216,9 +187,9 @@ void HatchActor::OnMapLoaded(const dtGame::Message& msg)
          mGameMapLoaded = true;
          // Find the game level actor and search with its node
          dtCore::ActorPtrVector proxies;
-         GetGameActorProxy().GetGameManager()->FindActorsByType(*EntityActorRegistry::TYPE_GAME_LEVEL_ACTOR, proxies);
-         GameLevelActor* gla = dynamic_cast<GameLevelActor*>(proxies[0]->GetDrawable());
-         if (gla == NULL)
+         GetGameManager()->FindActorsByType(*EntityActorRegistry::TYPE_GAME_LEVEL_ACTOR, proxies);
+         GameLevelActor* gla = proxies[0]->GetDrawable<GameLevelActor>();
+         if (gla == nullptr)
          {
             LOG_ERROR("Failed to find the game level actor in the map. Unable to open or close the hatch door");
          }
@@ -226,7 +197,7 @@ void HatchActor::OnMapLoaded(const dtGame::Message& msg)
          {
             osg::Node* hatchNode = FindNamedNode("HatchEngr", gla->GetOSGNode());
             mHatchNode = dynamic_cast<osg::MatrixTransform*>(hatchNode);
-            if (mHatchNode == NULL)
+            if (mHatchNode == nullptr)
             {
                LOG_ERROR("Failed to find the hatch node in the game level.");
             }

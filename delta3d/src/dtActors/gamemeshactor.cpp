@@ -27,6 +27,7 @@
 #include <dtCore/functor.h>
 #include <dtCore/resourceactorproperty.h>
 #include <dtCore/vectoractorproperties.h>
+#include <dtCore/object.h>
 
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/gamemanager.h>
@@ -36,177 +37,12 @@
 namespace dtActors
 {
    //////////////////////////////////////////////////////////////////////////////
-   /////////////////////////// BEGIN ACTOR //////////////////////////////////////
-   //////////////////////////////////////////////////////////////////////////////
-
-   //////////////////////////////////////////////////////////////////////////////
-   GameMeshDrawable::GameMeshDrawable(dtGame::GameActorProxy& parent)
-      : dtGame::GameActor(parent)
-      , mUseCache(true)
-      , mModel(new dtCore::Model)
-      , mMeshNode(NULL)
-   {
-      GetMatrixNode()->addChild(&mModel->GetMatrixTransform());
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   GameMeshDrawable::~GameMeshDrawable()
-   {
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void GameMeshDrawable::SetMesh(const std::string& meshFile)
-   {
-      // Make sure the mesh changed.
-      if (mLoader.GetFilename() != meshFile)
-      {
-         mLoader.SetMeshFilename(meshFile);
-
-         // For the initial setting, load the mesh when we first enter the world so we can use the cache variable
-         if (GetSceneParent())
-         {
-            LoadMesh();
-         }
-      }
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   void GameMeshDrawable::LoadMesh()
-   {
-      osg::Node* model = mLoader.LoadFile(mLoader.GetFilename(), mUseCache);
-
-      if (model != NULL)
-      {
-         if (mMeshNode.valid())
-         {
-            mModel->GetMatrixTransform().removeChild(mMeshNode.get());
-         }
-
-         mModel->GetMatrixTransform().addChild(model);
-         mModel->SetDirty();
-
-         mMeshNode = model;
-
-      }
-      else
-      {
-         LOG_ERROR("Unable to load model file: " + mLoader.GetFilename());
-      }
-
-      // send out an ActorUpdateMessage
-      // GameMeshActor no longer does this by default. It is possible that the property was
-      // set using a message, and it is almost certain that the user does not want to do a full
-      // actor update.
-      // if (mAlreadyInWorld)
-      //    GetGameActorProxy().NotifyFullActorUpdate();
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   void GameMeshDrawable::AddedToScene(dtCore::Scene* scene)
-   {
-      dtGame::GameActor::AddedToScene(scene);
-
-      // Don't load the mesh if we're not
-      // really being added to the scene
-      if (scene != NULL)
-      {
-         if (!mLoader.GetFilename().empty())
-         {
-            LoadMesh();
-         }
-      }
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   void GameMeshDrawable::SetScale(const osg::Vec3& xyz)
-   {
-      mModel->SetScale(xyz);
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void GameMeshDrawable::SetModelRotation(const osg::Vec3& v3)
-   {
-      dtCore::Transform ourTransform;
-      mModel->GetTransform(ourTransform);
-      ourTransform.SetRotation(v3);
-      mModel->SetTransform(ourTransform);
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 GameMeshDrawable::GetModelRotation()
-   {
-      osg::Vec3 v3;
-      dtCore::Transform ourTransform;
-      mModel->GetTransform(ourTransform);
-      ourTransform.GetRotation(v3);
-      return v3;
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void GameMeshDrawable::SetModelTranslation(const osg::Vec3& v3)
-   {
-      dtCore::Transform ourTransform;
-      mModel->GetTransform(ourTransform);
-      ourTransform.SetTranslation(v3);
-      mModel->SetTransform(ourTransform);
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 GameMeshDrawable::GetModelTranslation()
-   {
-      osg::Vec3 v3;
-      dtCore::Transform ourTransform;
-      mModel->GetTransform(ourTransform);
-      ourTransform.GetTranslation(v3);
-      return v3;
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   osg::Vec3 GameMeshDrawable::GetScale() const
-   {
-      osg::Vec3 scale;
-      mModel->GetScale(scale);
-      return scale;
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   osg::MatrixTransform& GameMeshDrawable::GetMatrixTransform()
-   {
-      return mModel->GetMatrixTransform();
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   const osg::MatrixTransform& GameMeshDrawable::GetMatrixTransform() const
-   {
-      return mModel->GetMatrixTransform();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   osg::Node* GameMeshDrawable::GetMeshNode()
-   {
-      return mMeshNode.get();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   const osg::Node* GameMeshDrawable::GetMeshNode() const
-   {
-      return mMeshNode.get();
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   //////////////////////////// END ACTOR ///////////////////////////////////////
-   //////////////////////////////////////////////////////////////////////////////
-
-
-   //////////////////////////////////////////////////////////////////////////////
-   /////////////////////////// BEGIN PROXY //////////////////////////////////////
-   //////////////////////////////////////////////////////////////////////////////
-
-   //////////////////////////////////////////////////////////////////////////////
    GameMeshActor::GameMeshActor()
    {
-      SetClassName("dtActors::GameMeshActor");
-      SetName("StaticMesh");
+      static dtUtil::RefString name("StaticMesh");
+      static dtUtil::RefString className("dtActors::GameMeshActor");
+      SetName(name);
+      SetClassName(className);
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -217,38 +53,48 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    void GameMeshActor::BuildPropertyMap()
    {
-      const std::string GROUPNAME = "GameMesh";
+      static dtUtil::RefString GROUPNAME = "GameMesh";
 
       dtGame::GameActorProxy::BuildPropertyMap();
 
-      GameMeshDrawable* myActor = NULL;
-      GetDrawable(myActor);
+      dtCore::Object* draw = nullptr;
+      GetDrawable(draw);
 
       AddProperty(new dtCore::ResourceActorProperty(dtCore::DataType::STATIC_MESH,
          "static mesh", "Static Mesh",
-         dtCore::ResourceActorProperty::SetDescFuncType(this, &GameMeshActor::SetMeshResource),
-         dtCore::ResourceActorProperty::GetDescFuncType(this, &GameMeshActor::GetMeshResource),
+         dtCore::ResourceActorProperty::SetDescFuncType(draw, &dtCore::Object::SetMeshResource),
+         dtCore::ResourceActorProperty::GetDescFuncType(draw, &dtCore::Object::GetMeshResource),
          "The static mesh resource that defines the geometry", GROUPNAME));
 
       AddProperty(new dtCore::BooleanActorProperty("use cache object", "Use Model Cache",
-         dtCore::BooleanActorProperty::SetFuncType(myActor, &GameMeshDrawable::SetUseCache),
-         dtCore::BooleanActorProperty::GetFuncType(myActor, &GameMeshDrawable::GetUseCache),
+         dtCore::BooleanActorProperty::SetFuncType(draw, &dtCore::Object::SetUseCache),
+         dtCore::BooleanActorProperty::GetFuncType(draw, &dtCore::Object::GetUseCache),
          "Indicates whether we will try to use the cache when we load our model.", GROUPNAME));
 
+      AddProperty(new dtCore::BooleanActorProperty("RecenterGeometry", "RecenterGeometry",
+         dtCore::BooleanActorProperty::SetFuncType(draw, &dtCore::Object::SetRecenterGeometryUponLoad),
+         dtCore::BooleanActorProperty::GetFuncType(draw, &dtCore::Object::GetRecenterGeometryUponLoad),
+         "If the loading process should recenter the geometry to make the origin the center of the bounding box.", GROUPNAME));
+
+      AddProperty(new dtCore::BooleanActorProperty("GenerateTangents", "GenerateTangents",
+         dtCore::BooleanActorProperty::SetFuncType(draw, &dtCore::Object::SetGenerateTangents),
+         dtCore::BooleanActorProperty::GetFuncType(draw, &dtCore::Object::GetGenerateTangents),
+         "If the loading process should re-center the geometry to make the origin the center of the bounding box.", GROUPNAME));
+
       AddProperty(new dtCore::Vec3ActorProperty("Scale", "Scale",
-         dtCore::Vec3ActorProperty::SetFuncType(myActor, &GameMeshDrawable::SetScale),
-         dtCore::Vec3ActorProperty::GetFuncType(myActor, &GameMeshDrawable::GetScale),
+         dtCore::Vec3ActorProperty::SetFuncType(draw, &dtCore::Object::SetScale),
+         dtCore::Vec3ActorProperty::GetFuncType(draw, &dtCore::Object::GetScale),
          "Scales this visual model", "Transformable"));
 
       AddProperty(new dtCore::Vec3ActorProperty("Model Rotation", "Model Rotation",
-         dtCore::Vec3ActorProperty::SetFuncType(myActor, &GameMeshDrawable::SetModelRotation),
-         dtCore::Vec3ActorProperty::GetFuncType(myActor, &GameMeshDrawable::GetModelRotation),
+         dtCore::Vec3ActorProperty::SetFuncType(draw, &dtCore::Object::SetModelRotation),
+         dtCore::Vec3ActorProperty::GetFuncType(draw, &dtCore::Object::GetModelRotation),
          "Specifies the Rotation of the object",
          "Transformable"));
 
       AddProperty(new dtCore::Vec3ActorProperty("Model Translation", "Model Translation",
-         dtCore::Vec3ActorProperty::SetFuncType(myActor, &GameMeshDrawable::SetModelTranslation),
-         dtCore::Vec3ActorProperty::GetFuncType(myActor, &GameMeshDrawable::GetModelTranslation),
+         dtCore::Vec3ActorProperty::SetFuncType(draw, &dtCore::Object::SetModelTranslation),
+         dtCore::Vec3ActorProperty::GetFuncType(draw, &dtCore::Object::GetModelTranslation),
          "Specifies the Translation of the object",
          "Transformable"));
    }
@@ -262,23 +108,16 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    void GameMeshActor::CreateDrawable()
    {
-      SetDrawable(*new GameMeshDrawable(*this));
-
-      //// set the default name of this object so they show up somewhat nicely in STAGE
-      //// obviously, it's not guaranteed to be unique
-      //static int actorCount = 0;
-      //std::ostringstream ss;
-      //ss << "StaticMesh" << actorCount++;
-      //SetName(ss.str());
+      SetDrawable(*new dtCore::Object());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    const dtCore::BaseActorObject::RenderMode& GameMeshActor::GetRenderMode()
    {
-      dtCore::ResourceDescriptor resource = GetMeshResource();
+      dtCore::ResourceDescriptor resource = GetDrawable<dtCore::Object>()->GetMeshResource();
       if (resource.IsEmpty() == false)
       {
-         if (resource.GetResourceIdentifier().empty() || GetDrawable()->GetOSGNode() == NULL)
+         if (resource.GetResourceIdentifier().empty() || GetDrawable()->GetOSGNode() == nullptr)
          {
                return dtCore::BaseActorObject::RenderMode::DRAW_BILLBOARD_ICON;
          }
@@ -303,13 +142,4 @@ namespace dtActors
       return mBillBoardIcon.get();
    }
 
-   //////////////////////////////////////////////////////////////////////////
-   DT_IMPLEMENT_ACCESSOR_GETTER(GameMeshActor, dtCore::ResourceDescriptor, MeshResource)
-   void GameMeshActor::SetMeshResource(const dtCore::ResourceDescriptor& rd)
-   {
-      GameMeshDrawable* gmd = NULL;
-      GetDrawable(gmd);
-      gmd->SetMesh(dtCore::ResourceActorProperty::GetResourcePath(rd));
-      mMeshResource = rd;
-   }
 }
