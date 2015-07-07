@@ -61,7 +61,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 ResourceDock::ResourceDock()
   : QDockWidget()
-  , mTabs(NULL)
+  , mTabs(nullptr)
 {
    setWindowTitle(tr("Resources"));
    setMouseTracking(true);
@@ -103,7 +103,7 @@ ResourceDock::~ResourceDock(){}
 ////////////////////////////////////////////////////////////////////////////////
 QTreeWidgetItem* ResourceDock::FindListItem(std::string fullName) const
 {
-   QTreeWidgetItem* listItem = NULL;
+   QTreeWidgetItem* listItem = nullptr;
 
    for (int itemIndex = 0; itemIndex < mGeometryTreeWidget->topLevelItemCount(); ++itemIndex)
    {
@@ -151,7 +151,7 @@ QTreeWidgetItem* ResourceDock::FindMapItem(std::string fullName) const
       }
    }
 
-   return NULL;
+   return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -183,7 +183,7 @@ QTreeWidgetItem* ResourceDock::FindGeometryItem(const std::string& fullName) con
       }
    }
 
-   return NULL;
+   return nullptr;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -191,7 +191,7 @@ bool ResourceDock::RemoveGeometryItem(QTreeWidgetItem* item)
 {
    bool success = false;
 
-   if (item != NULL)
+   if (item != nullptr)
    {
       while (item->childCount() > 0)
       {
@@ -222,7 +222,7 @@ QTreeWidgetItem* ResourceDock::FindShaderFileItem(const std::string& filename) c
       }
    }
 
-   return NULL;
+   return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -238,7 +238,7 @@ QTreeWidgetItem* ResourceDock::FindShaderGroupItem(const std::string& groupName,
       }
    }
 
-   return NULL;
+   return nullptr;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -264,7 +264,7 @@ void ResourceDock::ReselectCurrentShaderItem()
    QTreeWidgetItem* fileItem = FindShaderFileItem(mCurrentShaderFile.toStdString());
 
    // If the file no longer exists, clear the data and return none
-   if (fileItem == NULL)
+   if (fileItem == nullptr)
    {
       mCurrentShaderFile.clear();
       mCurrentShaderGroup.clear();
@@ -277,7 +277,7 @@ void ResourceDock::ReselectCurrentShaderItem()
    QTreeWidgetItem* groupItem = FindShaderGroupItem(mCurrentShaderGroup.toStdString(), fileItem);
 
    // If the group doesn't exist, clear the data and return none
-   if (groupItem == NULL)
+   if (groupItem == nullptr)
    {
       mCurrentShaderFile.clear();
       mCurrentShaderGroup.clear();
@@ -433,7 +433,7 @@ void ResourceDock::OnGeometryItemChanged(QTreeWidgetItem* item, int column)
             for (int lightID = 0; lightID < dtCore::MAX_LIGHTS; lightID++)
             {
                DeleteTreeItem(mLightItems[lightID].custom);
-               mLightItems[lightID].custom = NULL;
+               mLightItems[lightID].custom = nullptr;
             }
 
             QString mapName = item->text(0);
@@ -523,7 +523,7 @@ void ResourceDock::OnNewShader(const std::string& filename, const std::string& s
    // Get the file item.
    QTreeWidgetItem* fileItem = FindShaderFileItem(filename);
    // If the file doesn't exist, create a new one.
-   if (fileItem == NULL)
+   if (fileItem == nullptr)
    {
       QFileInfo fileInfo(filename.c_str());
 
@@ -555,7 +555,7 @@ void ResourceDock::OnNewShader(const std::string& filename, const std::string& s
    QTreeWidgetItem* groupItem = FindShaderGroupItem(shaderGroup, fileItem);
 
    // If the group doesn't exist, create a new one.
-   if (groupItem == NULL)
+   if (groupItem == nullptr)
    {
       groupItem = new QTreeWidgetItem;
       groupItem->setText(0, shaderGroup.c_str());
@@ -639,7 +639,7 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
             }
             catch (dtUtil::Exception& e)
             {
-               QMessageBox::critical(NULL, "Error", e.ToString().c_str());
+               QMessageBox::critical(nullptr, "Error", e.ToString().c_str());
 
                // We don't want this signal emitted when we're unchecking
                disconnect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)),
@@ -737,7 +737,7 @@ void ResourceDock::OnReloadShaderFiles()
       }
       catch (dtUtil::Exception& e)
       {
-         QMessageBox::critical(NULL, "Error", e.ToString().c_str());
+         QMessageBox::critical(nullptr, "Error", e.ToString().c_str());
       }
    }
 
@@ -878,7 +878,7 @@ void ResourceDock::OnLightUpdate(const LightInfo& lightInfo)
       if (typeString != mLightItems[lightIndex].type->text(1))
       {
          DeleteTreeItem(mLightItems[lightIndex].custom);
-         mLightItems[lightIndex].custom = NULL;
+         mLightItems[lightIndex].custom = nullptr;
       }
 
       if (!mLightItems[lightIndex].custom)
@@ -907,7 +907,7 @@ void ResourceDock::OnLightUpdate(const LightInfo& lightInfo)
             if (typeString != mLightItems[lightIndex].type->text(1))
             {
                DeleteTreeItem(mLightItems[lightIndex].custom);
-               mLightItems[lightIndex].custom = NULL;
+               mLightItems[lightIndex].custom = nullptr;
             }
 
             if (!mLightItems[lightIndex].custom)
@@ -933,7 +933,7 @@ void ResourceDock::OnLightUpdate(const LightInfo& lightInfo)
             if (typeString != mLightItems[lightIndex].type->text(1))
             {
                DeleteTreeItem(mLightItems[lightIndex].custom);
-               mLightItems[lightIndex].custom = NULL;
+               mLightItems[lightIndex].custom = nullptr;
             }
 
             if (!mLightItems[lightIndex].custom)
@@ -1007,7 +1007,7 @@ void ResourceDock::OnLightItemClicked(QTreeWidgetItem* item, int column)
 
             // Delete the custom light data so it can be refreshed with new data.
             DeleteTreeItem(mLightItems[lightID].custom);
-            mLightItems[lightID].custom = NULL;
+            mLightItems[lightID].custom = nullptr;
          }
 
          // Change a color attribute of the light.
@@ -1296,7 +1296,7 @@ void ResourceDock::CreateLightItems()
       mLightItems[lightIndex].ambient   = CreateColorItem("Ambient", newLightItem);
       mLightItems[lightIndex].diffuse   = CreateColorItem("Diffuse", newLightItem);
       mLightItems[lightIndex].specular  = CreateColorItem("Specular", newLightItem);
-      mLightItems[lightIndex].custom    = NULL;
+      mLightItems[lightIndex].custom    = nullptr;
    }
 
    // Set the default light to "on"

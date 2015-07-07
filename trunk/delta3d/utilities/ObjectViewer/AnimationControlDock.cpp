@@ -63,7 +63,7 @@ void AnimationParamsTableRow::InsertValuesToTable(QTableWidget& table, int rowIn
 void AnimationParamsTableRow::SetRowValues(QTableWidget& table, int rowIndex)
 {
    QString curStr;
-   QTableWidgetItem* curItem = NULL;
+   QTableWidgetItem* curItem = nullptr;
    for (int col = 0; col < MAX_COLUMNS; ++col)
    {
       curItem = table.item(rowIndex, col);
@@ -183,8 +183,8 @@ void AnimationControlDock::ResetUI()
 
 void AnimationControlDock::UpdateUI()
 {
-   osg::Node* node = mObject.valid() ? mObject->GetOSGNode() : NULL;
-   if (node != NULL)
+   osg::Node* node = mObject.valid() ? mObject->GetOSGNode() : nullptr;
+   if (node != nullptr)
    {
       AnimCallbackVisitor visitor;
       node->accept(visitor);
@@ -192,7 +192,7 @@ void AnimationControlDock::UpdateUI()
       int maxFrames = 0;
       double timeEarliest = -1.0;
       double timeLatest = 0.0;
-      osg::AnimationPath* curPath = NULL;
+      osg::AnimationPath* curPath = nullptr;
       typedef AnimCallbackVisitor::AnimCallbackVector AnimCallbackVector;
       AnimCallbackVector::iterator iter = visitor.GetAnimCallbacks().begin();
       AnimCallbackVector::iterator iterEnd = visitor.GetAnimCallbacks().end();
@@ -284,7 +284,7 @@ osg::AnimationPath::LoopMode AnimationControlDock::ConvertToPlayMode(int playMod
 
 void AnimationControlDock::ApplyAnimationParameters(dtAnim::AnimCallbackVisitor& visitor)
 {
-   AnimClipPath* curPath = NULL;
+   AnimClipPath* curPath = nullptr;
    typedef AnimCallbackVisitor::AnimCallbackVector AnimCallbackVector;
    AnimCallbackVector::iterator iter = visitor.GetAnimCallbacks().begin();
    AnimCallbackVector::iterator iterEnd = visitor.GetAnimCallbacks().end();
@@ -302,7 +302,7 @@ void AnimationControlDock::ApplyAnimationParameters(dtAnim::AnimCallbackVisitor&
 
 osg::Node* AnimationControlDock::GetRootNode()
 {
-   return mObject.valid() ? mObject->GetOSGNode() : NULL;
+   return mObject.valid() ? mObject->GetOSGNode() : nullptr;
 }
 
 void AnimationControlDock::OnPause()
@@ -313,7 +313,7 @@ void AnimationControlDock::OnPause()
 void AnimationControlDock::InternalPause()
 {
    osg::Node* node = GetRootNode();
-   if (node != NULL)
+   if (node != nullptr)
    {
       AnimCallbackVisitor visitor;
       node->accept(visitor);
@@ -332,7 +332,7 @@ void AnimationControlDock::OnPlay()
 void AnimationControlDock::InternalPlay(bool reset)
 {
    osg::Node* node = GetRootNode();
-   if (node != NULL)
+   if (node != nullptr)
    {
       AnimCallbackVisitor visitor;
       node->accept(visitor);
@@ -352,7 +352,7 @@ void AnimationControlDock::InternalPlay(bool reset)
 void AnimationControlDock::OnReset()
 {
    osg::Node* node = GetRootNode();
-   if (node != NULL)
+   if (node != nullptr)
    {
       AnimCallbackVisitor visitor;
       node->accept(visitor);
@@ -365,7 +365,7 @@ std::string AnimationControlDock::GetRowID(int rowIndex) const
 {
    std::string name;
    QTableWidgetItem* item = mUI.mTableAnimations->item(rowIndex, AnimationParamsTableRow::NAME);
-   if (item != NULL)
+   if (item != nullptr)
    {
       name = item->text().toStdString();
    }
@@ -377,7 +377,7 @@ int AnimationControlDock::GetRowIndex(const std::string& animName) const
 {
    int rowIndex = -1;
    
-   QTableWidgetItem* curItem = NULL;
+   QTableWidgetItem* curItem = nullptr;
    int numRows = mUI.mTableAnimations->rowCount();
    for (int i = 0; i < numRows; ++i)
    {
@@ -442,7 +442,7 @@ void AnimationControlDock::OnRemove()
 
    std::set<int> rows;
    
-   QTableWidgetItem* curItem = NULL;
+   QTableWidgetItem* curItem = nullptr;
    while (!items.empty())
    {
       curItem = items.front();
@@ -485,7 +485,7 @@ void AnimationControlDock::OnRemove()
 void AnimationControlDock::OnSpeedChanged()
 {
    osg::Node* node = GetRootNode();
-   if (node != NULL && mUI.mAnimSpeed->value() != 0.0)
+   if (node != nullptr && mUI.mAnimSpeed->value() != 0.0)
    {
       AnimCallbackVisitor visitor;
       node->accept(visitor);
@@ -497,7 +497,7 @@ void AnimationControlDock::OnSpeedChanged()
 void AnimationControlDock::OnBeginFrameOffsetChanged()
 {
    osg::Node* node = GetRootNode();
-   if (node != NULL && mUI.mAnimSpeed->value() != 0.0)
+   if (node != nullptr && mUI.mAnimSpeed->value() != 0.0)
    {
       AnimCallbackVisitor visitor;
       node->accept(visitor);
@@ -509,7 +509,7 @@ void AnimationControlDock::OnBeginFrameOffsetChanged()
 void AnimationControlDock::OnLoopLimitChanged()
 {
    osg::Node* node = GetRootNode();
-   if (node != NULL && mUI.mAnimSpeed->value() != 0.0)
+   if (node != nullptr && mUI.mAnimSpeed->value() != 0.0)
    {
       AnimCallbackVisitor visitor;
       node->accept(visitor);
@@ -522,7 +522,7 @@ void AnimationControlDock::OnPlayModeChanged(bool checked)
 {
     osg::Node* node = GetRootNode();
     AnimCallbackVisitor visitor;
-    if (node != NULL && mUI.mAnimSpeed->value() != 0.0)
+    if (node != nullptr && mUI.mAnimSpeed->value() != 0.0)
     {
         node->accept(visitor);
     }
@@ -560,7 +560,7 @@ void AnimationControlDock::OnGeometryLoaded(dtCore::Object* object)
 
    mObject = object;
 
-   bool objectValid = mObject.valid() && mObject->GetOSGNode() != NULL;
+   bool objectValid = mObject.valid() && mObject->GetOSGNode() != nullptr;
    if (objectValid)
    {
       osg::Node* node = mObject->GetOSGNode();
@@ -571,7 +571,7 @@ void AnimationControlDock::OnGeometryLoaded(dtCore::Object* object)
       AnimCallbackVisitor visitor;
       node->accept(visitor);
 
-      osg::AnimationPath* curPath = NULL;
+      osg::AnimationPath* curPath = nullptr;
       typedef AnimCallbackVisitor::AnimCallbackVector AnimCallbackVector;
       AnimCallbackVector::iterator iter = visitor.GetAnimCallbacks().begin();
       AnimCallbackVector::iterator iterEnd = visitor.GetAnimCallbacks().end();
