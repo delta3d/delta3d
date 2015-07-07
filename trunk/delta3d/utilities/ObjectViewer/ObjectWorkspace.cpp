@@ -3,9 +3,11 @@
 #include "MotionModelToolbar.h"
 #include "ResourceDock.h"
 #include "ObjectViewer.h"
+#include "TextureVisitor.h"
 
 #include <dtQt/nodetreepanel.h>
 #include <dtQt/osggraphicswindowqt.h>
+#include <dtQt/osgwriteroptionsdialog.h>
 #include <dtQt/projectcontextdialog.h>
 #include <dtQt/propertypanel.h>
 #include <dtQt/propertypanelbuilder.h>
@@ -35,6 +37,7 @@
 #include <QtOpenGL/QGLWidget>
 
 #include <osgDB/Registry>
+#include <osgDB/WriteFile>
 #include <cassert>
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -55,11 +58,11 @@ static const QString SETTING_RESOURCE_DOCK_VIS("ResourceDock.Visible");
 // CLASS CODE
 ////////////////////////////////////////////////////////////////////////////////
 ObjectWorkspace::ObjectWorkspace()
-  : mLoadShaderDefAction(NULL)
-  , mLoadGeometryAction(NULL)
-  , mSaveAsAction(NULL)
-  , mChangeContextAction(NULL)
-  , mExitAct(NULL)
+  : mLoadShaderDefAction(nullptr)
+  , mLoadGeometryAction(nullptr)
+  , mSaveAsAction(nullptr)
+  , mChangeContextAction(nullptr)
+  , mExitAct(nullptr)
 {
    resize(1024, 768);
 
@@ -248,6 +251,7 @@ void ObjectWorkspace::CreateFileMenuActions()
 
    mSaveAsAction = new QAction(tr("&Save As..."), this);
    mSaveAsAction->setStatusTip(tr("Save a model as a different file name or format."));
+   mSaveAsAction->setEnabled(false); // Should only be enabled when there is something available to save.
    connect(mSaveAsAction, SIGNAL(triggered()), this, SLOT(OnSaveAs()));
 
    mChangeContextAction = new QAction(tr("Change Project..."), this);
@@ -705,14 +709,14 @@ void ObjectWorkspace::OnLoadGeometry(const std::string& fullName)
       // item to its treeview.
 
       // Remove the current model if it currently exists.
-      if (geometryItem != NULL)
+      if (geometryItem != nullptr)
       {
          mResourceDock->RemoveGeometryItem(geometryItem);
          geometryItem = mResourceDock->FindGeometryItem(fullName);
       }
 
       // Only reload the item if it does not exist.
-      if (geometryItem == NULL)
+      if (geometryItem == nullptr)
       {
          // Give the required information to the resource manager(dock)
          mResourceDock->OnNewGeometry(fileInfo.absolutePath().toStdString(),
@@ -763,14 +767,46 @@ void ObjectWorkspace::OnSaveAs()
       dtCore::Object* obj = mViewer->GetDeltaObject();
       if (obj != nullptr && obj->GetOSGNode() != nullptr)
       {
-         osgDB::ReaderWriter::WriteResult result = reg->writeNode(*obj->GetOSGNode(), filename.toStdString(), nullptr);
+         // Ask the user for export options.
+         dtQt::OsgWriterOptionsDialog osgDialog;
+         if (osgDialog.exec() == QDialog::Accepted)
+         {
+            if (osgDialog.IsOptimizerChecked())
+            {
+               osgUtil::Optimizer::OptimizationOptions options = osgDialog.GetOptimizerOptionsPanel().GetOptions();
 
-         // TODO:
+               osgUtil::Optimizer optimizer;
+               optimizer.optimize(obj->GetOSGNode(), options);
+            }
+
+            // Access the options that the user selected.
+            dtCore::RefPtr<osgDB::Options> options = osgDialog.GetWriterOptionsPanel().GetOptions();
+
+            osgDB::Registry::instance()->setOptions(options);
+
+            // Optimize the model to not keep image data after creating textures.
+            // The unref flag is saved to file, so this step is important for optimization.
+            dtCore::RefPtr<TextureVisitor> visitor = new TextureVisitor;
+            obj->GetOSGNode()->accept(*visitor);
+            visitor->SetUnRefImageData(true);
+
+            // Write the file.
+            if ( ! osgDB::writeNodeFile(*obj->GetOSGNode(), filename.toStdString(), options.get()))
+            {
+               QString msg = "Failed writing file: " + filename;
+               QMessageBox::warning(this, tr("Save Failed"), msg);
+            }
+
+            // Set textures back to keep image data for the sake of the editor for
+            // subsequent image writing. If not, image data will go NULL an not
+            // allow textures to be written along with their model.
+            visitor->SetUnRefImageData(false);
+         }
       }
       else
       {
-         QString msg = "Could not save file: " + filename;
-         QMessageBox::warning(this, tr("Save Failed"), msg);
+         QString msg = "No object available. Could not save file: " + filename;
+         QMessageBox::warning(this, tr("No Object to Save"), msg);
       }
    }
    else
@@ -784,14 +820,17 @@ void ObjectWorkspace::OnSaveAs()
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnGeometryChanged()
 {
-   osg::Node* node = NULL;
+   osg::Node* node = nullptr;
    
-   if (mViewer->GetDeltaObject() != NULL)
+   bool objectValid = mViewer->GetDeltaObject() != nullptr;
+   if (objectValid)
    {
       node = mViewer->GetDeltaObject()->GetOSGNode();
    }
 
    mNodeTree->SetNode(node);
+
+   mSaveAsAction->setEnabled(objectValid);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -810,7 +849,7 @@ void ObjectWorkspace::OnChangeContext()
       // Re-populate the list using the new context
       UpdateResourceLists();
 
-      mNodeTree->SetNode(NULL);
+      mNodeTree->SetNode(nullptr);
    }
 }
 
@@ -886,7 +925,7 @@ void ObjectWorkspace::SetViewer(ObjectViewer* viewer)
 
    dtQt::OSGGraphicsWindowQt* osgGraphWindow = dynamic_cast<dtQt::OSGGraphicsWindowQt*>(mViewer->GetWindow()->GetOsgViewerGraphicsWindow());
 
-   if (osgGraphWindow == NULL)
+   if (osgGraphWindow == nullptr)
    {
       LOG_ERROR("Unable to initialize. The deltawin could not be created with a QGLWidget.");
       return;
@@ -895,7 +934,7 @@ void ObjectWorkspace::SetViewer(ObjectViewer* viewer)
    //stuff the QGLWidget into it's parent widget placeholder and ensure it gets
    //resized to fit the parent
    QWidget* widget = osgGraphWindow->GetQGLWidget();
-   if (widget != NULL)
+   if (widget != nullptr)
    {
       widget->setGeometry(centralWidget()->geometry());
       mCentralLayout->addWidget(widget);

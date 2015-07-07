@@ -16,6 +16,7 @@
 
 #include "ObjectViewer.h"
 #include "ObjectViewerData.h"
+#include "TextureVisitor.h"
 
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
@@ -129,7 +130,7 @@ public:
         {
             const osg::Drawable* d = node.getDrawable ( i );
             const osg::Geometry* geom = d->asGeometry();
-            if ( geom != NULL )
+            if ( geom != nullptr )
             {
                 // Count triangles
                 const osg::Geometry::PrimitiveSetList& pList ( geom->getPrimitiveSetList() );
@@ -294,7 +295,7 @@ void ObjectViewer::OnMotionModelSpeedChanged(MotionModelTypeE motionModelType, f
       dtCore::FlyMotionModel* fly
          = dynamic_cast<dtCore::FlyMotionModel*>(mMotionModel.get());
       
-      if (fly != NULL)
+      if (fly != nullptr)
       {
          fly->SetMaximumFlySpeed(speed);
       }
@@ -304,7 +305,7 @@ void ObjectViewer::OnMotionModelSpeedChanged(MotionModelTypeE motionModelType, f
       dtCore::UFOMotionModel* ufo
          = dynamic_cast<dtCore::UFOMotionModel*>(mMotionModel.get());
       
-      if (ufo != NULL)
+      if (ufo != nullptr)
       {
          ufo->SetMaximumFlySpeed(speed);
       }
@@ -342,7 +343,7 @@ void ObjectViewer::ResetMotionModel(float radius, const osg::Vec3& center)
 {
    dtCore::OrbitMotionModel* orbit = dynamic_cast<dtCore::OrbitMotionModel*>(mMotionModel.get());
 
-   if (orbit != NULL)
+   if (orbit != nullptr)
    {
       dtCore::Camera* cam = GetCamera();
       float distance = 5.0f;
@@ -398,7 +399,7 @@ void ObjectViewer::OnLoadShaderFile(const QString& filename)
    }
    catch (dtUtil::Exception& e)
    {
-      QMessageBox::critical(NULL, "Error", e.ToString().c_str());
+      QMessageBox::critical(nullptr, "Error", e.ToString().c_str());
    }
 }
 
@@ -427,7 +428,7 @@ void ObjectViewer::OnLoadMapFile(const std::string& filename)
       QString error = "An error occured while opening the map. ";
       error += e.What().c_str();
       LOG_ERROR(error.toStdString());
-      QMessageBox::critical(NULL, tr("Map Open Error"),error,tr("OK"));
+      QMessageBox::critical(nullptr, tr("Map Open Error"),error,tr("OK"));
       return;
    }
 
@@ -453,7 +454,7 @@ void ObjectViewer::OnLoadMapFile(const std::string& filename)
          errors.append("If you save this map, the library and any actors referenced by the library will be lost.");
 
          QApplication::restoreOverrideCursor();
-         QMessageBox::warning(NULL, tr("Missing Libraries"), errors, tr("OK"));
+         QMessageBox::warning(nullptr, tr("Missing Libraries"), errors, tr("OK"));
          QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
       }
    }
@@ -662,6 +663,13 @@ void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
       mObject = new dtCore::Object;
       mObject->LoadFile(filename, false);
 
+      // Ensure image data for textures remains available in case
+      // model and textures need to be written back out at some
+      // later time.
+      dtCore::RefPtr<TextureVisitor> visitor = new TextureVisitor;
+      mObject->GetOSGNode()->accept(*visitor);
+      visitor->SetUnRefImageData(false);
+
       //print out stats
       CountPrimitives ( *(mObject->GetOSGNode()), filename );
 
@@ -698,7 +706,7 @@ void ObjectViewer::OnUnloadGeometryFile()
       mShadeDecorator->removeChild(mObject->GetOSGNode());
       mWireDecorator->removeChild(mObject->GetOSGNode());
 
-      mObject = NULL;
+      mObject = nullptr;
    }
 
    if (mCharacter.valid())
@@ -706,7 +714,7 @@ void ObjectViewer::OnUnloadGeometryFile()
       mShadeDecorator->removeChild(mCharacter->GetOSGNode());
       mWireDecorator->removeChild(mCharacter->GetOSGNode());
 
-      mCharacter = NULL;
+      mCharacter = nullptr;
    }
 
    // Remove the old map.
@@ -718,11 +726,11 @@ void ObjectViewer::OnUnloadGeometryFile()
       try
       {
          dtCore::Project::GetInstance().CloseMap(*mMap, true);
-         mMap = NULL;
+         mMap = nullptr;
       }
       catch (const dtUtil::Exception &e)
       {
-         QMessageBox::critical(NULL, tr("Error"), e.What().c_str(), tr("OK"));
+         QMessageBox::critical(nullptr, tr("Error"), e.What().c_str(), tr("OK"));
       }
    }
 }
@@ -747,7 +755,7 @@ void ObjectViewer::OnApplyShader(const std::string& groupName, const std::string
    }
    catch (const dtUtil::Exception &e)
    {
-      QMessageBox::critical(NULL, "Error", e.ToString().c_str());
+      QMessageBox::critical(nullptr, "Error", e.ToString().c_str());
    }
 }
 
@@ -834,7 +842,7 @@ void ObjectViewer::OnSetLightType(int id, int type)
    QString lightName = QString("Light%1").arg(id);
 
    dtCore::Light* light = GetScene()->GetLight(id);
-   dtCore::Light* newLight = NULL;
+   dtCore::Light* newLight = nullptr;
 
    switch (type)
    {
@@ -1284,7 +1292,7 @@ void ObjectViewer::GenerateTangentsForObject(dtCore::Object* object)
 
       if (!geom->getVertexAttribArray(6))
       {
-         if (tangentArray != NULL)
+         if (tangentArray != nullptr)
          {
             //geom->setVertexAttribData(6, osg::Geometry::ArrayData(tsg->getTangentArray(), osg::Geometry::BIND_PER_VERTEX, GL_FALSE));
             geom->setVertexAttribArray(6, tangentArray);
