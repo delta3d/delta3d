@@ -354,6 +354,8 @@ namespace dtEditQt
             for (unsigned proxyIndex = 0; proxyIndex < actors.size(); proxyIndex++)
             {
                dtCore::BaseActorObject* actor = actors[proxyIndex].get();
+               if (actor->IsActorComponent()) continue;
+               if (actor->IsSystemComponent()) continue;
 
                EditorActions::GetInstance().AddActorToMap(*actor, *currMap, true);
                currMap->AddActorToGroup(groupIndex, actor);
@@ -378,6 +380,7 @@ namespace dtEditQt
                   }
                }
             }
+
 
             // Finally set the proxies in the prefab to be the current selection.
             ViewportManager::GetInstance().getViewportOverlay()->setMultiSelectMode(true);
@@ -418,12 +421,6 @@ namespace dtEditQt
             if (mapPtr.valid())
             {
                EditorActions::GetInstance().AddActorToMap(*proxy, *mapPtr, true);
-            }
-
-            dtActors::PrefabActorProxy* prefabProxy = dynamic_cast<dtActors::PrefabActorProxy*>(proxy.get());
-            if (prefabProxy)
-            {
-               prefabProxy->SetMap(mapPtr.get());
             }
 
             // Set the prefab resource of the actor to the current prefab.
