@@ -18,6 +18,7 @@ SET(PROG_HEADERS ${SOURCE_PATH}/AnimationControlDock.h
                  ${SOURCE_PATH}/ResourceDock.h
                  ${SOURCE_PATH}/ShaderTree.h
                  ${SOURCE_PATH}/TextEdit.h
+                 ${SOURCE_PATH}/TextureVisitor.h
                  ${SOURCE_PATH}/Typedefs.h)
 
 SET(PROG_SOURCES ${SOURCE_PATH}/main.cpp
@@ -30,6 +31,7 @@ SET(PROG_SOURCES ${SOURCE_PATH}/main.cpp
                  ${SOURCE_PATH}/ResourceDock.cpp
                  ${SOURCE_PATH}/ShaderTree.cpp
                  ${SOURCE_PATH}/TextEdit.cpp
+                 ${SOURCE_PATH}/TextureVisitor.cpp
                  ${SOURCE_PATH}/ObjectViewer.rc)
 
 
