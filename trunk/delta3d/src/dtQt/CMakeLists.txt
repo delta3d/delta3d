@@ -43,6 +43,9 @@ objecttypelistpanel.cpp
 objecttypeselectdialog.cpp
 osgadapterwidget.cpp
 osggraphicswindowqt.cpp
+osgoptimizerpanel.cpp
+osgwriteroptionsdialog.cpp
+osgwriteroptionspanel.cpp
 projectcontextdialog.cpp
 propertycontrolarray.cpp
 propertycontrolbool.cpp
@@ -77,6 +80,9 @@ qt4_wrap_ui(UI_SOURCES actortreepanel.ui
                        basepropertycontrol.ui
                        nodetreepanel.ui
                        objecttypelistpanel.ui
+					   osgoptimizerpanel.ui
+					   osgwriteroptionsdialog.ui
+					   osgwriteroptionspanel.ui
                        propertycontrolarray.ui
                        propertycontrolbool.ui
                        propertycontrolbitmask.ui
