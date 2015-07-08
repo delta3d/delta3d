@@ -54,7 +54,7 @@
     <rect>
      <x>180</x>
      <y>10</y>
-     <width>163</width>
+     <width>191</width>
      <height>136</height>
     </rect>
    </property>
@@ -80,11 +80,25 @@
      </layout>
     </item>
     <item>
-     <widget class="QCheckBox" name="mCompressTextures">
-      <property name="text">
-       <string>Compress</string>
-      </property>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Compression</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="mTextureCompression">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
      <widget class="QCheckBox" name="mUseOriginalRefs">
@@ -106,6 +120,19 @@
    </property>
    <property name="text">
     <string>Save As...</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="mOmitHiddenNodes">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>140</y>
+     <width>141</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Omit Hidden Nodes</string>
    </property>
   </widget>
  </widget>
