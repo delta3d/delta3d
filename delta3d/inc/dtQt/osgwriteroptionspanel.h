@@ -27,6 +27,7 @@
 #include <dtCore/refptr.h>
 #include <QtGui/qwidget.h>
 #include <osg/Node>
+#include <osg/Texture>
 #include <osgDB/Options>
 
 
@@ -68,6 +69,9 @@ namespace dtQt
 
       OsgOptionsPtr GetOptions() const;
 
+      void SetTextureCompressionOption(osg::Texture::InternalFormatMode compression);
+      osg::Texture::InternalFormatMode GetTextureCompressionOption() const;
+
       virtual void UpdateUI();
 
       virtual void UpdateData();
@@ -84,6 +88,7 @@ namespace dtQt
       void OnOptimizeChanged(int checkedState);
 
       void OnTextureWriteChanged();
+      void OnTextureCompressionChanged();
 
    protected:
       virtual void CreateConnections();
@@ -94,6 +99,7 @@ namespace dtQt
 
       bool mBinaryMode;
       OsgOptionsPtr mOptions;
+      osg::Texture::InternalFormatMode mTextureCompression;
    };
 }
 

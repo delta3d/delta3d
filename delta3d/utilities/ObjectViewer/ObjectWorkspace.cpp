@@ -36,6 +36,7 @@
 #include <QtGui/QDragEnterEvent>
 #include <QtOpenGL/QGLWidget>
 
+#include <osgDB/FileNameUtils>
 #include <osgDB/Registry>
 #include <osgDB/WriteFile>
 #include <cassert>
@@ -760,6 +761,8 @@ void ObjectWorkspace::OnSaveAs()
       mContextPath.c_str(),
       tr(filterStr.str().c_str()));
 
+   std::string ext = osgDB::getFileExtension(filename.toStdString());
+
    QString statusMessage;
 
    if ( ! filename.isEmpty())
@@ -769,38 +772,23 @@ void ObjectWorkspace::OnSaveAs()
       {
          // Ask the user for export options.
          dtQt::OsgWriterOptionsDialog osgDialog;
+         osgDialog.GetWriterOptionsPanel().SetBinaryMode(ext == "ive" || ext == "osgb");
          if (osgDialog.exec() == QDialog::Accepted)
          {
+            dtCore::RefPtr<osg::Node> model = obj->GetOSGNode();
+
             if (osgDialog.IsOptimizerChecked())
             {
                osgUtil::Optimizer::OptimizationOptions options = osgDialog.GetOptimizerOptionsPanel().GetOptions();
 
-               osgUtil::Optimizer optimizer;
-               optimizer.optimize(obj->GetOSGNode(), options);
+               model = OptimizeModel(*model, options, true);
             }
 
             // Access the options that the user selected.
-            dtCore::RefPtr<osgDB::Options> options = osgDialog.GetWriterOptionsPanel().GetOptions();
+            dtQt::OsgWriterOptionsPanel& panel = osgDialog.GetWriterOptionsPanel();
+            dtCore::RefPtr<osgDB::Options> options = panel.GetOptions();
 
-            osgDB::Registry::instance()->setOptions(options);
-
-            // Optimize the model to not keep image data after creating textures.
-            // The unref flag is saved to file, so this step is important for optimization.
-            dtCore::RefPtr<TextureVisitor> visitor = new TextureVisitor;
-            obj->GetOSGNode()->accept(*visitor);
-            visitor->SetUnRefImageData(true);
-
-            // Write the file.
-            if ( ! osgDB::writeNodeFile(*obj->GetOSGNode(), filename.toStdString(), options.get()))
-            {
-               QString msg = "Failed writing file: " + filename;
-               QMessageBox::warning(this, tr("Save Failed"), msg);
-            }
-
-            // Set textures back to keep image data for the sake of the editor for
-            // subsequent image writing. If not, image data will go NULL an not
-            // allow textures to be written along with their model.
-            visitor->SetUnRefImageData(false);
+            SaveModel(*model, *options, panel.GetTextureCompressionOption(), filename.toStdString());
          }
       }
       else
@@ -958,6 +946,69 @@ void ObjectWorkspace::OnShaderApplied(ShaderProgramPtr shaderProgram)
       dtCore::RefPtr<dtQt::PropertyPanelBuilder> propBuilder = new dtQt::PropertyPanelBuilder;
       propBuilder->AddPropertiesToPanel(*mProperties, *mPropertyPanel);*/
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+dtCore::RefPtr<osg::Node> ObjectWorkspace::OptimizeModel(osg::Node& model, osgUtil::Optimizer::OptimizationOptions options, bool optimizeCopy)
+{
+   dtCore::RefPtr<osg::Node> resultModel = &model;
+
+   if (optimizeCopy)
+   {
+      resultModel = dynamic_cast<osg::Node*>(model.clone(osg::CopyOp::DEEP_COPY_ALL));
+
+      if ( ! resultModel.valid())
+      {
+         std::string msg = "Failed to clone and optimize the model: " + model.getName();
+         QMessageBox::warning(this, tr("Optimize Failed"), tr(msg.c_str()));
+
+         // Send back the original model.
+         return &model;
+      }
+   }
+
+   osgUtil::Optimizer optimizer;
+   optimizer.optimize(resultModel.get(), options);
+
+   return resultModel;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::SaveModel(osg::Node& model, osgDB::Options& options, osg::Texture::InternalFormatMode textureMode, const std::string& filepath)
+{
+   osgDB::Registry::instance()->setOptions(&options);
+
+   // Determine if the textures should be compressed.
+   /*if (textureMode != osg::Texture::USE_IMAGE_DATA_FORMAT)
+   {
+      dtCore::RefPtr<CompressTexturesVisitor> visitor = new CompressTexturesVisitor(textureMode);
+      model.accept(*visitor);
+      visitor->compress();
+
+      std::string ext = osgDB::getFileExtension(filepath);
+      if (ext != "ive" || (options.getOptionString().find("noTexturesInIVEFile") != std::string::npos))
+      {
+         visitor->write(osgDB::getFilePath(filepath));
+      }
+   }*/
+
+   // Optimize the model to not keep image data after creating textures.
+   // The unref flag is saved to file, so this step is important for optimization.
+   dtCore::RefPtr<TextureVisitor> visitor = new TextureVisitor;
+   model.accept(*visitor);
+   visitor->SetUnRefImageData(true);
+
+   // Write the file.
+   if ( ! osgDB::writeNodeFile(model, filepath, &options))
+   {
+      std::string msg = "Failed writing file: " + filepath;
+      QMessageBox::warning(this, tr("Save Failed"), tr(msg.c_str()));
+   }
+
+   // Set textures back to keep image data for the sake of the editor for
+   // subsequent image writing. If not, image data will go NULL an not
+   // allow textures to be written along with their model.
+   visitor->SetUnRefImageData(false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

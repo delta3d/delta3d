@@ -27,6 +27,8 @@
 #include <QtGui/QMainWindow>
 #include <QtCore/QFileInfoList>
 #include <dtCore/refptr.h>
+#include <osgDB/Options>
+#include <osgUtil/Optimizer>
 #include "Typedefs.h"
 
 
@@ -175,6 +177,10 @@ private:
    void UpdateShaderList();
    void UpdateMapList();
    bool IsDeltaMapFile(const QString& filename);
+
+   dtCore::RefPtr<osg::Node> OptimizeModel(osg::Node& model, osgUtil::Optimizer::OptimizationOptions options, bool optimizeCopy);
+   
+   void SaveModel(osg::Node& model, osgDB::Options& options, osg::Texture::InternalFormatMode textureMode, const std::string& filepath);
 
 private slots:
 

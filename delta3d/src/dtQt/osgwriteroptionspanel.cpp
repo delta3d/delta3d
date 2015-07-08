@@ -57,6 +57,47 @@ namespace dtQt
 
 
 
+   struct TextureCompressionOption
+   {
+      std::string mUIText;
+      osg::Texture::InternalFormatMode mEnumValue;
+   };
+
+   static const TextureCompressionOption _TextureCompressionOptions[] = {
+      TextureCompressionOption{ "None", osg::Texture::USE_IMAGE_DATA_FORMAT },
+      TextureCompressionOption{ "Auto", osg::Texture::USE_USER_DEFINED_FORMAT },
+      TextureCompressionOption{  "ARB", osg::Texture::USE_ARB_COMPRESSION },
+      TextureCompressionOption{ "DXT1", osg::Texture::USE_S3TC_DXT1_COMPRESSION },
+      TextureCompressionOption{ "DXT3", osg::Texture::USE_S3TC_DXT3_COMPRESSION },
+      TextureCompressionOption{ "DXT5", osg::Texture::USE_S3TC_DXT5_COMPRESSION }
+   };
+
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   /////////////////////////////////////////////////////////////////////////////
+   class OsgWriterOptionsPreset : public osg::Referenced
+   {
+   public:
+      bool mOptimize;
+      bool mCompress;
+      bool mOriginalReferences;
+      std::string mTextureWriteOption;
+
+      OsgWriterOptionsPreset()
+         : mOptimize(false)
+         , mCompress(false)
+         , mOriginalReferences(false)
+      {}
+
+   protected:
+      virtual ~OsgWriterOptionsPreset()
+      {}
+   };
+
+
+
    /////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    /////////////////////////////////////////////////////////////////////////////
@@ -65,14 +106,13 @@ namespace dtQt
       , mUI(new Ui::OsgWriterOptionsPanel)
       , mBinaryMode(false)
       , mOptions(new osgDB::ReaderWriter::Options())
+      , mTextureCompression(_TextureCompressionOptions[0].mEnumValue)
    {
       mUI->setupUi(this);
 
       CreateConnections();
 
       CreateUIOptions();
-
-      mUI->mTextureWrite->setCurrentIndex(0);
 
       UpdateUI();
    }
@@ -90,12 +130,15 @@ namespace dtQt
 
       connect(mUI->mTextureWrite, SIGNAL(currentIndexChanged(int)),
          this, SLOT(OnTextureWriteChanged()));
+
+      connect(mUI->mTextureCompression, SIGNAL(currentIndexChanged(int)),
+         this, SLOT(OnTextureCompressionChanged()));
    }
 
    void OsgWriterOptionsPanel::CreateUIOptions()
    {
+      // Texture Write Options
       const TextureWriteOption* curOption = nullptr;
-
       size_t limit = sizeof(_TextureWriteOptions) / sizeof(TextureWriteOption);
       for (size_t i = 0; i < limit; ++i)
       {
@@ -104,11 +147,24 @@ namespace dtQt
          QString qstr(tr(curOption->mUIText.c_str()));
          mUI->mTextureWrite->addItem(qstr);
       }
+
+      // Texture Compression Options
+      const TextureCompressionOption* curCompressOption = nullptr;
+      limit = sizeof(_TextureCompressionOptions) / sizeof(TextureCompressionOption);
+      for (size_t i = 0; i < limit; ++i)
+      {
+         curCompressOption = &_TextureCompressionOptions[i];
+
+         QString qstr(tr(curCompressOption->mUIText.c_str()));
+         mUI->mTextureCompression->addItem(qstr);
+      }
    }
 
    void OsgWriterOptionsPanel::SetBinaryMode(bool binaryMode)
    {
       mBinaryMode = binaryMode;
+
+      UpdateData();
    }
 
    bool OsgWriterOptionsPanel::IsBinaryMode() const
@@ -141,9 +197,24 @@ namespace dtQt
       UpdateData();
    }
 
+   void OsgWriterOptionsPanel::OnTextureCompressionChanged()
+   {
+      UpdateData();
+   }
+
    OsgOptionsPtr OsgWriterOptionsPanel::GetOptions() const
    {
       return mOptions;
+   }
+
+   void OsgWriterOptionsPanel::SetTextureCompressionOption(osg::Texture::InternalFormatMode compression)
+   {
+      mTextureCompression = compression;
+   }
+
+   osg::Texture::InternalFormatMode OsgWriterOptionsPanel::GetTextureCompressionOption() const
+   {
+      return mTextureCompression;
    }
 
    void OsgWriterOptionsPanel::UpdateUI()
@@ -151,27 +222,48 @@ namespace dtQt
       // Texture Write Option
       std::string value = mOptions->getPluginStringData(TEXTURE_WRITE_OPTION);
       int index = mUI->mTextureWrite->findText(value.c_str());
-      mUI->mTextureWrite->setCurrentIndex(index);
+      mUI->mTextureWrite->setCurrentIndex(index < 0 ? 0 : index);
+
+      // Texture Compression Option
+      index = 0;
+      const TextureCompressionOption* curCompressOption = nullptr;
+      size_t limit = sizeof(_TextureCompressionOptions) / sizeof(TextureCompressionOption);
+      for (size_t i = 0; i < limit; ++i)
+      {
+         curCompressOption = &_TextureCompressionOptions[i];
+
+         if (curCompressOption->mEnumValue == mTextureCompression)
+         {
+            index = i;
+            break;
+         }
+      }
+
+      mUI->mTextureCompression->setCurrentIndex(index);
    }
 
    void OsgWriterOptionsPanel::UpdateData()
    {
       // General plugin writer options
       const TextureWriteOption* textureWriteOption = &_TextureWriteOptions[mUI->mTextureWrite->currentIndex()];
-      mOptions->setPluginStringData(TEXTURE_WRITE_OPTION, textureWriteOption->mValue);
-
       TextureWriteOptionE enumVal = textureWriteOption->mEnumValue;
-      mBinaryMode = true;
+
+      const TextureCompressionOption* textureCompressionOption = &_TextureCompressionOptions[mUI->mTextureCompression->currentIndex()];
+      mTextureCompression = textureCompressionOption->mEnumValue;
+
       bool exportTextures = enumVal != NONE;
       bool externalTextures = enumVal != EMBED || ! mBinaryMode;
       bool embedTextures = ! externalTextures;
-      bool compress = mUI->mCompressTextures->isChecked();
+      bool compress = mTextureCompression != osg::Texture::USE_IMAGE_DATA_FORMAT;
       bool writeFiles = enumVal == EXTERNAL_WRITE;
       bool originalRefs = mUI->mUseOriginalRefs->isChecked();
       std::string optionStr;
 
       if (exportTextures)
       {
+         // Set the hint to write images.
+         mOptions->setPluginStringData(TEXTURE_WRITE_OPTION, textureWriteOption->mValue);
+
          optionStr = "OutputTextureFiles";
 
          if (compress)
@@ -199,12 +291,17 @@ namespace dtQt
 
          if (embedTextures)
          {
-            optionStr += " includeImageFileInIVEFile";
+            // OSG will default to "IncludeData" if not specified otherwise.
+
+            if (textureWriteOption->mValue == "IncludeFile")
+            {
+               optionStr += " includeImageFileInIVEFile";
+            }
          }
       }
       else
       {
-         optionStr += " noTexturesInIVEFile";
+         mOptions->removePluginStringData(TEXTURE_WRITE_OPTION);
          optionStr += " noWriteExternalReferenceFiles";
       }
 
