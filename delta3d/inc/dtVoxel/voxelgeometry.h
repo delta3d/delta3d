@@ -26,8 +26,11 @@
 #include <pal/palFactory.h>
 #include <pal/palGeometry.h>
 #include <openvdb/openvdb.h>
+#include <bitset>
 // remove
 #include <iostream>
+#include <dtCore/camera.h>
+#include <osg/io_utils>
 
 namespace dtVoxel
 {
@@ -70,8 +73,26 @@ namespace dtVoxel
                };
          typedef typename GridType::ValueOnIter GridItr;
          openvdb::BBoxd worldBoundingBox(openvdb::Vec3d(bbBox.min.x,bbBox.min.y,bbBox.min.z), openvdb::Vec3d(bbBox.max.x,bbBox.max.y,bbBox.max.z));
+         openvdb::CoordBBox collideBox;
          GridPtr grid = mGrid;
-         openvdb::CoordBBox collideBox = grid->transform().worldToIndexCellCentered(worldBoundingBox);
+         if (worldBoundingBox.volume() < size_t(UINT32_MAX))
+         {
+            //std::cout << "max extent " << worldBoundingBox.maxExtent();
+            collideBox = grid->transform().worldToIndexCellCentered(worldBoundingBox);
+         }
+         else // debug draw
+         {
+            dtCore::Transform xform;
+            dtCore::Camera::GetInstance(0)->GetTransform(xform);
+            osg::Vec3d cameraPos = xform.GetTranslation();
+            //std::cout << "camera pos " << cameraPos;
+            openvdb::Vec3d cameraOvdb(cameraPos.x(), cameraPos.y(), cameraPos.z());
+            openvdb::Vec3d min(cameraOvdb - openvdb::Vec3d(50.0, 50.0, 5.0));
+            openvdb::Vec3d max(cameraOvdb + openvdb::Vec3d(50.0, 50.0, 5.0));
+
+            collideBox = openvdb::CoordBBox(grid->transform().worldToIndexCellCentered(min), grid->transform().worldToIndexCellCentered(max));
+         }
+         //std::cout << " collision box: " << collideBox << std::endl;
          for (int i = collideBox.min().x(), iend = collideBox.max().x() + 1; i < iend; ++i)
          {
             for (int j = collideBox.min().y(), jend = collideBox.max().y() + 1; j < jend; ++j)
@@ -85,8 +106,9 @@ namespace dtVoxel
 
                   openvdb::BBoxd iBox(openvdb::Vec3d(double(coord.x()), double(coord.y()), double(coord.z())), 0);
                   iBox.expand(0.5f);
+                  //std::cout << "Voxel in collision box: " << iBox << std::endl;
                   openvdb::BBoxd voxelBBox = grid->transform().indexToWorld(iBox);
-                  bool activeNeighbors[6];
+                  std::bitset<6> activeNeighbors;
                   activeNeighbors[0] = ca.isValueOn(openvdb::Coord(coord.x()-1,coord.y(),coord.z()));
                   activeNeighbors[1] = ca.isValueOn(openvdb::Coord(coord.x(),coord.y(),coord.z()+1));
                   activeNeighbors[2] = ca.isValueOn(openvdb::Coord(coord.x()+1,coord.y(),coord.z()));
@@ -98,7 +120,7 @@ namespace dtVoxel
                   //std::cout << std::endl;
                   openvdb::math::Vec3<Float> min = voxelBBox.min();
                   openvdb::math::Vec3<Float> max = voxelBBox.max();
-                  //std::cout << "voxel min max: " << min << max << std::endl;
+                  // std::cout << "voxel min max: " << min << max << std::endl;
                   Float cube_vertices[] =
                         {
                               min.x(),  max.y(),  max.z(),
@@ -150,6 +172,7 @@ namespace dtVoxel
          grid->tree().getIndexRange(bbox);
          openvdb::Vec3d start = grid->indexToWorld(bbox.getStart());
          openvdb::Vec3d end = grid->indexToWorld(bbox.getEnd());
+         std::cout << "Bounding box of grid: " << start << "->" << end << std::endl;
          palBoundingBox palBB;
          palBB.min.Set(Float(start.x()), Float(start.y()), Float(start.z()));
          palBB.max.Set(Float(end.x()), Float(end.y()), Float(end.z()));
