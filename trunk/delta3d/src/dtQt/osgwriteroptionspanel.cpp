@@ -275,7 +275,7 @@ namespace dtQt
          if (externalTextures)
          {
             optionStr += " noTexturesInIVEFile"; // IVE
-            optionStr += " inlineExternalReferencesInIVEFile"; // IVE
+            //optionStr += " inlineExternalReferencesInIVEFile"; // IVE
 
             if (writeFiles)
             {
@@ -296,16 +296,19 @@ namespace dtQt
             if (textureWriteOption->mValue == "IncludeFile")
             {
                optionStr += " includeImageFileInIVEFile";
+               //optionStr += " noWriteExternalReferenceFiles"; // IVE
             }
          }
+
+         mOptions->setOptionString(optionStr);
       }
       else
       {
          mOptions->removePluginStringData(TEXTURE_WRITE_OPTION);
-         optionStr += " noWriteExternalReferenceFiles";
+         optionStr += " noTexturesInIVEFile"; // IVE
+         optionStr += " noWriteExternalReferenceFiles"; // IVE
+         mOptions->setOptionString(optionStr);
       }
-
-      mOptions->setOptionString(optionStr);
    }
 
 }
