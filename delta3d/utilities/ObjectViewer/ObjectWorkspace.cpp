@@ -978,6 +978,12 @@ void ObjectWorkspace::SaveModel(osg::Node& model, osgDB::Options& options, osg::
 {
    osgDB::Registry::instance()->setOptions(&options);
 
+   // Change the currnt directory so that writing of external texture files
+   // are written to a proper location relative to the target model file.
+   std::string currentDir = osgDB::getCurrentWorkingDirectory();
+   std::string targetDir = osgDB::getFilePath(filepath);
+   osgDB::setCurrentWorkingDirectory(targetDir);
+
    // Determine if the textures should be compressed.
    /*if (textureMode != osg::Texture::USE_IMAGE_DATA_FORMAT)
    {
@@ -1009,6 +1015,9 @@ void ObjectWorkspace::SaveModel(osg::Node& model, osgDB::Options& options, osg::
    // subsequent image writing. If not, image data will go NULL an not
    // allow textures to be written along with their model.
    visitor->SetUnRefImageData(false);
+
+   // Restore the original current directory.
+   osgDB::setCurrentWorkingDirectory(currentDir);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
