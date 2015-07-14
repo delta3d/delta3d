@@ -58,6 +58,7 @@ namespace dtVoxel
    private:
    
       bool mIsDone;
+      double mIsoLevel;
       osg::Vec3 mOffset;
       osg::Vec3 mTexelSize;
       osg::Vec3i mResolution;
@@ -100,7 +101,7 @@ namespace dtVoxel
       osg::Node* GetOSGNode();
       const osg::Node* GetOSGNode() const;
 
-      double SampleCoord(double x, double y, double z, openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>& fastSampler);
+      double SampleCoord(double x, double y, double z, double isovalue, openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>& fastSampler);
          
       void AddGeometry(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution, osg::Vec3Array* vertArray, osg::DrawElementsUInt* drawElements);
 

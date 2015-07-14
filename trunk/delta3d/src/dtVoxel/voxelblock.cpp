@@ -635,11 +635,14 @@ namespace dtVoxel
       geode->addDrawable(geom);
       parentNode.addChild(geode);      
 
-      /*dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
-      simplifier->setSampleRatio(0.2f);
-      simplifier->setDoTriStrip(false);
-      parentNode.accept(*simplifier);*/
-      
+      if (voxelActor.GetSimplify())
+      {
+         dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
+         simplifier->setSampleRatio(voxelActor.GetSampleRatio());
+         simplifier->setDoTriStrip(false);
+         parentNode.accept(*simplifier);
+      }
+
       osgUtil::Optimizer opt;
       opt.optimize(&parentNode, osgUtil::Optimizer::MAKE_FAST_GEOMETRY);     
       
