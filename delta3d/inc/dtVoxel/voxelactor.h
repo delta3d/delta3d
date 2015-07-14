@@ -59,6 +59,9 @@ namespace dtVoxel
       void MarkVisualDirty(const osg::BoundingBox& bb, int gridIdx = 0);
 
       DT_DECLARE_ACCESSOR_INLINE(float, ViewDistance)
+      DT_DECLARE_ACCESSOR_INLINE(float, IsoLevel)
+      DT_DECLARE_ACCESSOR_INLINE(bool, Simplify)
+      DT_DECLARE_ACCESSOR_INLINE(float, SampleRatio)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, GridDimensions)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, BlockDimensions)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, CellDimensions)

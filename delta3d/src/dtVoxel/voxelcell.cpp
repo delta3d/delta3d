@@ -58,6 +58,7 @@ namespace dtVoxel
 
    CreateMeshTask::CreateMeshTask(const osg::Vec3& offset, const osg::Vec3& texelSize, const osg::Vec3i& resolution, openvdb::FloatGrid::Ptr grid)
       : mIsDone(false)
+      , mIsoLevel(0.12f)
       , mOffset(offset)
       , mTexelSize(texelSize)
       , mResolution(resolution)
@@ -164,9 +165,9 @@ namespace dtVoxel
    {
       double result = (fastSampler.wsSample(openvdb::Vec3R(x, y, z)));
       
-      dtUtil::Clamp(result, 0.0, 0.15);            
+      dtUtil::Clamp(result, 0.0, mIsoLevel);
 
-      result = dtUtil::MapRangeValue(result, 0.0, 0.15, 0.0, 1.0);
+      result = dtUtil::MapRangeValue(result, 0.0, mIsoLevel, 0.0, 1.0);
       return result;
    }
 
@@ -236,12 +237,12 @@ namespace dtVoxel
       mImpl->mIsAllocated = false;
    }
 
-   double VoxelCell::SampleCoord(double x, double y, double z, openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>& fastSampler)
+   double VoxelCell::SampleCoord(double x, double y, double z, double isovalue, openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>& fastSampler)
    {
       double result = (fastSampler.wsSample(openvdb::Vec3R(x, y, z)));
-      dtUtil::Clamp(result, -0.33, 0.36);
+      dtUtil::Clamp(result, 0.0, isovalue);
       
-      result = dtUtil::MapRangeValue(result, 0.0, 0.15, 0.0, 1.0);
+      result = dtUtil::MapRangeValue(result, 0.0, isovalue, 0.0, 1.0);
       return result;
    }
 
@@ -269,6 +270,7 @@ namespace dtVoxel
 
       //reusing this improves performance by quite a bit 
       osg::Vec3 vertlist[12];
+      double isovalue = voxelActor.GetIsoLevel();
 
       for (int i = 0; i < resolution[0]; ++i)
       {
@@ -286,28 +288,28 @@ namespace dtVoxel
                TRIANGLE triangles[5];
 
                grid.p[0] = from;
-               grid.val[0] = SampleCoord(grid.p[0].x(), grid.p[0].y(), grid.p[0].z(), fastSampler);
+               grid.val[0] = SampleCoord(grid.p[0].x(), grid.p[0].y(), grid.p[0].z(), isovalue, fastSampler);
 
                grid.p[1].set(from[0] + texelSize[0], from[1], from[2]);
-               grid.val[1] = SampleCoord(grid.p[1].x(), grid.p[1].y(), grid.p[1].z(), fastSampler);
+               grid.val[1] = SampleCoord(grid.p[1].x(), grid.p[1].y(), grid.p[1].z(), isovalue, fastSampler);
 
                grid.p[2].set(from[0] + texelSize[0], from[1] + texelSize[1], from[2]);
-               grid.val[2] = SampleCoord(grid.p[2].x(), grid.p[2].y(), grid.p[2].z(), fastSampler);
+               grid.val[2] = SampleCoord(grid.p[2].x(), grid.p[2].y(), grid.p[2].z(), isovalue, fastSampler);
 
                grid.p[3].set(from[0], from[1] + texelSize[1], from[2]);
-               grid.val[3] = SampleCoord(grid.p[3].x(), grid.p[3].y(), grid.p[3].z(), fastSampler);
+               grid.val[3] = SampleCoord(grid.p[3].x(), grid.p[3].y(), grid.p[3].z(), isovalue, fastSampler);
 
                grid.p[4].set(from[0], from[1], from[2] + texelSize[2]);
-               grid.val[4] = SampleCoord(grid.p[4].x(), grid.p[4].y(), grid.p[4].z(), fastSampler);
+               grid.val[4] = SampleCoord(grid.p[4].x(), grid.p[4].y(), grid.p[4].z(), isovalue, fastSampler);
 
                grid.p[5].set(from[0] + texelSize[0], from[1], from[2] + texelSize[2]);
-               grid.val[5] = SampleCoord(grid.p[5].x(), grid.p[5].y(), grid.p[5].z(), fastSampler);
+               grid.val[5] = SampleCoord(grid.p[5].x(), grid.p[5].y(), grid.p[5].z(), isovalue, fastSampler);
 
                grid.p[6].set(from[0] + texelSize[0], from[1] + texelSize[1], from[2] + texelSize[2]);
-               grid.val[6] = SampleCoord(grid.p[6].x(), grid.p[6].y(), grid.p[6].z(), fastSampler);
+               grid.val[6] = SampleCoord(grid.p[6].x(), grid.p[6].y(), grid.p[6].z(), isovalue, fastSampler);
 
                grid.p[7].set(from[0], from[1] + texelSize[1], from[2] + texelSize[2]);
-               grid.val[7] = SampleCoord(grid.p[7].x(), grid.p[7].y(), grid.p[7].z(), fastSampler);
+               grid.val[7] = SampleCoord(grid.p[7].x(), grid.p[7].y(), grid.p[7].z(), isovalue, fastSampler);
 
                int numTriangles = PolygonizeCube(grid, isolevel, triangles, &vertlist[0]);
 
@@ -400,11 +402,14 @@ namespace dtVoxel
 
       mImpl->mMeshNode->addChild(geode);
 
-      /*dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
-      simplifier->setSampleRatio(0.2f);
-      simplifier->setDoTriStrip(false);
-      mImpl->mMeshNode->accept(*simplifier);*/
-      
+      if (voxelActor.GetSimplify())
+      {
+         dtCore::RefPtr<osgUtil::Simplifier> simplifier = new osgUtil::Simplifier();
+         simplifier->setSampleRatio(voxelActor.GetSampleRatio());
+         simplifier->setDoTriStrip(false);
+         mImpl->mMeshNode->accept(*simplifier);
+      }
+
       mImpl->mIsAllocated = true;
    }
 

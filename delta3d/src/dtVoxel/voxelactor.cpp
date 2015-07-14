@@ -48,6 +48,9 @@ namespace dtVoxel
 
    VoxelActor::VoxelActor()
    : mViewDistance(1000.0f)
+   , mIsoLevel(0.12f)
+   , mSimplify(false)
+   , mSampleRatio(0.2f)
    , mCreateRemotePhysics(false)
    {
    }
@@ -99,6 +102,9 @@ namespace dtVoxel
       RegHelper regHelper(*this, this, GROUP);
       
       DT_REGISTER_PROPERTY_WITH_LABEL(ViewDistance, "View Distance", "The distance to at which voxels will be generated into groups of volumes and rendered.", RegHelper, regHelper);
+      DT_REGISTER_PROPERTY_WITH_LABEL(IsoLevel, "IsoLevel", "The value of the database which marks the surface, use the same number as the thickness if you compiled a database with the OpenVDBCompiler.", RegHelper, regHelper);
+      DT_REGISTER_PROPERTY_WITH_LABEL(Simplify, "Simplify", "Whether or not to simplify the result, this can take a long longer to generate.", RegHelper, regHelper);
+      DT_REGISTER_PROPERTY_WITH_LABEL(SampleRatio, "SampleRatio", "The percentage at which to sample in each dimension when simplifying, make sure to turn on the Simplify option to use this property.", RegHelper, regHelper);
       DT_REGISTER_PROPERTY_WITH_LABEL(GridDimensions, "Grid Dimensions", "The size of the grid to allocate into blocks.", RegHelper, regHelper);
       DT_REGISTER_PROPERTY_WITH_LABEL(BlockDimensions,"Block Dimensions", "The size of the blocks within the grid.", RegHelper, regHelper);
       DT_REGISTER_PROPERTY_WITH_LABEL(CellDimensions, "Cell Dimensions", "The size of the cells within the blocks", RegHelper, regHelper);
