@@ -49,12 +49,12 @@ namespace dtVoxel
       {
       }
 
-      /*override*/ ~ColliderCallback() {}
+      ~ColliderCallback() override {}
 
       /**
        * Override this to return the triangles within the given axis aligned bounding box.
        */
-      virtual void operator()(const palBoundingBox& bbBox, TriangleVector& trianglesOut)
+      virtual void operator()(const palBoundingBox& bbBox, palTriangleCallback& callback)
       {
          static const int faces[] =
                {
@@ -92,11 +92,16 @@ namespace dtVoxel
 
             collideBox = openvdb::CoordBBox(grid->transform().worldToIndexCellCentered(min), grid->transform().worldToIndexCellCentered(max));
          }
+
+         const palBoundingBox& fullBoundingBox = GetBoundingBox();
+
          //std::cout << " collision box: " << collideBox << std::endl;
          for (int i = collideBox.min().x(), iend = collideBox.max().x() + 1; i < iend; ++i)
          {
             for (int j = collideBox.min().y(), jend = collideBox.max().y() + 1; j < jend; ++j)
             {
+               int partId = (fullBoundingBox.max.x - fullBoundingBox.max.x) * i + j;
+
                for (int k = collideBox.min().z(), kend = collideBox.max().z() + 1; k < kend; ++k)
                {
                   typename GridType::ConstAccessor& ca = mAcc;
@@ -132,22 +137,23 @@ namespace dtVoxel
                               max.x(),  max.y(),  max.z(),
                               max.x(),  max.y(),  min.z()
                         };
-                  int triCount = 12;
-                  for (int i=0; i < triCount; ++i)
+                  static int triCount = 12;
+                  int baseTriIdx = (triCount * k);
+                  for (int triIdx=0; triIdx < triCount; ++triIdx)
                   {
-                     if (!activeNeighbors[i/2])
+                     if (!activeNeighbors[triIdx/2])
                      {
-                        palTriangle tri;
+                        palTriangle triangle;
                         //std::cout << "triangle ";
-                        for (unsigned j = 0; j < 3; ++j)
+                        for (unsigned vertIdx = 0; vertIdx < 3; ++vertIdx)
                         {
-                           tri.vertices[j].x = cube_vertices[3 * faces[3*i + j] + 0];
-                           tri.vertices[j].y = cube_vertices[3 * faces[3*i + j] + 1];
-                           tri.vertices[j].z = cube_vertices[3 * faces[3*i + j] + 2];
+                           triangle.vertices[vertIdx].x = cube_vertices[3 * faces[3*triIdx + vertIdx] + 0];
+                           triangle.vertices[vertIdx].y = cube_vertices[3 * faces[3*triIdx + vertIdx] + 1];
+                           triangle.vertices[vertIdx].z = cube_vertices[3 * faces[3*triIdx + vertIdx] + 2];
                            //std::cout << "[" << tri.vertices[j].x << " " << tri.vertices[j].y << " " << tri.vertices[j].z << "]";
                         }
                         //std::cout << std::endl;
-                        trianglesOut.push_back(tri);
+                        callback.ProcessTriangle(triangle, partId,  baseTriIdx + triIdx);
                      }
                   }
                }
