@@ -34,9 +34,11 @@ namespace dtCore
    class DT_CORE_EXPORT Transform
    {
    public:
+      typedef osg::Matrix::value_type value_type;
+      typedef osg::Vec3::value_type vec_value_type;
 
-      Transform(float tx = 0.0f, float ty = 0.0f, float tz = 0.0f,
-                float h = 0.0f, float p = 0.0f, float r = 0.0f);
+      Transform(vec_value_type tx = 0.0f, vec_value_type ty = 0.0f, vec_value_type tz = 0.0f,
+            vec_value_type h = 0.0f, vec_value_type p = 0.0f, vec_value_type r = 0.0f);
       Transform(const Transform& that);
       ~Transform();
 
@@ -62,7 +64,7 @@ namespace dtCore
       /// Overwrites this transform with a scale matrix with the given values.
       void MakeScale(const osg::Vec3f& scaleVec) { mTransform.makeScale(scaleVec); }
       /// Overwrites this transform with a scale matrix with the given values.
-      void MakeScale(osg::Matrix::value_type x, osg::Matrix::value_type y, osg::Matrix::value_type z)
+      void MakeScale(value_type x, value_type y, value_type z)
          { mTransform.makeScale(x,y,z); }
 
       void GetRow(unsigned index, osg::Vec3& row) const;
@@ -72,8 +74,8 @@ namespace dtCore
       void SetRow(unsigned index, const osg::Vec4& row);
 
       ///Set both translation and rotation methods
-      void Set(float tx, float ty, float tz,
-                       float h, float p, float r);
+      void Set(vec_value_type tx, vec_value_type ty, vec_value_type tz,
+            vec_value_type h, vec_value_type p, vec_value_type r);
       ///Set both translation and rotation methods
       void Set(const osg::Vec3& xyz, const osg::Vec3& hprRotation);
       ///Set both translation and rotation methods
@@ -87,12 +89,12 @@ namespace dtCore
       void Set(const osg::Vec3& xyz, const osg::Vec3& lookAtXYZ, const osg::Vec3& upVec);
 
       ///Set both translation and rotation using target(lookat) and position
-      void Set(float posX, float posY, float posZ,
-               float lookAtX, float lookAtY, float lookAtZ,
-               float upVecX, float upVecY, float upVecZ);
+      void Set(vec_value_type posX, vec_value_type posY, vec_value_type posZ,
+            vec_value_type lookAtX, vec_value_type lookAtY, vec_value_type lookAtZ,
+            vec_value_type upVecX, vec_value_type upVecY, vec_value_type upVecZ);
 
       ///Set only translation methods
-      void SetTranslation(float tx, float ty, float tz) { SetTranslation(osg::Vec3(tx, ty, tz)); }
+      void SetTranslation(vec_value_type tx, vec_value_type ty, vec_value_type tz) { SetTranslation(osg::Vec3(tx, ty, tz)); }
       ///Set only translation methods
       void SetTranslation(const osg::Vec3f& xyz) { mTransform.setTrans( xyz ); }
       ///Set only translation methods
@@ -107,7 +109,7 @@ namespace dtCore
        * Set the rotation using heading, pitch, roll (in degrees)
        * This will wipe out any scale assigned to the matrix.
        */
-      void SetRotation(float h, float p, float r) { SetRotation(osg::Vec3(h, p, r)); }
+      void SetRotation(vec_value_type h, vec_value_type p, vec_value_type r) { SetRotation(osg::Vec3(h, p, r)); }
 
       /**
        * Set the rotation using heading, pitch, roll (in degrees)
@@ -127,7 +129,7 @@ namespace dtCore
       void SetRotation(const osg::Matrix& rotation);
 
       ///Get translation and rotation methods
-      void Get(float& tx, float& ty, float& tz, float& h, float& p, float& r) const;
+      void Get(vec_value_type& tx, vec_value_type& ty, vec_value_type& tz, vec_value_type& h, vec_value_type& p, vec_value_type& r) const;
       ///Get translation and rotation methods
       void Get(osg::Vec3& xyz, osg::Matrix& rotation) const;
       ///Get translation and rotation methods
@@ -142,12 +144,12 @@ namespace dtCore
       ///Get only translation methods
       void GetTranslation(osg::Vec3d& translation) const { translation.set(mTransform.getTrans()); }
       ///Get only translation methods
-      void GetTranslation(float& tx, float& ty, float& tz) const;
+      void GetTranslation(vec_value_type& tx, vec_value_type& ty, vec_value_type& tz) const;
       ///Get only translation methods
       const osg::Vec3 GetTranslation() const { return mTransform.getTrans(); }
 
       ///Get only rotation methods
-      void GetRotation(float& h, float& p, float& r) const;
+      void GetRotation(vec_value_type& h, vec_value_type& p, vec_value_type& r) const;
       ///Get only rotation methods
       void GetRotation(osg::Vec3& hpr) const;
       ///Get only rotation methods
@@ -172,9 +174,9 @@ namespace dtCore
       void CalcScale(osg::Vec3d& scale) const;
 
       /// Calculates the distance from this tranform to another
-      double CalcDistance(const dtCore::Transform& xform) const;
+      value_type CalcDistance(const dtCore::Transform& xform) const;
       /// Calculates the distance squared from this tranform to another
-      double CalcDistanceSquared(const dtCore::Transform& xform) const;
+      value_type CalcDistanceSquared(const dtCore::Transform& xform) const;
 
       /**
        * Does a polar decomposition (SLOW) on the matrix to get the scale and the unscaled rotation matrix,
@@ -201,7 +203,7 @@ namespace dtCore
        *  The epsilon will scale up and down based on the values of the floats using the passed id in epsilon
        *  as a base.
        */
-      bool EpsilonEquals(const Transform& transform, float epsilon = 0.0001f) const;
+      bool EpsilonEquals(const Transform& transform, value_type epsilon = 0.0001) const;
 
       /// @return true if the all the elements are valid floats, i.e. not NAN
       bool IsValid() const { return mTransform.valid(); };
