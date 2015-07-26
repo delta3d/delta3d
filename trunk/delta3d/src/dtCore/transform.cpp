@@ -8,7 +8,7 @@
 namespace dtCore
 {
    /////////////////////////////////////////////////////////////////////////////
-   Transform::Transform(float tx, float ty, float tz, float h, float p, float r)
+   Transform::Transform(Transform::vec_value_type tx, Transform::vec_value_type ty, Transform::vec_value_type tz, Transform::vec_value_type h, Transform::vec_value_type p, Transform::vec_value_type r)
    {
       Set(tx, ty, tz, h, p, r);
    }
@@ -49,7 +49,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Transform::Set(float tx, float ty, float tz, float h, float p, float r)
+   void Transform::Set(Transform::vec_value_type tx, Transform::vec_value_type ty, Transform::vec_value_type tz, Transform::vec_value_type h, Transform::vec_value_type p, Transform::vec_value_type r)
    {
       osg::Vec3 xyz(tx, ty, tz);
       osg::Vec3 hpr(h, p, r);
@@ -127,7 +127,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Transform::Get(float& tx, float& ty, float& tz, float& h, float& p, float& r) const
+   void Transform::Get(Transform::vec_value_type& tx, Transform::vec_value_type& ty, Transform::vec_value_type& tz, Transform::vec_value_type& h, Transform::vec_value_type& p, Transform::vec_value_type& r) const
    {
       GetTranslation(tx, ty, tz);
       GetRotation(h, p, r);
@@ -161,7 +161,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Transform::GetTranslation(float& tx, float& ty, float& tz) const
+   void Transform::GetTranslation(Transform::vec_value_type& tx, Transform::vec_value_type& ty, Transform::vec_value_type& tz) const
    {
       osg::Vec3f vec3;
       GetTranslation(vec3);
@@ -183,7 +183,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Transform::GetRotation(float& h, float& p, float& r) const
+   void Transform::GetRotation(Transform::vec_value_type& h, Transform::vec_value_type& p, Transform::vec_value_type& r) const
    {
       osg::Vec3 hpr;
       dtUtil::MatrixUtil::MatrixToHpr(hpr, mTransform);
@@ -295,9 +295,9 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Transform::Set(float posX, float posY, float posZ,
-                       float lookAtX, float lookAtY, float lookAtZ,
-                       float upVecX, float upVecY, float upVecZ)
+   void Transform::Set(Transform::vec_value_type posX, Transform::vec_value_type posY, Transform::vec_value_type posZ,
+                       Transform::vec_value_type lookAtX, Transform::vec_value_type lookAtY, Transform::vec_value_type lookAtZ,
+                       Transform::vec_value_type upVecX, Transform::vec_value_type upVecY, Transform::vec_value_type upVecZ)
    {
       osg::Vec3 xyz(posX, posY, posZ);
       osg::Vec3 lookAt(lookAtX, lookAtY, lookAtZ);
@@ -333,7 +333,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool Transform::EpsilonEquals(const Transform& transform, float epsilon) const
+   bool Transform::EpsilonEquals(const Transform& transform, Transform::value_type epsilon) const
    {
       for(int i = 0; i < 4; i++)
       {
