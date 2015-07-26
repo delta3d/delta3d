@@ -166,8 +166,9 @@ namespace dtUtil
 
    //////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////
-   struct LogImpl
+   class LogImpl //: std::stringbuf
    {
+   public:
       LogImpl(const std::string& name)
       : mOutputStreamBit(Log::STANDARD)
       , mName(name)
@@ -181,6 +182,45 @@ namespace dtUtil
       Log::LogMessageType mLevel;
       Log::LogObserverContainer mObservers;
    };
+//   /** Stream buffer calling notify handler when buffer is synchronized (usually on std::endl).
+//    * Stream stores last notification severity to pass it to handler call.
+//    */
+//   struct NotifyStreamBuffer : public std::stringbuf
+//   {
+//       NotifyStreamBuffer() : _severity(osg::NOTICE)
+//       {
+//       }
+//
+//       void setNotifyHandler(osg::NotifyHandler *handler) { _handler = handler; }
+//       osg::NotifyHandler *getNotifyHandler() const { return _handler.get(); }
+//
+//       /** Sets severity for next call of notify handler */
+//       void setCurrentSeverity(osg::NotifySeverity severity)
+//       {
+//           if (_severity != severity)
+//           {
+//               sync();
+//               _severity = severity;
+//           }
+//       }
+//
+//       osg::NotifySeverity getCurrentSeverity() const { return _severity; }
+//
+//   private:
+//
+//       int sync()
+//       {
+//           sputc(0); // string termination
+//           if (_handler.valid())
+//               _handler->notify(_severity, pbase());
+//           pubseekpos(0, std::ios_base::out); // or str(std::string())
+//           return 0;
+//       }
+//
+//       osg::ref_ptr<osg::NotifyHandler> _handler;
+//       osg::NotifySeverity _severity;
+//   };
+
 
    //////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////

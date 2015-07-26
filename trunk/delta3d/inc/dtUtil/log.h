@@ -26,6 +26,7 @@
 #include <string>
 #include <cstdarg>
 #include <vector>
+#include <ostream>
 
 #include <osg/Referenced>
 #include <osg/ref_ptr>
@@ -69,6 +70,23 @@ namespace dtUtil
          _logger.LogMessage(DT_LOG_SOURCE, msg, level); \
    }\
 
+//   #define LOGN(level, name, msg) \
+//   {\
+//      dtUtil::Log& _logger = dtUtil::Log::GetInstance(name); \
+//      if (_logger.IsLevelEnabled(level)) \
+//      {\
+//         _logger(DT_LOG_SOURCE, level) << msg \
+//      }\
+//   }\
+//
+   #define LOGN_ONCE(level, name, msg) \
+   {\
+      static bool _log_once_guard_ = false; \
+      if (!_log_once_guard_) \
+      LOGN(level, name, msg) \
+      _log_once_guard_ = true; \
+   }\
+
    #define LOGN_DEBUG(name, msg) LOGN(dtUtil::Log::LOG_DEBUG, name, msg)
 
    #define LOGN_INFO(name, msg) LOGN(dtUtil::Log::LOG_INFO, name, msg)
@@ -88,6 +106,26 @@ namespace dtUtil
    #define LOG_ERROR(msg) LOGN_ERROR(dtUtil::LogFile::LOG_DEFAULT_NAME, msg)
 
    #define LOG_ALWAYS(msg) LOGN_ALWAYS(dtUtil::LogFile::LOG_DEFAULT_NAME, msg)
+
+   #define LOGN_ONCE_DEBUG(name, msg) LOGN_ONCE(dtUtil::Log::LOG_DEBUG, name, msg)
+
+   #define LOGN_ONCE_INFO(name, msg) LOGN_ONCE(dtUtil::Log::LOG_INFO, name, msg)
+
+   #define LOGN_ONCE_WARNING(name, msg) LOGN_ONCE(dtUtil::Log::LOG_WARNING, name, msg)
+
+   #define LOGN_ONCE_ERROR(name, msg) LOGN_ONCE(dtUtil::Log::LOG_ERROR, name, msg)
+
+   #define LOGN_ONCE_ALWAYS(name, msg) LOGN_ONCE(dtUtil::Log::LOG_ALWAYS, name, msg)
+
+   #define LOG_ONCE_DEBUG(msg) LOGN_ONCE_DEBUG(dtUtil::LogFile::LOG_DEFAULT_NAME, msg)
+
+   #define LOG_ONCE_INFO(msg) LOGN_ONCE_INFO(dtUtil::LogFile::LOG_DEFAULT_NAME, msg)
+
+   #define LOG_ONCE_WARNING(msg) LOGN_ONCE_WARNING(dtUtil::LogFile::LOG_DEFAULT_NAME, msg)
+
+   #define LOG_ONCE_ERROR(msg) LOGN_ONCE_ERROR(dtUtil::LogFile::LOG_DEFAULT_NAME, msg)
+
+   #define LOG_ONCE_ALWAYS(msg) LOGN_ONCE_ALWAYS(dtUtil::LogFile::LOG_DEFAULT_NAME, msg)
 
    struct LogImpl;
 
@@ -289,6 +327,8 @@ namespace dtUtil
 
       ///Returns the name of this logger.
       const std::string& GetName() const;
+
+      //std::ostream& operator()(const std::string& file, const std::string& method, int line, LogMessageType msgType);
 
       //Constructor and destructor are both protected since this is a singleton.
    protected:
