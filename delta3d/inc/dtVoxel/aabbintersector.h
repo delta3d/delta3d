@@ -90,10 +90,6 @@ namespace dtVoxel
                      result = true;
                      return result;
                   }
-                  else
-                  {
-                     if ()
-                  }
                }
             }
          }
