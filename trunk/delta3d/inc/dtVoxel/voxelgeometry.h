@@ -87,8 +87,8 @@ namespace dtVoxel
             osg::Vec3d cameraPos = xform.GetTranslation();
             //std::cout << "camera pos " << cameraPos;
             openvdb::Vec3d cameraOvdb(cameraPos.x(), cameraPos.y(), cameraPos.z());
-            openvdb::Vec3d min(cameraOvdb - openvdb::Vec3d(50.0, 50.0, 5.0));
-            openvdb::Vec3d max(cameraOvdb + openvdb::Vec3d(50.0, 50.0, 5.0));
+            openvdb::Vec3d min(cameraOvdb - openvdb::Vec3d(10.0, 10.0, 5.0));
+            openvdb::Vec3d max(cameraOvdb + openvdb::Vec3d(10.0, 10.0, 5.0));
 
             collideBox = openvdb::CoordBBox(grid->transform().worldToIndexCellCentered(min), grid->transform().worldToIndexCellCentered(max));
          }

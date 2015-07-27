@@ -253,9 +253,9 @@ namespace dtVoxel
 
       //todo using local grid should be faster
       osg::BoundingBox bb(pos, offsetTo);
-      openvdb::GridBase::Ptr vdbGrid = voxelActor.CollideWithAABB(bb);
+      bool hasData = voxelActor.HasDataInAABB(bb);
 
-      if (vdbGrid != NULL && !vdbGrid->empty())
+      if (hasData)
       {
          //std::cout << "Creating new mesh." << std::endl;
          
@@ -363,9 +363,9 @@ namespace dtVoxel
 
                               //todo using local grid should be faster
                               osg::BoundingBox bb(offsetFrom, offsetTo);
-                              openvdb::GridBase::Ptr vdbGrid = voxelActor.CollideWithAABB(bb);
+                              bool hasData = voxelActor.HasDataInAABB(bb);
 
-                              if (vdbGrid != NULL && !vdbGrid->empty())
+                              if (hasData)
                               {
                                  //std::cout << "Creating new mesh." << std::endl;
 
@@ -466,9 +466,9 @@ namespace dtVoxel
 
                //todo using local grid should be faster
                osg::BoundingBox bb(offsetFrom, offsetTo);
-               openvdb::GridBase::Ptr vdbGrid = voxelActor.CollideWithAABB(bb);
+               bool hasData = voxelActor.HasDataInAABB(bb);
 
-               if (vdbGrid != NULL && !vdbGrid->empty())
+               if (hasData)
                {
                   //keeping a pointer and incrementing it should be much faster for a large contiguous dataset
                   int cellIndex = (z * gridDimensions[1] * gridDimensions[0]) + (y * gridDimensions[0]) + x;
@@ -613,9 +613,9 @@ namespace dtVoxel
 
                //todo using local grid should be faster
                osg::BoundingBox bb(offsetFrom, offsetTo);
-               openvdb::GridBase::Ptr vdbGrid = voxelActor.CollideWithAABB(bb);
+               bool hasData = voxelActor.HasDataInAABB(bb);
                
-               if (vdbGrid != NULL && !vdbGrid->empty())
+               if (hasData)
                {
                   //keeping a pointer and incrementing it should be much faster for a large contiguous dataset
                   int cellIndex = (z * gridDimensions[1] * gridDimensions[0]) + (y * gridDimensions[0]) + x;

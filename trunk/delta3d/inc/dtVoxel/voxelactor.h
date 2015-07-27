@@ -55,8 +55,10 @@ namespace dtVoxel
        * Returns a new grid that contains the collision set of the given bounding box.
        */
       openvdb::GridBase::Ptr CollideWithAABB(const osg::BoundingBox& bb, int gridIdx = 0);
+      bool HasDataInAABB(const osg::BoundingBox& bb, int gridIdx = 0);
 
       void MarkVisualDirty(const osg::BoundingBox& bb, int gridIdx = 0);
+
 
       DT_DECLARE_ACCESSOR_INLINE(float, ViewDistance)
       DT_DECLARE_ACCESSOR_INLINE(float, IsoLevel)

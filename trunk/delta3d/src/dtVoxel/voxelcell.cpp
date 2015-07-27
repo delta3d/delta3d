@@ -534,14 +534,14 @@ namespace dtVoxel
 
                   openvdb::BBoxd bbox(openvdb::Vec3d(bb.xMin(), bb.yMin(), bb.zMin()), openvdb::Vec3d(bb.xMax(), bb.yMax(), bb.zMax()));
 
-                  openvdb::GridBase::Ptr gridPtr = voxelActor.CollideWithAABB(bb);
+                  //openvdb::GridBase::Ptr gridPtr = voxelActor.CollideWithAABB(bb);
 
                   aabb.SetWorldBB(bbox);
-                  aabb.Intersect();
-                  openvdb::GridBase::Ptr grid2Ptr = aabb.GetHits();
+                  bool hasData = aabb.HasDataInAABB();
+                  //openvdb::GridBase::Ptr grid2Ptr = aabb.GetHits();
 
 
-                  if (grid2Ptr != NULL && !grid2Ptr->empty())
+                  if (hasData)
                   {
                      *(ptr++) = (unsigned char)255;// voxel;
                      *(ptr++) = (unsigned char)255;// voxel;

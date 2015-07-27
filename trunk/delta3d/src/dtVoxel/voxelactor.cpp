@@ -159,6 +159,27 @@ namespace dtVoxel
       return result;
    }
 
+   ////////////////////////////////////////////////////
+   bool VoxelActor::HasDataInAABB(const osg::BoundingBox& bb, int gridIdx)
+   {
+      bool result = false;
+      openvdb::BBoxd bbox(openvdb::Vec3d(bb.xMin(), bb.yMin(), bb.zMin()), openvdb::Vec3d(bb.xMax(), bb.yMax(), bb.zMax()));
+      if (openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(GetGrid(gridIdx)))
+      {
+         AABBIntersector<openvdb::BoolGrid> aabb(gridB);
+         aabb.SetWorldBB(bbox);
+         result = aabb.HasDataInAABB();
+       }
+      else if (openvdb::FloatGrid::Ptr gridF = boost::dynamic_pointer_cast<openvdb::FloatGrid>(GetGrid(gridIdx)))
+      {
+         AABBIntersector<openvdb::FloatGrid> aabb(gridF);
+         aabb.SetWorldBB(bbox);
+         aabb.Intersect();
+         result = aabb.HasDataInAABB();
+      }
+      return result;
+   }
+
    /////////////////////////////////////////////////////
    void VoxelActor::MarkVisualDirty(const osg::BoundingBox& bb, int gridIdx)
    {

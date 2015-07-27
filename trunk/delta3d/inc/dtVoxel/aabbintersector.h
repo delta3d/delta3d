@@ -75,6 +75,32 @@ namespace dtVoxel
          }
       }
 
+      bool HasDataInAABB() const
+      {
+         bool result = false;
+         for (int i = mCollideBox.min().x(); i < mCollideBox.max().x() + 1; ++i)
+         {
+            for (int j = mCollideBox.min().y(); j < mCollideBox.max().y() + 1; ++j)
+            {
+               for (int k = mCollideBox.min().z(); k < mCollideBox.max().z() + 1; ++k)
+               {
+                  openvdb::math::Coord coord(i, j, k);
+                  if (mAcc.isVoxel(coord))
+                  {
+                     result = true;
+                     return result;
+                  }
+                  else
+                  {
+                     if ()
+                  }
+               }
+            }
+         }
+         return result;
+      }
+
+
       typename GridType::Ptr GetGrid() const { return mGrid; }
 
       inline void SetIndexBB(const openvdb::math::CoordBBox& box)
