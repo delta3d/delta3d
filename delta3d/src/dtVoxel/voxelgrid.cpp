@@ -334,11 +334,11 @@ namespace dtVoxel
                curBlock->Init(mBlockDimensions, offsetFrom, mCellDimensions);
                
                osg::BoundingBox bb(offsetFrom, offsetTo);
-               openvdb::GridBase::Ptr vdbGrid = mVoxelActor->CollideWithAABB(bb);
+               bool hasData = mVoxelActor->HasDataInAABB(bb);
 
                //bool collides = mVoxelActor->FastSampleWithAABB(bb, osg::Vec3i(50, 50, 10));
 
-               if (vdbGrid != NULL && !vdbGrid->empty())
+               if (hasData)
                {
                   int index = (z * mBlocksY * mBlocksX) + (y * mBlocksX) + x;
 
@@ -519,11 +519,11 @@ namespace dtVoxel
                   osg::Vec3 offsetTo = offsetFrom + mBlockDimensions;
 
                   osg::BoundingBox bb(offsetFrom, offsetTo);
-                  openvdb::GridBase::Ptr vdbGrid = mVoxelActor->CollideWithAABB(bb);
+                  bool hasData = mVoxelActor->HasDataInAABB(bb);
 
                   int index = (z * mBlocksY * mBlocksX) + (y * mBlocksX) + x;
 
-                  if (vdbGrid != NULL && !vdbGrid->empty())
+                  if (hasData)
                   {                     
                      mBlockVisibility[index] = false;
                   }
