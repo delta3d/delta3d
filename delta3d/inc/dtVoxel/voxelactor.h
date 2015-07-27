@@ -38,7 +38,7 @@ namespace dtVoxel
       typedef dtGame::GameActorProxy BaseClass;
 
       VoxelActor();
-
+       
       void BuildPropertyMap() override;
 
       DT_DECLARE_ACCESSOR(dtCore::ResourceDescriptor, Database);
@@ -65,7 +65,8 @@ namespace dtVoxel
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, GridDimensions)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, BlockDimensions)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, CellDimensions)
-      DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, TextureResolution)
+      DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, StaticResolution)
+      DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, DynamicResolution)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, Offset)
       // if the physics geometry should be created when the actor is remote.
       DT_DECLARE_ACCESSOR_INLINE(bool, CreateRemotePhysics)

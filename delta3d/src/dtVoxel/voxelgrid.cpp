@@ -59,7 +59,8 @@ namespace dtVoxel
       , mDist1(500.0f)
       , mDist2(750.0f)
       , mAllocatedBounds()      
-      , mTextureResolution()
+      , mStaticResolution()
+      , mDynamicResolution()
       , mRootNode(new osg::Group())
       , mVoxelActor()
       , mFullPathToFileCache()
@@ -75,13 +76,14 @@ namespace dtVoxel
    {
    }
 
-   void VoxelGrid::Init(const osg::Vec3& grid_offset, const osg::Vec3& dimensions, const osg::Vec3& block_dimensions, const osg::Vec3& cellDimensions, const osg::Vec3i& textureResolution)
+   void VoxelGrid::Init(const osg::Vec3& grid_offset, const osg::Vec3& dimensions, const osg::Vec3& block_dimensions, const osg::Vec3& cellDimensions, const osg::Vec3i& staticResolution, const osg::Vec3i& dynamicResolution)
    {
       mGridOffset = grid_offset;
       mWSDimensions = dimensions;
       mBlockDimensions = block_dimensions;
-      mCellDimensions = cellDimensions;
-      mTextureResolution = textureResolution;
+      mCellDimensions = cellDimensions;      
+      mStaticResolution = staticResolution;
+      mDynamicResolution = dynamicResolution;
 
       mBlocksX = int(std::floor(mWSDimensions[0] / mBlockDimensions[0]));
       mBlocksY = int(std::floor(mWSDimensions[1] / mBlockDimensions[1]));
@@ -92,11 +94,11 @@ namespace dtVoxel
       mBlocks = new VoxelBlock[mNumBlocks];
 
 
-      mRes0 = mTextureResolution;
+      mRes0 = mStaticResolution;
 
-      mRes1.set(int(std::floor(float(mTextureResolution[0]) * 0.75f)),
-         int(std::floor(float(mTextureResolution[1]) * 0.75f)),
-         int(std::floor(float(mTextureResolution[2]) * 0.75f)));
+      mRes1.set(int(std::floor(float(mStaticResolution[0]) * 0.75f)),
+         int(std::floor(float(mStaticResolution[1]) * 0.75f)),
+         int(std::floor(float(mStaticResolution[2]) * 0.75f)));
 
       mRes2.set(int(std::floor(float(mRes1[0]) * 0.75f)),
          int(std::floor(float(mRes1[1]) * 0.75f)),
@@ -162,7 +164,7 @@ namespace dtVoxel
                         {
                            //std::cout << "Collecting dirty cells" << std::endl;
 
-                           curBlock->CollectDirtyCells(*mVoxelActor, bb, mTextureResolution, mDirtyCells);  
+                           curBlock->CollectDirtyCells(*mVoxelActor, bb, mDynamicResolution, mDirtyCells);  
                         }
                      }
                   }
@@ -192,7 +194,7 @@ namespace dtVoxel
          {
             //std::cout << "task complete" << std::endl;
 
-            updateInfo.mBlock->RegenerateCell(*mVoxelActor, updateInfo.mCell, updateInfo.mNodeToUpdate, updateInfo.mCellIndex, mTextureResolution, mViewDistance);
+            updateInfo.mBlock->RegenerateCell(*mVoxelActor, updateInfo.mCell, updateInfo.mNodeToUpdate, updateInfo.mCellIndex, mDynamicResolution, mViewDistance);
             iter = mDirtyCells.erase(iter);
          }
          else
@@ -261,7 +263,7 @@ namespace dtVoxel
       //                  else
       //                  {
       //                     LOG_ERROR("No data found for block " + dtUtil::ToString(index) );
-      //                     //curBlock->AllocateCombinedMesh(*mVoxelActor, mTextureResolution);
+      //                     //curBlock->AllocateCombinedMesh(*mVoxelActor, mStaticResolution);
       //                     //curBlock->SaveCachedModel(mFullPathToFileCache, index);
       //                  }
 
@@ -347,7 +349,7 @@ namespace dtVoxel
                      if (!curBlock->LoadCachedModel(mFullPathToFileCache, index))
                      {
                         //allocate this block
-                        //curBlock->AllocateCombinedMesh(*mVoxelActor, mTextureResolution);
+                        //curBlock->AllocateCombinedMesh(*mVoxelActor, mStaticResolution);
                         
                         curBlock->AllocateLODMesh(*mVoxelActor, mRes0, mDist0, mRes1, mDist1, mRes2, mDist2, mRes3, mViewDistance);
 
@@ -362,7 +364,7 @@ namespace dtVoxel
                      if (!curBlock->HasCachedModel(mFullPathToFileCache, index))
                      {
                         std::cout << "Caching model for later use" << std::endl;
-                        //curBlock->AllocateCombinedMesh(*mVoxelActor, mTextureResolution);
+                        //curBlock->AllocateCombinedMesh(*mVoxelActor, mStaticResolution);
                         curBlock->AllocateLODMesh(*mVoxelActor, mRes0, mDist0, mRes1, mDist1, mRes2, mDist2, mRes3, mViewDistance);
 
                         curBlock->SaveCachedModel(mFullPathToFileCache, index);
@@ -632,9 +634,14 @@ namespace dtVoxel
       return block;
    }
 
-   const osg::Vec3i& VoxelGrid::GetTextureResolution() const
+   const osg::Vec3i& VoxelGrid::GetStaticResolution() const
    {
-      return mTextureResolution;
+      return mStaticResolution;
+   }
+   
+   const osg::Vec3i& VoxelGrid::GetDynamicResolution() const
+   {
+      return mDynamicResolution;
    }
 
    osg::Node* VoxelGrid::GetOSGNode()
@@ -771,7 +778,7 @@ namespace dtVoxel
          //std::cout << "Creating directory " << folderName.str() << std::endl;
          fileUtil.MakeDirectory(projectPath + folderName.str());
 
-         folderName << "/Resolution_x" << int(mTextureResolution.x()) << "_y" << int(mTextureResolution.y()) << "_z" << int(mTextureResolution.z()) << "/";
+         folderName << "/Resolution_x" << int(mStaticResolution.x()) << "_y" << int(mStaticResolution.y()) << "_z" << int(mStaticResolution.z()) << "/";
          //std::cout << "Creating directory " << folderName.str() << std::endl;
          fileUtil.MakeDirectory(projectPath + folderName.str());
 
