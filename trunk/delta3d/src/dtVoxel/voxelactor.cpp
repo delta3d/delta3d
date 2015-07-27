@@ -108,7 +108,8 @@ namespace dtVoxel
       DT_REGISTER_PROPERTY_WITH_LABEL(GridDimensions, "Grid Dimensions", "The size of the grid to allocate into blocks.", RegHelper, regHelper);
       DT_REGISTER_PROPERTY_WITH_LABEL(BlockDimensions,"Block Dimensions", "The size of the blocks within the grid.", RegHelper, regHelper);
       DT_REGISTER_PROPERTY_WITH_LABEL(CellDimensions, "Cell Dimensions", "The size of the cells within the blocks", RegHelper, regHelper);
-      DT_REGISTER_PROPERTY_WITH_LABEL(TextureResolution, "Texture Resolution", "The dimensions of the 3d texture which holds individual voxels within a single cell.", RegHelper, regHelper);
+      DT_REGISTER_PROPERTY_WITH_LABEL(StaticResolution, "Static Resolution", "The resolution to sample the VDB database for the static pregenerated data.", RegHelper, regHelper);
+      DT_REGISTER_PROPERTY_WITH_LABEL(DynamicResolution, "Dynamic Resolution", "The resolution to sample the VDB database for the dynamic deformable data.", RegHelper, regHelper);
       DT_REGISTER_PROPERTY_WITH_LABEL(Offset, "Offset", "The offset of the database in world space.", RegHelper, regHelper);
       DT_REGISTER_PROPERTY_WITH_LABEL(CreateRemotePhysics, "Create Remote Physics", "Create the voxel geometry for the physics if this actor is remote.", RegHelper, regHelper);
 
@@ -290,10 +291,11 @@ namespace dtVoxel
       RegisterForMessages(dtGame::MessageType::TICK_LOCAL, dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
 
 
-      osg::Vec3i res(int(mTextureResolution.x()), int(mTextureResolution.y()), int(mTextureResolution.z()));
+      osg::Vec3i staticRes(int(mStaticResolution.x()), int(mStaticResolution.y()), int(mStaticResolution.z()));
+      osg::Vec3i dynamicRes(int(mDynamicResolution.x()), int(mDynamicResolution.y()), int(mDynamicResolution.z()));
 
 
-      mGrid->Init(mOffset, mGridDimensions, mBlockDimensions, mCellDimensions, res);
+      mGrid->Init(mOffset, mGridDimensions, mBlockDimensions, mCellDimensions, staticRes, dynamicRes);
       
       dtGame::GameManager* gm = GetGameManager();
 

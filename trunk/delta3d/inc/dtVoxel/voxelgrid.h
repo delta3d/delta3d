@@ -39,7 +39,7 @@ namespace dtVoxel
       VoxelGrid();
 
       ///Call Init() before CreateGridFromActor()
-      void Init(const osg::Vec3& grid_offset, const osg::Vec3& dimensions, const osg::Vec3& block_dimensions, const osg::Vec3& cellDimensions, const osg::Vec3i& textureResolution);
+      void Init(const osg::Vec3& grid_offset, const osg::Vec3& dimensions, const osg::Vec3& block_dimensions, const osg::Vec3& cellDimensions, const osg::Vec3i& staticResolution, const osg::Vec3i& dynamicResolution);
       void CreateGridFromActor(const osg::Vec3& pos, VoxelActor& voxelActor);
 
       void CreatePagedLODGrid(const osg::Vec3& pos, VoxelActor& voxelActor);
@@ -77,7 +77,8 @@ namespace dtVoxel
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, BlockDimensions)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, CellDimensions)
       
-      const osg::Vec3i& GetTextureResolution() const;
+      const osg::Vec3i& GetStaticResolution() const;
+      const osg::Vec3i& GetDynamicResolution() const;
 
    protected:
       DT_DECLARE_ACCESSOR_INLINE(bool, Initialized)
@@ -109,7 +110,7 @@ namespace dtVoxel
    
    private:
       osg::BoundingBox mAllocatedBounds;
-      osg::Vec3i mTextureResolution;
+      osg::Vec3i mStaticResolution, mDynamicResolution;
       dtCore::RefPtr<osg::Group> mRootNode;
       dtCore::ObserverPtr<VoxelActor> mVoxelActor;
       std::string mFullPathToFileCache;
