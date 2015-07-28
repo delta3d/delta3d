@@ -63,7 +63,6 @@ namespace dtVoxel
       osg::Vec3 mTexelSize;
       osg::Vec3i mResolution;
       dtCore::RefPtr<osg::Geode> mMesh;
-      std::map<osg::Vec3, int> mVectorMap;
       openvdb::FloatGrid::Ptr mGrid;
       openvdb::tools::GridSampler<openvdb::FloatGrid, openvdb::tools::PointSampler> mSampler;
 
