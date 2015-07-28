@@ -625,12 +625,14 @@ namespace dtUtil
    {
       if (t != NULL)
       {
-         struct tm* temp = gmtime(t);
-         if (temp != NULL)
-         {
-            timeParts = *temp;
+         bool result = false;
+#ifdef DELTA_WIN32
+         result = gmtime_s(&timeParts, t) != EINVAL;
+#else
+         result = gmtime_r(t, &timeParts) != NULL;
+#endif
+         if (result)
             return;
-         }
       }
 
       memset(&timeParts, 0, sizeof(tm));
@@ -641,12 +643,14 @@ namespace dtUtil
    {
       if (t != NULL)
       {
-         struct tm* temp = localtime(t);
-         if (temp != NULL)
-         {
-            timeParts = *temp;
+         bool result = false;
+#ifdef DELTA_WIN32
+         result = localtime_s(&timeParts, t) != EINVAL;
+#else
+         result = localtime_r(t, &timeParts) != NULL;
+#endif
+         if (result)
             return;
-         }
       }
 
       memset(&timeParts, 0, sizeof(tm));
