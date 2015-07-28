@@ -33,21 +33,25 @@
 
 #include <dtUtil/mathdefines.h>
 
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range3d.h>
+#include <tbb/mutex.h>
+
 #include <iostream>
 
 namespace dtVoxel
 {
-   int HashVec3(std::map<osg::Vec3, int>& vectorMap, const osg::Vec3& vec, int currentElement)
+   int HashVec3(std::map<osg::Vec3, int>& vectorMap, const osg::Vec3& vec, bool& inserted)
    {
-      int index = currentElement;
-      std::map<osg::Vec3, int>::iterator iter = vectorMap.find(vec);
-      if (iter != vectorMap.end())
+      inserted = true;
+      int index = vectorMap.size();
+      auto insertResult = vectorMap.insert(std::make_pair(vec, index));
+      //if insert fails
+      if (!insertResult.second)
       {
-         index = (*iter).second;
-      }
-      else
-      {
-         vectorMap.insert(std::make_pair(vec, currentElement));
+         //take the existing index
+         index = insertResult.first->second;
+         inserted = false;
       }
 
       return index;
@@ -82,73 +86,102 @@ namespace dtVoxel
    void CreateMeshTask::operator()()
    {      
       dtCore::RefPtr<osg::Geometry> geom = new osg::Geometry();
-      dtCore::RefPtr<osg::Vec3Array> vertArray = new osg::Vec3Array();            
+      dtCore::RefPtr<osg::Vec3Array> vertArray = new osg::Vec3Array();
       dtCore::RefPtr<osg::DrawElementsUInt> drawElements = new osg::DrawElementsUInt(GL_TRIANGLES);
       
-      //reusing this improves performance by quite a bit 
-      osg::Vec3 vertlist[12];
+      tbb::mutex /*hashMtx,*/ elemMtx;
 
-      for (int i = 0; i < mResolution[0]; ++i)
-      {
-         for (int j = 0; j < mResolution[1]; ++j)
-         {
-            for (int k = 0; k < mResolution[2]; ++k)
+      tbb::parallel_for(tbb::blocked_range3d<int>(0, mResolution[0], 2, 0, mResolution[1], 2, 0, mResolution[2], 2),
+            [&](const tbb::blocked_range3d<int>& r)
             {
-               double worldX = mOffset[0] + (i * mTexelSize[0]);
-               double worldY = mOffset[1] + (j * mTexelSize[1]);
-               double worldZ = mOffset[2] + (k * mTexelSize[2]);
+         // It may not be as efficient for rendering to have one per thread, but having to lock a shared kills performance.
+         std::map<osg::Vec3, int> mVectorMap;
 
-               osg::Vec3 from(worldX, worldY, worldZ);
+         dtCore::RefPtr<osg::Vec3Array> vertArraySub = new osg::Vec3Array();
+         dtCore::RefPtr<osg::DrawElementsUInt> drawElementsSub = new osg::DrawElementsUInt(GL_TRIANGLES);
 
-               GRIDCELL grid;
-               TRIANGLE triangles[5];
+         //reusing this improves performance by quite a bit
+         osg::Vec3 vertlist[12];
 
-               grid.p[0] = from;
-               grid.val[0] = SampleCoord(grid.p[0].x(), grid.p[0].y(), grid.p[0].z(), mSampler);
-
-               grid.p[1].set(from[0] + mTexelSize[0], from[1], from[2]);
-               grid.val[1] = SampleCoord(grid.p[1].x(), grid.p[1].y(), grid.p[1].z(), mSampler);
-
-               grid.p[2].set(from[0] + mTexelSize[0], from[1] + mTexelSize[1], from[2]);
-               grid.val[2] = SampleCoord(grid.p[2].x(), grid.p[2].y(), grid.p[2].z(), mSampler);
-
-               grid.p[3].set(from[0], from[1] + mTexelSize[1], from[2]);
-               grid.val[3] = SampleCoord(grid.p[3].x(), grid.p[3].y(), grid.p[3].z(), mSampler);
-
-               grid.p[4].set(from[0], from[1], from[2] + mTexelSize[2]);
-               grid.val[4] = SampleCoord(grid.p[4].x(), grid.p[4].y(), grid.p[4].z(), mSampler);
-
-               grid.p[5].set(from[0] + mTexelSize[0], from[1], from[2] + mTexelSize[2]);
-               grid.val[5] = SampleCoord(grid.p[5].x(), grid.p[5].y(), grid.p[5].z(), mSampler);
-
-               grid.p[6].set(from[0] + mTexelSize[0], from[1] + mTexelSize[1], from[2] + mTexelSize[2]);
-               grid.val[6] = SampleCoord(grid.p[6].x(), grid.p[6].y(), grid.p[6].z(), mSampler);
-
-               grid.p[7].set(from[0], from[1] + mTexelSize[1], from[2] + mTexelSize[2]);
-               grid.val[7] = SampleCoord(grid.p[7].x(), grid.p[7].y(), grid.p[7].z(), mSampler);
-
-
-               int numTriangles = PolygonizeCube(grid, isolevel, triangles, &vertlist[0]);
-               
-               for (int n = 0; n < numTriangles; ++n)
+         for (int i = r.pages().begin(); i < r.pages().end(); ++i)
+         {
+            for (int j = r.rows().begin(); j < r.rows().end(); ++j)
+            {
+               for (int k = r.cols().begin(); k < r.cols().end(); ++k)
                {
-                  for (int i = 0; i < 3; ++i)
+                  double worldX = mOffset[0] + (i * mTexelSize[0]);
+                  double worldY = mOffset[1] + (j * mTexelSize[1]);
+                  double worldZ = mOffset[2] + (k * mTexelSize[2]);
+
+                  osg::Vec3 from(worldX, worldY, worldZ);
+
+                  GRIDCELL grid;
+                  TRIANGLE triangles[5];
+
+                  grid.p[0] = from;
+                  grid.val[0] = SampleCoord(grid.p[0].x(), grid.p[0].y(), grid.p[0].z(), mSampler);
+
+                  grid.p[1].set(from[0] + mTexelSize[0], from[1], from[2]);
+                  grid.val[1] = SampleCoord(grid.p[1].x(), grid.p[1].y(), grid.p[1].z(), mSampler);
+
+                  grid.p[2].set(from[0] + mTexelSize[0], from[1] + mTexelSize[1], from[2]);
+                  grid.val[2] = SampleCoord(grid.p[2].x(), grid.p[2].y(), grid.p[2].z(), mSampler);
+
+                  grid.p[3].set(from[0], from[1] + mTexelSize[1], from[2]);
+                  grid.val[3] = SampleCoord(grid.p[3].x(), grid.p[3].y(), grid.p[3].z(), mSampler);
+
+                  grid.p[4].set(from[0], from[1], from[2] + mTexelSize[2]);
+                  grid.val[4] = SampleCoord(grid.p[4].x(), grid.p[4].y(), grid.p[4].z(), mSampler);
+
+                  grid.p[5].set(from[0] + mTexelSize[0], from[1], from[2] + mTexelSize[2]);
+                  grid.val[5] = SampleCoord(grid.p[5].x(), grid.p[5].y(), grid.p[5].z(), mSampler);
+
+                  grid.p[6].set(from[0] + mTexelSize[0], from[1] + mTexelSize[1], from[2] + mTexelSize[2]);
+                  grid.val[6] = SampleCoord(grid.p[6].x(), grid.p[6].y(), grid.p[6].z(), mSampler);
+
+                  grid.p[7].set(from[0], from[1] + mTexelSize[1], from[2] + mTexelSize[2]);
+                  grid.val[7] = SampleCoord(grid.p[7].x(), grid.p[7].y(), grid.p[7].z(), mSampler);
+
+
+                  int numTriangles = PolygonizeCube(grid, isolevel, triangles, &vertlist[0]);
+
+
+                  for (int n = 0; n < numTriangles; ++n)
                   {
-                     int numVerts = vertArray->size();
-                     int index = HashVec3(mVectorMap, triangles[n].p[i], numVerts);
-
-                     if (index == numVerts)
+                     for (int i = 0; i < 3; ++i)
                      {
-                        vertArray->push_back(triangles[n].p[i]);                        
-                     }
+                        bool inserted = false;
+                        int index = -1;
+                        {
+                           index = HashVec3(mVectorMap, triangles[n].p[i], inserted);
+                           if (inserted)
+                           {
+                              vertArraySub->push_back(triangles[n].p[i]);
+                              if ((vertArraySub->size() - 1) != unsigned(index))
+                              {
+                                 printf("Error! %lu %d\n", vertArraySub->size(), index);
+                              }
+                           }
+                        }
 
-                     drawElements->addElement(index);
+                        drawElementsSub->addElement(index);
+
+                     }
                   }
                }
             }
          }
-      }
-
+         tbb::mutex::scoped_lock sl(elemMtx);
+         vertArray->reserve(vertArray->size() +  vertArraySub->size());
+         int startingIdx = vertArray->size();
+         vertArray->insert(vertArray->end(), vertArraySub->begin(), vertArraySub->end());
+         drawElements->reserve(drawElements->size() +  drawElementsSub->size());
+         for (auto itr = drawElementsSub->begin(), itrEnd = drawElementsSub->end(); itr != itrEnd; ++itr)
+         {
+            drawElements->push_back((*itr) + startingIdx);
+         }
+         //drawElements->insert(drawElements->end(), drawElementsSub->begin(), drawElementsSub->end());
+            });
       //std::cout << "Num Verts " << vertArray->getNumElements() << std::endl;
 
       
@@ -157,7 +190,6 @@ namespace dtVoxel
 
       mMesh->addDrawable(geom);
 
-      mVectorMap.clear();
       mIsDone = true;
    }
 
@@ -260,12 +292,13 @@ namespace dtVoxel
       openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>
          fastSampler(accessor, gridB->transform());
 
+      bool inserted = false;
       //Insert items into map
       for (unsigned i = 0; i < vertArray->getNumElements(); ++i)
       {
          osg::Vec3 pos = vertArray->operator[](i);
          
-         HashVec3(mImpl->mVectorMap, pos, i);
+         HashVec3(mImpl->mVectorMap, pos, inserted);
       }
 
       //reusing this improves performance by quite a bit 
@@ -317,10 +350,10 @@ namespace dtVoxel
                {
                   for (int i = 0; i < 3; ++i)
                   {
-                     int numVerts = vertArray->size();
-                     int index = HashVec3(mImpl->mVectorMap, triangles[n].p[i], numVerts);
+                     bool added = false;
+                     int index = HashVec3(mImpl->mVectorMap, triangles[n].p[i], added);
 
-                     if (index == numVerts)
+                     if (added)
                      {
                         vertArray->push_back(triangles[n].p[i]);
                      }
@@ -370,6 +403,13 @@ namespace dtVoxel
       if (mImpl->mCreateMeshTask->IsDone())
       {
          if (mImpl->mCreateMeshTask->WaitUntilComplete(2))
+         {
+            return true;
+         }
+      }
+      else
+      {
+         if (mImpl->mCreateMeshTask->WaitUntilComplete(-1))
          {
             return true;
          }
