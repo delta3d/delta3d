@@ -107,7 +107,7 @@ void ActorComponent::RegisterForTick()
       std::string tickInvokable = INVOKABLE_PREFIX_TICK_REMOTE.Get() + GetType()->GetFullName();
       if(!owner->GetInvokable(tickInvokable))
       {
-         owner->AddInvokable(*new Invokable(tickInvokable, dtUtil::MakeFunctor(&ActorComponent::OnTickLocal, this)));
+         owner->AddInvokable(*new Invokable(tickInvokable, dtUtil::MakeFunctor(&ActorComponent::OnTickRemote, this)));
       }
       owner->RegisterForMessages(MessageType::TICK_REMOTE, tickInvokable);
    }
