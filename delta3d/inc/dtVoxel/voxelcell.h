@@ -34,6 +34,7 @@
 #include <openvdb/tools/Interpolation.h>
 
 #include <openvdb/openvdb.h>
+#include <OpenThreads/Atomic>
 
 namespace dtVoxel
 {
@@ -52,19 +53,18 @@ namespace dtVoxel
 
       virtual void operator()();
 
-      double SampleCoord(double x, double y, double z, openvdb::tools::GridSampler<openvdb::FloatGrid, openvdb::tools::PointSampler>& fastSampler);
+      double SampleCoord(double x, double y, double z, openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>& fastSampler);
 
 
    private:
    
-      bool mIsDone;
+      volatile bool mIsDone;
       double mIsoLevel;
       osg::Vec3 mOffset;
       osg::Vec3 mTexelSize;
       osg::Vec3i mResolution;
       dtCore::RefPtr<osg::Geode> mMesh;
       openvdb::FloatGrid::Ptr mGrid;
-      openvdb::tools::GridSampler<openvdb::FloatGrid, openvdb::tools::PointSampler> mSampler;
 
    };
 
@@ -82,7 +82,9 @@ namespace dtVoxel
       void CreateMesh(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution);
       
       void CreateMeshWithTask(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution);
-      
+
+      bool RunTask();
+
       bool CheckTaskStatus();
 
       void TakeGeometry();

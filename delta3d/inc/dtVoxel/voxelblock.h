@@ -37,6 +37,7 @@ namespace dtVoxel
       osg::Group* mNodeToUpdate;
 
       osg::Vec3i mCellIndex;
+      bool mStarted;
    };
 
 

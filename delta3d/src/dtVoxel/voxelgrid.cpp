@@ -179,13 +179,14 @@ namespace dtVoxel
       //int cellsToUpdate = mDirtyCells.size();
 
       //std::cout << "UpdateGrid " << mDirtyCells.size() << " dirty cells." << std::endl;
-      std::vector<VoxelCellUpdateInfo>::iterator iter = mDirtyCells.begin();
 
-      for (; iter != mDirtyCells.end();)
+
+      unsigned runCount = 1;
+      for (auto iter = mDirtyCells.begin(); iter != mDirtyCells.end();)
       {
          VoxelCellUpdateInfo& updateInfo = *iter;
          //std::cout << "Checking task status" << std::endl;
-         if (updateInfo.mCell->CheckTaskStatus())
+         if (updateInfo.mStarted && updateInfo.mCell->CheckTaskStatus())
          {
             //std::cout << "task complete" << std::endl;
 
@@ -194,9 +195,15 @@ namespace dtVoxel
          }
          else
          {
+            if (runCount > 0 && updateInfo.mCell->RunTask())
+            {
+               updateInfo.mStarted = true;
+               --runCount;
+            }
             ++iter;
          }
       }
+      //dtUtil::ThreadPool::ExecuteTasks();
 
       //osg::BoundingBox newBounds = ComputeWorldBounds(newCameraPos);
       //

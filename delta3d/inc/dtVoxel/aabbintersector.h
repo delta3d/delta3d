@@ -13,6 +13,7 @@
 #include <openvdb/Types.h>
 #include <boost/utility.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
+#include <dtUtil/mathdefines.h>
 
 namespace dtVoxel
 {
@@ -78,20 +79,46 @@ namespace dtVoxel
       bool HasDataInAABB() const
       {
          bool result = false;
-         for (int i = mCollideBox.min().x(); i < mCollideBox.max().x() + 1; ++i)
+         std::vector<openvdb::Index> dims;
+         TreeT::getNodeLog2Dims(dims);
+         int dim = 1 << dims.back();
+         for (int i = mCollideBox.min().x(); i <= mCollideBox.max().x();)
          {
-            for (int j = mCollideBox.min().y(); j < mCollideBox.max().y() + 1; ++j)
+            for (int j = mCollideBox.min().y(); j <= mCollideBox.max().y();)
             {
-               for (int k = mCollideBox.min().z(); k < mCollideBox.max().z() + 1; ++k)
+               for (int k = mCollideBox.min().z(); k <= mCollideBox.max().z();)
                {
                   openvdb::math::Coord coord(i, j, k);
-                  if (mAcc.isVoxel(coord))
+                  const typename TreeT::LeafNodeType* leaf = mAcc.probeLeaf(coord);
+                  if (leaf == nullptr)
                   {
+                     //printf("Null leaf: %d %d %d\n", i, j, k);
+                  }
+                  else if ( /*leaf != nullptr &&*/ !leaf->isEmpty() )
+                  {
+                     //printf("leaf: %p %d %d %d\n", leaf, i, j, k);
                      result = true;
                      return result;
                   }
+//                  else
+//                  {
+//                     printf("empty leaf: %p %d %d %d\n", leaf, i, j, k);
+//                  }
+
+                  if (k < mCollideBox.max().z())
+                     k=dtUtil::Min<int>(k+dim, mCollideBox.max().z());
+                  else
+                     ++k;
                }
+               if (j < mCollideBox.max().y())
+                  j=dtUtil::Min<int>(j+dim, mCollideBox.max().y());
+               else
+                  ++j;
             }
+            if (i < mCollideBox.max().x())
+               i=dtUtil::Min<int>(i+dim, mCollideBox.max().x());
+            else
+               ++i;
          }
          return result;
       }
