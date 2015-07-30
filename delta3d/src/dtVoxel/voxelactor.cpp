@@ -209,6 +209,28 @@ namespace dtVoxel
       }
    }
 
+   /////////////////////////////////////////////////////
+   void VoxelActor::OnTickEndOfFrame(const dtGame::TickMessage& tickMessage)
+   {
+      if (mGrid.valid())
+      {
+         dtGame::GameManager* gm = GetGameManager();
+
+         if (gm != nullptr)
+         {
+            dtCore::Camera* cam = gm->GetApplication().GetCamera();
+
+            osg::Vec3 pos;
+            dtCore::Transform xform;
+            cam->GetTransform(xform);
+            xform.GetTranslation(pos);
+
+            mGrid->BeginNewUpdates(pos);
+
+            //std::cout << "Updating voxel grid with position (" << pos[0] << ", " << pos[1] << ", " << pos[2] << ")" << std::endl;
+         }
+      }
+   }
 
    /////////////////////////////////////////////////////
    void VoxelActor::CreateDrawable()
@@ -322,6 +344,7 @@ namespace dtVoxel
    void VoxelActor::OnEnteredWorld()
    {
       RegisterForMessages(dtGame::MessageType::TICK_LOCAL, dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
+      RegisterForMessages(dtGame::MessageType::TICK_LOCAL, dtUtil::MakeFunctor(&VoxelActor::OnTickEndOfFrame, this));
 
 
       osg::Vec3i staticRes(int(mStaticResolution.x()), int(mStaticResolution.y()), int(mStaticResolution.z()));

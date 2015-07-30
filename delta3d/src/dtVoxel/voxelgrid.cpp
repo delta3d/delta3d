@@ -181,28 +181,21 @@ namespace dtVoxel
       //std::cout << "UpdateGrid " << mDirtyCells.size() << " dirty cells." << std::endl;
 
 
-      unsigned runCount = 1;
-      for (auto iter = mDirtyCells.begin(); iter != mDirtyCells.end();)
-      {
-         VoxelCellUpdateInfo& updateInfo = *iter;
-         //std::cout << "Checking task status" << std::endl;
-         if (updateInfo.mStarted && updateInfo.mCell->CheckTaskStatus())
-         {
-            //std::cout << "task complete" << std::endl;
-
-            updateInfo.mBlock->RegenerateCell(*mVoxelActor, updateInfo.mCell, updateInfo.mNodeToUpdate, updateInfo.mCellIndex, mDynamicResolution, mViewDistance);
-            iter = mDirtyCells.erase(iter);
-         }
-         else
-         {
-            if (runCount > 0 && updateInfo.mCell->RunTask())
+      mDirtyCells.erase(std::remove_if(mDirtyCells.begin(), mDirtyCells.end(),
+            [&](VoxelCellUpdateInfo& updateInfo)
             {
-               updateInfo.mStarted = true;
-               --runCount;
+               if (updateInfo.mStarted && updateInfo.mCell->CheckTaskStatus())
+               {
+                  //std::cout << "task complete" << std::endl;
+
+                  updateInfo.mBlock->RegenerateCell(*mVoxelActor, updateInfo.mCell, updateInfo.mNodeToUpdate, updateInfo.mCellIndex, mDynamicResolution, mViewDistance);
+                  return true;
+               }
+               return false;
             }
-            ++iter;
-         }
-      }
+
+            ), mDirtyCells.end());
+
       //dtUtil::ThreadPool::ExecuteTasks();
 
       //osg::BoundingBox newBounds = ComputeWorldBounds(newCameraPos);
@@ -292,6 +285,20 @@ namespace dtVoxel
       //}
 
       //mAllocatedBounds = newBounds;
+   }
+
+   void VoxelGrid::BeginNewUpdates(const osg::Vec3& newCameraPos)
+   {
+      unsigned runCount = 1;
+      for (auto iter = mDirtyCells.begin(); runCount > 0 && iter != mDirtyCells.end(); ++iter)
+      {
+         VoxelCellUpdateInfo& updateInfo = *iter;
+         if (updateInfo.mCell->RunTask())
+         {
+            updateInfo.mStarted = true;
+            --runCount;
+         }
+      }
    }
 
 
