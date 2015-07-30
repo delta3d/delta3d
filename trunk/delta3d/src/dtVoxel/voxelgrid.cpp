@@ -29,6 +29,7 @@
 #include <iostream>
 #include <fstream>
 #include <tbb/parallel_for.h>
+#include <tbb/blocked_range3d.h>
 
 #include <OpenThreads/Mutex>
 #include <OpenThreads/ScopedLock>
@@ -141,7 +142,13 @@ namespace dtVoxel
 
       osg::Vec3i startIndex = GetIndexFromPos(dirtyBounds._min);
       osg::Vec3i endIndex = GetIndexFromPos(dirtyBounds._max);
-      
+
+      startIndex.x() = dtUtil::Max(startIndex.x(), 0);
+      startIndex.y() = dtUtil::Max(startIndex.y(), 0);
+      startIndex.z() = dtUtil::Max(startIndex.z(), 0);
+      endIndex.x() = dtUtil::Min(endIndex.x(), mBlocksX);
+      endIndex.y() = dtUtil::Min(endIndex.y(), mBlocksY);
+      endIndex.z() = dtUtil::Min(endIndex.z(), mBlocksZ);
       //std::cout << std::endl << "start index " << startIndex.x() << ", " << startIndex.y() << ", " << startIndex.z() << std::endl;
       //std::cout << std::endl << "end index " << endIndex.x() << ", " << endIndex.y() << ", " << endIndex.z() << std::endl;
 
@@ -152,29 +159,17 @@ namespace dtVoxel
          {
             for (int x = startIndex.x(); x <= endIndex.x(); x++)
             {
-               if (z >= 0 && z < mBlocksZ)
+               VoxelBlock* curBlock = GetBlockFromIndex(x, y, z);
+
+               if (curBlock != nullptr)
                {
-                  if (y >= 0 && y < mBlocksY)
-                  {
-                     if (x >= 0 && x < mBlocksX)
-                     {
-                        VoxelBlock* curBlock = GetBlockFromIndex(x, y, z);
+                  //std::cout << "Collecting dirty cells" << std::endl;
 
-                        if (curBlock != nullptr)
-                        {
-                           //std::cout << "Collecting dirty cells" << std::endl;
-
-                           curBlock->CollectDirtyCells(*mVoxelActor, bb, mDynamicResolution, mDirtyCells);  
-                        }
-                     }
-                  }
+                  curBlock->CollectDirtyCells(*mVoxelActor, bb, mDynamicResolution, mDirtyCells);
                }
             }
          }
       }
-      
-
-           
    }
 
 
@@ -312,15 +307,14 @@ namespace dtVoxel
       
       //int blockCount = 0;
       OpenThreads::Atomic blockCount;
-      for (int z = 0; z < mBlocksZ; z++)
+      tbb::parallel_for(tbb::blocked_range3d<int>(0,mBlocksZ,1, 0,mBlocksY,1, 0,mBlocksX,1),
+            [=, &blockCount](const tbb::blocked_range3d<int>& r)
+            {
+      for (int z = r.pages().begin(); z < r.pages().end(); z++)
       {
-         
-         tbb::parallel_for(tbb::blocked_range<int>(0,mBlocksY),
-               [=, &blockCount](const tbb::blocked_range<int>& r)
-               {
-         for (int y=r.begin(); y!=r.end(); ++y)//(int y = 0; y < mBlocksY; y++)
+         for (int y=r.rows().begin(); y!=r.rows().end(); ++y)//(int y = 0; y < mBlocksY; y++)
          {
-            for (int x = 0; x < mBlocksX; x++)
+            for (int x = r.cols().begin(); x < r.cols().end(); x++)
             {
                VoxelBlock* curBlock = GetBlockFromIndex(x, y, z);
 
@@ -381,8 +375,8 @@ namespace dtVoxel
             std::cout << std::endl << mNumBlocks - blockCount << " Blocks remaining." << std::endl;
 
          }
-               });
       }
+            });
 
       std::cout << std::endl << "Done Creating Voxel Grid" << std::endl;
 

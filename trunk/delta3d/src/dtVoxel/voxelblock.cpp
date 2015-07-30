@@ -252,7 +252,7 @@ namespace dtVoxel
       cell->SetDirty(false);
 
       //todo using local grid should be faster
-      //osg::BoundingBox bb(pos, offsetTo);
+      osg::BoundingBox bb(pos, offsetTo);
       bool hasData = true;//voxelActor.HasDataInAABB(bb);
 
       if (hasData)
