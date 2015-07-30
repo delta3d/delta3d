@@ -68,7 +68,6 @@ namespace dtVoxel
       , mResolution(resolution)
       , mMesh(new osg::Geode())
       , mGrid(grid)
-      , mSampler(*grid)
    {
    }
 
@@ -91,9 +90,10 @@ namespace dtVoxel
       
       tbb::mutex /*hashMtx,*/ elemMtx;
 
-      tbb::parallel_for(tbb::blocked_range3d<int>(0, mResolution[0], 2, 0, mResolution[1], 2, 0, mResolution[2], 2),
+      tbb::parallel_for(tbb::blocked_range3d<int>(0, mResolution[0], 4, 0, mResolution[1], 4, 0, mResolution[2], 4),
             [&](const tbb::blocked_range3d<int>& r)
             {
+         openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler> sampler(mGrid->getConstAccessor(), mGrid->transform());
          // It may not be as efficient for rendering to have one per thread, but having to lock a shared kills performance.
          std::map<osg::Vec3, int> mVectorMap;
 
@@ -102,6 +102,8 @@ namespace dtVoxel
 
          //reusing this improves performance by quite a bit
          osg::Vec3 vertlist[12];
+         GRIDCELL grid;
+         TRIANGLE triangles[5];
 
          for (int i = r.pages().begin(); i < r.pages().end(); ++i)
          {
@@ -115,32 +117,29 @@ namespace dtVoxel
 
                   osg::Vec3 from(worldX, worldY, worldZ);
 
-                  GRIDCELL grid;
-                  TRIANGLE triangles[5];
-
                   grid.p[0] = from;
-                  grid.val[0] = SampleCoord(grid.p[0].x(), grid.p[0].y(), grid.p[0].z(), mSampler);
+                  grid.val[0] = SampleCoord(grid.p[0].x(), grid.p[0].y(), grid.p[0].z(), sampler);
 
                   grid.p[1].set(from[0] + mTexelSize[0], from[1], from[2]);
-                  grid.val[1] = SampleCoord(grid.p[1].x(), grid.p[1].y(), grid.p[1].z(), mSampler);
+                  grid.val[1] = SampleCoord(grid.p[1].x(), grid.p[1].y(), grid.p[1].z(), sampler);
 
                   grid.p[2].set(from[0] + mTexelSize[0], from[1] + mTexelSize[1], from[2]);
-                  grid.val[2] = SampleCoord(grid.p[2].x(), grid.p[2].y(), grid.p[2].z(), mSampler);
+                  grid.val[2] = SampleCoord(grid.p[2].x(), grid.p[2].y(), grid.p[2].z(), sampler);
 
                   grid.p[3].set(from[0], from[1] + mTexelSize[1], from[2]);
-                  grid.val[3] = SampleCoord(grid.p[3].x(), grid.p[3].y(), grid.p[3].z(), mSampler);
+                  grid.val[3] = SampleCoord(grid.p[3].x(), grid.p[3].y(), grid.p[3].z(), sampler);
 
                   grid.p[4].set(from[0], from[1], from[2] + mTexelSize[2]);
-                  grid.val[4] = SampleCoord(grid.p[4].x(), grid.p[4].y(), grid.p[4].z(), mSampler);
+                  grid.val[4] = SampleCoord(grid.p[4].x(), grid.p[4].y(), grid.p[4].z(), sampler);
 
                   grid.p[5].set(from[0] + mTexelSize[0], from[1], from[2] + mTexelSize[2]);
-                  grid.val[5] = SampleCoord(grid.p[5].x(), grid.p[5].y(), grid.p[5].z(), mSampler);
+                  grid.val[5] = SampleCoord(grid.p[5].x(), grid.p[5].y(), grid.p[5].z(), sampler);
 
                   grid.p[6].set(from[0] + mTexelSize[0], from[1] + mTexelSize[1], from[2] + mTexelSize[2]);
-                  grid.val[6] = SampleCoord(grid.p[6].x(), grid.p[6].y(), grid.p[6].z(), mSampler);
+                  grid.val[6] = SampleCoord(grid.p[6].x(), grid.p[6].y(), grid.p[6].z(), sampler);
 
                   grid.p[7].set(from[0], from[1] + mTexelSize[1], from[2] + mTexelSize[2]);
-                  grid.val[7] = SampleCoord(grid.p[7].x(), grid.p[7].y(), grid.p[7].z(), mSampler);
+                  grid.val[7] = SampleCoord(grid.p[7].x(), grid.p[7].y(), grid.p[7].z(), sampler);
 
 
                   int numTriangles = PolygonizeCube(grid, isolevel, triangles, &vertlist[0]);
@@ -193,7 +192,7 @@ namespace dtVoxel
       mIsDone = true;
    }
 
-   double CreateMeshTask::SampleCoord(double x, double y, double z, openvdb::tools::GridSampler<openvdb::FloatGrid, openvdb::tools::PointSampler>& fastSampler)
+   double CreateMeshTask::SampleCoord(double x, double y, double z, openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>& fastSampler)
    {
       double result = (fastSampler.wsSample(openvdb::Vec3R(x, y, z)));
       
@@ -384,9 +383,19 @@ namespace dtVoxel
          mImpl->mCreateMeshTask = new CreateMeshTask(mImpl->mOffset, texelSize, resolution, gridB);
 
       }
-      dtUtil::ThreadPool::AddTask(*mImpl->mCreateMeshTask, dtUtil::ThreadPool::BACKGROUND);
-      //dtUtil::ThreadPool::ExecuteTasks();
 
+      //dtUtil::ThreadPool::AddTask(*mImpl->mCreateMeshTask, dtUtil::ThreadPool::BACKGROUND);
+
+   }
+
+   bool VoxelCell::RunTask()
+   {
+      if (!mImpl->mCreateMeshTask->IsDone())
+      {
+         dtUtil::ThreadPool::AddTask(*mImpl->mCreateMeshTask, dtUtil::ThreadPool::BACKGROUND);
+         return true;
+      }
+      return false;
    }
 
    void VoxelCell::TakeGeometry()

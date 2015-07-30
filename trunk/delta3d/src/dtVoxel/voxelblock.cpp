@@ -199,6 +199,7 @@ namespace dtVoxel
                               updateInfo.mCell = vc;
                               updateInfo.mNodeToUpdate = fv.mFoundNode;
                               updateInfo.mCellIndex.set(x, y, z);
+                              updateInfo.mStarted = false;
 
                               vc->SetDirty(true);
 
@@ -222,7 +223,6 @@ namespace dtVoxel
             }
          }
       }
-   
    }
 
 
@@ -253,7 +253,7 @@ namespace dtVoxel
 
       //todo using local grid should be faster
       osg::BoundingBox bb(pos, offsetTo);
-      bool hasData = true;//voxelActor.HasDataInAABB(bb);
+      bool hasData = voxelActor.HasDataInAABB(bb);
 
       if (hasData)
       {
