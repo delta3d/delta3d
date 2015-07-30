@@ -183,13 +183,13 @@ namespace dtVoxel
    /////////////////////////////////////////////////////
    void VoxelActor::MarkVisualDirty(const osg::BoundingBox& bb, int gridIdx)
    {
-      mGrid->MarkDirtyAABB(bb);
+      mVisualGrid->MarkDirtyAABB(bb);
    }
 
    /////////////////////////////////////////////////////
    void VoxelActor::OnTickLocal(const dtGame::TickMessage& tickMessage)
    {
-      if (mGrid.valid())
+      if (mVisualGrid.valid())
       {
          dtGame::GameManager* gm = GetGameManager();
 
@@ -202,31 +202,11 @@ namespace dtVoxel
             cam->GetTransform(xform);
             xform.GetTranslation(pos);
 
-            mGrid->UpdateGrid(pos);
+            mVisualGrid->UpdateGrid(pos);
 
-            //std::cout << "Updating voxel grid with position (" << pos[0] << ", " << pos[1] << ", " << pos[2] << ")" << std::endl;
-         }
-      }
-   }
+            ModifyGrids.emit_signal(tickMessage);
 
-   /////////////////////////////////////////////////////
-   void VoxelActor::OnTickEndOfFrame(const dtGame::TickMessage& tickMessage)
-   {
-      if (mGrid.valid())
-      {
-         dtGame::GameManager* gm = GetGameManager();
-
-         if (gm != nullptr)
-         {
-            dtCore::Camera* cam = gm->GetApplication().GetCamera();
-
-            osg::Vec3 pos;
-            dtCore::Transform xform;
-            cam->GetTransform(xform);
-            xform.GetTranslation(pos);
-
-            mGrid->BeginNewUpdates(pos);
-
+            mVisualGrid->BeginNewUpdates(pos);
             //std::cout << "Updating voxel grid with position (" << pos[0] << ", " << pos[1] << ", " << pos[2] << ")" << std::endl;
          }
       }
@@ -240,8 +220,8 @@ namespace dtVoxel
       //dd->CreateDebugDrawable(*mGrid);
       //SetDrawable(*dd);
 
-      mGrid = new VoxelGrid();
-      SetDrawable(*mGrid);
+      mVisualGrid = new VoxelGrid();
+      SetDrawable(*mVisualGrid);
 
    }
 
@@ -344,14 +324,12 @@ namespace dtVoxel
    void VoxelActor::OnEnteredWorld()
    {
       RegisterForMessages(dtGame::MessageType::TICK_LOCAL, dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
-      RegisterForMessages(dtGame::MessageType::TICK_LOCAL, dtUtil::MakeFunctor(&VoxelActor::OnTickEndOfFrame, this));
-
 
       osg::Vec3i staticRes(int(mStaticResolution.x()), int(mStaticResolution.y()), int(mStaticResolution.z()));
       osg::Vec3i dynamicRes(int(mDynamicResolution.x()), int(mDynamicResolution.y()), int(mDynamicResolution.z()));
 
 
-      mGrid->Init(mOffset, mGridDimensions, mBlockDimensions, mCellDimensions, staticRes, dynamicRes);
+      mVisualGrid->Init(mOffset, mGridDimensions, mBlockDimensions, mCellDimensions, staticRes, dynamicRes);
       
       dtGame::GameManager* gm = GetGameManager();
 
@@ -364,8 +342,8 @@ namespace dtVoxel
          cam->GetTransform(xform);
          xform.GetTranslation(pos);
 
-         mGrid->SetViewDistance(mViewDistance);
-         mGrid->CreatePagedLODGrid(pos, *this);
+         mVisualGrid->SetViewDistance(mViewDistance);
+         mVisualGrid->CreatePagedLODGrid(pos, *this);
       }
       else
       {
@@ -406,7 +384,7 @@ namespace dtVoxel
       GetComponent(shaderComp);
       if (shaderComp != nullptr)
       {
-         mGrid->SetShaderGroup(shaderComp->GetCurrentShader().GetResourceIdentifier());
+         mVisualGrid->SetShaderGroup(shaderComp->GetCurrentShader().GetResourceIdentifier());
       }
    }
 
