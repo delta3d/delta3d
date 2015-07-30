@@ -73,7 +73,8 @@ namespace dtVoxel
       // if the physics geometry should be created when the actor is remote.
       DT_DECLARE_ACCESSOR_INLINE(bool, CreateRemotePhysics)
 
-      void OnVolumeUpdate(const VolumeUpdateMessage& msg);
+      // This exists external objects can deform the grid, created a change message, and then tell the visual to update with the message.
+      void UpdateVolume(const VolumeUpdateMessage& msg, bool updateVisualOnly);
    protected:
       /**
        * Loads the voxel mesh.
@@ -83,10 +84,13 @@ namespace dtVoxel
       ~VoxelActor() override;
       void CreateDrawable() override;
 
+      // This is used by the message handler
+      void OnVolumeUpdateMsg(const VolumeUpdateMessage& msg);
    private:
+
       template<typename GridTypePtr>
-      void UpdateGrid(GridTypePtr grid, const dtCore::NamedArrayParameter* indices, const dtCore::NamedArrayParameter* values,
-            const dtCore::NamedArrayParameter* indicesDeactivated);
+      void UpdateVolumeInternal(GridTypePtr grid, const dtCore::NamedArrayParameter* indices, const dtCore::NamedArrayParameter* values,
+            const dtCore::NamedArrayParameter* indicesDeactivated, bool updateVisualOnly);
 
       dtCore::RefPtr<VoxelGrid> mGrid;
       openvdb::GridPtrVecPtr mGrids;

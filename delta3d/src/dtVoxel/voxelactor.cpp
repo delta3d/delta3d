@@ -225,8 +225,8 @@ namespace dtVoxel
 
    /////////////////////////////////////////////////////
    template<typename GridTypePtr>
-   void VoxelActor::UpdateGrid(GridTypePtr grid, const dtCore::NamedArrayParameter* indices, const dtCore::NamedArrayParameter* values,
-         const dtCore::NamedArrayParameter* indicesDeactivated)
+   void VoxelActor::UpdateVolumeInternal(GridTypePtr grid, const dtCore::NamedArrayParameter* indices, const dtCore::NamedArrayParameter* values,
+         const dtCore::NamedArrayParameter* indicesDeactivated, bool updateVisualOnly)
    {
       typedef typename GridTypePtr::element_type GridType;
       typedef typename GridType::ValueType ValueType;
@@ -250,8 +250,11 @@ namespace dtVoxel
                openvdb::Vec3d idxOVDBVec(idxVec.x(), idxVec.y(), idxVec.z());
                openvdb::Vec3d worldVec = grid->transform().indexToWorld(idxOVDBVec);
                bb.expandBy(osg::Vec3(worldVec.x(), worldVec.y(), worldVec.z()));
-               openvdb::Coord c(std::round(idxVec.x()), std::round(idxVec.y()), std::round(idxVec.z()));
-               accessor.setValue(c, val);
+               if (!updateVisualOnly)
+               {
+                  openvdb::Coord c(std::round(idxVec.x()), std::round(idxVec.y()), std::round(idxVec.z()));
+                  accessor.setValue(c, val);
+               }
             }
          }
          else
@@ -269,8 +272,11 @@ namespace dtVoxel
             openvdb::Vec3d idxOVDBVec(idxVec.x(), idxVec.y(), idxVec.z());
             openvdb::Vec3d worldVec = grid->transform().indexToWorld(idxOVDBVec);
             bb.expandBy(osg::Vec3(worldVec.x(), worldVec.y(), worldVec.z()));
-            openvdb::Coord c(openvdb::Coord::round(idxOVDBVec));
-            accessor.setValueOff(c, grid->background());
+            if (!updateVisualOnly)
+            {
+               openvdb::Coord c(openvdb::Coord::round(idxOVDBVec));
+               accessor.setValueOff(c, grid->background());
+            }
          }
          else
          {
@@ -282,10 +288,9 @@ namespace dtVoxel
    }
 
    /////////////////////////////////////////////////////
-   void VoxelActor::OnVolumeUpdate(const VolumeUpdateMessage& msg)
+   void VoxelActor::UpdateVolume(const VolumeUpdateMessage& msg, bool updateVisualOnly)
    {
-      if (GetNumGrids() > 0 && (IsRemote() || GetLocalActorUpdatePolicy() != dtGame::GameActorProxy::LocalActorUpdatePolicy::IGNORE_ALL)
-            && msg.GetSource() != GetGameManager()->GetMachineInfo())
+      if (GetNumGrids() > 0)
       {
          const dtCore::NamedArrayParameter* indices = msg.GetIndicesChanged();
          const dtCore::NamedArrayParameter* values = msg.GetValuesChanged();
@@ -294,16 +299,23 @@ namespace dtVoxel
          openvdb::FloatGrid::Ptr gridF = boost::dynamic_pointer_cast<openvdb::FloatGrid>(GetGrid(0));
          if (gridF)
          {
-            UpdateGrid(gridF, indices, values, indicesDeactivated);
+            UpdateVolumeInternal(gridF, indices, values, indicesDeactivated, updateVisualOnly);
          }
          else
          {
             openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(GetGrid(0));
             if (gridB)
-               UpdateGrid(gridB, indices, values, indicesDeactivated);
+               UpdateVolumeInternal(gridB, indices, values, indicesDeactivated, updateVisualOnly);
          }
-
       }
+   }
+
+   /////////////////////////////////////////////////////
+   void VoxelActor::OnVolumeUpdateMsg(const VolumeUpdateMessage& msg)
+   {
+      if ((IsRemote() || GetLocalActorUpdatePolicy() != dtGame::GameActorProxy::LocalActorUpdatePolicy::IGNORE_ALL)
+                  && msg.GetSource() != GetGameManager()->GetMachineInfo())
+         UpdateVolume(msg, false);
    }
 
    /////////////////////////////////////////////////////
@@ -365,7 +377,7 @@ namespace dtVoxel
          }
       }
 
-      RegisterForMessagesAboutSelf(VoxelMessageType::INFO_VOLUME_CHANGED, dtUtil::MakeFunctor(&VoxelActor::OnVolumeUpdate, this));
+      RegisterForMessagesAboutSelf(VoxelMessageType::INFO_VOLUME_CHANGED, dtUtil::MakeFunctor(&VoxelActor::OnVolumeUpdateMsg, this));
 
       dtGame::ShaderActorComponent* shaderComp = nullptr;
       GetComponent(shaderComp);
