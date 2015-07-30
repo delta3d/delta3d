@@ -24,47 +24,51 @@
 #include <dtVoxel/voxelblock.h>
 #include <dtUtil/getsetmacros.h>
 #include <dtCore/deltadrawable.h>
+#include <dtCore/sigslot.h>
 
 #include <osg/Group>
 
 namespace dtVoxel
 {   
 
-    /***
+   /***
     *  A VoxelGrid represents a 3d grid of VoxelBlocks.  
     */
    class DT_VOXEL_EXPORT VoxelGrid : public dtCore::DeltaDrawable
    {
    public:
+
       VoxelGrid();
 
       ///Call Init() before CreateGridFromActor()
       void Init(const osg::Vec3& grid_offset, const osg::Vec3& dimensions, const osg::Vec3& block_dimensions, const osg::Vec3& cellDimensions, const osg::Vec3i& staticResolution, const osg::Vec3i& dynamicResolution);
+
       void CreateGridFromActor(const osg::Vec3& pos, VoxelActor& voxelActor);
 
       void CreatePagedLODGrid(const osg::Vec3& pos, VoxelActor& voxelActor);
 
       void GenerateVisibility(VoxelActor& voxelActor);
 
+      /***
+       * Updates the renderable area defined by view distance
+       */
+      void UpdateGrid(const osg::Vec3& newCameraPos);
+
+      void BeginNewUpdates(const osg::Vec3& newCameraPos);
 
       /***
-      * Updates the renderable area defined by view distance
-      */
-      void UpdateGrid(const osg::Vec3& newCameraPos);
-      
-      /***
-      * Marks a region dirty which will force regenerate next time they are visible
-      */
+       * Marks a region dirty which will force regenerate next time they are visible
+       */
       void MarkDirtyAABB(const osg::BoundingBox& bb);
-      
+
 
       VoxelBlock* GetBlockFromIndex(int index);
       VoxelBlock* GetBlockFromIndex(int x, int y, int z);
       VoxelBlock* GetBlockFromPos(const osg::Vec3& pos);
       osg::Vec3i GetIndexFromPos(const osg::Vec3& pos);
 
-      /*virtual*/ osg::Node* GetOSGNode();
-      /*virtual*/ const osg::Node* GetOSGNode() const;
+      osg::Node* GetOSGNode() override;
+      const osg::Node* GetOSGNode() const override;
 
 
       DT_DECLARE_ACCESSOR_INLINE(int, BlocksX)
@@ -76,7 +80,7 @@ namespace dtVoxel
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, WSDimensions)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, BlockDimensions)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, CellDimensions)
-      
+
       const osg::Vec3i& GetStaticResolution() const;
       const osg::Vec3i& GetDynamicResolution() const;
 
@@ -84,14 +88,14 @@ namespace dtVoxel
       DT_DECLARE_ACCESSOR_INLINE(bool, Initialized)
 
       openvdb::GridBase::Ptr ConvertToLocalResolutionGrid(openvdb::GridBase::Ptr);
-      
+
       osg::BoundingBox ComputeWorldBounds(const osg::Vec3& pos);
 
       osg::Vec3 GetCenterOfBlock(int x, int y, int z);
       void GenerateCacheString();
       bool WriteVoxelDatabase();
       bool ReadVoxelDatabase();
-      
+
 
       bool ReadBlockVisibility();
       bool WriteBlockVisibility();
@@ -107,7 +111,7 @@ namespace dtVoxel
       DT_DECLARE_ACCESSOR_INLINE(float, Dist1)
       DT_DECLARE_ACCESSOR_INLINE(float, Dist2)
 
-   
+
    private:
       osg::BoundingBox mAllocatedBounds;
       osg::Vec3i mStaticResolution, mDynamicResolution;
@@ -118,7 +122,7 @@ namespace dtVoxel
       std::vector<bool> mBlockVisibility;
       std::vector<VoxelCellUpdateInfo> mDirtyCells;
       VoxelBlock* mBlocks;
-      
+
    };
 
    typedef dtCore::RefPtr<VoxelGrid> VoxelGridPtr;

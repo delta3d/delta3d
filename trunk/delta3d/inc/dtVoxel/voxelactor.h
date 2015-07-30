@@ -47,9 +47,10 @@ namespace dtVoxel
       openvdb::GridBase::Ptr GetGrid(int i);
       size_t GetNumGrids() const;
 
-      virtual void OnEnteredWorld();
-      virtual void OnTickLocal(const dtGame::TickMessage& tickMessage);
+      void OnEnteredWorld() override;
+      void OnTickLocal(const dtGame::TickMessage& tickMessage) override;
 
+      virtual void OnTickEndOfFrame(const dtGame::TickMessage& tickMessage);
 
       /**
        * Returns a new grid that contains the collision set of the given bounding box.
@@ -81,7 +82,7 @@ namespace dtVoxel
        * @throw dtUtil::FileNotFoundException if the resource does not exist.
        */
       virtual void LoadGrid(const dtCore::ResourceDescriptor& rd);
-      ~VoxelActor() override;
+      ~VoxelActor() /*override*/;
       void CreateDrawable() override;
 
       // This is used by the message handler
