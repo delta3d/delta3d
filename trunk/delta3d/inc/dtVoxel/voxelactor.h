@@ -37,6 +37,9 @@ namespace dtVoxel
    public:
       typedef dtGame::GameActorProxy BaseClass;
 
+      // This signal is fired when it's safe to modify the grids.
+      sigslot::signal1<const dtGame::TickMessage&> ModifyGrids;
+
       VoxelActor();
        
       void BuildPropertyMap() override;
@@ -50,8 +53,6 @@ namespace dtVoxel
       void OnEnteredWorld() override;
       void OnTickLocal(const dtGame::TickMessage& tickMessage) override;
 
-      virtual void OnTickEndOfFrame(const dtGame::TickMessage& tickMessage);
-
       /**
        * Returns a new grid that contains the collision set of the given bounding box.
        */
@@ -59,7 +60,6 @@ namespace dtVoxel
       bool HasDataInAABB(const osg::BoundingBox& bb, int gridIdx = 0);
 
       void MarkVisualDirty(const osg::BoundingBox& bb, int gridIdx = 0);
-
 
       DT_DECLARE_ACCESSOR_INLINE(float, ViewDistance)
       DT_DECLARE_ACCESSOR_INLINE(float, IsoLevel)
@@ -93,7 +93,7 @@ namespace dtVoxel
       void UpdateVolumeInternal(GridTypePtr grid, const dtCore::NamedArrayParameter* indices, const dtCore::NamedArrayParameter* values,
             const dtCore::NamedArrayParameter* indicesDeactivated, bool updateVisualOnly);
 
-      dtCore::RefPtr<VoxelGrid> mGrid;
+      dtCore::RefPtr<VoxelGrid> mVisualGrid;
       openvdb::GridPtrVecPtr mGrids;
    };
 
