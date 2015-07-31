@@ -22,7 +22,6 @@
 #include <dtVoxel/aabbintersector.h>
 #include <dtVoxel/voxelgeometry.h>
 #include <dtVoxel/voxelmessagetype.h>
-#include <dtVoxel/volumeupdatemessage.h>
 
 #include <dtABC/application.h>
 
@@ -205,6 +204,12 @@ namespace dtVoxel
             mVisualGrid->UpdateGrid(pos);
 
             ModifyGrids.emit_signal(tickMessage);
+            std::for_each(mUpdateMessages.begin(), mUpdateMessages.end(),
+                  [this](VolumeUpdateMessagePtr& msg)
+                  {
+                     UpdateVolume(*msg, false);
+                  });
+            mUpdateMessages.clear();
 
             mVisualGrid->BeginNewUpdates(pos);
             //std::cout << "Updating voxel grid with position (" << pos[0] << ", " << pos[1] << ", " << pos[2] << ")" << std::endl;
@@ -317,7 +322,9 @@ namespace dtVoxel
    {
       if ((IsRemote() || GetLocalActorUpdatePolicy() != dtGame::GameActorProxy::LocalActorUpdatePolicy::IGNORE_ALL)
                   && msg.GetSource() != GetGameManager()->GetMachineInfo())
-         UpdateVolume(msg, false);
+      {
+         mUpdateMessages.push_back(&msg);
+      }
    }
 
    /////////////////////////////////////////////////////

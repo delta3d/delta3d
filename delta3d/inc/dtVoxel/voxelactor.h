@@ -21,6 +21,7 @@
 #define DTVOXEL_VOXELACTOR_H_
 
 #include <dtVoxel/export.h>
+#include <dtVoxel/volumeupdatemessage.h>
 #include <dtGame/gameactorproxy.h>
 #include <dtUtil/getsetmacros.h>
 //Really need to fine grain this.
@@ -95,6 +96,7 @@ namespace dtVoxel
 
       dtCore::RefPtr<VoxelGrid> mVisualGrid;
       openvdb::GridPtrVecPtr mGrids;
+      std::vector<VolumeUpdateMessagePtr> mUpdateMessages;
    };
 
    typedef dtCore::RefPtr<VoxelActor> VoxelActorPtr;

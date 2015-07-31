@@ -59,6 +59,8 @@ namespace dtVoxel
    private:
    };
 
+   typedef dtCore::RefPtr<const VolumeUpdateMessage> VolumeUpdateMessagePtr;
+
 
 } /* namespace dtVoxel */
 

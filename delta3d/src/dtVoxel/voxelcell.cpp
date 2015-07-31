@@ -39,6 +39,8 @@
 
 #include <iostream>
 
+#include <dtCore/timer.h>
+
 namespace dtVoxel
 {
    int HashVec3(std::map<osg::Vec3, int>& vectorMap, const osg::Vec3& vec, bool& inserted)
@@ -83,7 +85,8 @@ namespace dtVoxel
    }
 
    void CreateMeshTask::operator()()
-   {      
+   {
+      dtCore::Timer_t startTime = dtCore::Timer::Instance()->Tick();
       dtCore::RefPtr<osg::Geometry> geom = new osg::Geometry();
       dtCore::RefPtr<osg::Vec3Array> vertArray = new osg::Vec3Array();
       dtCore::RefPtr<osg::DrawElementsUInt> drawElements = new osg::DrawElementsUInt(GL_TRIANGLES);
@@ -184,12 +187,14 @@ namespace dtVoxel
       //std::cout << "Num Verts " << vertArray->getNumElements() << std::endl;
 
       
-      geom->setVertexArray(vertArray);      
+      geom->setVertexArray(vertArray);
       geom->addPrimitiveSet(drawElements);
 
       mMesh->addDrawable(geom);
 
       mIsDone = true;
+      dtCore::Timer_t endTime = dtCore::Timer::Instance()->Tick();
+      std::cout << dtCore::Timer::Instance()->DeltaMil(startTime, endTime) << std::endl;
    }
 
    double CreateMeshTask::SampleCoord(double x, double y, double z, openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>& fastSampler)
@@ -392,7 +397,7 @@ namespace dtVoxel
    {
       if (!mImpl->mCreateMeshTask->IsDone())
       {
-         dtUtil::ThreadPool::AddTask(*mImpl->mCreateMeshTask, dtUtil::ThreadPool::BACKGROUND);
+         dtUtil::ThreadPool::AddTask(*mImpl->mCreateMeshTask, dtUtil::ThreadPool::IMMEDIATE);
          return true;
       }
       return false;
