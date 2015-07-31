@@ -90,7 +90,7 @@ namespace dtVoxel
       
       tbb::mutex /*hashMtx,*/ elemMtx;
 
-      tbb::parallel_for(tbb::blocked_range3d<int>(0, mResolution[0], 4, 0, mResolution[1], 4, 0, mResolution[2], 4),
+      tbb::parallel_for(tbb::blocked_range3d<int>(0, mResolution[0], mResolution[0], 0, mResolution[1], mResolution[1], 0, mResolution[2],  mResolution[2]/4),
             [&](const tbb::blocked_range3d<int>& r)
             {
          openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler> sampler(mGrid->getConstAccessor(), mGrid->transform());
