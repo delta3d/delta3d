@@ -105,9 +105,9 @@ namespace dtVoxel
          int(std::floor(float(mRes1[1]) * 0.75f)),
          int(std::floor(float(mRes1[2]) * 0.75f)));
 
-      mRes3.set(1 + int(std::floor(float(mRes3[0]) * 0.75f)),
-         1 + int(std::floor(float(mRes3[1]) * 0.75f)),
-         1 + int(std::floor(float(mRes3[2]) * 0.75f)));
+      mRes3.set(1 + int(std::floor(float(mRes2[0]) * 0.75f)),
+         1 + int(std::floor(float(mRes2[1]) * 0.75f)),
+         1 + int(std::floor(float(mRes2[2]) * 0.75f)));
 
 
 
