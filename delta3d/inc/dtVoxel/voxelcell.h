@@ -45,7 +45,7 @@ namespace dtVoxel
    class DT_VOXEL_EXPORT CreateMeshTask : public dtUtil::ThreadPoolTask
    {
    public:
-      CreateMeshTask(const osg::Vec3& offset, const osg::Vec3& texelSize, const osg::Vec3i& resolution, openvdb::FloatGrid::Ptr grid);
+      CreateMeshTask(const osg::Vec3& offset, const osg::Vec3& texelSize, const osg::Vec3i& resolution, double isoLevel, openvdb::FloatGrid::Ptr grid);
 
       osg::Geode* TakeGeometry();
 
