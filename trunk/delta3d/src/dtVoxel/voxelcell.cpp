@@ -57,12 +57,12 @@ namespace dtVoxel
       return index;
    }
 
-   //todo- make property
+   //this is always 1 because the actual values are interploated from 0-1 using the iso value property now
    float isolevel = 1.0f;
 
-   CreateMeshTask::CreateMeshTask(const osg::Vec3& offset, const osg::Vec3& texelSize, const osg::Vec3i& resolution, openvdb::FloatGrid::Ptr grid)
+   CreateMeshTask::CreateMeshTask(const osg::Vec3& offset, const osg::Vec3& texelSize, const osg::Vec3i& resolution, double isolevel, openvdb::FloatGrid::Ptr grid)
       : mIsDone(false)
-      , mIsoLevel(0.12f)
+      , mIsoLevel(isolevel)
       , mOffset(offset)
       , mTexelSize(texelSize)
       , mResolution(resolution)
@@ -380,7 +380,7 @@ namespace dtVoxel
          openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(voxelActor.GetGrid(0));
 
 
-         mImpl->mCreateMeshTask = new CreateMeshTask(mImpl->mOffset, texelSize, resolution, gridB);
+         mImpl->mCreateMeshTask = new CreateMeshTask(mImpl->mOffset, texelSize, resolution, voxelActor.GetIsoLevel(), gridB);
 
       }
 
