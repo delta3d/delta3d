@@ -120,7 +120,7 @@ namespace dtVoxel
       std::string mFullPathToFileCache;
       std::string mCacheFolder;
       std::vector<bool> mBlockVisibility;
-      std::vector<VoxelCellUpdateInfo> mDirtyCells;
+      std::list<VoxelCellUpdateInfo> mDirtyCells;
       VoxelBlock* mBlocks;
 
    };

@@ -69,8 +69,6 @@ namespace dtVoxel
       , mDirtyCells()
       , mBlocks(nullptr)
    {
-      //allocate some space initially to avoid thrashing
-      mDirtyCells.reserve(15);
    }
 
    VoxelGrid::~VoxelGrid()
@@ -180,111 +178,25 @@ namespace dtVoxel
 
       //std::cout << "UpdateGrid " << mDirtyCells.size() << " dirty cells." << std::endl;
 
+      std::list<VoxelCellUpdateInfo>::iterator iter = mDirtyCells.begin();
+      std::list<VoxelCellUpdateInfo>::iterator iterEnd = mDirtyCells.end();
 
-      mDirtyCells.erase(std::remove_if(mDirtyCells.begin(), mDirtyCells.end(),
-            [&](VoxelCellUpdateInfo& updateInfo)
-            {
-               if (updateInfo.mStarted && updateInfo.mCell->CheckTaskStatus())
-               {
-                  //std::cout << "task complete" << std::endl;
+      for (; iter != iterEnd;)
+      {
+         VoxelCellUpdateInfo& updateInfo = *iter;
 
-                  updateInfo.mBlock->RegenerateCell(*mVoxelActor, updateInfo.mCell, updateInfo.mNodeToUpdate, updateInfo.mCellIndex, mDynamicResolution, mViewDistance);
-                  return true;
-               }
-               return false;
-            }
+         if (updateInfo.mStarted && updateInfo.mCell->CheckTaskStatus())
+         {
+            updateInfo.mBlock->RegenerateCell(*mVoxelActor, updateInfo.mCell, updateInfo.mNodeToUpdate, updateInfo.mCellIndex, mDynamicResolution, mViewDistance);
 
-            ), mDirtyCells.end());
+            iter = mDirtyCells.erase(iter);
+         }
+         else
+         {
+            ++iter;
+         }
+      }
 
-      //dtUtil::ThreadPool::ExecuteTasks();
-
-      //osg::BoundingBox newBounds = ComputeWorldBounds(newCameraPos);
-      //
-      //osg::BoundingBox combinedBounds = mAllocatedBounds;
-
-      //combinedBounds.expandBy(newBounds);
-
-      //osg::Vec3 newDim;
-      //newDim[0] = combinedBounds.xMax() - combinedBounds.xMin();
-      //newDim[1] = combinedBounds.yMax() - combinedBounds.yMin();
-      //newDim[2] = combinedBounds.zMax() - combinedBounds.zMin();
-
-      //int blocksX = int(std::floor(newDim.x() / mBlockDimensions.x()));
-      //int blocksY = int(std::floor(newDim.y() / mBlockDimensions.y()));
-      //int blocksZ = int(std::floor(newDim.z() / mBlockDimensions.z()));
-
-      ////std::cout << "Blocks X " << blocksX << " Blocks Y " << blocksY << " Blocks Z " << blocksZ << std::endl;
-
-      //osg::Vec3 bboffset = combinedBounds._min - mGridOffset;
-      //int startX = int(std::floor(bboffset.x() / mBlockDimensions.x()));
-      //int startY = int(std::floor(bboffset.y() / mBlockDimensions.y()));
-      //int startZ = int(std::floor(bboffset.z() / mBlockDimensions.z()));
-
-      //int endX = startX + blocksX;
-      //int endY = startY + blocksY;
-      //int endZ = startZ + blocksZ;
-    
-      //for (int z = startZ; z < endZ; z++)
-      //{
-      //   for (int y = startY; y < endY; y++)
-      //   {
-      //      for (int x = startX; x < endX; x++)
-      //      {
-      //         VoxelBlock* curBlock = GetBlockFromIndex(x, y, z);
-
-      //         if (curBlock != nullptr)
-      //         {
-      //            osg::Vec3 centerPos = GetCenterOfBlock(x, y, z);
-
-      //            bool posInOldBounds = mAllocatedBounds.contains(centerPos);
-      //            bool posInNewBounds = newBounds.contains(centerPos);
-      //             
-      //            if (posInNewBounds) 
-      //            {
-      //               //allocate
-      //               if (!curBlock->GetEmpty() && !curBlock->IsAllocated())
-      //               {
-      //                  int index = (z * mBlocksY * mBlocksX) + (y * mBlocksX) + x;
-
-      //                  if (curBlock->GetDirty())
-      //                  {
-      //                     curBlock->AllocateLODMesh(*mVoxelActor, mRes0, mDist0, mRes1, mDist1, mRes2, mDist2, mRes3, mViewDistance);
-      //                     mRootNode->addChild(curBlock->GetOSGNode());
-      //                  }
-      //                  else if (curBlock->LoadCachedModel(mFullPathToFileCache, index))
-      //                  {
-      //                     mRootNode->addChild(curBlock->GetOSGNode());
-      //                  }                        
-      //                  else
-      //                  {
-      //                     LOG_ERROR("No data found for block " + dtUtil::ToString(index) );
-      //                     //curBlock->AllocateCombinedMesh(*mVoxelActor, mStaticResolution);
-      //                     //curBlock->SaveCachedModel(mFullPathToFileCache, index);
-      //                  }
-
-      //               }                     
-
-      //            }
-      //            else if (posInOldBounds)
-      //            {
-      //               if (curBlock->IsAllocated())
-      //               {
-      //                  //deallocate
-      //                  curBlock->DeAllocate();
-      //                  mRootNode->removeChild(curBlock->GetOSGNode());
-      //               }
-      //            }
-
-      //         }
-      //         else
-      //         {
-      //            LOG_ERROR("Invalid block dimensions calculated when updating grid.");
-      //         }
-      //      }
-      //   }
-      //}
-
-      //mAllocatedBounds = newBounds;
    }
 
    void VoxelGrid::BeginNewUpdates(const osg::Vec3& newCameraPos)

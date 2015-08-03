@@ -71,7 +71,7 @@ namespace dtVoxel
       void RegenerateAABB(VoxelActor& voxelActor, const osg::BoundingBox& bb, const osg::Vec3i& textureResolution);
       void RegenerateCell(VoxelActor& voxelActor, VoxelCell* cell, osg::Group* nodeToUpdate, const osg::Vec3i& cellIndex, const osg::Vec3i& textureResolution, float viewDistance);
 
-      void CollectDirtyCells(VoxelActor& voxelActor, const osg::BoundingBox& bb, const osg::Vec3i& textureResolution, std::vector<VoxelCellUpdateInfo>& dirtyCells);
+      void CollectDirtyCells(VoxelActor& voxelActor, const osg::BoundingBox& bb, const osg::Vec3i& textureResolution, std::list<VoxelCellUpdateInfo>& dirtyCells);
 
 
       //void AllocateCell(const osg::Vec3& pos, const osg::Vec3i& textureResolution);
