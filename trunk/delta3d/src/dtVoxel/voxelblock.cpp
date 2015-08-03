@@ -153,7 +153,7 @@ namespace dtVoxel
       return mOffset;
    }
 
-   void VoxelBlock::CollectDirtyCells(VoxelActor& voxelActor, const osg::BoundingBox& bb, const osg::Vec3i& textureResolution, std::vector<VoxelCellUpdateInfo>& dirtyCells)
+   void VoxelBlock::CollectDirtyCells(VoxelActor& voxelActor, const osg::BoundingBox& bb, const osg::Vec3i& textureResolution, std::list<VoxelCellUpdateInfo>& dirtyCells)
    {
       osg::BoundingBox bounds(mOffset, mOffset + mWSDimensions);
 
