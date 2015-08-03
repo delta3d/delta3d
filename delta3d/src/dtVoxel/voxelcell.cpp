@@ -36,6 +36,7 @@
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range3d.h>
 #include <tbb/mutex.h>
+#include <tbb/task_scheduler_init.h>
 
 #include <iostream>
 
@@ -86,6 +87,8 @@ namespace dtVoxel
 
    void CreateMeshTask::operator()()
    {
+      unsigned blockSize = 5U;
+      tbb::task_scheduler_init init(blockSize);
       dtCore::Timer_t startTime = dtCore::Timer::Instance()->Tick();
       dtCore::RefPtr<osg::Geometry> geom = new osg::Geometry();
       dtCore::RefPtr<osg::Vec3Array> vertArray = new osg::Vec3Array();
@@ -93,7 +96,7 @@ namespace dtVoxel
       
       tbb::mutex /*hashMtx,*/ elemMtx;
 
-      tbb::parallel_for(tbb::blocked_range3d<int>(0, mResolution[0], mResolution[0], 0, mResolution[1], mResolution[1], 0, mResolution[2],  mResolution[2]/4),
+      tbb::parallel_for(tbb::blocked_range3d<int>(0, mResolution[0], mResolution[0]/blockSize, 0, mResolution[1], mResolution[1]/blockSize, 0, mResolution[2],  mResolution[2]/blockSize),
             [&](const tbb::blocked_range3d<int>& r)
             {
          openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler> sampler(mGrid->getConstAccessor(), mGrid->transform());
@@ -388,16 +391,14 @@ namespace dtVoxel
          mImpl->mCreateMeshTask = new CreateMeshTask(mImpl->mOffset, texelSize, resolution, voxelActor.GetIsoLevel(), gridB);
 
       }
-
-      //dtUtil::ThreadPool::AddTask(*mImpl->mCreateMeshTask, dtUtil::ThreadPool::BACKGROUND);
-
    }
 
    bool VoxelCell::RunTask()
    {
       if (!mImpl->mCreateMeshTask->IsDone())
       {
-         dtUtil::ThreadPool::AddTask(*mImpl->mCreateMeshTask, dtUtil::ThreadPool::IMMEDIATE);
+         dtUtil::ThreadPool::AddTask(*mImpl->mCreateMeshTask, dtUtil::ThreadPool::BACKGROUND);
+         //mImpl->mCreateMeshTask->operator ()();
          return true;
       }
       return false;
