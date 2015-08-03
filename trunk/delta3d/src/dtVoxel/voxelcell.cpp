@@ -32,13 +32,12 @@
 #include <dtVoxel/aabbintersector.h>
 
 #include <dtUtil/mathdefines.h>
+#include <dtUtil/log.h>
 
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range3d.h>
 #include <tbb/mutex.h>
 #include <tbb/task_scheduler_init.h>
-
-#include <iostream>
 
 #include <dtCore/timer.h>
 
@@ -89,6 +88,7 @@ namespace dtVoxel
    {
       unsigned blockSize = 5U;
       tbb::task_scheduler_init init(blockSize);
+
       dtCore::Timer_t startTime = dtCore::Timer::Instance()->Tick();
       dtCore::RefPtr<osg::Geometry> geom = new osg::Geometry();
       dtCore::RefPtr<osg::Vec3Array> vertArray = new osg::Vec3Array();
@@ -196,8 +196,7 @@ namespace dtVoxel
       mMesh->addDrawable(geom);
 
       mIsDone = true;
-      dtCore::Timer_t endTime = dtCore::Timer::Instance()->Tick();
-      std::cout << dtCore::Timer::Instance()->DeltaMil(startTime, endTime) << std::endl;
+      LOGN_DEBUG("voxelcell.cpp", "Time to update cell ms: " + dtUtil::ToString(dtCore::Timer::Instance()->DeltaMil(startTime, dtCore::Timer::Instance()->Tick())));
    }
 
    double CreateMeshTask::SampleCoord(double x, double y, double z, openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>& fastSampler)
