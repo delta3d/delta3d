@@ -221,20 +221,21 @@ namespace dtVoxel
             {
                double fractionOfTickBehind = (tickMessage.GetDeltaSimTime()-timeDiff)/tickMessage.GetDeltaRealTime();
                unsigned numToUpdate = unsigned(std::ceil(fractionOfTickBehind * double(mMaxCellsToUpdatePerFrame)));
-               std::cout << "Updating at most " << numToUpdate << " cells." << std::endl;
+               //if (numToUpdate != mMaxCellsToUpdatePerFrame)
+               //   std::cout << "Updating at most " << numToUpdate << " cells." << std::endl;
                mVisualGrid->BeginNewUpdates(pos, numToUpdate);
                mTicksSinceVisualUpdate = 0;
             }
             else if (mTicksSinceVisualUpdate > 2)
             {
-               std::cout << "Updating forced to 1 cell." << std::endl;
+               //std::cout << "Updating forced to 1 cell." << std::endl;
                mVisualGrid->BeginNewUpdates(pos, 1U);
                mTicksSinceVisualUpdate = 0;
             }
             else
             {
                ++mTicksSinceVisualUpdate;
-               std::cout << "Skipping visual update to help catch up." << std::endl;
+               //std::cout << "Skipping visual update to help catch up." << std::endl;
             }
          }
       }
