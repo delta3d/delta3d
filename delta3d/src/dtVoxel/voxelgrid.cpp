@@ -51,7 +51,6 @@ namespace dtVoxel
       , mWSDimensions()
       , mBlockDimensions()
       , mCellDimensions()
-      , mMaxCellsToUpdatePerFrame(1)
       , mInitialized(false)
       , mRes0()
       , mRes1()
@@ -200,9 +199,9 @@ namespace dtVoxel
 
    }
 
-   void VoxelGrid::BeginNewUpdates(const osg::Vec3& newCameraPos)
+   void VoxelGrid::BeginNewUpdates(const osg::Vec3& newCameraPos, unsigned maxCellsToUpdate)
    {
-      unsigned runCount = mMaxCellsToUpdatePerFrame;
+      unsigned runCount = maxCellsToUpdate;
       for (auto iter = mDirtyCells.begin(); runCount > 0 && iter != mDirtyCells.end(); ++iter)
       {
          VoxelCellUpdateInfo& updateInfo = *iter;
@@ -227,8 +226,6 @@ namespace dtVoxel
       
       mVoxelActor = &voxelActor;
       
-      mMaxCellsToUpdatePerFrame = mVoxelActor->GetMaxCellsToUpdatePerFrame();
-
       //std::cout << std::endl << "Creating Voxel Grid with " << mNumBlocks << " Voxel Blocks" << std::endl;
 
       GenerateCacheString();
