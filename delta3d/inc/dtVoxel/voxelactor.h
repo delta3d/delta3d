@@ -98,6 +98,7 @@ namespace dtVoxel
       dtCore::RefPtr<VoxelGrid> mVisualGrid;
       openvdb::GridPtrVecPtr mGrids;
       std::vector<VolumeUpdateMessagePtr> mUpdateMessages;
+      int mTicksSinceVisualUpdate;
    };
 
    typedef dtCore::RefPtr<VoxelActor> VoxelActorPtr;

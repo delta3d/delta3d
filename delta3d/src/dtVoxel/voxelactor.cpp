@@ -30,6 +30,7 @@
 #include <dtCore/camera.h>
 #include <dtCore/project.h>
 #include <dtCore/transform.h>
+#include <dtCore/system.h>
 
 #include <dtGame/basemessages.h>
 #include <dtGame/gamemanager.h>
@@ -52,6 +53,7 @@ namespace dtVoxel
    , mSampleRatio(0.2f)
    , mMaxCellsToUpdatePerFrame(1)
    , mCreateRemotePhysics(false)
+   , mTicksSinceVisualUpdate(0)
    {
    }
 
@@ -213,8 +215,18 @@ namespace dtVoxel
                   });
             mUpdateMessages.clear();
 
-            mVisualGrid->BeginNewUpdates(pos);
-            //std::cout << "Updating voxel grid with position (" << pos[0] << ", " << pos[1] << ", " << pos[2] << ")" << std::endl;
+            double correctSimTime = dtCore::System::GetInstance().GetCorrectSimulationTime();
+            if (mTicksSinceVisualUpdate > 2 || correctSimTime < tickMessage.GetSimulationTime() + tickMessage.GetDeltaSimTime())
+            {
+               //std::cout << "Updating voxel grid with position (" << pos[0] << ", " << pos[1] << ", " << pos[2] << ")" << std::endl;
+               mVisualGrid->BeginNewUpdates(pos);
+               mTicksSinceVisualUpdate = 0;
+            }
+            else
+            {
+               ++mTicksSinceVisualUpdate;
+               //std::cout << "Skipping visual update to help catch up." << std::endl;
+            }
          }
       }
    }
