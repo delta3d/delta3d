@@ -216,16 +216,25 @@ namespace dtVoxel
             mUpdateMessages.clear();
 
             double correctSimTime = dtCore::System::GetInstance().GetCorrectSimulationTime();
-            if (mTicksSinceVisualUpdate > 2 || correctSimTime < tickMessage.GetSimulationTime() + tickMessage.GetDeltaSimTime())
+            double timeDiff = dtUtil::Max(correctSimTime - tickMessage.GetSimulationTime(), 0.0);
+            if (timeDiff < tickMessage.GetDeltaSimTime())
             {
-               //std::cout << "Updating voxel grid with position (" << pos[0] << ", " << pos[1] << ", " << pos[2] << ")" << std::endl;
-               mVisualGrid->BeginNewUpdates(pos);
+               double fractionOfTickBehind = (tickMessage.GetDeltaSimTime()-timeDiff)/tickMessage.GetDeltaRealTime();
+               unsigned numToUpdate = unsigned(std::ceil(fractionOfTickBehind * double(mMaxCellsToUpdatePerFrame)));
+               std::cout << "Updating at most " << numToUpdate << " cells." << std::endl;
+               mVisualGrid->BeginNewUpdates(pos, numToUpdate);
+               mTicksSinceVisualUpdate = 0;
+            }
+            else if (mTicksSinceVisualUpdate > 2)
+            {
+               std::cout << "Updating forced to 1 cell." << std::endl;
+               mVisualGrid->BeginNewUpdates(pos, 1U);
                mTicksSinceVisualUpdate = 0;
             }
             else
             {
                ++mTicksSinceVisualUpdate;
-               //std::cout << "Skipping visual update to help catch up." << std::endl;
+               std::cout << "Skipping visual update to help catch up." << std::endl;
             }
          }
       }
@@ -283,6 +292,7 @@ namespace dtVoxel
             LOGN_ERROR("voxelactor.cpp", "Received a VolumeUpdateMessage, but the indices are not Vec3 parameters.");
          }
       }
+
       for (unsigned i = 0; i < indicesDeactivated->GetSize(); ++i)
       {
          const dtCore::NamedParameter* indexP = indicesDeactivated->GetParameter(i);

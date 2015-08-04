@@ -54,7 +54,7 @@ namespace dtVoxel
        */
       void UpdateGrid(const osg::Vec3& newCameraPos);
 
-      void BeginNewUpdates(const osg::Vec3& newCameraPos);
+      void BeginNewUpdates(const osg::Vec3& newCameraPos, unsigned maxCellsToUpdate);
 
       /***
        * Marks a region dirty which will force regenerate next time they are visible
@@ -80,8 +80,6 @@ namespace dtVoxel
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, WSDimensions)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, BlockDimensions)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, CellDimensions)
-
-      DT_DECLARE_ACCESSOR_INLINE(unsigned, MaxCellsToUpdatePerFrame)
 
       const osg::Vec3i& GetStaticResolution() const;
       const osg::Vec3i& GetDynamicResolution() const;
