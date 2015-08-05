@@ -42,6 +42,8 @@ namespace dtQt
    static const QString ICON_GEOMETRY(":dtQt/icons/nodes/geometry.png");
    static const QString ICON_GROUP(":dtQt/icons/nodes/group.png");
    static const QString ICON_MATRIX(":dtQt/icons/nodes/matrix.png");
+   static const QString ICON_OCCLUDER(":dtQt/icons/nodes/occluder.png");
+   static const QString ICON_OCCLUSION_QUERY(":dtQt/icons/nodes/occlusionquery.png");
    static const QString ICON_SKELETON(":dtQt/icons/nodes/skeleton.png");
    static const QString ICON_STATESET(":dtQt/icons/nodes/stateset.png");
 
@@ -266,7 +268,7 @@ namespace dtQt
             QIcon statesetIcon(ICON_STATESET);
             item->setIcon(col, statesetIcon);
 
-            std::string str = "Stateset (" + ss->getName() + ")";
+            std::string str = "Stateset \"" + ss->getName() + "\"";
             QString qtip(str.c_str());
             item->setToolTip(col, qtip);
          }
@@ -329,6 +331,14 @@ namespace dtQt
          else if (nodeType.compare("Skeleton") == 0)
          {
             icon = &ICON_SKELETON;
+         }
+         else if (nodeType.compare("OccluderNode") == 0)
+         {
+            icon = &ICON_OCCLUDER;
+         }
+         else if (nodeType.compare("OcclusionQueryNode") == 0)
+         {
+            icon = &ICON_OCCLUSION_QUERY;
          }
 
          return *icon;
