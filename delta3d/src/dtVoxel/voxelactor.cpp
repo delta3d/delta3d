@@ -52,6 +52,7 @@ namespace dtVoxel
    , mSimplify(false)
    , mSampleRatio(0.2f)
    , mMaxCellsToUpdatePerFrame(1)
+   , mNumLODs(0)
    , mCreateRemotePhysics(false)
    , mTicksSinceVisualUpdate(0)
    {
@@ -114,6 +115,7 @@ namespace dtVoxel
       DT_REGISTER_PROPERTY_WITH_LABEL(DynamicResolution, "Dynamic Resolution", "The resolution to sample the VDB database for the dynamic deformable data.", RegHelper, regHelper);
       DT_REGISTER_PROPERTY_WITH_LABEL(Offset, "Offset", "The offset of the database in world space.", RegHelper, regHelper);
       DT_REGISTER_PROPERTY(MaxCellsToUpdatePerFrame, "The number of dirty cells to regenerate per frame", RegHelper, regHelper);
+      DT_REGISTER_PROPERTY(NumLODs, "The number of LODs to generate, can be 0, 1, 2 or 3", RegHelper, regHelper);
       DT_REGISTER_PROPERTY_WITH_LABEL(CreateRemotePhysics, "Create Remote Physics", "Create the voxel geometry for the physics if this actor is remote.", RegHelper, regHelper);
 
       DT_REGISTER_RESOURCE_PROPERTY(dtCore::DataType::VOLUME, Database, "Database", "Voxel database file", RegHelper, regHelper);
