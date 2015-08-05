@@ -17,6 +17,7 @@
 #include <dtPhysics/collisioncontact.h>
 #include <dtPhysics/raycast.h>
 #include <dtPhysics/physicsmaterials.h>
+#include <dtUtil/mathdefines.h>
 
 namespace dtPhysics
 {
@@ -29,7 +30,8 @@ namespace dtPhysics
       {
          for (unsigned j = 0; j < 4; ++j)
          {
-            fillInMatrix._mat[4*i + j] = xform(i, j);
+            Float v = Float(xform(i, j));
+            fillInMatrix._mat[4*i + j] = dtUtil::IsFinite(v) ? v : Float(0.0);
          }
 
       }
@@ -43,7 +45,8 @@ namespace dtPhysics
       {
          for (unsigned j = 0; j < 4; ++j)
          {
-             xform(i, j) = palMatrix._mat[4*i + j];
+            typename DtMatrixType::value_type v = palMatrix._mat[4U*i + j];
+            xform(i, j) = dtUtil::IsFinite(v) ? v : typename DtMatrixType::value_type(0.0);
          }
 
       }
@@ -55,7 +58,7 @@ namespace dtPhysics
    {
       for (size_t i = 0; i < dtVecType::num_components; ++i)
       {
-         dtVec[i] = palVec[i];
+         dtVec[i] = dtUtil::IsFinite(palVec[i]) ? palVec[i] : typename dtVecType::value_type(0.0);
       }
    }
 
@@ -65,7 +68,7 @@ namespace dtPhysics
    {
       for (size_t i = 0; i < dtVecType::num_components; ++i)
       {
-         palVec[i] = dtVec[i];
+         palVec[i] = dtUtil::IsFinite(dtVec[i]) ? dtVec[i] : typename dtVecType::value_type(0.0);
       }
    }
 
@@ -149,8 +152,8 @@ namespace dtPhysics
             PhysicsObject* po2 = reinterpret_cast<PhysicsObject*>(contactPoint.m_pBody2->GetUserData());
             c.mObject2 = po2;
          }
-         c.mDistance = contactPoint.m_fDistance;
-         c.mImpulse = contactPoint.m_fImpulse;
+         c.mDistance = dtUtil::IsFinite(contactPoint.m_fDistance) ? contactPoint.m_fDistance : 0.0f;
+         c.mImpulse = dtUtil::IsFinite(contactPoint.m_fImpulse) ? contactPoint.m_fImpulse : 0.0f;
          PalVecToVectorType(c.mNormal, contactPoint.m_vContactNormal);
          PalVecToVectorType(c.mPosition, contactPoint.m_vContactPosition);
          mContacts.push_back(c);
