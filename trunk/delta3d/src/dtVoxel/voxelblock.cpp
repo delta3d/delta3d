@@ -41,6 +41,7 @@ namespace dtVoxel
 
       FindVoxelCellVisitor(const std::string& name) 
          : osg::NodeVisitor(TRAVERSE_ALL_CHILDREN)
+         , mLOD(nullptr)
          , mFoundNode(nullptr)
          , mName(name)
       {
@@ -59,6 +60,14 @@ namespace dtVoxel
          }
       }
 
+      virtual void apply(osg::PagedLOD& lod)
+      {
+         mLOD = &lod;
+         traverse(lod);
+      }
+
+      
+      osg::PagedLOD* mLOD;
       osg::Group* mFoundNode;
       std::string mName;
    };
@@ -190,9 +199,13 @@ namespace dtVoxel
                            FindVoxelCellVisitor fv(GetCellName(x, y, z));
                            GetOSGNode()->accept(fv);
 
-                           if (fv.mFoundNode != nullptr)
+                           if (fv.mFoundNode != nullptr && fv.mLOD != nullptr)
                            {
+                                                            
                               //std::cout << "Found Node" << std::endl;
+
+                              fv.mLOD->setNumChildrenThatCannotBeExpired(fv.mLOD->getNumChildren());
+
 
                               VoxelCellUpdateInfo updateInfo;
                               updateInfo.mBlock = this;
@@ -200,6 +213,8 @@ namespace dtVoxel
                               updateInfo.mNodeToUpdate = fv.mFoundNode;
                               updateInfo.mCellIndex.set(x, y, z);
                               updateInfo.mStarted = false;
+                              updateInfo.mLODNode = fv.mLOD;
+                              
 
                               vc->SetDirty(true);
 
@@ -216,6 +231,15 @@ namespace dtVoxel
                               //start generating the mesh on a background thread
                               vc->CreateMeshWithTask(voxelActor, transform, mWSCellDimensions, textureResolution);
                            }
+                           /*else
+                           {
+                              if (fv.mFoundNode == nullptr)
+                              {
+                                 std::cout << "Node is null " << GetCellName(x, y, z) << std::endl;
+                              }
+                              else if (fv.mLOD != nullptr)
+                                 LOG_ERROR("LOD NODE IS NULL")
+                           }*/
                         }
                      }
                   }
@@ -373,50 +397,15 @@ namespace dtVoxel
                                  vc->GetOSGNode()->setName(fv.mName);
                                  parent->addChild(vc->GetOSGNode());
                                  
-                                 if (!wasAllocated)
+                                 if (!wasAllocated && fv.mLOD != NULL)
                                  {
-                                    osg::Group* pt = mVolume->getChild(0)->asGroup();
-                                    osg::PagedLOD* lod = dynamic_cast<osg::PagedLOD*>(pt);
-
-                                    //std::cout << "looking for paged lod" << std::endl;
-
-                                    //find the paged lod child                                 
-                                    while (pt != nullptr && lod == nullptr && pt->getNumChildren() > 0)
-                                    {
-                                       //std::cout << "executing loop" << std::endl;
-
-                                       pt = pt->getChild(0)->asGroup();
-                                       lod = dynamic_cast<osg::PagedLOD*>(pt);
-                                    }
-
-                                    //std::cout << "found lod node" << std::endl;
-
-
-                                    if (lod != nullptr)// && lod->getNumChildren() > 1)
-                                    {
-                                       lod->removeChildren(1, lod->getNumChildren());
-                                       lod->setNumChildrenThatCannotBeExpired(1);
-                                       lod->setRange(0, 0.0f, 750.0f); //todo- need view distance
-                                       //std::cout << "Marking child 0 to not expire, deleting rest of children" << std::endl;
-                                    }
-                                    //else
-                                    //{
-                                    //   if (lod == nullptr)
-                                    //   {
-                                    //      std::cout << "lod is null" << std::endl;
-                                    //   }
-                                    //   
-                                    //   if (pt == nullptr)
-                                    //   {
-                                    //      std::cout << "child ptr is null" << lod->getNumChildren() << std::endl;
-
-                                    //   }
-
-                                    //   {
-                                    //      std::cout << "lod num children " << lod->getNumChildren() << std::endl;
-                                    //   }
-
-                                    //}
+                                    fv.mLOD->removeChildren(1, fv.mLOD->getNumChildren());
+                                    fv.mLOD->setNumChildrenThatCannotBeExpired(1);
+                                    fv.mLOD->setRange(0, 0.0f, voxelActor.GetViewDistance());
+                                 }
+                                 else if (fv.mLOD != NULL)
+                                 {
+                                    LOG_ERROR("LOD NODE IS NULL");
                                  }
 
                               }
