@@ -187,7 +187,7 @@ namespace dtVoxel
 
          if (updateInfo.mStarted && updateInfo.mCell->CheckTaskStatus())
          {
-            updateInfo.mBlock->RegenerateCell(*mVoxelActor, updateInfo.mCell, updateInfo.mNodeToUpdate, updateInfo.mCellIndex, mDynamicResolution, mViewDistance);
+            updateInfo.mBlock->RegenerateCell(*mVoxelActor, updateInfo.mCell, updateInfo.mNodeToUpdate.get(), updateInfo.mCellIndex, mDynamicResolution, mViewDistance);
 
             iter = mDirtyCells.erase(iter);
          }
