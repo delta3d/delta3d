@@ -524,10 +524,19 @@ namespace dtVoxel
       lodNode->setRadius(0.5 * mWSDimensions.length());
       lodNode->setCenter(mOffset + (mWSDimensions * 0.5f));
 
+      unsigned lods = voxelActor.GetNumLODs();
+      
+      if (lods > 3)
+      {
+         LOG_WARNING("Num LODs on the VoxelActor cannot be > 3, valid settings are 0, 1, 2, or 3");
+         lods = 3;
+      }
+
       dtCore::RefPtr<osg::Group> node0 = new osg::Group;
-      dtCore::RefPtr<osg::Group> node1 = new osg::Group;
-      /*dtCore::RefPtr<osg::Group> node2 = new osg::Group;
-      dtCore::RefPtr<osg::Group> node3 = new osg::Group;*/
+      
+      dtCore::RefPtr<osg::Group> node1;
+      dtCore::RefPtr<osg::Group> node2;
+      dtCore::RefPtr<osg::Group> node3;
 
 
       AllocateCells(voxelActor, *node0, mGridDimensions, resolution0);
@@ -535,50 +544,62 @@ namespace dtVoxel
       if (!fileName.empty())
       {
          lodNode->setFileName(0, fileName);
-         lodNode->setRange(0, 0.0f, dist0);
+         lodNode->setRange(0, 0.0f, (lods == 0) ? viewDistance : dist0);
       }
       else
       {
          LOG_ERROR("Error writing paged lod node 0.");
       }
 
-      //we sample at the same resolution and simplify later, to be refactored into properties
-      AllocateCombinedMesh(voxelActor, *node1, mGridDimensions, resolution1);
-      fileName = SaveCachedModel(filePath, *node1, index, 1);
-      if (!fileName.empty())
+      if (lods > 0)
       {
-         lodNode->setFileName(1, fileName);
-         lodNode->setRange(1, dist0, viewDistance);// dist1);
-      }
-      else
-      {
-         LOG_ERROR("Error writing paged lod node 1.");
-      }
+         node1 = new osg::Group;
 
-      /*AllocateCombinedMesh(voxelActor, *node2, mGridDimensions, resolution2);
-      fileName = SaveCachedModel(filePath, *node2, index, 2);
-      if (!fileName.empty())
-      {
-         lodNode->setFileName(2, fileName);
-         lodNode->setRange(2, dist1, dist2);
-      }
-      else
-      {
-         LOG_ERROR("Error writing paged lod node 2.");
-      }
+         AllocateCombinedMesh(voxelActor, *node1, mGridDimensions, resolution1);
+         fileName = SaveCachedModel(filePath, *node1, index, 1);
+         if (!fileName.empty())
+         {
+            lodNode->setFileName(1, fileName);
+            lodNode->setRange(1, dist0, (lods == 1) ? viewDistance : dist1);
+         }
+         else
+         {
+            LOG_ERROR("Error writing paged lod node 1.");
+         }
 
-      AllocateCombinedMesh(voxelActor, *node3, mGridDimensions, resolution3);
-      fileName = SaveCachedModel(filePath, *node3, index, 3);
-      if (!fileName.empty())
-      {
-         lodNode->setFileName(3, fileName);
-         lodNode->setRange(3, dist2, viewDistance);
-      }
-      else
-      {
-         LOG_ERROR("Error writing paged lod node 3.");
-      }*/
+         if (lods > 1)
+         {
+            node2 = new osg::Group;
 
+            AllocateCombinedMesh(voxelActor, *node2, mGridDimensions, resolution2);
+            fileName = SaveCachedModel(filePath, *node2, index, 2);
+            if (!fileName.empty())
+            {
+               lodNode->setFileName(2, fileName);
+               lodNode->setRange(2, dist1, (lods == 2) ? viewDistance : dist2);
+            }
+            else
+            {
+               LOG_ERROR("Error writing paged lod node 2.");
+            }
+            if (lods > 2)
+            {
+               node3 = new osg::Group;
+
+               AllocateCombinedMesh(voxelActor, *node3, mGridDimensions, resolution3);
+               fileName = SaveCachedModel(filePath, *node3, index, 3);
+               if (!fileName.empty())
+               {
+                  lodNode->setFileName(3, fileName);
+                  lodNode->setRange(3, dist2, viewDistance);
+               }
+               else
+               {
+                  LOG_ERROR("Error writing paged lod node 3.");
+               }
+            }
+         }
+      }
 
       mVolume->addChild(lodNode);
 
