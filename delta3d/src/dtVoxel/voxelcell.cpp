@@ -86,7 +86,7 @@ namespace dtVoxel
 
    void CreateMeshTask::operator()()
    {
-      unsigned blockSize = 5U;
+      unsigned blockSize = 2U;
       tbb::task_scheduler_init init(blockSize);
 
       dtCore::Timer_t startTime = dtCore::Timer::Instance()->Tick();
