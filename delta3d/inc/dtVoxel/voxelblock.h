@@ -34,7 +34,8 @@ namespace dtVoxel
    public:
       VoxelBlock* mBlock;
       VoxelCell* mCell;
-      osg::Group* mNodeToUpdate;
+      dtCore::ObserverPtr<osg::Group> mNodeToUpdate;
+      dtCore::ObserverPtr<osg::PagedLOD> mLODNode;
 
       osg::Vec3i mCellIndex;
       bool mStarted;
