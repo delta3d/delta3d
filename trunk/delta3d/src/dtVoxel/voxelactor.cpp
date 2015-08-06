@@ -267,7 +267,10 @@ namespace dtVoxel
       typedef typename GridType::Accessor AccessorType;
 
       AccessorType accessor = grid->getAccessor();
+      bool first = true;
+      float rangeToRecomputeBound = 0.5 * mCellDimensions.x() * mCellDimensions.y();
 
+      openvdb::Vec3d lastVector;
       osg::BoundingBox bb;
       for (unsigned i = 0; i < indices->GetSize(); ++i)
       {
@@ -282,12 +285,33 @@ namespace dtVoxel
                ValueType val = valueParam->GetValue();
                openvdb::Vec3d idxOVDBVec(idxVec.x(), idxVec.y(), idxVec.z());
                openvdb::Vec3d worldVec = grid->transform().indexToWorld(idxOVDBVec);
+               if (first)
+               {
+                  lastVector = worldVec;
+
+                  first = false;
+               }
+               else
+               {
+                  openvdb::Vec3d diff = lastVector - worldVec;
+                  double lengthSqr = diff.lengthSqr();
+                  if (lengthSqr > rangeToRecomputeBound)
+                  {
+                     //markDirtyCounter++;
+                     MarkVisualDirty(bb, 0);
+                     bb = osg::BoundingBox();
+                  }
+               }
+                  
                bb.expandBy(osg::Vec3(worldVec.x(), worldVec.y(), worldVec.z()));
                if (!updateVisualOnly)
                {
                   openvdb::Coord c(std::round(idxVec.x()), std::round(idxVec.y()), std::round(idxVec.z()));
                   accessor.setValue(c, val);
                }
+            
+               lastVector = worldVec;
+               
             }
          }
          else
@@ -295,6 +319,9 @@ namespace dtVoxel
             LOGN_ERROR("voxelactor.cpp", "Received a VolumeUpdateMessage, but the indices are not Vec3 parameters.");
          }
       }
+
+      first = true;
+      MarkVisualDirty(bb, 0);
 
       for (unsigned i = 0; i < indicesDeactivated->GetSize(); ++i)
       {
@@ -305,19 +332,39 @@ namespace dtVoxel
             osg::Vec3 idxVec = indexVp->GetValue();
             openvdb::Vec3d idxOVDBVec(idxVec.x(), idxVec.y(), idxVec.z());
             openvdb::Vec3d worldVec = grid->transform().indexToWorld(idxOVDBVec);
+            if (first)
+            {
+               lastVector = worldVec;
+
+               first = false;
+            }
+            else
+            {
+               openvdb::Vec3d diff = lastVector - worldVec;
+               double lengthSqr = diff.lengthSqr();
+               if (lengthSqr > rangeToRecomputeBound)
+               {
+                  //markDirtyCounter++;
+                  MarkVisualDirty(bb, 0);
+                  bb = osg::BoundingBox();
+               }
+            }
+
             bb.expandBy(osg::Vec3(worldVec.x(), worldVec.y(), worldVec.z()));
             if (!updateVisualOnly)
             {
                openvdb::Coord c(openvdb::Coord::round(idxOVDBVec));
                accessor.setValueOff(c, grid->background());
             }
+
+            lastVector = worldVec;
          }
          else
          {
             LOGN_ERROR("voxelactor.cpp", "Received a VolumeUpdateMessage, but the indices deactivated are not Vec3 parameters.");
          }
       }
-      //re-add when not busted
+      
       MarkVisualDirty(bb, 0);
    }
 
