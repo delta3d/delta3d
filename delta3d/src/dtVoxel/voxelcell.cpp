@@ -87,7 +87,7 @@ namespace dtVoxel
    void CreateMeshTask::operator()()
    {
       unsigned blockSize = 2U;
-      tbb::task_scheduler_init init(blockSize);
+      //tbb::task_scheduler_init init(blockSize);
 
       dtCore::Timer_t startTime = dtCore::Timer::Instance()->Tick();
       dtCore::RefPtr<osg::Geometry> geom = new osg::Geometry();
@@ -392,12 +392,18 @@ namespace dtVoxel
       }
    }
 
-   bool VoxelCell::RunTask()
+   bool VoxelCell::RunTask(bool allowBackgroundThreading)
    {
       if (!mImpl->mCreateMeshTask->IsDone())
       {
-         dtUtil::ThreadPool::AddTask(*mImpl->mCreateMeshTask, dtUtil::ThreadPool::BACKGROUND);
-         //mImpl->mCreateMeshTask->operator ()();
+         if (allowBackgroundThreading)
+         {
+            dtUtil::ThreadPool::AddTask(*mImpl->mCreateMeshTask, dtUtil::ThreadPool::BACKGROUND);
+         }
+         else
+         {
+            mImpl->mCreateMeshTask->operator ()();
+         }
          return true;
       }
       return false;

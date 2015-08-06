@@ -54,7 +54,7 @@ namespace dtVoxel
        */
       void UpdateGrid(const osg::Vec3& newCameraPos);
 
-      void BeginNewUpdates(const osg::Vec3& newCameraPos, unsigned maxCellsToUpdate);
+      void BeginNewUpdates(const osg::Vec3& newCameraPos, unsigned maxCellsToUpdate, bool allowBackgroundThreading);
 
       /***
        * Marks a region dirty which will force regenerate next time they are visible

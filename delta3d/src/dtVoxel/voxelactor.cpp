@@ -52,6 +52,7 @@ namespace dtVoxel
    , mSimplify(false)
    , mSampleRatio(0.2f)
    , mMaxCellsToUpdatePerFrame(1)
+   , mUpdateCellsOnBackgroundThread(true)
    , mNumLODs(0)
    , mCreateRemotePhysics(false)
    , mTicksSinceVisualUpdate(0)
@@ -115,6 +116,7 @@ namespace dtVoxel
       DT_REGISTER_PROPERTY_WITH_LABEL(DynamicResolution, "Dynamic Resolution", "The resolution to sample the VDB database for the dynamic deformable data.", RegHelper, regHelper);
       DT_REGISTER_PROPERTY_WITH_LABEL(Offset, "Offset", "The offset of the database in world space.", RegHelper, regHelper);
       DT_REGISTER_PROPERTY(MaxCellsToUpdatePerFrame, "The number of dirty cells to regenerate per frame", RegHelper, regHelper);
+      DT_REGISTER_PROPERTY(UpdateCellsOnBackgroundThread, "If this should push the update task to a thread pool BACKGROUND task.  If true, runs multithreaded but blocks the main thread until it completes.", RegHelper, regHelper);
       DT_REGISTER_PROPERTY(NumLODs, "The number of LODs to generate, can be 0, 1, 2 or 3", RegHelper, regHelper);
       DT_REGISTER_PROPERTY_WITH_LABEL(CreateRemotePhysics, "Create Remote Physics", "Create the voxel geometry for the physics if this actor is remote.", RegHelper, regHelper);
 
@@ -225,13 +227,13 @@ namespace dtVoxel
                unsigned numToUpdate = unsigned(std::ceil(fractionOfTickBehind * double(mMaxCellsToUpdatePerFrame)));
                //if (numToUpdate != mMaxCellsToUpdatePerFrame)
                //   std::cout << "Updating at most " << numToUpdate << " cells." << std::endl;
-               mVisualGrid->BeginNewUpdates(pos, numToUpdate);
+               mVisualGrid->BeginNewUpdates(pos, numToUpdate, mUpdateCellsOnBackgroundThread);
                mTicksSinceVisualUpdate = 0;
             }
             else if (mTicksSinceVisualUpdate > 2)
             {
                //std::cout << "Updating forced to 1 cell." << std::endl;
-               mVisualGrid->BeginNewUpdates(pos, 1U);
+               mVisualGrid->BeginNewUpdates(pos, 1U, mUpdateCellsOnBackgroundThread);
                mTicksSinceVisualUpdate = 0;
             }
             else
