@@ -68,7 +68,9 @@ namespace dtActors
       DT_DECLARE_ACCESSOR(std::string, Name);
       DT_DECLARE_ACCESSOR(dtCore::ResourceDescriptor, ParticleFile);
       DT_DECLARE_ACCESSOR(bool, Enabled);
+      DT_DECLARE_ACCESSOR(bool, UpdateInterpolationEnabled);
       DT_DECLARE_ACCESSOR(float, UpdateFrequency);
+      DT_DECLARE_ACCESSOR(float, InitialInterpolation);
       DT_DECLARE_ACCESSOR(float, OwnerSpeedMin);
       DT_DECLARE_ACCESSOR(float, OwnerSpeedMax);
       DT_DECLARE_ACCESSOR(bool, RelativeToParent);
