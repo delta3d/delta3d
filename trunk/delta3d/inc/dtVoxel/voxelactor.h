@@ -73,7 +73,9 @@ namespace dtVoxel
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, DynamicResolution)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, Offset)
       DT_DECLARE_ACCESSOR_INLINE(unsigned, MaxCellsToUpdatePerFrame)
+      DT_DECLARE_ACCESSOR_INLINE(bool, UpdateCellsOnBackgroundThread)
       DT_DECLARE_ACCESSOR_INLINE(unsigned, NumLODs)
+
       // if the physics geometry should be created when the actor is remote.
       DT_DECLARE_ACCESSOR_INLINE(bool, CreateRemotePhysics)
 

@@ -199,13 +199,13 @@ namespace dtVoxel
 
    }
 
-   void VoxelGrid::BeginNewUpdates(const osg::Vec3& newCameraPos, unsigned maxCellsToUpdate)
+   void VoxelGrid::BeginNewUpdates(const osg::Vec3& newCameraPos, unsigned maxCellsToUpdate, bool allowBackgroundThreading)
    {
       unsigned runCount = maxCellsToUpdate;
       for (auto iter = mDirtyCells.begin(); runCount > 0 && iter != mDirtyCells.end(); ++iter)
       {
          VoxelCellUpdateInfo& updateInfo = *iter;
-         if (updateInfo.mCell->RunTask())
+         if (updateInfo.mCell->RunTask(allowBackgroundThreading))
          {
             updateInfo.mStarted = true;
             --runCount;
