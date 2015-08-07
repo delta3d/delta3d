@@ -37,6 +37,7 @@
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range3d.h>
 #include <tbb/mutex.h>
+#include <tbb/task_scheduler_init.h>
 
 #include <dtCore/timer.h>
 
@@ -85,6 +86,9 @@ namespace dtVoxel
 
    void CreateMeshTask::operator()()
    {
+      unsigned blockSize = 2U;
+      tbb::task_scheduler_init init(blockSize);
+
       dtCore::Timer_t startTime = dtCore::Timer::Instance()->Tick();
       dtCore::RefPtr<osg::Geometry> geom = new osg::Geometry();
       dtCore::RefPtr<osg::Vec3Array> vertArray = new osg::Vec3Array();
