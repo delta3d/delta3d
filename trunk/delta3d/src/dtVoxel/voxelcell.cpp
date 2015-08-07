@@ -37,7 +37,6 @@
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range3d.h>
 #include <tbb/mutex.h>
-#include <tbb/task_scheduler_init.h>
 
 #include <dtCore/timer.h>
 
@@ -86,9 +85,6 @@ namespace dtVoxel
 
    void CreateMeshTask::operator()()
    {
-      unsigned blockSize = 2U;
-      //tbb::task_scheduler_init init(blockSize);
-
       dtCore::Timer_t startTime = dtCore::Timer::Instance()->Tick();
       dtCore::RefPtr<osg::Geometry> geom = new osg::Geometry();
       dtCore::RefPtr<osg::Vec3Array> vertArray = new osg::Vec3Array();
@@ -96,7 +92,7 @@ namespace dtVoxel
       
       tbb::mutex /*hashMtx,*/ elemMtx;
 
-      tbb::parallel_for(tbb::blocked_range3d<int>(0, mResolution[0], mResolution[0]/blockSize, 0, mResolution[1], mResolution[1]/blockSize, 0, mResolution[2],  mResolution[2]/blockSize),
+      tbb::parallel_for(tbb::blocked_range3d<int>(0, mResolution[0], 1U, 0, mResolution[1], 16U, 0, mResolution[2],  9U),
             [&](const tbb::blocked_range3d<int>& r)
             {
          openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler> sampler(mGrid->getConstAccessor(), mGrid->transform());
