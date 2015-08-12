@@ -62,6 +62,8 @@ namespace dtVoxel
 
       void MarkVisualDirty(const osg::BoundingBox& bb, int gridIdx = 0);
 
+      void ResetGrid();
+
       DT_DECLARE_ACCESSOR_INLINE(float, ViewDistance)
       DT_DECLARE_ACCESSOR_INLINE(float, IsoLevel)
       DT_DECLARE_ACCESSOR_INLINE(bool, Simplify)
@@ -78,6 +80,8 @@ namespace dtVoxel
 
       // if the physics geometry should be created when the actor is remote.
       DT_DECLARE_ACCESSOR_INLINE(bool, CreateRemotePhysics)
+
+      DT_DECLARE_ACCESSOR_INLINE(bool, PauseUpdate)
 
       // This exists external objects can deform the grid, created a change message, and then tell the visual to update with the message.
       void UpdateVolume(const VolumeUpdateMessage& msg, bool updateVisualOnly);

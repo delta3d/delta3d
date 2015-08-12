@@ -61,6 +61,11 @@ namespace dtVoxel
        */
       void MarkDirtyAABB(const osg::BoundingBox& bb);
 
+      /***
+      * Deletes all data and recreates it, this is useful if the voxel database has been
+      *  deformed but needs to be reset and revert back to the original loaded database.
+      */
+      void ResetGrid();
 
       VoxelBlock* GetBlockFromIndex(int index);
       VoxelBlock* GetBlockFromIndex(int x, int y, int z);
@@ -111,8 +116,9 @@ namespace dtVoxel
       DT_DECLARE_ACCESSOR_INLINE(float, Dist1)
       DT_DECLARE_ACCESSOR_INLINE(float, Dist2)
 
-
+      
    private:
+      osg::Vec3 mOffset;
       osg::BoundingBox mAllocatedBounds;
       osg::Vec3i mStaticResolution, mDynamicResolution;
       dtCore::RefPtr<osg::Group> mRootNode;

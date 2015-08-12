@@ -55,6 +55,7 @@ namespace dtVoxel
    , mUpdateCellsOnBackgroundThread(true)
    , mNumLODs(0)
    , mCreateRemotePhysics(false)
+   , mPauseUpdate(false)
    , mTicksSinceVisualUpdate(0)
    {
    }
@@ -196,7 +197,7 @@ namespace dtVoxel
    /////////////////////////////////////////////////////
    void VoxelActor::OnTickLocal(const dtGame::TickMessage& tickMessage)
    {
-      if (mVisualGrid.valid())
+      if (mVisualGrid.valid())// && !mPauseUpdate)
       {
          dtGame::GameManager* gm = GetGameManager();
 
@@ -411,7 +412,6 @@ namespace dtVoxel
       osg::Vec3i staticRes(int(mStaticResolution.x()), int(mStaticResolution.y()), int(mStaticResolution.z()));
       osg::Vec3i dynamicRes(int(mDynamicResolution.x()), int(mDynamicResolution.y()), int(mDynamicResolution.z()));
 
-
       mVisualGrid->Init(mOffset, mGridDimensions, mBlockDimensions, mCellDimensions, staticRes, dynamicRes);
       
       dtGame::GameManager* gm = GetGameManager();
@@ -471,5 +471,15 @@ namespace dtVoxel
       }
    }
 
+
+   void VoxelActor::ResetGrid()
+   {
+      LoadGrid(mDatabase);
+
+      if (mVisualGrid.valid())
+      {
+         mVisualGrid->ResetGrid();
+      }
+   }
 
 } /* namespace dtVoxel */
