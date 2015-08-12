@@ -222,6 +222,7 @@ namespace dtVoxel
          return;
       }
 
+      mOffset = pos;
       mAllocatedBounds = ComputeWorldBounds(pos);
       
       mVoxelActor = &voxelActor;
@@ -766,6 +767,40 @@ namespace dtVoxel
       }
 
       return result;
+   }
+
+   void VoxelGrid::ResetGrid()
+   {
+      //cannot regenerate if it was never created 
+      if (mVoxelActor.valid())
+      {
+         //clear all cells to be regenerated
+         mDirtyCells.clear();
+
+         for (int i = 0; i < mNumBlocks; ++i)
+         {
+            if (mBlocks[i].IsAllocated())
+            {
+               mBlocks[i].DeAllocate();
+
+               osg::Vec3 offsetFrom = mBlocks[i].GetOffset();
+
+               osg::Vec3 offsetTo = offsetFrom + mBlockDimensions;
+
+               mBlocks[i].Init(mBlockDimensions, offsetFrom, mCellDimensions);
+
+               if (!mBlocks[i].LoadCachedModel(mFullPathToFileCache, i))
+               {
+                  LOG_ERROR("Unable to load model for previously allocated block.");
+               }
+               else
+               {
+                  mRootNode->addChild(mBlocks[i].GetOSGNode());
+               }
+            }
+         }
+      }
+
    }
 
 } /* namespace dtVoxel */
