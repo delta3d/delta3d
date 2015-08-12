@@ -353,7 +353,7 @@ namespace dtAnim
    dtAnim::PoseMeshDatabase* ModelDatabase::GetPoseMeshDatabase(dtAnim::BaseModelWrapper& wrapper)
    {
       // Get access to the pose mesh file name
-      dtAnim::ModelDatabase& database = dtAnim::ModelDatabase::GetInstance();
+      //dtAnim::ModelDatabase& database = dtAnim::ModelDatabase::GetInstance();
       dtAnim::BaseModelData* modelData = wrapper.GetModelData();
       const std::string& poseMeshFile = modelData->GetPoseMeshFilename();
 
