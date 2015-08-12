@@ -1620,6 +1620,8 @@ namespace dtPhysics
             link->SetParam(PAL_LINK_PARAM_DOF_MIN, osg::DegreesToRadians(desc.GetAngularLimitMinimums()[i]), i+3);
             link->SetParam(PAL_LINK_PARAM_DOF_MAX, osg::DegreesToRadians(desc.GetAngularLimitMaximums()[i]), i+3);
          }
+
+         link->SetParam(PAL_LINK_PARAM_BREAK_IMPULSE, desc.GetBreakingThreshold());
       }
 
       return link;

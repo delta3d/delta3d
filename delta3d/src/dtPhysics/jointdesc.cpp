@@ -23,12 +23,14 @@
 #include <dtCore/propertymacros.h>
 #include <dtCore/arrayactorpropertycomplex.h>
 #include <dtCore/propertycontaineractorproperty.h>
+#include <limits>
 
 namespace dtPhysics
 {
 
    JointDesc::JointDesc()
    : mJointType(&JointType::GENERIC_6DOF)
+   , mBreakingThreshold(std::numeric_limits<decltype(mBreakingThreshold)>::infinity())
    , mDisableCollisionBetweenBodies(true)
    {
       typedef dtCore::PropertyRegHelper<JointDesc> JointDescRegHelper;
@@ -40,6 +42,7 @@ namespace dtPhysics
       DT_REGISTER_PROPERTY(Body2Name, "Name of the second body attached to the joint.", JointDescRegHelper, regHelper);
       DT_REGISTER_PROPERTY(VisualNodeName, "Name of the second transform node this joint should be moving in the visual model.", JointDescRegHelper, regHelper);
       DT_REGISTER_PROPERTY(JointType, "The type of joint this should be.", JointDescRegHelper, regHelper);
+      DT_REGISTER_PROPERTY(BreakingThreshold, "The impulse magnitude at which this joint will break", JointDescRegHelper, regHelper);
 
       DT_REGISTER_PROPERTY(Body1RelativeTranslation, "The relative translation from body 1 to the joint center.", JointDescRegHelper, regHelper);
       DT_REGISTER_PROPERTY(Body1RelativeRotationHPR, "The relative rotation from body 1 to the joint center.", JointDescRegHelper, regHelper);
@@ -96,6 +99,7 @@ namespace dtPhysics
    DT_IMPLEMENT_ACCESSOR(JointDesc, std::string, VisualNodeName);
 
    DT_IMPLEMENT_ACCESSOR(JointDesc, dtUtil::EnumerationPointer<JointType>, JointType);
+   DT_IMPLEMENT_ACCESSOR(JointDesc, float, BreakingThreshold);
 
    DT_IMPLEMENT_ACCESSOR(JointDesc, VectorType, Body1RelativeTranslation);
    DT_IMPLEMENT_ACCESSOR(JointDesc, VectorType, Body1RelativeRotationHPR);
