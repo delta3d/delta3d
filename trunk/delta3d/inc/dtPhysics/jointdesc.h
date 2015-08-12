@@ -51,6 +51,8 @@ namespace dtPhysics
 
       DT_DECLARE_ACCESSOR(dtUtil::EnumerationPointer<JointType>, JointType)
 
+      DT_DECLARE_ACCESSOR(dtPhysics::Real, BreakingThreshold)
+
       DT_DECLARE_ACCESSOR(VectorType, Body1RelativeTranslation)
       DT_DECLARE_ACCESSOR(VectorType, Body1RelativeRotationHPR)
       void GetBody1Frame(TransformType& xform) const;
