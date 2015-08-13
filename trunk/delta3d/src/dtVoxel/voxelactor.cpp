@@ -83,6 +83,8 @@ namespace dtVoxel
 
             std::cout << "Done Loading Grid" << std::endl;
 
+            InitializePhysics();
+
          }
          catch (const openvdb::IoError& ioe)
          {
@@ -405,6 +407,40 @@ namespace dtVoxel
    }
 
    /////////////////////////////////////////////////////
+   void VoxelActor::InitializePhysics()
+   {
+      if (IsInGM() && (!IsRemote() || GetCreateRemotePhysics()))
+      {
+         dtPhysics::PhysicsActCompPtr pac = GetComponent<dtPhysics::PhysicsActComp>();
+         if (mGrids && pac.valid())
+         {
+            dtPhysics::PhysicsObject* po = pac->GetMainPhysicsObject();
+            if (po != nullptr && po->GetPrimitiveType() == dtPhysics::PrimitiveType::CUSTOM_CONCAVE_MESH)
+            {
+               po->CleanUp();
+
+               dtPhysics::TransformType xform;
+               VoxelGeometryPtr geometry;
+               openvdb::FloatGrid::Ptr gridF = boost::dynamic_pointer_cast<openvdb::FloatGrid>(GetGrid(0));
+               if (gridF)
+               {
+                  geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridF);
+               }
+               else
+               {
+                  openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(GetGrid(0));
+                  if (gridB)
+                     geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridB);
+               }
+               if (geometry.valid())
+                  po->CreateFromGeometry(*geometry);
+            }
+         }
+      }
+   }
+
+
+   /////////////////////////////////////////////////////
    void VoxelActor::OnEnteredWorld()
    {
       RegisterForMessages(dtGame::MessageType::TICK_LOCAL, dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
@@ -433,33 +469,7 @@ namespace dtVoxel
          LOG_ERROR("NULL GameManager!");
       }
 
-
-      if (!IsRemote() || GetCreateRemotePhysics())
-      {
-         dtPhysics::PhysicsActCompPtr pac = GetComponent<dtPhysics::PhysicsActComp>();
-         if (mGrids && pac.valid())
-         {
-            dtPhysics::PhysicsObject* po = pac->GetMainPhysicsObject();
-            if (po != nullptr && po->GetPrimitiveType() == dtPhysics::PrimitiveType::CUSTOM_CONCAVE_MESH)
-            {
-               dtPhysics::TransformType xform;
-               VoxelGeometryPtr geometry;
-               openvdb::FloatGrid::Ptr gridF = boost::dynamic_pointer_cast<openvdb::FloatGrid>(GetGrid(0));
-               if (gridF)
-               {
-                  geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridF);
-               }
-               else
-               {
-                  openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(GetGrid(0));
-                  if (gridB)
-                     geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridB);
-               }
-               if (geometry.valid())
-                  po->CreateFromGeometry(*geometry);
-            }
-         }
-      }
+      InitializePhysics();
 
       RegisterForMessagesAboutSelf(VoxelMessageType::INFO_VOLUME_CHANGED, dtUtil::MakeFunctor(&VoxelActor::OnVolumeUpdateMsg, this));
 
@@ -472,11 +482,12 @@ namespace dtVoxel
    }
 
 
+
    void VoxelActor::ResetGrid()
    {
-      mGrids = NULL;
-
-      LoadGrid(mDatabase);
+      dtCore::ResourceDescriptor temp = mDatabase;
+      SetDatabase(dtCore::ResourceDescriptor::NULL_RESOURCE);
+      SetDatabase(temp);
 
       if (mVisualGrid.valid())
       {
