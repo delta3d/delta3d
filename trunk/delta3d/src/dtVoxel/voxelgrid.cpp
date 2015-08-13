@@ -785,7 +785,7 @@ namespace dtVoxel
 
                osg::Vec3 offsetFrom = mBlocks[i].GetOffset();
 
-               osg::Vec3 offsetTo = offsetFrom + mBlockDimensions;
+               //osg::Vec3 offsetTo = offsetFrom + mBlockDimensions;
 
                mBlocks[i].Init(mBlockDimensions, offsetFrom, mCellDimensions);
 
