@@ -118,6 +118,9 @@ namespace dtPhysics
             dtCore::Timer_t startTime = dtCore::Timer::Instance()->Tick();
             if (mStepTime > FLT_EPSILON)
             {
+               mStepTimeAccum += elapsedTime;
+               float steps = std::floor(mStepTimeAccum / mStepTime);
+
                if (mSolver != NULL)
                {
                   // If it has a solver, then we assume the physics engine handles fixed time step itself
@@ -127,26 +130,22 @@ namespace dtPhysics
                   // is equal to mStepTime * mTotalStepCount
                   mPalPhysicsScene->Update(elapsedTime);
                }
+               else if (steps > 0.0f)
+               {
+                  // If it has no solver interface (like ODE), we have to feed it the fixed time step.
+                  // this means no interpolation, which can cause weird rendering artifacts.
+                  // Unfortunately, this will only step in multiples of the fixed time step
+                  // so it really doesn't fix anything.  Pal will need to solve this problem.
+                  mPalPhysicsScene->Update(mStepTime * steps);
+               }
                else
                {
-                  mStepTimeAccum += elapsedTime;
-                  float steps = std::floor(mStepTimeAccum / mStepTime);
-                  if (steps > 0.0f)
-                  {
-                     // If it has no solver interface (like ODE), we have to feed it the fixed time step.
-                     // this means no interpolation, which can cause weird rendering artifacts.
-                     // Unfortunately, this will only step in multiples of the fixed time step
-                     // so it really doesn't fix anything.  Pal will need to solve this problem.
-                     mPalPhysicsScene->Update(mStepTime * steps);
-                  }
-                  else
-                  {
-                     // TODO clear all the forces.  Pal needs an api for this, but physics engines may not
-                     // solve for it.
-                  }
-                  mStepTimeAccum -= mStepTime * steps;
-                  mTotalStepCount+= int(steps);
+                  // TODO clear all the forces.  Pal needs an api for this, but physics engines may not
+                  // solve for it.
                }
+
+               mStepTimeAccum -= mStepTime * steps;
+               mTotalStepCount+= int(steps);
             }
             else
             {

@@ -62,7 +62,8 @@ namespace dtPhysics
       TestCustomRaycastCallback()
       : mGotAHit(false)
       , mHitCount(0)
-      , mClosestHitsObject(NULL)
+      , mClosestHitsObject(nullptr)
+      , mRayLength(0.0f)
       {
       }
 
@@ -101,7 +102,7 @@ namespace dtPhysics
       CPPUNIT_TEST(TestWorldPerEngine);
       CPPUNIT_TEST(TestSolverPerEngine);
       CPPUNIT_TEST(TestActionsPerEngine);
-      CPPUNIT_TEST(TestNULLStaticInstance);
+      CPPUNIT_TEST(TestnullptrStaticInstance);
       CPPUNIT_TEST(TestMaterialsPerEngine);
       CPPUNIT_TEST(TestMaterialInteractionsPerEngine);
       CPPUNIT_TEST(TestMaterialAliasesPerEngine);
@@ -117,7 +118,7 @@ namespace dtPhysics
       void TestWorldPerEngine();
       void TestSolverPerEngine();
       void TestActionsPerEngine();
-      void TestNULLStaticInstance();
+      void TestnullptrStaticInstance();
       void TestMaterialsPerEngine();
       void TestMaterialInteractionsPerEngine();
       void TestMaterialAliasesPerEngine();
@@ -143,7 +144,7 @@ namespace dtPhysics
       {
          try
          {
-            mPhysWorld = NULL;
+            mPhysWorld = nullptr;
             mPhysWorld = new PhysicsWorld(mCurrentEngine);
 
             CPPUNIT_ASSERT( ! PhysicsWorld::IsInitialized());
@@ -178,11 +179,11 @@ namespace dtPhysics
    void PhysicsWorldTests::tearDown()
    {
       dtCore::System::GetInstance().Stop();
-      mPhysWorld = NULL;
+      mPhysWorld = nullptr;
    }
 
    /////////////////////////////////////////////////////////
-   void PhysicsWorldTests::TestNULLStaticInstance()
+   void PhysicsWorldTests::TestnullptrStaticInstance()
    {
       CPPUNIT_ASSERT_THROW(PhysicsWorld::GetInstance(), dtUtil::Exception);
    }
@@ -446,11 +447,11 @@ namespace dtPhysics
       dtPhysics::SolverWrapper* solver = PhysicsWorld::GetInstance().GetSolver();
       if (mCurrentEngine == dtPhysics::PhysicsWorld::ODE_ENGINE)
       {
-         CPPUNIT_ASSERT(solver == NULL);
+         CPPUNIT_ASSERT(solver == nullptr);
          return;
       }
 
-      CPPUNIT_ASSERT(solver != NULL);
+      CPPUNIT_ASSERT(solver != nullptr);
       solver->SetSubsteps(3);
 
       // Accuracy should default to 10.0f;
@@ -565,8 +566,8 @@ namespace dtPhysics
       dtCore::ObserverPtr<dtPhysics::Action> actionOb = action.get();
       dtCore::ObserverPtr<dtPhysics::Action> action2Ob = action2.get();
 
-      action = NULL;
-      action2 = NULL;
+      action = nullptr;
+      action2 = nullptr;
 
       CPPUNIT_ASSERT_MESSAGE("The first action should have been deleted.", !actionOb.valid());
       CPPUNIT_ASSERT_MESSAGE("The second action should have been deleted.", !action2Ob.valid());
@@ -612,10 +613,10 @@ namespace dtPhysics
       // The default material should be the first registered material.
       CPPUNIT_ASSERT(materials.GetMaterialCount() == 1);
 
-      CPPUNIT_ASSERT(materials.GetMaterial("Dumb") == NULL);
+      CPPUNIT_ASSERT(materials.GetMaterial("Dumb") == nullptr);
 
       Material* defaultMat = materials.GetMaterial(PhysicsMaterials::DEFAULT_MATERIAL_NAME);
-      CPPUNIT_ASSERT(defaultMat != NULL);
+      CPPUNIT_ASSERT(defaultMat != nullptr);
       MaterialIndex index = defaultMat->GetId();
       CPPUNIT_ASSERT(defaultMat == materials.GetMaterialByIndex(index));
 
@@ -636,7 +637,7 @@ namespace dtPhysics
       def2.SetStaticAnisotropicFriction(dtPhysics::VectorType(0.2, 0.8, 1.0));
 
       Material* cheeseMat = materials.NewMaterial(testMaterialName, def);
-      CPPUNIT_ASSERT(cheeseMat != NULL);
+      CPPUNIT_ASSERT(cheeseMat != nullptr);
       CPPUNIT_ASSERT(materials.GetMaterialCount() == 2);
       CPPUNIT_ASSERT(cheeseMat == materials.CreateOrUpdateMaterial(testMaterialName, def));
       CPPUNIT_ASSERT(materials.GetMaterialCount() == 2);
@@ -645,7 +646,7 @@ namespace dtPhysics
       CPPUNIT_ASSERT(cheeseMat == materials.GetMaterialByIndex(index));
 
       Material* uniqueMaterial = materials.GetMaterial(testMaterialName);
-      CPPUNIT_ASSERT(uniqueMaterial != NULL);
+      CPPUNIT_ASSERT(uniqueMaterial != nullptr);
       CPPUNIT_ASSERT(uniqueMaterial == cheeseMat);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetKineticFriction(), uniqueMaterial->m_fKinetic, 0.01f);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetStaticFriction(), uniqueMaterial->m_fStatic, 0.01f);
@@ -660,14 +661,14 @@ namespace dtPhysics
       CPPUNIT_ASSERT( ! materials.SetMaterialDef("fake", def));
 
       uniqueMaterial = materials.GetMaterial(testMaterialName);
-      CPPUNIT_ASSERT(uniqueMaterial != NULL);
+      CPPUNIT_ASSERT(uniqueMaterial != nullptr);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetKineticFriction(), uniqueMaterial->m_fKinetic, 0.01f);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetStaticFriction(), uniqueMaterial->m_fStatic, 0.01f);
       CPPUNIT_ASSERT_DOUBLES_EQUAL(def.GetRestitution(), uniqueMaterial->m_fRestitution, 0.01f);
 
       def.SetKineticFriction(0.001f);
       Material* test1 = materials.NewMaterial(testMaterialName +"1", def);
-      CPPUNIT_ASSERT_MESSAGE("Recreating the same named material doesn't work.", materials.NewMaterial(testMaterialName +"1", def) == NULL);
+      CPPUNIT_ASSERT_MESSAGE("Recreating the same named material doesn't work.", materials.NewMaterial(testMaterialName +"1", def) == nullptr);
       CPPUNIT_ASSERT(test1 == materials.GetMaterial(testMaterialName +"1"));
       CPPUNIT_ASSERT(test1->GetId() == def.GetMaterialIndex());
       
@@ -726,7 +727,7 @@ namespace dtPhysics
       CPPUNIT_ASSERT(def2.GetMaterialIndex() == index);
 
       // Test that accessing an unrecognized material should fail.
-      CPPUNIT_ASSERT(NULL == materials.GetMaterialByIndex(12345));
+      CPPUNIT_ASSERT(nullptr == materials.GetMaterialByIndex(12345));
       CPPUNIT_ASSERT( ! materials.GetMaterialDefByIndex(12345, def));
    }
 
@@ -774,15 +775,15 @@ namespace dtPhysics
 
       materials.CreateOrUpdateMaterial(cheddarMaterialAlias, def);
       materials.RemoveAlias(ironMaterialAlias);
-      CPPUNIT_ASSERT(materials.GetMaterial(cheddarMaterialAlias) != NULL);
+      CPPUNIT_ASSERT(materials.GetMaterial(cheddarMaterialAlias) != nullptr);
       CPPUNIT_ASSERT(materials.GetMaterial(cheddarMaterialAlias) != mat1);
       CPPUNIT_ASSERT(materials.GetMaterial(brieMaterialAlias) == mat1);
-      CPPUNIT_ASSERT(materials.GetMaterial(ironMaterialAlias) == NULL);
+      CPPUNIT_ASSERT(materials.GetMaterial(ironMaterialAlias) == nullptr);
 
       materials.ClearAliases();
-      CPPUNIT_ASSERT_MESSAGE("Cheddar is no longer an alias. it should still exist after aliases are cleared", materials.GetMaterial(cheddarMaterialAlias) != NULL);
-      CPPUNIT_ASSERT(materials.GetMaterial(brieMaterialAlias) == NULL);
-      CPPUNIT_ASSERT(materials.GetMaterial(ironMaterialAlias) == NULL);
+      CPPUNIT_ASSERT_MESSAGE("Cheddar is no longer an alias. it should still exist after aliases are cleared", materials.GetMaterial(cheddarMaterialAlias) != nullptr);
+      CPPUNIT_ASSERT(materials.GetMaterial(brieMaterialAlias) == nullptr);
+      CPPUNIT_ASSERT(materials.GetMaterial(ironMaterialAlias) == nullptr);
    }
 
    /////////////////////////////////////////////////////////
