@@ -94,8 +94,11 @@ namespace dtVoxel
       ~VoxelActor() /*override*/;
       void CreateDrawable() override;
 
-      // This is used by the message handler
+      /// This is used by the message handler
       void OnVolumeUpdateMsg(const VolumeUpdateMessage& msg);
+
+      /// Loads or resets the physics based on the current state and configuration.
+      void InitializePhysics();
    private:
 
       template<typename GridTypePtr>

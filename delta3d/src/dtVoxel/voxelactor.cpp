@@ -70,10 +70,10 @@ namespace dtVoxel
    /////////////////////////////////////////////////////
    void VoxelActor::LoadGrid(const dtCore::ResourceDescriptor& rd)
    {
-      std::cout << "Loading Grid" << std::endl;
 
       if (rd != GetDatabase() && !rd.IsEmpty())
       {
+         std::cout << "Loading Grid" << std::endl;
          try
          {
             openvdb::io::File file(dtCore::Project::GetInstance().GetResourcePath(rd));
@@ -95,6 +95,7 @@ namespace dtVoxel
       }
       else if (rd.IsEmpty())
       {
+         std::cout << "Unloading Grid" << std::endl;
          mGrids = NULL;
       }
    }
