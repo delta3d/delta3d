@@ -474,6 +474,8 @@ namespace dtVoxel
 
    void VoxelActor::ResetGrid()
    {
+      mGrids = NULL;
+
       LoadGrid(mDatabase);
 
       if (mVisualGrid.valid())
