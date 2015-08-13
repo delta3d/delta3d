@@ -285,6 +285,7 @@ public:
 
       dtCore::RefPtr<dtGame::GameActorProxy> actor;
       mGM->CreateActor(*TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE, actor);
+      actor->AddComponent(*new dtGame::ShaderActorComponent);
       dtGame::ShaderActorComponent* comp = actor->GetComponent<dtGame::ShaderActorComponent>();
 
       dtCore::ActorProperty* prop = comp->GetProperty(propName);
@@ -329,6 +330,8 @@ public:
       dtCore::RefPtr<dtGame::GameActorProxy> actor, actorCopyProp;
       mGM->CreateActor(*TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE, actor);
       mGM->CreateActor(*TestGameActorLibrary::TEST1_GAME_ACTOR_TYPE, actorCopyProp);
+      actor->AddComponent(*new dtGame::ShaderActorComponent);
+      actorCopyProp->AddComponent(*new dtGame::ShaderActorComponent);
 
       dtCore::RefPtr<dtGame::ShaderActorComponent> extraComp, extraCompCopyProp;
       mGM->CreateActor(*dtGame::ShaderActorComponent::TYPE, extraComp);

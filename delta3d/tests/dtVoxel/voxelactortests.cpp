@@ -77,6 +77,14 @@ namespace dtVoxel
             CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(0U));
             voxelActor->SetDatabase(dtCore::ResourceDescriptor("Volumes:delta3d_island.vdb"));
             CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(1U));
+            openvdb::GridBase::Ptr grid = voxelActor->GetGrid(0);
+            CPPUNIT_ASSERT(grid);
+            voxelActor->SetDatabase(dtCore::ResourceDescriptor::NULL_RESOURCE);
+            CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(0U));
+            voxelActor->SetDatabase(dtCore::ResourceDescriptor("Volumes:delta3d_island.vdb"));
+            CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(1U));
+            openvdb::GridBase::Ptr grid2 = voxelActor->GetGrid(0);
+            CPPUNIT_ASSERT(grid2 && grid2 != grid);
          }
          catch(const dtUtil::Exception& ex)
          {
