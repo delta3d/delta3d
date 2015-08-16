@@ -3,6 +3,8 @@
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/polardecomp.h>
 #include <dtUtil/mathdefines.h>
+#include <dtUtil/datastream.h>
+#include <iostream>
 #include <cmath>
 
 namespace dtCore
@@ -367,5 +369,56 @@ namespace dtCore
       return EpsilonEquals(rhs, 0.0f);
    }
 
-   /////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////////////////////
+   std::ostream& operator << (std::ostream& o, const Transform& xform)
+   {
+      for (unsigned i = 0; i < 4; ++i)
+      {
+         for (unsigned j = 0; j < 4; ++j)
+         {
+            o << xform(i,j) << " ";
+         }
+      }
+      return o;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////////////////
+   std::istream& operator >> (std::istream& io, Transform& xform)
+   {
+      for (unsigned i = 0; i < 4; ++i)
+      {
+         for (unsigned j = 0; j < 4; ++j)
+         {
+            io >> xform(i,j);
+         }
+      }
+      return io;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////////////////
+   dtUtil::DataStream& operator << (dtUtil::DataStream& ds, const Transform& xform)
+   {
+      for (unsigned i = 0; i < 4; ++i)
+      {
+         for (unsigned j = 0; j < 4; ++j)
+         {
+            ds << xform(i,j);
+         }
+      }
+      return ds;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////////////////
+   dtUtil::DataStream& operator >> (dtUtil::DataStream& ds, Transform& xform)
+   {
+      for (unsigned i = 0; i < 4; ++i)
+      {
+         for (unsigned j = 0; j < 4; ++j)
+         {
+            ds >> xform(i,j);
+         }
+      }
+      return ds;
+   }
+
 }
