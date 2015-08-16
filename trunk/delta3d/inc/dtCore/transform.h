@@ -25,7 +25,12 @@
 #include <osg/Matrix>
 #include <osg/Vec3>
 #include <osg/Vec4>
+#include <iosfwd>
 
+namespace dtUtil
+{
+   class DataStream;
+}
 
 namespace dtCore
 {
@@ -221,6 +226,15 @@ namespace dtCore
 
       osg::Matrix mTransform; ///<Internal storage
    };
+
+   DT_CORE_EXPORT std::ostream& operator << (std::ostream& o, const Transform& xform);
+
+   DT_CORE_EXPORT std::istream& operator >> (std::istream& i, Transform& xform);
+
+   DT_CORE_EXPORT dtUtil::DataStream& operator << (dtUtil::DataStream& ds, const Transform& xform);
+
+   DT_CORE_EXPORT dtUtil::DataStream& operator >> (dtUtil::DataStream& ds, Transform& xform);
+
 }
 
 

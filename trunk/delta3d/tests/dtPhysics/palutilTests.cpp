@@ -23,8 +23,9 @@ namespace dtPhysics
    class PalUtilTests : public CPPUNIT_NS::TestFixture
    {
       CPPUNIT_TEST_SUITE(PalUtilTests);
-          CPPUNIT_TEST(testMatrixConversion);
-          CPPUNIT_TEST(testTransformConversion);
+         CPPUNIT_TEST(testInversion);
+         CPPUNIT_TEST(testMatrixConversion);
+         CPPUNIT_TEST(testTransformConversion);
       CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -34,6 +35,21 @@ namespace dtPhysics
       void setUp();
       void tearDown();
 
+      void testInversion()
+      {
+         palMatrix4x4 pM, pMInv;
+         mat_identity(&pM);
+         mat_set_rotation(&pM, 0.3, 0.1, -1.4);
+         mat_set_translation(&pM, -383.8, -1289.90, 0.337);
+         mat_invert(&pMInv, &pM);
+
+         dtCore::Transform osgMat, palInvToOsgMat;
+         PalMatrixToTransform(osgMat, pM);
+         PalMatrixToTransform(palInvToOsgMat, pMInv);
+         CPPUNIT_ASSERT(osgMat.Invert());
+
+         CPPUNIT_ASSERT(osgMat.EpsilonEquals(palInvToOsgMat, 0.0001f));
+      }
 
       void testTransformConversion()
       {
