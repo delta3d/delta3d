@@ -32,12 +32,14 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    NamedArrayParameter::NamedArrayParameter(const dtUtil::RefString& name)
       : NamedParameter(DataType::ARRAY, name, false)
+      , mPackData(true)
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    NamedArrayParameter::NamedArrayParameter(DataType& dataType, const dtUtil::RefString& name)
       : NamedParameter(dataType, name, false)
+      , mPackData(true)
    {
    }
 
@@ -45,6 +47,9 @@ namespace dtCore
    NamedArrayParameter::~NamedArrayParameter()
    {
    }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   DT_IMPLEMENT_ACCESSOR(NamedArrayParameter, bool, PackData)
 
    ///////////////////////////////////////////////////////////////////////////////
    void NamedArrayParameter::CopyFrom(const NamedParameter& otherParam)
@@ -90,7 +95,8 @@ namespace dtCore
          if (param != NULL)
          {
             stream << param->GetDataType().GetTypeId();
-            stream << param->GetName();
+            if (!mPackData)
+               stream << param->GetName();
             stream << param->IsList();
             param->ToDataStream(stream);
          }
@@ -101,6 +107,8 @@ namespace dtCore
 
       }
    }
+
+   static const dtUtil::RefString DEFAULT_ELEMENT_NAME("elem");
 
    ///////////////////////////////////////////////////////////////////////////////
    bool NamedArrayParameter::FromDataStream(dtUtil::DataStream& stream)
@@ -118,6 +126,8 @@ namespace dtCore
       }
       Resize(size);
 
+      // To reuse the buffer space.
+      std::string name;
       for (unsigned short int i = 0; i < size; i++)
       {
          unsigned char id;
@@ -142,13 +152,13 @@ namespace dtCore
          // don't touch the index if it's the unknown type.
          if (*type != dtCore::DataType::UNKNOWN)
          {
-            std::string name;
-            stream >> name;
+            if (!mPackData)
+               stream >> name;
 
             bool isList;
             stream >> isList;
 
-            dtCore::RefPtr<NamedParameter> param = dtCore::NamedParameter::CreateFromType(*type, name, isList);
+            dtCore::RefPtr<NamedParameter> param = dtCore::NamedParameter::CreateFromType(*type, mPackData ? DEFAULT_ELEMENT_NAME : dtUtil::RefString(name), isList);
 
             okay = okay && param != NULL && param->FromDataStream(stream);
             if (okay) SetParameter(i, *param);
@@ -175,7 +185,8 @@ namespace dtCore
          if (param != NULL)
          {
             ss << OPEN_CHAR << param->GetDataType().GetName() << CLOSE_CHAR;
-            ss << OPEN_CHAR << param->GetName() << CLOSE_CHAR;
+            if (!mPackData)
+               ss << OPEN_CHAR << param->GetName() << CLOSE_CHAR;
             ss << OPEN_CHAR << param->IsList() << CLOSE_CHAR;
             ss << OPEN_CHAR << param->ToString() << CLOSE_CHAR;
          }
@@ -225,13 +236,16 @@ namespace dtCore
                }
             }
 
-            result = result && dtUtil::TakeToken(data, name, OPEN_CHAR, CLOSE_CHAR) &&
+            if (!mPackData)
+               result = result && dtUtil::TakeToken(data, name, OPEN_CHAR, CLOSE_CHAR);
+
+            result = result &&
                   dtUtil::TakeToken(data, isList, OPEN_CHAR, CLOSE_CHAR) &&
                   dtUtil::TakeToken(data, item, OPEN_CHAR, CLOSE_CHAR);
 
             if (result && dt != NULL)
             {
-               dtCore::RefPtr<NamedParameter> newParameter = dtCore::NamedParameter::CreateFromType(*dt, name, dtUtil::ToType<bool>(isList));
+               dtCore::RefPtr<NamedParameter> newParameter = dtCore::NamedParameter::CreateFromType(*dt, mPackData ? DEFAULT_ELEMENT_NAME: dtUtil::RefString(name), dtUtil::ToType<bool>(isList));
                result = newParameter->FromString(item);
                if (result)
                {

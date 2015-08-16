@@ -1722,12 +1722,13 @@ dtCore::RefPtr<dtCore::NamedArrayParameter> NamedParameterTests::CreateNamedArra
    arrayParam->AddParameter("test2", dtCore::DataType::DOUBLE);
    arrayParam->AddParameter(*new dtCore::NamedFloatParameter("test3"));
    arrayParam->AddParameter("test4", dtCore::DataType::INT);
+   arrayParam->AddParameter("test5", dtCore::DataType::VEC3);
    arrayParam->AddEmptyIndex();
 
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("Should have received 7 in list for group param messages" , size_t(7), arrayParam->GetSize());
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Should have received 8 in list for group param messages" , size_t(8), arrayParam->GetSize());
 
    dtCore::RefPtr<dtCore::NamedArrayParameter> internalArray =
-      static_cast<dtCore::NamedArrayParameter*>(arrayParam->AddParameter("test5", dtCore::DataType::ARRAY));
+      static_cast<dtCore::NamedArrayParameter*>(arrayParam->AddParameter("test6", dtCore::DataType::ARRAY));
 
    internalArray->AddParameter(*new dtCore::NamedStringParameter("test1"));
    internalArray->AddEmptyIndex();
@@ -1735,13 +1736,14 @@ dtCore::RefPtr<dtCore::NamedArrayParameter> NamedParameterTests::CreateNamedArra
    return arrayParam;
 }
 
+///////////////////////////////////////////////////////////////////////
 void NamedParameterTests::TestNamedArrayParameter(dtCore::NamedArrayParameter& arrayParam)
 {
-   CPPUNIT_ASSERT_EQUAL(size_t(8), arrayParam.GetSize());
+   CPPUNIT_ASSERT_EQUAL(size_t(9), arrayParam.GetSize());
 
    CPPUNIT_ASSERT(arrayParam.GetParameter(0) == NULL);
    CPPUNIT_ASSERT(arrayParam.GetParameter(2) == NULL);
-   CPPUNIT_ASSERT(arrayParam.GetParameter(6) == NULL);
+   CPPUNIT_ASSERT(arrayParam.GetParameter(7) == NULL);
 
    CPPUNIT_ASSERT(arrayParam.GetParameter(1) != NULL);
    CPPUNIT_ASSERT(arrayParam.GetParameter(1)->GetDataType() == dtCore::DataType::STRING);
@@ -1755,11 +1757,14 @@ void NamedParameterTests::TestNamedArrayParameter(dtCore::NamedArrayParameter& a
    CPPUNIT_ASSERT(arrayParam.GetParameter(5) != NULL);
    CPPUNIT_ASSERT(arrayParam.GetParameter(5)->GetDataType() == dtCore::DataType::INT);
 
-   CPPUNIT_ASSERT(arrayParam.GetParameter(7) != NULL);
-   CPPUNIT_ASSERT(arrayParam.GetParameter(7)->GetDataType() == dtCore::DataType::ARRAY);
+   CPPUNIT_ASSERT(arrayParam.GetParameter(6) != NULL);
+   CPPUNIT_ASSERT(arrayParam.GetParameter(6)->GetDataType() == dtCore::DataType::VEC3);
+
+   CPPUNIT_ASSERT(arrayParam.GetParameter(8) != NULL);
+   CPPUNIT_ASSERT(arrayParam.GetParameter(8)->GetDataType() == dtCore::DataType::ARRAY);
 
    dtCore::RefPtr<dtCore::NamedArrayParameter> internalArray =
-      dynamic_cast<dtCore::NamedArrayParameter*>(arrayParam.GetParameter(7));
+      dynamic_cast<dtCore::NamedArrayParameter*>(arrayParam.GetParameter(8));
 
    CPPUNIT_ASSERT(internalArray->GetParameter(0) != NULL);
    CPPUNIT_ASSERT(internalArray->GetParameter(0)->GetDataType() == dtCore::DataType::STRING);
@@ -1783,6 +1788,7 @@ void NamedParameterTests::TestNamedArrayParameter(dtCore::NamedArrayParameter& a
    CPPUNIT_ASSERT(amp.GetParameter(21) == NULL);
 
 }
+///////////////////////////////////////////////////////////////////////
 
 void NamedParameterTests::TestNamedArrayParameterCopy()
 {
@@ -1804,6 +1810,7 @@ void NamedParameterTests::TestNamedArrayParameterCopy()
 //   }
 }
 
+///////////////////////////////////////////////////////////////////////
 void NamedParameterTests::TestNamedArrayParameterWithProperty()
 {
    try
@@ -1847,11 +1854,13 @@ void NamedParameterTests::TestNamedArrayParameterWithProperty()
 
 }
 
+///////////////////////////////////////////////////////////////////////
 void NamedParameterTests::TestNamedArrayParameterStream()
 {
    try
    {
       dtCore::RefPtr<dtCore::NamedArrayParameter> arrayParam = CreateNamedArrayParameter();
+      CPPUNIT_ASSERT_MESSAGE("The packing default should be true.", arrayParam->GetPackData());
       TestNamedArrayParameter(*arrayParam);
 
       dtUtil::DataStream ds;
@@ -1859,9 +1868,25 @@ void NamedParameterTests::TestNamedArrayParameterStream()
       arrayParam->ToDataStream(ds);
 
       dtCore::RefPtr<dtCore::NamedArrayParameter> arrayCopy = new dtCore::NamedArrayParameter("testCopy");
-      arrayCopy->FromDataStream(ds);
+
+
+      dtUtil::DataStream ds2(const_cast<char*>(ds.GetBuffer()), ds.GetBufferSize(), false);
+      arrayCopy->FromDataStream(ds2);
 
       TestNamedArrayParameter(*arrayCopy);
+
+      ds.Rewind();
+      ds2.Rewind();
+
+      arrayParam->SetPackData(false);
+      arrayParam->ToDataStream(ds);
+
+      dtUtil::DataStream ds3(const_cast<char*>(ds.GetBuffer()), ds.GetBufferSize(), false);
+
+      arrayCopy->SetPackData(false);
+      arrayCopy->FromDataStream(ds3);
+      TestNamedArrayParameter(*arrayCopy);
+
    }
    catch (const dtUtil::Exception& e)
    {
@@ -1870,11 +1895,13 @@ void NamedParameterTests::TestNamedArrayParameterStream()
 
 }
 
+///////////////////////////////////////////////////////////////////////
 void NamedParameterTests::TestNamedArrayParameterString()
 {
    try
    {
       dtCore::RefPtr<dtCore::NamedArrayParameter> arrayParam = CreateNamedArrayParameter();
+      CPPUNIT_ASSERT_MESSAGE("The packing default should be true.", arrayParam->GetPackData());
       TestNamedArrayParameter(*arrayParam);
 
       std::string s;
@@ -1884,6 +1911,12 @@ void NamedParameterTests::TestNamedArrayParameterString()
       dtCore::RefPtr<dtCore::NamedArrayParameter> arrayCopy = new dtCore::NamedArrayParameter("testCopy");
       arrayCopy->FromString(s);
 
+      TestNamedArrayParameter(*arrayCopy);
+
+      arrayParam->SetPackData(false);
+      s = arrayParam->ToString();
+      arrayCopy->SetPackData(false);
+      arrayCopy->FromString(s);
       TestNamedArrayParameter(*arrayCopy);
    }
    catch (const dtUtil::Exception& e)

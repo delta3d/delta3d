@@ -24,6 +24,7 @@
 #define DELTA_NAMED_ARRAY_PARAMETER
 
 #include <dtCore/namedparameter.h>
+#include <dtUtil/getsetmacros.h>
 #include <vector>
 #include <algorithm>
 
@@ -92,6 +93,11 @@ namespace dtCore
             std::for_each(mParameterList.begin(), mParameterList.end(), function);
          }
 
+         /**
+          * Setting this to true means it won't store the names of the array parameters, just the types and values.
+          * This saves a lot of space for longer lists.  This is the default so it will be used for actor updates.
+          */
+         DT_DECLARE_ACCESSOR(bool, PackData);
       protected:
          NamedArrayParameter(DataType& dataType, const dtUtil::RefString& name);
          virtual ~NamedArrayParameter();
