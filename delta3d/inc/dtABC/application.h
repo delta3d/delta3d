@@ -268,6 +268,14 @@ namespace dtABC
 	  osg::Referenced* AsReferenced() override;
       /******** Log Time Provider functions end ********/
 
+     ///called on the OSG Composite Viewer
+     void StartThreading();
+
+     ///called on the OSG Composite Viewer
+     void StopThreading();
+          
+     /// returns true if the application is running in threaded mode with active threads
+     bool GetThreadsActive() const;
 
    protected:
       virtual ~Application();
