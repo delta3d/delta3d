@@ -61,6 +61,7 @@ namespace dtPhysics
       CollisionGroup GetGroup() const;
 
       void SetMaterial(Material* material);
+      Material* GetMaterial();
 
       palBodyBase& GetPalBodyBase();
 

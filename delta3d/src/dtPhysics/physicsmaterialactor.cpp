@@ -32,6 +32,30 @@
 
 namespace dtPhysics
 {
+   /**
+   * This is a simple stub drawable that does nothing.
+   */
+   class MaterialDrawable : public dtCore::DeltaDrawable
+   {
+   public:
+
+      // Constructor
+      MaterialDrawable();
+
+      ///required by DeltaDrawable
+      osg::Node* GetOSGNode();
+      const osg::Node* GetOSGNode() const;
+
+   protected:
+
+      // Destructor
+      virtual ~MaterialDrawable();
+
+   private:
+
+      dtCore::RefPtr<osg::Node> mNode;
+   };
+
    //////////////////////////////////////////////////////////
    // Actor code
    //////////////////////////////////////////////////////////

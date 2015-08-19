@@ -68,13 +68,7 @@ namespace dtPhysics
       /// @return the physics world as const.
       const PhysicsWorld& GetPhysicsWorld() const;
 
-      /*virtual*/ void ProcessMessage(const dtGame::Message &message);
-
-      DEPRECATE_FUNC const PhysicsActComp* GetHelper(const std::string& name) const { return GetActorComp(name); }
-      DEPRECATE_FUNC PhysicsActComp* GetHelper(const std::string& name) { return GetActorComp(name); }
-      DEPRECATE_FUNC void RegisterHelper(PhysicsActComp& toRegister) { RegisterActorComp(toRegister); }
-      DEPRECATE_FUNC void UnregisterHelper(PhysicsActComp& toRemove) { UnregisterActorComp(toRemove); }
-      DEPRECATE_FUNC bool IsHelperRegistered(const PhysicsActComp& pActComp) { return IsActorCompRegistered(pActComp); }
+      /*virtual*/ void ProcessMessage(const dtGame::Message& message);
 
       const PhysicsActComp* GetActorComp(const std::string& name) const;
       PhysicsActComp* GetActorComp(const std::string& name);

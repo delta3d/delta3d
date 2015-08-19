@@ -63,6 +63,17 @@ namespace dtPhysics
          mV[2] = v3;
       }
 
+      bool HasEquivalentVertices() const
+      {
+         VectorType::value_type epsilon(0.00001);
+         return dtUtil::Equivalent(mV[0], mV[1], epsilon) || dtUtil::Equivalent(mV[1], mV[2], epsilon) || dtUtil::Equivalent(mV[2], mV[0], epsilon);
+      }
+
+      bool IsFinite() const
+      {
+         return dtUtil::IsFiniteVec(mV[0]) && dtUtil::IsFiniteVec(mV[1]) && dtUtil::IsFiniteVec(mV[2]);
+      }
+
       bool SplitIf(Real maxEdgeLength, Triangle& newT)
       {
          if (maxEdgeLength == FLT_MAX || maxEdgeLength <= 0.0f)
@@ -151,10 +162,10 @@ namespace dtPhysics
       }
       //std::cerr << tv[0] << "\n" << tv[1] << "\n" << tv[2] << std::endl;
 
-      if (dtUtil::IsFiniteVec(tv[0]) && dtUtil::IsFiniteVec(tv[1]) && dtUtil::IsFiniteVec(tv[2]))
+      Triangle initial(tv[0], tv[1], tv[2]);
+      if (!initial.HasEquivalentVertices() && initial.IsFinite())
       {
          std::vector<Triangle> mTriangles;
-         Triangle initial(tv[0], tv[1], tv[2]);
 
          mTriangles.push_back(initial);
 
@@ -204,7 +215,7 @@ namespace dtPhysics
       else
       {
          std::ostringstream ss;
-         ss << "Found non-finite triangle data.  The three vertices of the triangle are \"";
+         ss << "Found non-finite triangle data or one with equivalent vertices.  The three vertices of the triangle are \"";
          ss << tv[0] << "\", \"" << tv[1] << "\", and \"" << tv[2] << "\".";
          LOG_ERROR(ss.str());
       }
