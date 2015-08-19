@@ -285,6 +285,7 @@ void Application::Frame(const double deltaSimTime)
    }
 }
 
+
 ///////////////////////////////////////////////////////////////////////////////
 void Application::PreFrame(const double deltaSimTime)
 {
@@ -835,3 +836,24 @@ bool Application::ApplyConfigData(const ApplicationConfigHandler &handler)
 
    return applied_well;
 }
+
+///////////////////////////////////////////////////////////////////////////////
+void Application::StartThreading()
+{
+   LOGN_DEBUG("application.cpp", "Starting threading.");
+   mCompositeViewer->startThreading();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void Application::StopThreading()
+{
+   LOGN_DEBUG("application.cpp", "Stopping threading.");
+   mCompositeViewer->stopThreading();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool Application::GetThreadsActive() const
+{
+   return mCompositeViewer->areThreadsRunning();
+}
+
