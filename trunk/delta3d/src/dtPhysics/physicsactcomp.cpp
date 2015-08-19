@@ -128,21 +128,21 @@ namespace dtPhysics
          DefaultPrePhysicsUpdate();
       }
 
-      ForEachPhysicsObject([&](dtCore::RefPtr<dtPhysics::PhysicsObject>& po)
+      const MaterialActor* mat = this->LookupMaterialActor();
+      if (mat != nullptr)
+      {
+         ForEachPhysicsObject([&](dtCore::RefPtr<dtPhysics::PhysicsObject>& po)
             {
-               if (po->GetMaterial() == nullptr)
+               if (po->GetMaterialId().IsNull())
                {
-                  const MaterialActor* mat = this->LookupMaterialActor();
-                  if (mat != nullptr)
-                  {
-                     po->SetMaterial(mat->GetMaterial());
-                  }
+                  po->SetMaterialId(mat->GetId());
                }
                if (GetAutoCreateOnEnteringWorld())
                {
                   po->Create();
                }
             });
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -486,16 +486,16 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////////////////////////////////
-   const MaterialActor* PhysicsActComp::LookupMaterialActor()
+   const MaterialActor* PhysicsActComp::LookupMaterialActor(const dtCore::UniqueId& id)
    {
       const MaterialActor* result = nullptr;
-      if (!GetMaterialActor().ToString().empty() )
+      if (!id.IsNull())
       {
          dtGame::GameActorProxy* gap = nullptr;
          GetOwner(gap);
          if (gap != nullptr)
          {
-            gap->GetGameManager()->FindActorById(GetMaterialActor(), result);
+            gap->GetGameManager()->FindActorById(id, result);
          }
       }
       return result;

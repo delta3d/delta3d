@@ -98,6 +98,7 @@ namespace dtPhysics
       CPPUNIT_TEST(testObjectShapeCalc);
       CPPUNIT_TEST(testObjectShapeCalcOriginOffsetPerEngine);
       CPPUNIT_TEST(testObjectDeleteWithConstraintsPerEngine);
+      CPPUNIT_TEST(testPhysicsObjectMaterialActorPerEngine);
       CPPUNIT_TEST(testActCompPerEngine);
       CPPUNIT_TEST(testConvexHullCachingPerEngine);
       CPPUNIT_TEST(testComponentPerEngine);
@@ -133,6 +134,7 @@ namespace dtPhysics
       void testObjectActivationDefaultsPerEngine();
       void testObjectActivationInitializeAndChangePerEngine();
       void testObjectDampingAccessorsPerEngine();
+      void testPhysicsObjectMaterialActorPerEngine();
       void testObjectShapeCalc();
       void testObjectShapeCalcOriginOffsetPerEngine();
       void testObjectDeleteWithConstraintsPerEngine();
@@ -154,6 +156,7 @@ namespace dtPhysics
       void testPhysicsObject(const std::string& engine);
       void testPhysicsObjectCollision(const std::string& engine);
       void testPhysicsObjectWithOffset(const std::string& engine);
+      void testPhysicsObjectMaterialActor(const std::string& engine);
       void testPhysicsObjectWithOffsetAndShape(dtPhysics::PrimitiveType& shapeType);
       void testPhysicsObjectVisualTransform(const std::string& engine);
       void testPhysicsObjectConvex(const std::string& engine);
@@ -304,10 +307,10 @@ namespace dtPhysics
          str = *curIter;
          CPPUNIT_ASSERT(str->find(objName) == std::string::npos);
          CPPUNIT_ASSERT(str->find(objNamePrefix) == std::string::npos);
-         CPPUNIT_ASSERT(po->GetProperty(str) != NULL);
+         CPPUNIT_ASSERT(po->GetProperty(str) != nullptr);
          ++numPropNamesFound;
 
-         CPPUNIT_ASSERT(pac->GetDeprecatedProperty(objNamePrefix + str) != NULL);
+         CPPUNIT_ASSERT(pac->GetDeprecatedProperty(objNamePrefix + str) != nullptr);
          CPPUNIT_ASSERT(po->GetObjectType().DefaultExists(str));
       }
 
@@ -390,6 +393,13 @@ namespace dtPhysics
    {
       std::for_each(GetPhysicsEngineList().begin(), GetPhysicsEngineList().end(),
                dtUtil::MakeFunctor(&dtPhysicsTests::testPhysicsObjectDampingAccessors, this));
+   }
+
+   /////////////////////////////////////////////////////////
+   void dtPhysicsTests::testPhysicsObjectMaterialActorPerEngine()
+   {
+      std::for_each(GetPhysicsEngineList().begin(), GetPhysicsEngineList().end(),
+               dtUtil::MakeFunctor(&dtPhysicsTests::testPhysicsObjectMaterialActor, this));
    }
 
    /////////////////////////////////////////////////////////
@@ -552,7 +562,7 @@ namespace dtPhysics
       physicsObject->SetOriginOffset(VectorType(0.0f, 0.0f, 0.0f));
       VectorType position(0.0f, 0.0f, 100.0f);
       physicsObject->SetTranslation(position);
-      CPPUNIT_ASSERT(physicsObject->Create(NULL, true));
+      CPPUNIT_ASSERT(physicsObject->Create(nullptr, true));
 
       CPPUNIT_ASSERT_MESSAGE("The auto compute origin offset should not occur on a mesh.", dtUtil::Equivalent(VectorType(0.0f, 0.0f, 0.0f), VectorType(0.0f, 0.0f, 0.0f), 0.001f));
       dtPhysics::RayCast ray;
@@ -759,27 +769,27 @@ namespace dtPhysics
       // test physics actorComp
       dtCore::RefPtr<PhysicsActComp> actorComp = new PhysicsActComp();
       actorComp->SetName("booga");
-      CPPUNIT_ASSERT_MESSAGE("UserData should default to NULL on a physics object", physicsObject->GetUserData() == NULL);
+      CPPUNIT_ASSERT_MESSAGE("UserData should default to nullptr on a physics object", physicsObject->GetUserData() == nullptr);
       physicsObject->SetUserData(actorComp.get());
       CPPUNIT_ASSERT_MESSAGE("Tried setting a actorComp as the user data on the object", physicsObject->GetUserData() == actorComp.get());
-      physicsObject->SetUserData(NULL);
+      physicsObject->SetUserData(nullptr);
       actorComp->AddPhysicsObject(*physicsObject);
       CPPUNIT_ASSERT_MESSAGE("The user data should be the actorComp after adding it as a child of the actorComp",
                physicsObject->GetUserData() == actorComp.get());
       actorComp->RemovePhysicsObject(*physicsObject);
-      CPPUNIT_ASSERT_MESSAGE("UserData should be NULL on a physics object after removing it from a actorComp by passing in the object",
-               physicsObject->GetUserData() == NULL);
+      CPPUNIT_ASSERT_MESSAGE("UserData should be nullptr on a physics object after removing it from a actorComp by passing in the object",
+               physicsObject->GetUserData() == nullptr);
 
       // we already  know this call works by the time we get here, no need to check again.
       actorComp->AddPhysicsObject(*physicsObject);
       actorComp->RemovePhysicsObject(physicsObject->GetName());
-      CPPUNIT_ASSERT_MESSAGE("UserData should be NULL on a physics object after removing it from a actorComp by name",
-               physicsObject->GetUserData() == NULL);
+      CPPUNIT_ASSERT_MESSAGE("UserData should be nullptr on a physics object after removing it from a actorComp by name",
+               physicsObject->GetUserData() == nullptr);
 
       dtCore::RefPtr<dtPhysics::MaterialActor> mat;
       mGM->CreateActor(*dtPhysics::PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE, mat);
       mat->SetName("Steel");
-      CPPUNIT_ASSERT(mat != NULL);
+      CPPUNIT_ASSERT(mat != nullptr);
 
       PhysicsMaterials& materials = PhysicsWorld::GetInstance().GetMaterials();
       Material* uniqueMaterial = materials.NewMaterial(mat->GetName(), mat->GetMaterialDef());
@@ -833,7 +843,7 @@ namespace dtPhysics
 
       BaseBodyWrapper* baseBodyWrapper = physicsObject->GetBodyWrapper();
 
-      CPPUNIT_ASSERT(baseBodyWrapper != NULL);
+      CPPUNIT_ASSERT(baseBodyWrapper != nullptr);
 
       // test mass
       CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Mass should have been created as 12!", 12.0f, physicsObject->GetMass(), 1e-3f);
@@ -908,7 +918,7 @@ namespace dtPhysics
       }
 
       // TODO: Test create from primitive, and create from properties functionality
-      CPPUNIT_ASSERT(physicsObject->GetGenericBodyWrapper() != NULL);
+      CPPUNIT_ASSERT(physicsObject->GetGenericBodyWrapper() != nullptr);
 
       CPPUNIT_ASSERT(physicsObject->IsGravityEnabled());
       CPPUNIT_ASSERT(physicsObject->GetGenericBodyWrapper()->IsGravityEnabled());
@@ -983,6 +993,40 @@ namespace dtPhysics
          po->SetTransform(xform);
       }
 
+   }
+
+   void dtPhysicsTests::testPhysicsObjectMaterialActor(const std::string& engine)
+   {
+      ChangeEngine(engine);
+      mGM->DeleteAllActors(true);
+
+      dtCore::RefPtr<PhysicsObject> po = PhysicsObject::CreateNew("jojo");
+      dtCore::RefPtr<dtPhysics::MaterialActor> mat;
+      mGM->CreateActor(*dtPhysics::PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE, mat);
+      if (mGM->GetComponentByName(dtPhysics::PhysicsComponent::DEFAULT_NAME) == nullptr)
+      {
+         mGM->AddComponent(*new dtPhysics::PhysicsComponent(dtPhysics::PhysicsWorld::GetInstance(), false));
+      }
+
+      // the po has to be added to an actor, so the material actor is as good as any.
+      mat->AddComponent(*new dtPhysics::PhysicsActComp);
+      mat->GetComponent<dtPhysics::PhysicsActComp>()->AddPhysicsObject(*po, true);
+
+      mat->SetName("boola");
+      mat->GetMaterialDef().SetRestitution(0.125);
+      mat->GetMaterialDef().SetStaticFriction(0.25);
+      mGM->AddActor(*mat);
+
+      PhysicsMaterials& materials = dtPhysics::PhysicsWorld::GetInstance().GetMaterials();
+
+      po->SetMaterialId(mat->GetId());
+      CPPUNIT_ASSERT(po->GetMaterial() == nullptr);
+      po->Create();
+      CPPUNIT_ASSERT(po->GetMaterial() != nullptr);
+      CPPUNIT_ASSERT_EQUAL(po->GetMaterial()->GetName(), std::string("boola"));
+      po->SetMaterialId(dtCore::UniqueId(false));
+      CPPUNIT_ASSERT(po->GetMaterial() != nullptr);
+      CPPUNIT_ASSERT(po->GetMaterial() == materials.GetMaterial(PhysicsMaterials::DEFAULT_MATERIAL_NAME));
    }
 
    void dtPhysicsTests::testPhysicsObjectWithOffsetAndShape(dtPhysics::PrimitiveType& shapeType)
@@ -1208,7 +1252,7 @@ namespace dtPhysics
 
       palActivationSettings* activationImpl = dynamic_cast<palActivationSettings*>(&po->GetBodyWrapper()->GetPalBodyBase());
       // No activation support, so return
-      if (activationImpl == NULL)
+      if (activationImpl == nullptr)
       {
          CPPUNIT_ASSERT_MESSAGE("ODE and Bullet plugins are known to have activation interface support, but the dynamic cast failed",
                   engine != PhysicsWorld::BULLET_ENGINE && engine != PhysicsWorld::ODE_ENGINE);
@@ -1266,7 +1310,7 @@ namespace dtPhysics
       CPPUNIT_ASSERT_DOUBLES_EQUAL(Real(0.1), po->GetLinearDamping(), Real(0.01));
       CPPUNIT_ASSERT_DOUBLES_EQUAL(Real(0.2), po->GetAngularDamping(), Real(0.01));
 
-      CPPUNIT_ASSERT(po->GetGenericBodyWrapper() != NULL);
+      CPPUNIT_ASSERT(po->GetGenericBodyWrapper() != nullptr);
 
       CPPUNIT_ASSERT_DOUBLES_EQUAL(Real(0.1), po->GetGenericBodyWrapper()->GetPalGenericBody().GetLinearDamping(), Real(0.01));
       CPPUNIT_ASSERT_DOUBLES_EQUAL(Real(0.2), po->GetGenericBodyWrapper()->GetPalGenericBody().GetAngularDamping(), Real(0.01));
@@ -1296,14 +1340,14 @@ namespace dtPhysics
       palLink* rigidLinkAfter = dtPhysics::PhysicsWorld::GetInstance().GetPalFactory()->CreateRigidLink(&poA->GetBodyWrapper()->GetPalBodyBase(),
             &poB->GetBodyWrapper()->GetPalBodyBase());
 
-      CPPUNIT_ASSERT(rigidLinkBefore != NULL);
-      CPPUNIT_ASSERT(rigidLinkAfter != NULL);
+      CPPUNIT_ASSERT(rigidLinkBefore != nullptr);
+      CPPUNIT_ASSERT(rigidLinkAfter != nullptr);
 
       // this test just verifies you can delete the link BEFORE deleting the bodies.
       delete rigidLinkBefore;
 
-      poA = NULL;
-      poB = NULL;
+      poA = nullptr;
+      poB = nullptr;
       // this test just verifies you can delete the link AFTER deleting the bodies.
       delete rigidLinkAfter;
    }
@@ -1344,7 +1388,7 @@ namespace dtPhysics
 
       palActivationSettings* activationImpl = dynamic_cast<palActivationSettings*>(&po->GetBodyWrapper()->GetPalBodyBase());
 
-      if (activationImpl != NULL)
+      if (activationImpl != nullptr)
       {
          if (activationImpl->GetSupportedActivationSettings()[palActivationSettings::LINEAR_VELOCITY_THRESHOLD])
          {
@@ -1409,7 +1453,7 @@ namespace dtPhysics
       dtCore::RefPtr<PhysicsObject> physicsObject2 = PhysicsObject::CreateNew(name2);
       dtCore::RefPtr<PhysicsObject> physicsObject3 = PhysicsObject::CreateNew(name3);
 
-      CPPUNIT_ASSERT(tehVoodoo->GetMainPhysicsObject() == NULL);
+      CPPUNIT_ASSERT(tehVoodoo->GetMainPhysicsObject() == nullptr);
       // adding
       tehVoodoo->AddPhysicsObject(*physicsObject2);
       CPPUNIT_ASSERT(tehVoodoo->GetMainPhysicsObject() == physicsObject2);
@@ -1490,21 +1534,21 @@ namespace dtPhysics
       CPPUNIT_ASSERT_MESSAGE("physics object1 should not active", !tehVoodoo->GetPhysicsObject(name3)->IsActive());
 
       // see if they exist
-      CPPUNIT_ASSERT_MESSAGE("physics object1 should be on actorComp", tehVoodoo->GetPhysicsObject(name1) != NULL);
-      CPPUNIT_ASSERT_MESSAGE("physics object2 should be on actorComp", tehVoodoo->GetPhysicsObject(name2) != NULL);
-      CPPUNIT_ASSERT_MESSAGE("physics object3 should be on actorComp", tehVoodoo->GetPhysicsObject(name3) != NULL);
+      CPPUNIT_ASSERT_MESSAGE("physics object1 should be on actorComp", tehVoodoo->GetPhysicsObject(name1) != nullptr);
+      CPPUNIT_ASSERT_MESSAGE("physics object2 should be on actorComp", tehVoodoo->GetPhysicsObject(name2) != nullptr);
+      CPPUNIT_ASSERT_MESSAGE("physics object3 should be on actorComp", tehVoodoo->GetPhysicsObject(name3) != nullptr);
 
       // remove one see if u can't get to it, and can get to others
       tehVoodoo->RemovePhysicsObject("mypalFriend2");
-      CPPUNIT_ASSERT_MESSAGE("physics object2 shouldn't be on actorComp", tehVoodoo->GetPhysicsObject(name2) == NULL);
-      CPPUNIT_ASSERT_MESSAGE("physics object1 should be on actorComp", tehVoodoo->GetPhysicsObject(name1) != NULL);
-      CPPUNIT_ASSERT_MESSAGE("physics object3 should be on actorComp", tehVoodoo->GetPhysicsObject(name3) != NULL);
+      CPPUNIT_ASSERT_MESSAGE("physics object2 shouldn't be on actorComp", tehVoodoo->GetPhysicsObject(name2) == nullptr);
+      CPPUNIT_ASSERT_MESSAGE("physics object1 should be on actorComp", tehVoodoo->GetPhysicsObject(name1) != nullptr);
+      CPPUNIT_ASSERT_MESSAGE("physics object3 should be on actorComp", tehVoodoo->GetPhysicsObject(name3) != nullptr);
 
       // clear all, none should on be on the actorComp
       tehVoodoo->ClearAllPhysicsObjects();
-      CPPUNIT_ASSERT_MESSAGE("physics object2 shouldn't be on actorComp", tehVoodoo->GetPhysicsObject(name2) == NULL);
-      CPPUNIT_ASSERT_MESSAGE("physics object1 shouldn't be on actorComp", tehVoodoo->GetPhysicsObject(name1) == NULL);
-      CPPUNIT_ASSERT_MESSAGE("physics object3 shouldn't be on actorComp", tehVoodoo->GetPhysicsObject(name3) == NULL);
+      CPPUNIT_ASSERT_MESSAGE("physics object2 shouldn't be on actorComp", tehVoodoo->GetPhysicsObject(name2) == nullptr);
+      CPPUNIT_ASSERT_MESSAGE("physics object1 shouldn't be on actorComp", tehVoodoo->GetPhysicsObject(name1) == nullptr);
+      CPPUNIT_ASSERT_MESSAGE("physics object3 shouldn't be on actorComp", tehVoodoo->GetPhysicsObject(name3) == nullptr);
 
       tehVoodoo->GetAllPhysicsObjects(toFill);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("GetAllPhysicsObjects Should not clear the vector", size_t(3U), toFill.size());
@@ -1522,7 +1566,7 @@ namespace dtPhysics
       dtPhysics::VertexData::ClearAllCachedData();
       std::string cachingString("jojo");
       ChangeEngine(engine);
-      CPPUNIT_ASSERT(dtPhysics::VertexData::FindCachedData(cachingString) == NULL);
+      CPPUNIT_ASSERT(dtPhysics::VertexData::FindCachedData(cachingString) == nullptr);
       try
       {
          //std::string path = dtCore::Project::GetInstance().GetResourcePath(dtCore::ResourceDescriptor("StaticMeshes:physics_crate.ive"));
@@ -1557,7 +1601,7 @@ namespace dtPhysics
          double elapsedFirst = dtCore::Timer::Instance()->DeltaMil(timerBegin, timerEnd);
 
          CPPUNIT_ASSERT_MESSAGE("A cached convex hull should exist with name " + cachingString + "_Polytope",
-                  dtPhysics::VertexData::FindCachedData(cachingString + "_Polytope") != NULL);
+                  dtPhysics::VertexData::FindCachedData(cachingString + "_Polytope") != nullptr);
 
          // Creating it a second time should use the cache.
          timerBegin = dtCore::Timer::Instance()->Tick();
@@ -1574,7 +1618,7 @@ namespace dtPhysics
 
          dtPhysics::VertexData::ClearCachedData(cachingString);
          CPPUNIT_ASSERT_MESSAGE("After cleaning the cached data, it should be gone",
-                  dtPhysics::VertexData::FindCachedData(cachingString) == NULL);
+                  dtPhysics::VertexData::FindCachedData(cachingString) == nullptr);
       }
       catch (const dtUtil::Exception& ex)
       {
@@ -1612,9 +1656,9 @@ namespace dtPhysics
          actorComp.InsertNewPhysicsObject(0);
 
          CPPUNIT_ASSERT(actorComp.GetPhysicsObjectCount() == 2);
-         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0) != NULL);
-         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(1) != NULL);
-         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(2) == NULL);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0) != nullptr);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(1) != nullptr);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(2) == nullptr);
 
          dtCore::RefPtr<PhysicsObject> po1 = actorComp.GetPhysicsObjectByIndex(0);
          dtCore::RefPtr<PhysicsObject> po3 = actorComp.GetPhysicsObjectByIndex(1);
@@ -1623,10 +1667,10 @@ namespace dtPhysics
 
          actorComp.InsertNewPhysicsObject(1);
          CPPUNIT_ASSERT(actorComp.GetPhysicsObjectCount() == 3);
-         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0) != NULL);
-         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(1) != NULL);
-         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(2) != NULL);
-         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(3) == NULL);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0) != nullptr);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(1) != nullptr);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(2) != nullptr);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(3) == nullptr);
 
          // Insert a new object between the first and last.
          dtCore::RefPtr<PhysicsObject> po2 = actorComp.GetPhysicsObjectByIndex(1);
@@ -1643,29 +1687,29 @@ namespace dtPhysics
          // Test removal
          actorComp.RemovePhysicsObjectByIndex(1);
          CPPUNIT_ASSERT(actorComp.GetPhysicsObjectCount() == 2);
-         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0) != NULL);
-         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(1) != NULL);
-         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(2) == NULL);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0) != nullptr);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(1) != nullptr);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(2) == nullptr);
          CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0)->GetName() == name1);
          CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(1)->GetName() == name3);
 
          actorComp.RemovePhysicsObjectByIndex(0);
          CPPUNIT_ASSERT(actorComp.GetPhysicsObjectCount() == 1);
-         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0) != NULL);
-         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(1) == NULL);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0) != nullptr);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(1) == nullptr);
          CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0)->GetName() == name3);
 
          // --- Test failed removal
          actorComp.RemovePhysicsObjectByIndex(2);
          CPPUNIT_ASSERT(actorComp.GetPhysicsObjectCount() == 1);
-         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0) != NULL);
-         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(1) == NULL);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0) != nullptr);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(1) == nullptr);
          CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0)->GetName() == name3);
 
          actorComp.RemovePhysicsObjectByIndex(0);
          CPPUNIT_ASSERT(actorComp.GetPhysicsObjectCount() == 0);
-         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0) == NULL);
-         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(1) == NULL);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(0) == nullptr);
+         CPPUNIT_ASSERT(actorComp.GetPhysicsObjectByIndex(1) == nullptr);
       }
       catch(dtUtil::Exception& ex)
       {
@@ -1719,9 +1763,9 @@ namespace dtPhysics
       PhysicsActComp* actorComp1 = mPhysicsComp->GetActorComp("tehVoodooActorComp1");
       PhysicsActComp* actorComp2 = mPhysicsComp->GetActorComp("tehVoodooActorComp2");
       PhysicsActComp* actorComp3 = mPhysicsComp->GetActorComp("tehVoodooActorComp3");
-      CPPUNIT_ASSERT_MESSAGE("ActorComp should have been registered", actorComp1 != NULL);
-      CPPUNIT_ASSERT_MESSAGE("ActorComp should have not been registered", actorComp2 == NULL);
-      CPPUNIT_ASSERT_MESSAGE("ActorComp should have been registered", actorComp3 != NULL);
+      CPPUNIT_ASSERT_MESSAGE("ActorComp should have been registered", actorComp1 != nullptr);
+      CPPUNIT_ASSERT_MESSAGE("ActorComp should have not been registered", actorComp2 == nullptr);
+      CPPUNIT_ASSERT_MESSAGE("ActorComp should have been registered", actorComp3 != nullptr);
 
       // make materials
 
@@ -1736,9 +1780,9 @@ namespace dtPhysics
       actorComp1 = mPhysicsComp->GetActorComp("tehVoodooActorComp1");
       actorComp2 = mPhysicsComp->GetActorComp("tehVoodooActorComp2");
       actorComp3 = mPhysicsComp->GetActorComp("tehVoodooActorComp3");
-      CPPUNIT_ASSERT_MESSAGE("ActorComp should not have been registered", actorComp1 == NULL);
-      CPPUNIT_ASSERT_MESSAGE("ActorComp should not have been registered", actorComp2 == NULL);
-      CPPUNIT_ASSERT_MESSAGE("ActorComp should not have been registered", actorComp3 == NULL);
+      CPPUNIT_ASSERT_MESSAGE("ActorComp should not have been registered", actorComp1 == nullptr);
+      CPPUNIT_ASSERT_MESSAGE("ActorComp should not have been registered", actorComp2 == nullptr);
+      CPPUNIT_ASSERT_MESSAGE("ActorComp should not have been registered", actorComp3 == nullptr);
    }
 
    /////////////////////////////////////////////////////////
@@ -1870,10 +1914,10 @@ namespace dtPhysics
 
       PhysicsMaterials& materials = dtPhysics::PhysicsWorld::GetInstance().GetMaterials();
 
-      CPPUNIT_ASSERT(materials.GetMaterial("Melange") == NULL);
+      CPPUNIT_ASSERT(materials.GetMaterial("Melange") == nullptr);
       mGM->AddActor(*mat);
       dtPhysics::Material* materialM = materials.GetMaterial("Melange");
-      CPPUNIT_ASSERT(materialM != NULL);
+      CPPUNIT_ASSERT(materialM != nullptr);
       CPPUNIT_ASSERT(materials.GetMaterial("Spice") == materialM);
       CPPUNIT_ASSERT(materials.GetMaterial("Control") == materialM);
       // test to see if they were set correctly.
@@ -1893,8 +1937,8 @@ namespace dtPhysics
       mGM->DeleteActor(*mat);
       dtCore::System::GetInstance().Step(0.01667f);
       dtCore::System::GetInstance().Step(0.01667f);
-      CPPUNIT_ASSERT(materials.GetMaterial("Spice") == NULL);
-      CPPUNIT_ASSERT(materials.GetMaterial("Control") == NULL);
+      CPPUNIT_ASSERT(materials.GetMaterial("Spice") == nullptr);
+      CPPUNIT_ASSERT(materials.GetMaterial("Control") == nullptr);
    }
 
    void dtPhysicsTests::testAutoCreate()

@@ -69,7 +69,7 @@ namespace dtPhysics
       ,  mNotifyCollisions(false)
       ,  mCollisionResponseEnabled(true)
       ,  mVisualToBodyIsIdentity(true)
-      ,  mMaterial(NULL)
+      ,  mMaterialId(false)
       ,  mActivationLinearVelocityThreshold(Real(-1.0))
       ,  mActivationAngularVelocityThreshold(Real(-1.0))
       ,  mActivationTimeThreshold(Real(-1.0))
@@ -122,7 +122,7 @@ namespace dtPhysics
       bool mCollisionResponseEnabled;
       bool mVisualToBodyIsIdentity;
 
-      Material* mMaterial;
+      dtCore::UniqueId mMaterialId;
 
       Real mActivationLinearVelocityThreshold, mActivationAngularVelocityThreshold, mActivationTimeThreshold;
       Real mLinearDamping, mAngularDamping;
@@ -136,8 +136,8 @@ namespace dtPhysics
       std::vector<dtCore::RefPtr<Geometry> > mGeometries;
 
       void CreateSimpleGeometry(const PrimitiveType& primType, const VectorType& dimensions,
-                              const TransformType& geomWorldTransform,
-                              Real mass)
+            const TransformType& geomWorldTransform,
+            Real mass)
       {
 
          dtCore::RefPtr<Geometry> geom;
@@ -258,9 +258,35 @@ namespace dtPhysics
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   Material* PhysicsObject::GetMaterial() const
+   const dtCore::UniqueId& PhysicsObject::GetMaterialId() const
    {
-      return mDataMembers->mMaterial;
+      return mDataMembers->mMaterialId;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void PhysicsObject::SetMaterialId(const dtCore::UniqueId& matId)
+   {
+      mDataMembers->mMaterialId = matId;
+      SetMaterialById(matId);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void PhysicsObject::SetMaterial(Material* mat)
+   {
+      if (mat!= nullptr && mDataMembers->mGenericBody.valid())
+      {
+         mDataMembers->mGenericBody->SetMaterial(mat);
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   Material* PhysicsObject::GetMaterial()
+   {
+      if (mDataMembers->mGenericBody.valid())
+      {
+         return mDataMembers->mGenericBody->GetMaterial();
+      }
+      return nullptr;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -274,7 +300,7 @@ namespace dtPhysics
 
          Material* mat = materials.GetMaterial(matName);
          // ugly, ugly hack.
-         if (mat == NULL)
+         if (mat == nullptr)
          {
             dtPhysics::PhysicsActComp* owner = dynamic_cast<dtPhysics::PhysicsActComp*>(GetUserData());
             if (owner != NULL)
@@ -315,14 +341,39 @@ namespace dtPhysics
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void PhysicsObject::SetMaterial(Material* mat)
+   bool PhysicsObject::SetMaterialById(const dtCore::UniqueId& id)
    {
+      bool result = false;
+      // Set the default material if nothing is set.
       if (mDataMembers->mGenericBody.valid())
       {
-         mDataMembers->mGenericBody->SetMaterial(mat);
+         dtPhysics::PhysicsMaterials& materials = PhysicsWorld::GetInstance().GetMaterials();
+         if (id.IsNull())
+         {
+            SetMaterial(PhysicsWorld::GetInstance().GetMaterials().GetMaterial(PhysicsMaterials::DEFAULT_MATERIAL_NAME));
+            result = true;
+         }
+         else
+         {
+            dtPhysics::PhysicsActComp* owner = dynamic_cast<dtPhysics::PhysicsActComp*>(GetUserData());
+            if (owner != NULL)
+            {
+               const MaterialActor* actor = owner->LookupMaterialActor(id);
+               if (actor != nullptr)
+               {
+                  Material* matObj = materials.GetMaterial(actor->GetName());
+                  if (matObj != nullptr)
+                  {
+                     SetMaterial(matObj);
+                  }
+                  result = true;
+               }
+            }
+         }
       }
-      mDataMembers->mMaterial = mat;
+      return result;
    }
+
 
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::BuildPropertyMap()
@@ -333,80 +384,84 @@ namespace dtPhysics
       PropRegType propRegHelper(*this, this, GROUP);
 
       DT_REGISTER_PROPERTY(Name,
-               "The name of this physics object.  This can be used to look it up at runtime", PropRegType, propRegHelper);
+            "The name of this physics object.  This can be used to look it up at runtime", PropRegType, propRegHelper);
 
       DT_REGISTER_PROPERTY_WITH_NAME(CollisionGroup, "Collision Group", "The numeric collision group for this object."
-               "Groups can be configured to collide or not collide with each other."
-               , PropRegType, propRegHelper);
+            "Groups can be configured to collide or not collide with each other."
+            , PropRegType, propRegHelper);
 
       DT_REGISTER_PROPERTY_WITH_NAME(MechanicsType, "Mechanics Type",
-               "Sets which collision type this actor will use", PropRegType, propRegHelper);
+            "Sets which collision type this actor will use", PropRegType, propRegHelper);
 
       DT_REGISTER_PROPERTY_WITH_NAME(PrimitiveType, "Primitive Type",
-               "Sets which primitive type this actor will use", PropRegType, propRegHelper);
+            "Sets which primitive type this actor will use", PropRegType, propRegHelper);
 
       DT_REGISTER_PROPERTY_WITH_NAME(Translation, "Translation",
-               "Initial Translation", PropRegType, propRegHelper);
+            "Initial Translation", PropRegType, propRegHelper);
 
       DT_REGISTER_PROPERTY_WITH_NAME(Rotation, "Rotation",
-               "Initial Rotation HPR", PropRegType, propRegHelper);
+            "Initial Rotation HPR", PropRegType, propRegHelper);
 
       DT_REGISTER_PROPERTY_WITH_NAME(OriginOffset, "Origin Offset",
-               "Offsets the origin of the collision geometry relative to the center of mass."
-               , PropRegType, propRegHelper);
+            "Offsets the origin of the collision geometry relative to the center of mass."
+            , PropRegType, propRegHelper);
 
       DT_REGISTER_PROPERTY_WITH_NAME(Extents, "Dimensions",
-               "Used for determining extents of the collision volume"
-               , PropRegType, propRegHelper);
+            "Used for determining extents of the collision volume"
+            , PropRegType, propRegHelper);
 
       DT_REGISTER_PROPERTY_WITH_NAME(Mass, "Mass",
-               "Total Mass of the object"
-               , PropRegType, propRegHelper);
+            "Total Mass of the object"
+            , PropRegType, propRegHelper);
 
       DT_REGISTER_PROPERTY_WITH_NAME(SkinThickness, "Skin Thickness",
-               "How far things may penetrate this physics object. Improves stability. Don't make this 0."
-               , PropRegType, propRegHelper);
+            "How far things may penetrate this physics object. Improves stability. Don't make this 0."
+            , PropRegType, propRegHelper);
 
       DT_REGISTER_PROPERTY_WITH_NAME(NotifyCollisions, "Notify Collisions",
-               "Set to true to enable collisions notifications for this object."
-               , PropRegType, propRegHelper);
+            "Set to true to enable collisions notifications for this object."
+            , PropRegType, propRegHelper);
 
       DT_REGISTER_PROPERTY_WITH_NAME(MomentOfInertia, "Moment Of Inertia",
-               "Sets the moment of inerta tensor 3x3 matrix diagonals.  If any value of this is 0 or negative, "
-               "it will be computed from the geometry."
-               , PropRegType, propRegHelper);
+            "Sets the moment of inerta tensor 3x3 matrix diagonals.  If any value of this is 0 or negative, "
+            "it will be computed from the geometry."
+            , PropRegType, propRegHelper);
 
       DT_REGISTER_PROPERTY_WITH_NAME(ActivationLinearVelocityThreshold, "ActivationLinearVelocityThreshold",
-               "the linear velocity threshold under which the object will auto-deactivate. -1 means engine default."
-               , PropRegType, propRegHelper);
+            "the linear velocity threshold under which the object will auto-deactivate. -1 means engine default."
+            , PropRegType, propRegHelper);
 
       DT_REGISTER_PROPERTY_WITH_NAME(ActivationAngularVelocityThreshold, "ActivationAngularVelocityThreshold",
-               "the angular velocity threshold under which the object will auto-deactivate. -1 means engine default."
-               , PropRegType, propRegHelper);
+            "the angular velocity threshold under which the object will auto-deactivate. -1 means engine default."
+            , PropRegType, propRegHelper);
 
       DT_REGISTER_PROPERTY_WITH_NAME(ActivationTimeThreshold, "ActivationTimeThreshold",
-               "The minimum time the object must be under all the activation thresholds before the object will auto-deactivate. -1 means engine default."
-               , PropRegType, propRegHelper);
+            "The minimum time the object must be under all the activation thresholds before the object will auto-deactivate. -1 means engine default."
+            , PropRegType, propRegHelper);
 
       DT_REGISTER_PROPERTY_WITH_NAME(LinearDamping, "LinearDamping",
-               "Artifical linear body damping. 0 means off, 1 means pretty much don't move."
-               , PropRegType, propRegHelper);
+            "Artifical linear body damping. 0 means off, 1 means pretty much don't move."
+            , PropRegType, propRegHelper);
 
       DT_REGISTER_PROPERTY_WITH_NAME(AngularDamping, "AngularDamping",
-               "Artifical angular body damping. 0 means off, 1 means pretty much don't move."
-               , PropRegType, propRegHelper);
+            "Artifical angular body damping. 0 means off, 1 means pretty much don't move."
+            , PropRegType, propRegHelper);
 
       DT_REGISTER_RESOURCE_PROPERTY_WITH_NAME(dtCore::DataType::STATIC_MESH, MeshResource, "PhysicsMesh", "PhysicsMesh",
-               "Geometry file to load for the physics to use.  It can be either a renderable mesh or a compiled physics mesh.",
-                PropRegType, propRegHelper);
+            "Geometry file to load for the physics to use.  It can be either a renderable mesh or a compiled physics mesh.",
+            PropRegType, propRegHelper);
 
       DT_REGISTER_PROPERTY_WITH_NAME(MeshScale, "PhysicsMeshScale",
-               "If a physics mesh is set, it can be scaled with this property.",
-                PropRegType, propRegHelper);
+            "If a physics mesh is set, it can be scaled with this property.",
+            PropRegType, propRegHelper);
 
       DT_REGISTER_PROPERTY(CollisionResponseEnabled,
-               "True for normal collision response.  False for collision detection only.",
-                PropRegType, propRegHelper);
+            "True for normal collision response.  False for collision detection only.",
+            PropRegType, propRegHelper);
+
+      DT_REGISTER_ACTOR_ID_PROPERTY("dtPhysics::MaterialActor", MaterialId,
+            "Material", "The material actor that defines the physics materials for this object.",
+            PropRegType, propRegHelper);
    }
 
    void PhysicsObject::CalculateBoundsAndOrigin(const osg::Node* nodeToLoad, bool calcDimensions, bool adjustOriginOffsetForGeometry)
@@ -455,7 +510,7 @@ namespace dtPhysics
 
    /////////////////////////////////////////////////////////////////////////////
    bool PhysicsObject::Create(const osg::Node* nodeToLoad, bool adjustOriginOffsetForGeometry,
-            const std::string& cachingKey)
+         const std::string& cachingKey)
    {
       try
       {
@@ -584,26 +639,35 @@ namespace dtPhysics
          return false;
       }
 
-      // Attempt to assign a material from the arbitrary triangle data that may have been loaded.
-      const dtPhysics::VertexData* vertData = geometry.GetVertexData();
-      if (vertData != NULL && vertData->GetMaterialCount() > 0)
+      bool materialWasSet = false;
+      // If the property is configured, it overrides the vert data.
+      if (GetMaterialId().IsNull())
       {
-         // For now one material can be applied per object.
-         std::string matName = vertData->GetMaterialName(vertData->GetFirstMaterialIndex());
-
-         // Try to set the physics material by name.
-         if ( ! matName.empty() && ! SetMaterialByName(matName))
+         // Attempt to assign a material from the arbitrary triangle data that may have been loaded.
+         const dtPhysics::VertexData* vertData = geometry.GetVertexData();
+         if (vertData != NULL && vertData->GetMaterialCount() > 0)
          {
-            LOG_ERROR("Could not assign a physics material by name \"" + matName
-               + "\" for object \"" + GetName() + "\"");
+            // For now one material can be applied per object.
+            std::string matName = vertData->GetMaterialName(vertData->GetFirstMaterialIndex());
+
+            if (! matName.empty())
+            {
+               // Try to set the physics material by name.
+               materialWasSet = SetMaterialByName(matName);
+               if (!materialWasSet)
+               {
+                  LOG_ERROR("Could not assign a physics material by name \"" + matName
+                        + "\" for object \"" + GetName() + "\" the property configured");
+               }
+            }
          }
       }
 
-      // Set the default material if nothing is set.
-      if (GetMaterial() == NULL)
+      if (!materialWasSet)
       {
-         SetMaterial(PhysicsWorld::GetInstance().GetMaterials().GetMaterial(PhysicsMaterials::DEFAULT_MATERIAL_NAME));
+         SetMaterialById(GetMaterialId());
       }
+
       SetSkinThickness(mDataMembers->mSkinThickness);
       SetNotifyCollisions(GetNotifyCollisions());
       SetCollisionResponseEnabled(mDataMembers->mCollisionResponseEnabled);
@@ -618,7 +682,7 @@ namespace dtPhysics
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool PhysicsObject::CreateInternal(VertexData* data)
+   bool PhysicsObject::CreateInternal(VertexData* vertData)
    {
       TransformType xform;
       GetTransform(xform);
@@ -626,6 +690,7 @@ namespace dtPhysics
 
       mDataMembers->mGenericBody = BaseBodyWrapper::CreateGenericBody(xform, *mDataMembers->mMechanicsType, mDataMembers->mCollisionGroup, mDataMembers->mMassOfObject);
 
+      bool materialWasSet = false;
       if (mDataMembers->mGenericBody.valid())
       {
          mDataMembers->mGenericBody->Init();
@@ -635,26 +700,29 @@ namespace dtPhysics
          {
             mDataMembers->CreateSimpleGeometry(GetPrimitiveType(), GetExtents(), geometryWorld, GetMass());
          }
-         else if (data != NULL)
+         else if (vertData != NULL)
          {
             // Scale the data in place, which is actually the cached one.
             // Each user will just rescale the data to what they need, but
             // chances are good that the same scale will end up being used over and over.
-            data->Scale(mDataMembers->mMeshScale);
+            vertData->Scale(mDataMembers->mMeshScale);
 
-            mDataMembers->CreateComplexGeometry(GetPrimitiveType(), geometryWorld, *data, GetMass());
+            mDataMembers->CreateComplexGeometry(GetPrimitiveType(), geometryWorld, *vertData, GetMass());
 
-            // Attempt to assign a material from the arbitrary triangle data that was loaded.
-            if (data->GetMaterialCount() > 0)
+            if (GetMaterialId().IsNull() && vertData->GetMaterialCount() > 0)
             {
                // For now one material can be applied per object.
-               std::string matName = data->GetMaterialName(data->GetFirstMaterialIndex());
+               std::string matName = vertData->GetMaterialName(vertData->GetFirstMaterialIndex());
 
-               // Try to set the physics material by name.
-               if ( ! matName.empty() && ! SetMaterialByName(matName))
+               if (! matName.empty())
                {
-                  LOG_ERROR("Could not assign a physics material by name \"" + matName
-                     + "\" for object \"" + GetName() + "\"");
+                  // Try to set the physics material by name.
+                  materialWasSet = SetMaterialByName(matName);
+                  if (!materialWasSet)
+                  {
+                     LOG_ERROR("Could not assign a physics material by name \"" + matName
+                           + "\" for object \"" + GetName() + "\" the property configured");
+                  }
                }
             }
          }
@@ -673,12 +741,11 @@ namespace dtPhysics
          return false;
       }
 
-
-      // Set the default material if nothing is set.
-      if (GetMaterial() == NULL)
+      if (!materialWasSet)
       {
-         SetMaterial(PhysicsWorld::GetInstance().GetMaterials().GetMaterial(PhysicsMaterials::DEFAULT_MATERIAL_NAME));
+         SetMaterialById(GetMaterialId());
       }
+
       SetSkinThickness(mDataMembers->mSkinThickness);
       SetNotifyCollisions(GetNotifyCollisions());
       SetCollisionResponseEnabled(mDataMembers->mCollisionResponseEnabled);
@@ -993,7 +1060,7 @@ namespace dtPhysics
       if (mDataMembers->mGenericBody.valid())
       {
          mDataMembers->mGeometries.erase(std::remove(mDataMembers->mGeometries.begin(), mDataMembers->mGeometries.end(), dtCore::RefPtr<Geometry>(&geom)),
-                                          mDataMembers->mGeometries.end());
+               mDataMembers->mGeometries.end());
          mDataMembers->mGenericBody->RemoveGeometry(geom);
       }
    }
@@ -1160,10 +1227,10 @@ namespace dtPhysics
       SetMomentOfInertia(
             VectorType(
                   moi.x() > 0.0 ? moi.x() * ratio: -1.0f,
-                  moi.y() > 0.0 ? moi.y() * ratio: -1.0f,
-                  moi.z() > 0.0 ? moi.z() * ratio: -1.0f
-                  )
-            );
+                        moi.y() > 0.0 ? moi.y() * ratio: -1.0f,
+                              moi.z() > 0.0 ? moi.z() * ratio: -1.0f
+            )
+      );
       SetMass(newMass);
    }
 
@@ -1444,7 +1511,7 @@ namespace dtPhysics
 
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::CalculateOriginAndExtentsForNode(PrimitiveType& type, const osg::BoundingBox& bb,
-            VectorType& center, VectorType& extents)
+         VectorType& center, VectorType& extents)
    {
       if (type == PrimitiveType::SPHERE)
       {
@@ -1605,8 +1672,8 @@ namespace dtPhysics
       TransformToPalMatrix(palFrameB, frameTwo);
 
       palLink* link = dtPhysics::PhysicsWorld::GetInstance().GetPalFactory()->CreateLink(palLinkType(palType), bodyBase1, bodyBase2,
-                  palFrameA, palFrameB,
-                  desc.GetDisableCollisionBetweenBodies());
+            palFrameA, palFrameB,
+            desc.GetDisableCollisionBetweenBodies());
 
       if (link->SupportsParameters())
       {

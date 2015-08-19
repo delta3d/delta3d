@@ -32,6 +32,7 @@
 #include <dtPhysics/palphysicsworld.h>
 #include <dtPhysics/palutil.h>
 #include <dtPhysics/physicscompiler.h>
+#include <dtPhysics/physicscomponent.h>
 #include <dtPhysics/physicsactorregistry.h>
 #include <dtPhysics/physicsmaterialactor.h>
 #include <dtPhysics/physicsmaterials.h>
@@ -138,6 +139,8 @@ namespace dtPhysics
       void TestCreatePhysicsObjectsForGeometry();
 
    private:
+      void TestMaterialAssignment(bool overrideMaterials);
+
       int mCompileCount;
       std::string mCurrentEngine;
       std::string mNodeDescriptionToFind;
@@ -808,10 +811,10 @@ namespace dtPhysics
          // a working state.
          options.mAllowDefaultMaterial = true;
 
-         CPPUNIT_ASSERT(1 == mCompiler->CompilePhysicsForNode(*mTestNode, options, data));
-         CPPUNIT_ASSERT(1 == mCompileCount); // Number of time callback called
-         CPPUNIT_ASSERT(1 == data.size()); // one default material
-         CPPUNIT_ASSERT(1 == data[NAME_DEFAULT].size());
+         CPPUNIT_ASSERT_EQUAL(1, mCompiler->CompilePhysicsForNode(*mTestNode, options, data));
+         CPPUNIT_ASSERT_EQUAL(1, mCompileCount); // Number of time callback called
+         CPPUNIT_ASSERT_EQUAL(size_t(1), data.size()); // one default material
+         CPPUNIT_ASSERT_EQUAL(size_t(1), data[NAME_DEFAULT].size());
          mCompileCount = 0;
          data.clear();
       }
@@ -821,10 +824,16 @@ namespace dtPhysics
       }
    }
 
-   /////////////////////////////////////////////////////////////////////////////
    void PhysicsCompilerTests::TestMaterialAssignment()
    {
       SetupTestPhysicsWorld();
+      TestMaterialAssignment(false);
+      TestMaterialAssignment(true);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void PhysicsCompilerTests::TestMaterialAssignment(bool overrideMaterials)
+   {
 
       VertexDataTable data;
       PhysicsCompileOptions options; // use defaults
@@ -886,14 +895,45 @@ namespace dtPhysics
          poB->SetMechanicsType(mechType);
          poC->SetMechanicsType(mechType);
 
+         const std::string overrideMaterialName("boola");
+         if (overrideMaterials)
+         {
+            dtPhysics::MaterialActorPtr mat;
+            mGM->CreateActor(*dtPhysics::PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE, mat);
+            mGM->AddComponent(*new dtPhysics::PhysicsComponent(dtPhysics::PhysicsWorld::GetInstance(), false));
+
+            // the physics objects and physics actor component have to be added to an actor, so the material actor is as good as any.
+            mat->AddComponent(*new dtPhysics::PhysicsActComp);
+            mat->GetComponent<dtPhysics::PhysicsActComp>()->AddPhysicsObject(*poA);
+            mat->GetComponent<dtPhysics::PhysicsActComp>()->AddPhysicsObject(*poB);
+            mat->GetComponent<dtPhysics::PhysicsActComp>()->AddPhysicsObject(*poC);
+
+            mat->SetName(overrideMaterialName);
+            mat->GetMaterialDef().SetRestitution(0.125);
+            mat->GetMaterialDef().SetStaticFriction(0.25);
+            mGM->AddActor(*mat);
+            poA->SetMaterialId(mat->GetId());
+            poB->SetMaterialId(mat->GetId());
+            poC->SetMaterialId(mat->GetId());
+         }
          poA->CreateFromGeometry(*geomA);
          poB->CreateFromGeometry(*geomB);
          poC->CreateFromGeometry(*geomC);
 
-         // --- Ensure that the appropriate materials have been set by the geometry.
-         CPPUNIT_ASSERT(poA->GetMaterial() == mMatA);
-         CPPUNIT_ASSERT(poB->GetMaterial() == mMatB);
-         CPPUNIT_ASSERT(poC->GetMaterial() == mMatC);
+         if (overrideMaterials)
+         {
+            // --- Ensure that the appropriate materials have been set by the geometry.
+            CPPUNIT_ASSERT_EQUAL(overrideMaterialName, poA->GetMaterial()->GetName());
+            CPPUNIT_ASSERT_EQUAL(overrideMaterialName, poB->GetMaterial()->GetName());
+            CPPUNIT_ASSERT_EQUAL(overrideMaterialName, poC->GetMaterial()->GetName());
+         }
+         else
+         {
+            // --- Ensure that the appropriate materials have been set by the geometry.
+            CPPUNIT_ASSERT(poA->GetMaterial() == mMatA);
+            CPPUNIT_ASSERT(poB->GetMaterial() == mMatB);
+            CPPUNIT_ASSERT(poC->GetMaterial() == mMatC);
+         }
 
 
          // Cast rays for material detection.
@@ -909,10 +949,20 @@ namespace dtPhysics
          CPPUNIT_ASSERT(reportB.mHitObject.valid());
          CPPUNIT_ASSERT(reportC.mHitObject.valid());
          CPPUNIT_ASSERT(reportD.mHitObject.valid());
-         CPPUNIT_ASSERT(reportA.mHitObject->GetMaterial() == mMatA); // Material A assigned to Q1 & Q3
-         CPPUNIT_ASSERT(reportB.mHitObject->GetMaterial() == mMatB); // Q2
-         CPPUNIT_ASSERT(reportC.mHitObject->GetMaterial() == mMatA); // Material A assigned to Q1 & Q3
-         CPPUNIT_ASSERT(reportD.mHitObject->GetMaterial() == mMatC); // Q4
+         if (overrideMaterials)
+         {
+            CPPUNIT_ASSERT_EQUAL(overrideMaterialName, reportA.mHitObject->GetMaterial()->GetName());
+            CPPUNIT_ASSERT_EQUAL(overrideMaterialName, reportB.mHitObject->GetMaterial()->GetName());
+            CPPUNIT_ASSERT_EQUAL(overrideMaterialName, reportC.mHitObject->GetMaterial()->GetName());
+            CPPUNIT_ASSERT_EQUAL(overrideMaterialName, reportD.mHitObject->GetMaterial()->GetName());
+         }
+         else
+         {
+            CPPUNIT_ASSERT(reportA.mHitObject->GetMaterial() == mMatA); // Material A assigned to Q1 & Q3
+            CPPUNIT_ASSERT(reportB.mHitObject->GetMaterial() == mMatB); // Q2
+            CPPUNIT_ASSERT(reportC.mHitObject->GetMaterial() == mMatA); // Material A assigned to Q1 & Q3
+            CPPUNIT_ASSERT(reportD.mHitObject->GetMaterial() == mMatC); // Q4
+         }
       }
       catch (dtUtil::Exception& ex)
       {

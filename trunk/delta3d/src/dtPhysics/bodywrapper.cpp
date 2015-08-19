@@ -205,6 +205,12 @@ namespace dtPhysics
    }
 
    ///////////////////////////////////////////////////////////////////////////
+   Material* BaseBodyWrapper::GetMaterial()
+   {
+      return mImpl->mBody->GetMaterial();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////
    void BodyWrapper::AddForce(const VectorType& forceToAdd)
    {
       mImpl->mDynBody->ApplyForce(forceToAdd[0], forceToAdd[1], forceToAdd[2]);

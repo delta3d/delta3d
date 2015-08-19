@@ -279,7 +279,10 @@ namespace dtPhysics
          const dtCore::UniqueId& GetMaterialActor() const;
 
          // Looks up the material actor object using the stored id.
-         const MaterialActor* LookupMaterialActor();
+         const MaterialActor* LookupMaterialActor() { return LookupMaterialActor(GetMaterialActor()); }
+
+         /// Finds a material actor given an id.
+         const MaterialActor* LookupMaterialActor(const dtCore::UniqueId& id);
 
          // Looks up the material actor object by name.
          const MaterialActor* LookupMaterialActor(const std::string& matName);

@@ -35,6 +35,7 @@
 #include <dtCore/propertycontainer.h>
 #include <dtCore/motioninterface.h>
 #include <dtCore/resourcedescriptor.h>
+#include <dtCore/uniqueid.h>
 #include <dtUtil/getsetmacros.h>
 #include <dtUtil/deprecationmgr.h>
 #include <osg/BoundingBox>
@@ -302,17 +303,20 @@ namespace dtPhysics
       bool GetNotifyCollisions() const;
 
       /**
-       * This may return NULL if it hasn't been set, but when one of the Create... methods are called
-       * it will change the NULL to a default material.
-       * @return the material for this object.
-       */
-      Material* GetMaterial() const;
-
-      /**
-       * Changes the material for this object.  Setting this to NULL only makes sense prior to calling a Create... method,
-       * which will make it use the default material.  Setting it to NULL after that is not defined.
+       * Changes the material for this object.  This will only work if it has already been created with one of the Create functions.
+       * Note this behavior has changed from earlier versions.  To preconfigure this, you set the unique id of the dtPhysics::MaterialActor.
        */
       void SetMaterial(Material*);
+      Material* GetMaterial();
+
+      /**
+       * This sets the unique id of the material actor to use for the material info.  This is used for the toolset to configure this physics object in the editor.
+       * It will have to lookup the actor if you call this,
+       * so it will only work if it has been registered with an actor component.  If you don't want to register it, lookup the material yourself,
+       * then call SetMaterial.
+       * @return the material for this object.
+       */
+      DT_DECLARE_ACCESSOR_GET_SET(dtCore::UniqueId, MaterialId);
 
       /**
        * Convenience method for assigning the material instance by a name.
@@ -327,6 +331,12 @@ namespace dtPhysics
        * @return TRUE if a material is found that matches the specified index.
        */
       bool SetMaterialByIndex(MaterialIndex index);
+
+      /**
+       * Sets the material by looking the material actor by the given unique id.
+       * This requires the physics object to be registered with a PhysicsActComp.
+       */
+      bool SetMaterialById(const dtCore::UniqueId& id);
 
       /**
        * This mesh resource will be loaded to set the physics data for a triangle mesh or convex.
