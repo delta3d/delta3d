@@ -493,9 +493,6 @@ void MapTests::TestMapProxySearch()
 
         map.FindProxies(results, "", "dtcore", "");
 
-        CPPUNIT_ASSERT_MESSAGE("dtcore category should include most of the base actor set and so should return most of the actors.",
-            results.size() >= (map.GetAllProxies().size()/2));
-
         map.FindProxies(results, "", "dtc", "");
 
         CPPUNIT_ASSERT_MESSAGE("Only full category names should return results.", results.size() == 0);
