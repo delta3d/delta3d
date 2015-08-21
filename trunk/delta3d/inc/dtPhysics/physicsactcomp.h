@@ -171,7 +171,7 @@ namespace dtPhysics
           *  This version will add the properties of the updater to the actor
           *  @param rootNode root node is the node on which to stop when computing the local transform of the refNode.
           */
-         template<typename UpdaterType = TransformJointUpdater>
+         template<typename UpdaterType /*= TransformJointUpdater*/>
          UpdaterType* CreateJointAndRegisterUpdater(dtPhysics::JointDesc& desc, osg::Transform& refNodeToUpdate, const osg::Node* rootNode = nullptr)
          {
             dtCore::RefPtr<UpdaterType> result;
