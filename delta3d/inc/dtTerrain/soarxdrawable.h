@@ -191,7 +191,7 @@ namespace dtTerrain
          /**
           * Computes the dimensions of the currently loaded terrain.
           */
-         virtual osg::BoundingBox computeBound() const;
+         virtual osg::BoundingBox computeBoundingBox() const;
          
          /**
           * Builds the internal data structures for use in rendering and managing

@@ -235,7 +235,7 @@ namespace dtTerrain
    }
 
    //////////////////////////////////////////////////////////////////////////
-   osg::BoundingBox SoarXDrawable::computeBound() const
+   osg::BoundingBox SoarXDrawable::computeBoundingBox() const
    {
       //float horizSize = mBaseHorizontalResolution * mBaseSize;
       //osg::BoundingBox bb;
