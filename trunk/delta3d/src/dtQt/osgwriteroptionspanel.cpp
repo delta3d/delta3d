@@ -42,34 +42,50 @@ namespace dtQt
    static const std::string TEXTURE_WRITE_OPTION("WriteImageHint");
    struct TextureWriteOption
    {
+      TextureWriteOption(std::string text, std::string value, TextureWriteOptionE e )
+         : mUIText(text)
+         , mValue(value)
+         , mEnumValue(e)
+      {
+
+      }
+
       std::string mUIText;
       std::string mValue;
       TextureWriteOptionE mEnumValue;
    };
 
    static const TextureWriteOption _TextureWriteOptions[] = {
-      TextureWriteOption{ "Include Data", "IncludeData", EMBED },
-      TextureWriteOption{ "Include File", "IncludeFile", EMBED },
-      TextureWriteOption{ "External", "UseExternal", EXTERNAL },
-      TextureWriteOption{ "Write Out", "WriteOut", EXTERNAL_WRITE },
-      TextureWriteOption{ "No Textures", "", NONE }
+      TextureWriteOption( "Include Data", "IncludeData", EMBED ),
+      TextureWriteOption( "Include File", "IncludeFile", EMBED ),
+      TextureWriteOption( "External", "UseExternal", EXTERNAL ),
+      TextureWriteOption( "Write Out", "WriteOut", EXTERNAL_WRITE ),
+      TextureWriteOption( "No Textures", "", NONE )
    };
 
 
 
    struct TextureCompressionOption
    {
+      TextureCompressionOption(std::string text, osg::Texture::InternalFormatMode e)
+         : mUIText(text)
+         , mEnumValue(e)
+      {
+
+      }
+
+
       std::string mUIText;
       osg::Texture::InternalFormatMode mEnumValue;
    };
 
    static const TextureCompressionOption _TextureCompressionOptions[] = {
-      TextureCompressionOption{ "None", osg::Texture::USE_IMAGE_DATA_FORMAT },
-      TextureCompressionOption{ "Auto", osg::Texture::USE_USER_DEFINED_FORMAT },
-      TextureCompressionOption{  "ARB", osg::Texture::USE_ARB_COMPRESSION },
-      TextureCompressionOption{ "DXT1", osg::Texture::USE_S3TC_DXT1_COMPRESSION },
-      TextureCompressionOption{ "DXT3", osg::Texture::USE_S3TC_DXT3_COMPRESSION },
-      TextureCompressionOption{ "DXT5", osg::Texture::USE_S3TC_DXT5_COMPRESSION }
+      TextureCompressionOption( "None", osg::Texture::USE_IMAGE_DATA_FORMAT ),
+      TextureCompressionOption( "Auto", osg::Texture::USE_USER_DEFINED_FORMAT ),
+      TextureCompressionOption(  "ARB", osg::Texture::USE_ARB_COMPRESSION ),
+      TextureCompressionOption( "DXT1", osg::Texture::USE_S3TC_DXT1_COMPRESSION ),
+      TextureCompressionOption( "DXT3", osg::Texture::USE_S3TC_DXT3_COMPRESSION ),
+      TextureCompressionOption( "DXT5", osg::Texture::USE_S3TC_DXT5_COMPRESSION )
    };
 
 
