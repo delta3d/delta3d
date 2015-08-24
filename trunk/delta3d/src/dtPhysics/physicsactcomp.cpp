@@ -128,21 +128,17 @@ namespace dtPhysics
          DefaultPrePhysicsUpdate();
       }
 
-      const MaterialActor* mat = this->LookupMaterialActor();
-      if (mat != nullptr)
-      {
-         ForEachPhysicsObject([&](dtCore::RefPtr<dtPhysics::PhysicsObject>& po)
+      ForEachPhysicsObject([&](dtCore::RefPtr<dtPhysics::PhysicsObject>& po)
+         {
+            if (po->GetMaterialId().IsNull())
             {
-               if (po->GetMaterialId().IsNull())
-               {
-                  po->SetMaterialId(mat->GetId());
-               }
-               if (GetAutoCreateOnEnteringWorld())
-               {
-                  po->Create();
-               }
-            });
-      }
+               po->SetMaterialId(GetMaterialActor());
+            }
+            if (GetAutoCreateOnEnteringWorld())
+            {
+               po->Create();
+            }
+         });
    }
 
    /////////////////////////////////////////////////////////////////////////////
