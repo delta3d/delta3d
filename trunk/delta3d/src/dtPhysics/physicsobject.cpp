@@ -544,14 +544,17 @@ namespace dtPhysics
          }
 
          dtCore::RefPtr<VertexData> data;
-         if (nodeToLoad != NULL)
+         if (!GetPrimitiveType().IsSimpleShape())
          {
-            bool polytope = GetPrimitiveType() == PrimitiveType::CONVEX_HULL;
-            VertexData::GetOrCreateCachedDataForNode(data, nodeToLoad, polytope && !cachingKey.empty() ? cachingKey + POLYTOPE_SUFFIX : cachingKey, polytope);
-         }
-         else
-         {
-            GetVertexDataForResource(data, cachingKey);
+            if (nodeToLoad != NULL)
+            {
+               bool polytope = GetPrimitiveType() == PrimitiveType::CONVEX_HULL;
+               VertexData::GetOrCreateCachedDataForNode(data, nodeToLoad, polytope && !cachingKey.empty() ? cachingKey + POLYTOPE_SUFFIX : cachingKey, polytope);
+            }
+            else
+            {
+               GetVertexDataForResource(data, cachingKey);
+            }
          }
 
          return CreateInternal(data);
