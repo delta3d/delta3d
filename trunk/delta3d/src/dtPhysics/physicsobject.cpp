@@ -75,7 +75,7 @@ namespace dtPhysics
       ,  mActivationTimeThreshold(Real(-1.0))
       ,  mLinearDamping(Real(0.01))
       ,  mAngularDamping(Real(0.01))
-      ,  mActivationSettings(NULL)
+      ,  mActivationSettings(nullptr)
       ,  mMeshScale(Real(1.0), Real(1.0), Real(1.0))
       {
       }
@@ -158,7 +158,7 @@ namespace dtPhysics
             geom = Geometry::CreateCapsuleGeometry(geomWorldTransform, dimensions[0], dimensions[1], mass);
          }
 
-         if (geom == NULL)
+         if (geom == nullptr)
          {
             LOG_ERROR("Unsupported primitive type passed to CreateSimpleGeometry: " + primType.GetName());
             return;
@@ -198,7 +198,7 @@ namespace dtPhysics
 
       void ApplyActivationSettings()
       {
-         if (mActivationSettings != NULL)
+         if (mActivationSettings != nullptr)
          {
             if (mActivationLinearVelocityThreshold > -FLT_EPSILON)
             {
@@ -240,7 +240,7 @@ namespace dtPhysics
    {
       CleanUp();
       delete mDataMembers;
-      mDataMembers = NULL;
+      mDataMembers = nullptr;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -303,14 +303,14 @@ namespace dtPhysics
          if (mat == nullptr)
          {
             dtPhysics::PhysicsActComp* owner = dynamic_cast<dtPhysics::PhysicsActComp*>(GetUserData());
-            if (owner != NULL)
+            if (owner != nullptr)
             {
                owner->LookupMaterialActor(matName);
                mat = materials.GetMaterial(matName);
             }
          }
 
-         if (mat != NULL)
+         if (mat != nullptr)
          {
             SetMaterial(mat);
             success = true;
@@ -330,7 +330,7 @@ namespace dtPhysics
          dtPhysics::PhysicsMaterials& materials = PhysicsWorld::GetInstance().GetMaterials();
 
          Material* mat = materials.GetMaterialByIndex(index);
-         if (mat != NULL)
+         if (mat != nullptr)
          {
             SetMaterial(mat);
             success = true;
@@ -356,7 +356,7 @@ namespace dtPhysics
          else
          {
             dtPhysics::PhysicsActComp* owner = dynamic_cast<dtPhysics::PhysicsActComp*>(GetUserData());
-            if (owner != NULL)
+            if (owner != nullptr)
             {
                const MaterialActor* actor = owner->LookupMaterialActor(id);
                if (actor != nullptr)
@@ -469,7 +469,7 @@ namespace dtPhysics
       VectorType center, newDimensions;
       osg::BoundingBox bBox;
 
-      if (nodeToLoad != NULL)
+      if (nodeToLoad != nullptr)
       {
          osg::ComputeBoundsVisitor bb;
          // sorry about the const cast.  The node SHOULD be const since we aren't changing it
@@ -546,7 +546,7 @@ namespace dtPhysics
          dtCore::RefPtr<VertexData> data;
          if (!GetPrimitiveType().IsSimpleShape())
          {
-            if (nodeToLoad != NULL)
+            if (nodeToLoad != nullptr)
             {
                bool polytope = GetPrimitiveType() == PrimitiveType::CONVEX_HULL;
                VertexData::GetOrCreateCachedDataForNode(data, nodeToLoad, polytope && !cachingKey.empty() ? cachingKey + POLYTOPE_SUFFIX : cachingKey, polytope);
@@ -608,7 +608,7 @@ namespace dtPhysics
             }
             else
             {
-               vertDataOut = NULL;
+               vertDataOut = nullptr;
                throw dtUtil::Exception("Unable to load triangle data from existing file resource: "
                      + GetMeshResource().GetResourceIdentifier(), __FILE__, __LINE__);
             }
@@ -638,7 +638,7 @@ namespace dtPhysics
       else
       {
          LOGN_ERROR("physicsobject.cpp", "Created a GenericBodyWrapper, but dynamic casting it to one failed.  Bailing out.");
-         mDataMembers->mGenericBody = NULL;
+         mDataMembers->mGenericBody = nullptr;
          return false;
       }
 
@@ -648,7 +648,7 @@ namespace dtPhysics
       {
          // Attempt to assign a material from the arbitrary triangle data that may have been loaded.
          const dtPhysics::VertexData* vertData = geometry.GetVertexData();
-         if (vertData != NULL && vertData->GetMaterialCount() > 0)
+         if (vertData != nullptr && vertData->GetMaterialCount() > 0)
          {
             // For now one material can be applied per object.
             std::string matName = vertData->GetMaterialName(vertData->GetFirstMaterialIndex());
@@ -703,7 +703,7 @@ namespace dtPhysics
          {
             mDataMembers->CreateSimpleGeometry(GetPrimitiveType(), GetExtents(), geometryWorld, GetMass());
          }
-         else if (vertData != NULL)
+         else if (vertData != nullptr)
          {
             // Scale the data in place, which is actually the cached one.
             // Each user will just rescale the data to what they need, but
@@ -740,7 +740,7 @@ namespace dtPhysics
       else
       {
          LOGN_ERROR("physicsobject.cpp", "Created a GenericBodyWrapper, but dynamic casting it to one failed.  Bailing out.");
-         mDataMembers->mGenericBody = NULL;
+         mDataMembers->mGenericBody = nullptr;
          return false;
       }
 
@@ -778,16 +778,16 @@ namespace dtPhysics
    {
       mDataMembers->mGeometries.clear();
       // This is just a pointer to a dynamic_cast version of the body, so no need to delete.
-      mDataMembers->mActivationSettings = NULL;
+      mDataMembers->mActivationSettings = nullptr;
       // These are ref ptrs, so they should get cleaned up
-      mDataMembers->mGenericBody = NULL;
+      mDataMembers->mGenericBody = nullptr;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    Real PhysicsObject::GetSkinThickness() const
    {
       Real thickness = mDataMembers->mSkinThickness;
-      if (mDataMembers->mGenericBody != NULL)
+      if (mDataMembers->mGenericBody != nullptr)
       {
          thickness = mDataMembers->mGenericBody->GetSkinWidth();
       }
@@ -798,7 +798,7 @@ namespace dtPhysics
    void PhysicsObject::SetSkinThickness(Real st)
    {
       mDataMembers->mSkinThickness = st;
-      if (mDataMembers->mGenericBody != NULL)
+      if (mDataMembers->mGenericBody != nullptr)
       {
          mDataMembers->mGenericBody->SetSkinWidth(st);
       }
@@ -838,7 +838,7 @@ namespace dtPhysics
    CollisionGroup PhysicsObject::GetCollisionGroup() const
    {
       CollisionGroup g = mDataMembers->mCollisionGroup;
-      if (mDataMembers->mGenericBody != NULL)
+      if (mDataMembers->mGenericBody != nullptr)
       {
          g = mDataMembers->mGenericBody->GetGroup();
       }
@@ -849,7 +849,7 @@ namespace dtPhysics
    void PhysicsObject::SetCollisionGroup(CollisionGroup group)
    {
       mDataMembers->mCollisionGroup = group;
-      if (mDataMembers->mGenericBody != NULL)
+      if (mDataMembers->mGenericBody != nullptr)
       {
          mDataMembers->mGenericBody->SetGroup(group);
       }
@@ -1054,7 +1054,7 @@ namespace dtPhysics
       {
          return mDataMembers->mGeometries[idx];
       }
-      return NULL;
+      return nullptr;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -1386,7 +1386,7 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    Real PhysicsObject::GetActivationLinearVelocityThreshold() const
    {
-      if (mDataMembers->mActivationSettings != NULL)
+      if (mDataMembers->mActivationSettings != nullptr)
       {
          return Real(mDataMembers->mActivationSettings->GetActivationLinearVelocityThreshold());
       }
@@ -1396,7 +1396,7 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::SetActivationLinearVelocityThreshold(Real threshold)
    {
-      if (mDataMembers->mActivationSettings != NULL)
+      if (mDataMembers->mActivationSettings != nullptr)
       {
          mDataMembers->mActivationSettings->SetActivationLinearVelocityThreshold(Float(threshold));
       }
@@ -1406,7 +1406,7 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    Real PhysicsObject::GetActivationAngularVelocityThreshold() const
    {
-      if (mDataMembers->mActivationSettings != NULL)
+      if (mDataMembers->mActivationSettings != nullptr)
       {
          return Real(mDataMembers->mActivationSettings->GetActivationAngularVelocityThreshold());
       }
@@ -1416,7 +1416,7 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::SetActivationAngularVelocityThreshold(Real threshold)
    {
-      if (mDataMembers->mActivationSettings != NULL)
+      if (mDataMembers->mActivationSettings != nullptr)
       {
          mDataMembers->mActivationSettings->SetActivationAngularVelocityThreshold(Float(threshold));
       }
@@ -1426,7 +1426,7 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    Real PhysicsObject::GetActivationTimeThreshold() const
    {
-      if (mDataMembers->mActivationSettings != NULL)
+      if (mDataMembers->mActivationSettings != nullptr)
       {
          return Real(mDataMembers->mActivationSettings->GetActivationTimeThreshold());
       }
@@ -1436,7 +1436,7 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::SetActivationTimeThreshold(Real threshold)
    {
-      if (mDataMembers->mActivationSettings != NULL)
+      if (mDataMembers->mActivationSettings != nullptr)
       {
          mDataMembers->mActivationSettings->SetActivationTimeThreshold(Float(threshold));
       }
@@ -1591,8 +1591,8 @@ namespace dtPhysics
          const VectorType&         pivotAxis,
          bool                      disableCollisionBetweenBodies)
    {
-      if (parent.GetBodyWrapper() == NULL && child.GetBodyWrapper() == NULL)
-         return NULL;
+      if (parent.GetBodyWrapper() == nullptr && child.GetBodyWrapper() == nullptr)
+         return nullptr;
 
       palBodyBase* bodyBase1( &(parent.GetBodyWrapper()->GetPalBodyBase()) );
       palBodyBase* bodyBase2( &(child.GetBodyWrapper()->GetPalBodyBase()) );
@@ -1613,8 +1613,8 @@ namespace dtPhysics
          bool disableCollisionBetweenBodies)
    {
 
-      if (body1.GetBodyWrapper() == NULL && body2.GetBodyWrapper() == NULL)
-         return NULL;
+      if (body1.GetBodyWrapper() == nullptr && body2.GetBodyWrapper() == nullptr)
+         return nullptr;
 
       palMatrix4x4 palFrameA, palFrameB;
 
@@ -1637,8 +1637,8 @@ namespace dtPhysics
 
    palRigidLink* PhysicsObject::CreateFixedJoint(dtPhysics::PhysicsObject& parent, dtPhysics::PhysicsObject& child, bool disableCollisionBetweenBodies)
    {
-      if (parent.GetBodyWrapper() == NULL && child.GetBodyWrapper() == NULL)
-         return NULL;
+      if (parent.GetBodyWrapper() == nullptr && child.GetBodyWrapper() == nullptr)
+         return nullptr;
 
       palBodyBase* bodyBase1( &(parent.GetBodyWrapper()->GetPalBodyBase()) );
       palBodyBase* bodyBase2( &(child.GetBodyWrapper()->GetPalBodyBase()) );
@@ -1651,7 +1651,7 @@ namespace dtPhysics
    palMotor* PhysicsObject::CreateMotor(palLink& joint, const MotorDesc& desc)
    {
       palMotor* result = dtPhysics::PhysicsWorld::GetInstance().GetPalFactory()->CreateMotor(&joint, desc.GetAxis().GetIndex() + (desc.GetIsAngular() ? 3 : 0));
-      if (result != NULL)
+      if (result != nullptr)
       {
          result->Update(desc.GetTargetVelocity(), desc.GetMaxForce());
       }
@@ -1660,8 +1660,8 @@ namespace dtPhysics
 
    palLink* PhysicsObject::CreateJoint(PhysicsObject& one, PhysicsObject& two, const JointDesc& desc)
    {
-      if (one.GetBodyWrapper() == NULL && two.GetBodyWrapper() == NULL)
-         return NULL;
+      if (one.GetBodyWrapper() == nullptr && two.GetBodyWrapper() == nullptr)
+         return nullptr;
 
       int palType = desc.GetJointType().GetPalLinkType();
       palBodyBase* bodyBase1( &(one.GetBodyWrapper()->GetPalBodyBase()) );
