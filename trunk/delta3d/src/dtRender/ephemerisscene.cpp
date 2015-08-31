@@ -167,6 +167,7 @@ namespace dtRender
             : mFogEnabled(true)
             , mFogNear(1.0f)
             , mVisibility(25000.0f)
+            , mFogColor(0.84f, 0.87f, 1.0f, 1.0f)
             , mFogMode(EphemerisScene::EXP2)
             , mDateTime()
             , mFog(new osg::Fog())
@@ -286,6 +287,7 @@ namespace dtRender
       bool mFogEnabled;
       float mFogNear;
       float mVisibility;
+      osg::Vec4 mFogColor;
       EphemerisScene::FogMode mFogMode;
       dtUtil::DateTime mDateTime;
       dtCore::RefPtr<osg::Fog> mFog; 
@@ -300,7 +302,7 @@ namespace dtRender
    : BaseClass(*EPHEMERIS_SCENE, SceneEnum::BACKGROUND)   
    , mSetToLocalTime(false)
    , mSetTimeFromSystem(false)
-   //, mAutoComputeFogColor(true)
+   , mAutoComputeFogColor(true)
    , mLatLong(19.3333f, 81.2167f)
    , mImpl(new EphemerisImpl())
    {
@@ -465,7 +467,7 @@ namespace dtRender
       mImpl->mFog->setDensity(density);
    }
 
-   float EphemerisScene::GetFogDensity()
+   float EphemerisScene::GetFogDensity() const
    {
       return mImpl->mFog->getDensity();
    }
@@ -498,12 +500,122 @@ namespace dtRender
 
    const osg::Vec4& EphemerisScene::GetFogColor() const
    {
-      return mImpl->mFog->getColor();
+      return mImpl->mFogColor;
    }
 
    void EphemerisScene::SetFogColor(const osg::Vec4& color)
    {
+      mImpl->mFogColor = color;
+
       mImpl->mFog->setColor(color);
+
+      if (mAutoComputeFogColor)
+      {
+         UpdateFogColor();
+      }
+   }
+
+   void EphemerisScene::UpdateFogColor()
+   {
+      // Calculate the fog color in the direction of the sun for
+      // sunrise/sunset effects.
+      
+      osgEphemeris::EphemerisData* ephemData = mImpl->mEphemerisModel->getEphemerisData();
+      if (ephemData != nullptr)
+      {
+         double sunAlt = osg::RadiansToDegrees(ephemData->data[osgEphemeris::CelestialBodyNames::Sun].alt);
+         
+         osg::Vec4 fogColor = mImpl->mFogColor * ApproximateSkyBrightness(sunAlt);
+         osg::Vec4 sunColor = mImpl->mEphemerisModel->getSunLightDiffuse();
+
+         float red = (fogColor[0] + 2.f * sunColor[0] * sunColor[0]) / 3.f;
+         float green = (fogColor[1] + 2.f * sunColor[1] * sunColor[1]) / 3.f;
+         float blue = (fogColor[2] + 2.f * sunColor[2]) / 3.f;
+
+         // interpolate between the sunrise/sunset color and the color
+         // at the opposite direction of this effect. Take in account
+         // the current visibility.
+         float vis = GetVisibility();
+
+         const float MAX_VISIBILITY = 20000;
+
+         // Clamp visibility
+         if (vis > MAX_VISIBILITY)
+         {
+            vis = MAX_VISIBILITY;
+         }
+
+         double sunRotation = osg::DegreesToRadians(-95.0);
+         double heading = osg::DegreesToRadians(-95.0);
+
+         double rotation = -(sunRotation + osg::PI) - heading;
+
+         float inverseVis = 1.f - (MAX_VISIBILITY - vis) / MAX_VISIBILITY;
+         float sif = 0.5f - cosf(osg::DegreesToRadians(sunAlt) * 2.0f) / 2.f + 0.000001f;
+
+         float rf1 = std::abs((rotation - osg::PI) / osg::PI); // difference between eyepoint heading and sun heading (rad)
+         float rf2 = inverseVis * pow(rf1 * rf1, 1.0f / sif);
+
+         float rf3 = 1.f - rf2;
+
+         fogColor[0] = rf3 * fogColor[0] + rf2 * red;
+         fogColor[1] = rf3 * fogColor[1] + rf2 * green;
+         fogColor[2] = rf3 * fogColor[2] + rf2 * blue;
+         fogColor[3] = 1.0;
+
+         // now apply the fog's color         
+         mImpl->mFog->setColor(fogColor);
+      }
+
+   }
+
+   double EphemerisScene::ApproximateSkyBrightness(double sunAlt)
+   {
+      if (sunAlt > 50.0)
+      {
+         return 1.0f;
+      }
+      else if (sunAlt > 40.0)
+      {
+         return dtUtil::MapRangeValue(sunAlt, 40.0, 50.0, 0.997, 1.0);
+      }
+      else if (sunAlt > 20.0)
+      {
+         return dtUtil::MapRangeValue(sunAlt, 20.0, 40.0, 0.962, 0.997);
+      }
+      else if (sunAlt > 10.0)
+      {
+         return dtUtil::MapRangeValue(sunAlt, 10.0, 20.0, 0.895, 0.962);
+      }
+      else if (sunAlt > 5.0)
+      {
+         return dtUtil::MapRangeValue(sunAlt, 5.0, 10.0, 0.806, 0.895);
+      }
+      else if (sunAlt > 0.0)
+      {
+         return dtUtil::MapRangeValue(sunAlt, 0.0, 5.0, 0.616, 0.806);
+      }
+      else if (sunAlt > -5.0)
+      {
+         return dtUtil::MapRangeValue(sunAlt, -5.0, 0.0, 0.350, 0.616);
+      }
+      else if (sunAlt > -10.0)
+      {
+         return dtUtil::MapRangeValue(sunAlt, -10.0, -5.0, 0.2, 0.350);
+      }
+      else if (sunAlt > -20.0)
+      {
+         return dtUtil::MapRangeValue(sunAlt, -20.0, -10.0, 0.11, 0.2);
+      }
+      else if (sunAlt > -90.0)
+      {
+         return dtUtil::MapRangeValue(sunAlt, -90.0, -20.0, 0.08, 0.11);
+      }
+      else
+      {
+         return 0.0;
+      }
+
    }
 
    void EphemerisScene::SetFogMode(FogMode mode)
@@ -547,7 +659,7 @@ namespace dtRender
 
    void EphemerisScene::SetVisibility(float distance)
    {
-      if (dtUtil::Equivalent(mImpl->mVisibility, 0.0f))
+      if (dtUtil::Equivalent(distance, 0.0f))
       {
          SetFogEnable(false);
          return;
@@ -562,7 +674,7 @@ namespace dtRender
       mImpl->mFog->setEnd(mImpl->mVisibility);
    }
 
-   float EphemerisScene::GetVisibility()
+   float EphemerisScene::GetVisibility() const
    {
       return mImpl->mVisibility;
    }
@@ -589,10 +701,10 @@ namespace dtRender
             mImpl->mEphemerisModel->setDateTime(osgEphemeris::DateTime(dt.GetYear(),
                  dt.GetMonth(), dt.GetDay(), dt.GetHour(), dt.GetMinute(), int(dt.GetSecond())));
 
-            /*if (mAutoComputeFogColor)
+            if (mAutoComputeFogColor)
             {
-
-            }*/
+               UpdateFogColor();
+            }
          }
 
       }
@@ -731,9 +843,9 @@ namespace dtRender
          "The color of the fog.",
          PropRegHelperType, propRegHelper);
 
-      /*DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(AutoComputeFogColor, "AutoComputeFogColor", "AutoComputeFogColor",
+      DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(AutoComputeFogColor, "AutoComputeFogColor", "AutoComputeFogColor",
           "Setting this property auto changes the fog color based on the time of day.",
-          PropRegHelperType, propRegHelper);*/
+          PropRegHelperType, propRegHelper);
 
       DT_REGISTER_PROPERTY_WITH_NAME_AND_LABEL(Visibility, "Visibility", "Visibility", 
          "How far things are visible before they become the full fog color.",

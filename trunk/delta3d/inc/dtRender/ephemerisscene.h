@@ -76,7 +76,7 @@ namespace dtRender
       void SetTimeToLocalTime();
 
       void SetFogDensity(float density);
-      float GetFogDensity();
+      float GetFogDensity() const;
 
       bool GetFogEnable() const;
       void SetFogEnable(bool enable);
@@ -89,21 +89,23 @@ namespace dtRender
       void SetFogNear( float val );
 
       void SetVisibility( float distance );
-      float GetVisibility ();
+      float GetVisibility() const;
 
       osg::LightSource* GetLightSource();
       const osg::LightSource* GetLightSource() const;
 
+      double ApproximateSkyBrightness(double sunAlt);
+
       DT_DECLARE_ACCESSOR_INLINE(bool, SetToLocalTime)
       DT_DECLARE_ACCESSOR_INLINE(bool, SetTimeFromSystem)
-      //DT_DECLARE_ACCESSOR_INLINE(bool, AutoComputeFogColor)
+      DT_DECLARE_ACCESSOR_INLINE(bool, AutoComputeFogColor)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec2, LatLong)
 
       
-
    protected:
       virtual void OnTimeChanged();
-
+      virtual void UpdateFogColor();
+      
    private:
       bool SetTimeAndDate(std::istringstream& iss);
       void BindShader();
