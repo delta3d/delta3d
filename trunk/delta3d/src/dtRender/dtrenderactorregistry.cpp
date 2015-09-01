@@ -34,6 +34,7 @@
 #include <dtRender/cubemapscene.h>
 #include <dtRender/ssaoscene.h>
 #include <dtRender/videoscene.h>
+#include <dtRender/atmospherescene.h>
 
 
 // For the autoreg
@@ -41,6 +42,8 @@
 
 namespace dtRender
 {
+   dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::ATMOSPHERE_SCENE_ACTOR_TYPE(new dtCore::ActorType
+      ("Atmosphere Scene", "dtRender", "This actor creates a post process fog effect."));
 
    dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::DOF_SCENE_ACTOR_TYPE(new dtCore::ActorType
       ("DOF Scene", "dtRender", "This actor creates a depth of field post process effect.")); 
@@ -117,6 +120,7 @@ namespace dtRender
    ////////////////////////////////////////////////////////////////////////////
    void RenderActorRegistry::RegisterActorTypes()
    {
+      mActorFactory->RegisterType<AtmosphereSceneActor>(ATMOSPHERE_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<CubeMapSceneActor>(CUBEMAP_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<DynamicLight>(DYNAMIC_LIGHT_ACTOR_TYPE.get());
       mActorFactory->RegisterType<DOFSceneActor>(DOF_SCENE_ACTOR_TYPE.get());
