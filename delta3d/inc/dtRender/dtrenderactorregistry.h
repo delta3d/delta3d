@@ -31,6 +31,8 @@ namespace dtRender
    {
    public:
 
+      static dtCore::RefPtr<dtCore::ActorType> ATMOSPHERE_SCENE_ACTOR_TYPE;
+
       static dtCore::RefPtr<dtCore::ActorType> DOF_SCENE_ACTOR_TYPE;
 
       static dtCore::RefPtr<dtCore::ActorType> DYNAMIC_LIGHT_ACTOR_TYPE;

@@ -10,6 +10,7 @@ file(GLOB LIB_PUBLIC_HEADERS
    )
 
 set(LIB_SOURCES 
+      atmospherescene.cpp
       cubemapscene.cpp
       dtrenderactorregistry.cpp
       dofscene.cpp
