@@ -49,7 +49,7 @@ namespace dtVoxel
       {
       }
 
-      ~ColliderCallback() override {}
+      ~ColliderCallback()  {}
 
       /**
        * Override this to return the triangles within the given axis aligned bounding box.
@@ -175,7 +175,7 @@ namespace dtVoxel
          typedef typename GridTypePtr::element_type GridType;
 
          openvdb::CoordBBox bbox;
-         grid->tree().getIndexRange(bbox);
+         bbox = grid->evalActiveVoxelBoundingBox();
          openvdb::Vec3d start = grid->indexToWorld(bbox.getStart());
          openvdb::Vec3d end = grid->indexToWorld(bbox.getEnd());
          std::cout << "Bounding box of grid: " << start << "->" << end << std::endl;
