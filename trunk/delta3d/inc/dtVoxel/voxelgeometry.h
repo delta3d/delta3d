@@ -27,8 +27,7 @@
 #include <pal/palGeometry.h>
 #include <openvdb/openvdb.h>
 #include <bitset>
-// remove
-#include <iostream>
+// #include <iostream>
 #include <dtCore/camera.h>
 #include <osg/io_utils>
 
@@ -45,7 +44,6 @@ namespace dtVoxel
       ColliderCallback(const palBoundingBox& shapeBoundingBox, GridPtr grid)
       : palCustomGeometryCallback(shapeBoundingBox)
       , mGrid(grid)
-      , mAcc(grid->getConstAccessor())
       {
       }
 
@@ -94,17 +92,17 @@ namespace dtVoxel
          }
 
          const palBoundingBox& fullBoundingBox = GetBoundingBox();
+         typename GridType::ConstAccessor ca = mGrid->getConstAccessor();
 
          //std::cout << " collision box: " << collideBox << std::endl;
          for (int i = collideBox.min().x(), iend = collideBox.max().x() + 1; i < iend; ++i)
          {
             for (int j = collideBox.min().y(), jend = collideBox.max().y() + 1; j < jend; ++j)
             {
-               int partId = (fullBoundingBox.max.x - fullBoundingBox.max.x) * i + j;
+               int partId = (fullBoundingBox.max.x - fullBoundingBox.min.x) * i + j;
 
                for (int k = collideBox.min().z(), kend = collideBox.max().z() + 1; k < kend; ++k)
                {
-                  typename GridType::ConstAccessor& ca = mAcc;
                   openvdb::math::Coord coord(i, j, k);
                   if (!ca.isValueOn(coord))
                      continue;
@@ -162,7 +160,6 @@ namespace dtVoxel
       }
 
       GridPtr mGrid;
-      typename GridType::ConstAccessor mAcc;
    };
 
    class DT_VOXEL_EXPORT VoxelGeometry : public dtPhysics::Geometry
@@ -178,7 +175,7 @@ namespace dtVoxel
          bbox = grid->evalActiveVoxelBoundingBox();
          openvdb::Vec3d start = grid->indexToWorld(bbox.getStart());
          openvdb::Vec3d end = grid->indexToWorld(bbox.getEnd());
-         std::cout << "Bounding box of grid: " << start << "->" << end << std::endl;
+         //std::cout << "Bounding box of grid: " << start << "->" << end << std::endl;
          palBoundingBox palBB;
          palBB.min.Set(Float(start.x()), Float(start.y()), Float(start.z()));
          palBB.max.Set(Float(end.x()), Float(end.y()), Float(end.z()));

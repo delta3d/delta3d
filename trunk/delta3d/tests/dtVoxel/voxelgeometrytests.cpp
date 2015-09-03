@@ -23,6 +23,8 @@
 #include "../dtPhysics/basedtphysicstestfixture.h"
 #include <dtPhysics/physicsobject.h>
 #include <openvdb/openvdb.h>
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range2d.h>
 
 namespace dtVoxel
 {
@@ -65,31 +67,48 @@ namespace dtVoxel
             CPPUNIT_ASSERT(geometry.valid());
             po->CreateFromGeometry(*geometry);
 
-            for (float i = 0; i < 12.0f; i += 0.01)
-            {
-               for (float j = 0; j < 12.0f; j += 0.01)
-               {
-                  dtPhysics::RayCast ray;
-                  ray.SetOrigin(dtPhysics::VectorType(i, j, 220.0f));
-                  ray.SetDirection(dtPhysics::VectorType(0.0f, 0.0f, -260.0f));
-                  std::vector<dtPhysics::RayCast::Report> hits;
-                  mPhysicsComp->GetPhysicsWorld().TraceRay(ray, hits);
-                  CPPUNIT_ASSERT(hits.size() > 0U);
-                  int found = 0;
-                  for (unsigned k = 0; k < hits.size(); ++k)
+            tbb::parallel_for(tbb::blocked_range2d<float>(-4.0f,8.0f,1, -4.0f,8.0f,1),
+                  [&](const tbb::blocked_range2d<float>& r)
                   {
-                     dtPhysics::VectorType v = hits[k].mHitPos;
-                     openvdb::Vec3d ov(v.x(), v.y(), v.z());
-                     openvdb::Coord coord1 = grid->transform().worldToIndexNodeCentered(ov);
-                     openvdb::Coord coord2 = grid->transform().worldToIndexCellCentered(ov);
-                     std::ostringstream ss;
-                     ss << "The collision coordinates should match up with cells in the grid." <<   ov << " " << coord1 << " ";
-                     openvdb::BoolGrid::ConstAccessor acc = grid->getConstAccessor();
-                     if (acc.isValueOn(coord1) || acc.isValueOn(coord2)) ++found;
+
+               std::ostringstream oss;
+               std::vector<dtPhysics::RayCast::Report> hits;
+
+               for (float i = r.rows().begin(); i < r.rows().end(); i += 0.02)
+               {
+                  for (float j = r.cols().begin(); j < r.cols().end(); j += 0.02)
+                  {
+                     dtPhysics::RayCast ray;
+                     ray.SetOrigin(dtPhysics::VectorType(i, j, 220.0f));
+                     ray.SetDirection(dtPhysics::VectorType(0.0f, 0.0f, -260.0f));
+                     hits.clear();
+                     mPhysicsComp->GetPhysicsWorld().TraceRay(ray, hits);
+                     oss.str("");
+                     oss << "No hits for ray x=" << i << " y=" << j;
+                     CPPUNIT_ASSERT_MESSAGE(oss.str(), hits.size() > 0U);
+                     size_t prevSize = hits.size();
+                     ray.SetOrigin(dtPhysics::VectorType(i, 1100.0f, j));
+                     ray.SetDirection(dtPhysics::VectorType(0.0f, -2200.0f, 0.0f));
+                     mPhysicsComp->GetPhysicsWorld().TraceRay(ray, hits);
+                     oss.str("");
+                     oss << "No hits for ray x=" << i << " z=" << j;
+                     CPPUNIT_ASSERT_MESSAGE(oss.str(), hits.size() > prevSize);
+                     int found = 0;
+                     for (unsigned k = 0; k < hits.size(); ++k)
+                     {
+                        dtPhysics::VectorType v = hits[k].mHitPos;
+                        openvdb::Vec3d ov(v.x(), v.y(), v.z());
+                        openvdb::Coord coord1 = grid->transform().worldToIndexNodeCentered(ov);
+                        openvdb::Coord coord2 = grid->transform().worldToIndexCellCentered(ov);
+                        std::ostringstream ss;
+                        ss << "The collision coordinates should match up with cells in the grid." <<   ov << " " << coord1 << " ";
+                        openvdb::BoolGrid::ConstAccessor acc = grid->getConstAccessor();
+                        if (acc.isValueOn(coord1) || acc.isValueOn(coord2)) ++found;
+                     }
+                     CPPUNIT_ASSERT(found > 0);
                   }
-                  CPPUNIT_ASSERT(found > 0);
                }
-            }
+                  });
          }
          catch (const dtUtil::Exception& ex)
          {
