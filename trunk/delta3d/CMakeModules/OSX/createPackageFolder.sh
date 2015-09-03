@@ -1,5 +1,6 @@
 DELTA_ROOT=$DEV/delta3d
 DELTA_EXT=$DELTA_ROOT/ext
+QTDIR=/usr/local/Trolltech/Qt-4.8.6
 
 rm -rf ~/delta3d
 
@@ -11,7 +12,7 @@ cp -av ${DELTA_EXT}/lib ${DELTA_EXT}/Frameworks ${DELTA_EXT}/include ${DELTA_EXT
 
 pushd ~/delta3d
 
-palOldNew="/Users/david/development/ext/src/pal-branch/lib/libpal.dylib @executable_path/../lib/libpal.dylib"
+palOldNew="$DEV/ext/src/pal/lib/libpal.dylib @executable_path/../lib/libpal.dylib"
 
 mkdir Qt
 mkdir QtPlugins
@@ -19,8 +20,9 @@ mkdir QtPlugins
 pushd Qt
 targetDir=$PWD
 
+
 rm -rf Qt*.framework phonon.framework
-pushd /usr/local/Trolltech/Qt-4.8.6/lib
+pushd $QTDIR/lib
 cp -av phonon.framework QtCore.framework    QtGui.framework     QtNetwork.framework QtOpenGL.framework  QtWebKit.framework QtXml.framework QtSvg.framework $targetDir
 cp -av ../plugins/* ~/delta3d/QtPlugins
 popd
@@ -29,12 +31,12 @@ for token in *.framework; do
    install_name_tool -id @executable_path/../Frameworks/$token/Versions/4/${token%.framework}  $token/Versions/4/${token%.framework}
    for tokenInner in *.framework; do
        #if [[ ${tokenInner} = ${token} ]]; then
-          install_name_tool -change /usr/local/Trolltech/Qt-4.8.6/lib/${tokenInner}/Versions/4/${tokenInner%.framework} @executable_path/../Frameworks/${tokenInner}/Versions/4/${tokenInner%.framework}  $token/${token%.framework}
+          install_name_tool -change $QTDIR/lib/${tokenInner}/Versions/4/${tokenInner%.framework} @executable_path/../Frameworks/${tokenInner}/Versions/4/${tokenInner%.framework}  $token/${token%.framework}
        #fi
    done
    #otool -L $token/${token%.framework}
 
-   targetFrw="/usr/local/Trolltech/Qt-4.8.6/lib/${token}/Versions/4/${token%.framework} @executable_path/../Frameworks/${token}/Versions/4/${token%.framework}"
+   targetFrw="$QTDIR/lib/${token}/Versions/4/${token%.framework} @executable_path/../Frameworks/${token}/Versions/4/${token%.framework}"
    
    pushd ../Frameworks
    
@@ -130,7 +132,7 @@ for token in *.app ; do
    ln -sf ../../lib ; 
    mkdir PlugIns; 
    pushd PlugIns; 
-   ln -sf ../../../lib/osgPlugins-3.2.1;
+   ln -sf ../../../lib/osgPlugins-3.4.0;
    ln -sf ../../../lib/stplugins;
    ln -sf ../../../lib/directorplugins;
    ln -sf ../../../PalPlugins;
