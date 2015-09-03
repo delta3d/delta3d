@@ -28,7 +28,6 @@
 #include "export.h"
 #include <dtABC/baseabc.h>
 #include <dtABC/application.h>
-#include <dtCore/deltawin.h>
 #include <dtCore/map.h>
 #include <dtCore/project.h>
 #include <dtCore/projectconfig.h>
@@ -63,21 +62,21 @@ public:
 
    TestApp();
 
-   virtual ~TestApp();
+   ~TestApp() /*override*/; // older versions of VC++ don't allow override on destructors.
 
    /**
     * Called to initialize the game application.  You can pull any command line params here.
     */
-   virtual void Initialize(dtABC::BaseABC& app, int argc, char **argv);
+   void Initialize(dtABC::BaseABC& app, int argc, char **argv) override;
 
 
    /**
     * Called just before your application's game loop starts.  This is your main
     * opportunity to create components, load maps, create unique actors, etc...
     */
-   virtual void OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gamemanager);
+   void OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gamemanager) override;
 
-   virtual void OnShutdown(dtABC::BaseABC& /*app*/, dtGame::GameManager& /*gamemanager*/);
+   void OnShutdown(dtABC::BaseABC& /*app*/, dtGame::GameManager& /*gamemanager*/) override;
 
    void ValidateMap(const std::string& mapToValidate);
 
