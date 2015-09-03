@@ -22,6 +22,10 @@
             <version></version>
         </library>
         <library>
+            <name>dtAnim</name>
+            <version></version>
+        </library>
+        <library>
             <name>dtAI</name>
             <version>1.0</version>
         </library>
