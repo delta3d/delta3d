@@ -122,16 +122,23 @@ namespace dtUtil
          // dlopen will not work with files in the current directory unless
          // they are prefaced with './'  (DB - Nov 5, 2003).
 
+         std::string libraryTempString;
 #ifdef __APPLE__
-         handle = dlopen(("@executable_path/../lib/" + fullLibraryName).c_str(), RTLD_LAZY | RTLD_GLOBAL);
+         libraryTempString = "@executable_path/../lib/" + fullLibraryName;
+         LOGN_DEBUG("librarysharingmanager.cpp", "Attempting to load library: " + libraryTempString);
+         handle = dlopen((libraryTempString).c_str(), RTLD_LAZY | RTLD_GLOBAL);
          if (handle == NULL)
          {
-            handle = dlopen(("@executable_path/../PlugIns/" + fullLibraryName).c_str(), RTLD_LAZY | RTLD_GLOBAL);
+            libraryTempString = "@executable_path/../PlugIns/" + fullLibraryName;
+            LOGN_DEBUG("librarysharingmanager.cpp", "Attempting to load library: " + libraryTempString);
+            handle = dlopen((libraryTempString).c_str(), RTLD_LAZY | RTLD_GLOBAL);
          }
 #endif
          if (handle == NULL)
          {
-            handle = dlopen(("./" + fullLibraryName).c_str(), RTLD_LAZY | RTLD_GLOBAL);
+            libraryTempString = "./" + fullLibraryName;
+            LOGN_DEBUG("librarysharingmanager.cpp", "Attempting to load library: " + libraryTempString);
+            handle = dlopen((libraryTempString).c_str(), RTLD_LAZY | RTLD_GLOBAL);
          }
 
          if (handle == NULL)
@@ -143,7 +150,6 @@ namespace dtUtil
          {
             LOG_ERROR("Error loading library \"" + fullLibraryName + "\" with dlopen(): " + dlerror());
          }
-
 #endif
          if (handle != NULL)
          {
@@ -269,7 +275,7 @@ DT_DISABLE_WARNING_END
             if (actualLibName != actualLibName2)
             {
                std::ostringstream msg2;
-               // First, try and load the dynamic library.
+               // First, try to load the dynamic library.
                msg2 << "Re-attempting using the module extension: " << actualLibName2;
                LOG_ALWAYS(msg2.str());
                dynLib = InternalLibraryHandle::LoadSharedLibrary(actualLibName2);
