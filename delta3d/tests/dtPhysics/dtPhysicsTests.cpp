@@ -1017,6 +1017,13 @@ namespace dtPhysics
       mat->GetMaterialDef().SetStaticFriction(0.25);
       mGM->AddActor(*mat);
 
+      dtCore::RefPtr<dtPhysics::MaterialActor> matAutre;
+      mGM->CreateActor(*dtPhysics::PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE, matAutre);
+      matAutre->SetName("niais");
+      matAutre->GetMaterialDef().SetRestitution(0.343);
+      matAutre->GetMaterialDef().SetStaticFriction(0.242);
+      mGM->AddActor(*matAutre);
+
       PhysicsMaterials& materials = dtPhysics::PhysicsWorld::GetInstance().GetMaterials();
 
       po->SetMaterialId(mat->GetId());
@@ -1025,6 +1032,26 @@ namespace dtPhysics
       CPPUNIT_ASSERT(po->GetMaterial() != nullptr);
       CPPUNIT_ASSERT_EQUAL(po->GetMaterial()->GetName(), std::string("boola"));
       po->SetMaterialId(dtCore::UniqueId(false));
+      CPPUNIT_ASSERT(po->GetMaterial() != nullptr);
+      CPPUNIT_ASSERT(po->GetMaterial() == materials.GetMaterial(PhysicsMaterials::DEFAULT_MATERIAL_NAME));
+
+      po->SetMaterialId(matAutre->GetId());
+      CPPUNIT_ASSERT(po->GetMaterial() != nullptr);
+      CPPUNIT_ASSERT_EQUAL(po->GetMaterial()->GetName(), std::string("niais"));
+
+      // Delete the material actor so we can see if it tries to look up the actor again.
+      mGM->DeleteActor(*matAutre);
+      dtCore::System::GetInstance().Step(0.01666f);
+
+      // Setting the ID again after setting the first time should not trigger a re-lookup of the actor.
+      po->SetMaterialId(matAutre->GetId());
+      CPPUNIT_ASSERT(po->GetMaterial() != nullptr);
+      CPPUNIT_ASSERT_EQUAL(po->GetMaterial()->GetName(), std::string("niais"));
+
+      // set to the first Id to make it switch.
+      po->SetMaterialId(mat->GetId());
+      // Setting the material to deleted one should result in the object having the default material.
+      po->SetMaterialId(matAutre->GetId());
       CPPUNIT_ASSERT(po->GetMaterial() != nullptr);
       CPPUNIT_ASSERT(po->GetMaterial() == materials.GetMaterial(PhysicsMaterials::DEFAULT_MATERIAL_NAME));
    }
@@ -1953,8 +1980,6 @@ namespace dtPhysics
       CPPUNIT_ASSERT(!une->GetAutoCreateOnEnteringWorld());
       CPPUNIT_ASSERT(!deux->GetAutoCreateOnEnteringWorld());
       une->SetAutoCreateOnEnteringWorld(true);
-
-
    }
 
    /////////////////////////////////////////////////////////
