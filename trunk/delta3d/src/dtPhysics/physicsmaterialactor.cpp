@@ -183,10 +183,10 @@ namespace dtPhysics
    //////////////////////////////////////////////////////////
    Material* MaterialActor::GetMaterial() const
    {
-      Material* uniqueMaterial = NULL;
-      PhysicsComponent* physComp;
+      Material* uniqueMaterial = nullptr;
+      PhysicsComponent* physComp = nullptr;
       GetGameManager()->GetComponentByName(PhysicsComponent::DEFAULT_NAME, physComp);
-      if (physComp != NULL)
+      if (physComp != nullptr)
       {
          PhysicsMaterials& materials = physComp->GetPhysicsWorld().GetMaterials();
 

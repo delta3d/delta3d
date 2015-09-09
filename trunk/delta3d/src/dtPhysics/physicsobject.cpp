@@ -266,8 +266,11 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    void PhysicsObject::SetMaterialId(const dtCore::UniqueId& matId)
    {
-      mDataMembers->mMaterialId = matId;
-      SetMaterialById(matId);
+      if (mDataMembers->mMaterialId != matId)
+      {
+         mDataMembers->mMaterialId = matId;
+         SetMaterialById(matId);
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -296,18 +299,24 @@ namespace dtPhysics
 
       if (PhysicsWorld::IsInitialized())
       {
-         dtPhysics::PhysicsMaterials& materials = PhysicsWorld::GetInstance().GetMaterials();
+         Material* mat = nullptr;
+         dtPhysics::PhysicsActComp* owner = dynamic_cast<dtPhysics::PhysicsActComp*>(GetUserData());
+         if (owner != nullptr)
+         {
+            const MaterialActor* matActor = owner->LookupMaterialActor(matName);
+            if (matActor != nullptr)
+            {
+               mDataMembers->mMaterialId = matActor->GetId();
+               mat = matActor->GetMaterial();
+            }
+         }
 
-         Material* mat = materials.GetMaterial(matName);
-         // ugly, ugly hack.
+         // If the actor can't be found the id can't be assigned.
          if (mat == nullptr)
          {
-            dtPhysics::PhysicsActComp* owner = dynamic_cast<dtPhysics::PhysicsActComp*>(GetUserData());
-            if (owner != nullptr)
-            {
-               owner->LookupMaterialActor(matName);
-               mat = materials.GetMaterial(matName);
-            }
+            dtPhysics::PhysicsMaterials& materials = PhysicsWorld::GetInstance().GetMaterials();
+
+            mat = materials.GetMaterial(matName);
          }
 
          if (mat != nullptr)
@@ -347,15 +356,10 @@ namespace dtPhysics
       // Set the default material if nothing is set.
       if (mDataMembers->mGenericBody.valid())
       {
-         dtPhysics::PhysicsMaterials& materials = PhysicsWorld::GetInstance().GetMaterials();
-         if (id.IsNull())
+         PhysicsMaterials& materials = PhysicsWorld::GetInstance().GetMaterials();
+         if (!id.IsNull())
          {
-            SetMaterial(PhysicsWorld::GetInstance().GetMaterials().GetMaterial(PhysicsMaterials::DEFAULT_MATERIAL_NAME));
-            result = true;
-         }
-         else
-         {
-            dtPhysics::PhysicsActComp* owner = dynamic_cast<dtPhysics::PhysicsActComp*>(GetUserData());
+            PhysicsActComp* owner = dynamic_cast<dtPhysics::PhysicsActComp*>(GetUserData());
             if (owner != nullptr)
             {
                const MaterialActor* actor = owner->LookupMaterialActor(id);
@@ -365,9 +369,22 @@ namespace dtPhysics
                   if (matObj != nullptr)
                   {
                      SetMaterial(matObj);
+                     result = true;
                   }
-                  result = true;
                }
+            }
+         }
+         if (!result)
+         {
+            Material* matObj = materials.GetMaterial(PhysicsMaterials::DEFAULT_MATERIAL_NAME);
+            if (matObj == nullptr)
+            {
+               LOG_ERROR("No default material exists")
+            }
+            else
+            {
+               SetMaterial(matObj);
+               result = true;
             }
          }
       }

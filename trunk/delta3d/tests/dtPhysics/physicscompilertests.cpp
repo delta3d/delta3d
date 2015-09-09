@@ -231,6 +231,7 @@ namespace dtPhysics
       // In turn "Proxy" will be renamed to "Actor"
       // These typdefs are here to prevent confusion.
       typedef dtPhysics::MaterialActor PhysicsMaterialActor;
+      mGM->AddComponent(*new dtPhysics::PhysicsComponent(dtPhysics::PhysicsWorld::GetInstance(), false));
 
       dtCore::RefPtr<PhysicsMaterialActor> matA;
       dtCore::RefPtr<PhysicsMaterialActor> matB;
@@ -827,6 +828,7 @@ namespace dtPhysics
    void PhysicsCompilerTests::TestMaterialAssignment()
    {
       SetupTestPhysicsWorld();
+      SetupTestActors();
       TestMaterialAssignment(false);
       TestMaterialAssignment(true);
    }
@@ -895,19 +897,19 @@ namespace dtPhysics
          poB->SetMechanicsType(mechType);
          poC->SetMechanicsType(mechType);
 
+         dtPhysics::MaterialActorPtr mat;
+         mGM->CreateActor(*dtPhysics::PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE, mat);
+
+         // the physics objects and physics actor component have to be added to an actor, so override material actor is as good as any.
+         mat->AddComponent(*new dtPhysics::PhysicsActComp);
+         mat->GetComponent<dtPhysics::PhysicsActComp>()->AddPhysicsObject(*poA);
+         mat->GetComponent<dtPhysics::PhysicsActComp>()->AddPhysicsObject(*poB);
+         mat->GetComponent<dtPhysics::PhysicsActComp>()->AddPhysicsObject(*poC);
+
+
          const std::string overrideMaterialName("boola");
          if (overrideMaterials)
          {
-            dtPhysics::MaterialActorPtr mat;
-            mGM->CreateActor(*dtPhysics::PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE, mat);
-            mGM->AddComponent(*new dtPhysics::PhysicsComponent(dtPhysics::PhysicsWorld::GetInstance(), false));
-
-            // the physics objects and physics actor component have to be added to an actor, so the material actor is as good as any.
-            mat->AddComponent(*new dtPhysics::PhysicsActComp);
-            mat->GetComponent<dtPhysics::PhysicsActComp>()->AddPhysicsObject(*poA);
-            mat->GetComponent<dtPhysics::PhysicsActComp>()->AddPhysicsObject(*poB);
-            mat->GetComponent<dtPhysics::PhysicsActComp>()->AddPhysicsObject(*poC);
-
             mat->SetName(overrideMaterialName);
             mat->GetMaterialDef().SetRestitution(0.125);
             mat->GetMaterialDef().SetStaticFriction(0.25);
@@ -931,8 +933,21 @@ namespace dtPhysics
          {
             // --- Ensure that the appropriate materials have been set by the geometry.
             CPPUNIT_ASSERT(poA->GetMaterial() == mMatA);
+            dtPhysics::MaterialActor* matTemp = nullptr;
+            mGM->FindActorByName(mMatA->GetName(), matTemp);
+            CPPUNIT_ASSERT(matTemp != nullptr);
+            // I know these actors exist because the setup created them.
+            CPPUNIT_ASSERT_EQUAL(matTemp->GetId(), poA->GetMaterialId());
+
             CPPUNIT_ASSERT(poB->GetMaterial() == mMatB);
+            mGM->FindActorByName(mMatB->GetName(), matTemp);
+            CPPUNIT_ASSERT(matTemp != nullptr);
+            CPPUNIT_ASSERT_EQUAL(matTemp->GetId(), poB->GetMaterialId());
+
             CPPUNIT_ASSERT(poC->GetMaterial() == mMatC);
+            mGM->FindActorByName(mMatC->GetName(), matTemp);
+            CPPUNIT_ASSERT(matTemp != nullptr);
+            CPPUNIT_ASSERT_EQUAL(matTemp->GetId(), poC->GetMaterialId());
          }
 
 
