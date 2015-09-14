@@ -146,7 +146,6 @@ namespace dtCore
 
       std::string displayName;
       std::string identifier;
-      dtUtil::StringTokenizer<dtUtil::IsSlash> stok;
       std::vector<std::string> tokens;
       if (IsList())
       {
@@ -160,10 +159,7 @@ namespace dtCore
          {
             tokens.clear();
 
-#ifdef DELTA_WIN32
-            stok = stok;
-#endif
-            stok.tokenize(tokens,result[i]);
+            dtUtil::StringTokenizer<dtUtil::IsSlash>::tokenize(tokens,result[i]);
             if (tokens.size() == 2)
             {
                displayName = tokens[0];
@@ -184,7 +180,7 @@ namespace dtCore
       }
       else
       {
-         stok.tokenize(tokens,value);
+         dtUtil::StringTokenizer<dtUtil::IsSlash>::tokenize(tokens,value);
          if (tokens.size() == 2)
          {
             displayName = tokens[0];
