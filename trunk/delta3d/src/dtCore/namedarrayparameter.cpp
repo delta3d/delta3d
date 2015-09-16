@@ -87,6 +87,11 @@ namespace dtCore
       // Write out the size of the list so we know how many times to loop in FromDataStream
       stream << (unsigned int)mParameterList.size();
 
+      if (mParameterList.size() > 10240U)
+      {
+         LOGN_WARNING("namedarrayparameter.cpp", "The array parameter is huge: " + dtUtil::ToString(mParameterList.size()));
+      }
+
       NamedArrayParameter::ParameterList::const_iterator i = mParameterList.begin();
       NamedArrayParameter::ParameterList::const_iterator end = mParameterList.end();
       for (; i != end; ++i)
@@ -119,10 +124,9 @@ namespace dtCore
       unsigned int size;
       stream >> size;
 
-      if (size > 10000U)
+      if (size > 10240U)
       {
-         LOGN_ERROR("namedarrayparameter.cpp", "For safety sake, the size of this array parameter is being limited to 10000");
-         size = 10000U;
+         LOGN_WARNING("namedarrayparameter.cpp", "The array parameter stream has a huge size parameter: " + dtUtil::ToString(size));
       }
       Resize(size);
 
