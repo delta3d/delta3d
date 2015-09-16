@@ -69,6 +69,11 @@ namespace dtCore
          /// read the data from a data stream.
          virtual bool FromDataStream(dtUtil::DataStream& stream) = 0;
 
+         void* operator new(size_t num_bytes);
+
+
+         void operator delete(void*);
+
       protected:
 
          virtual ~AbstractParameter() { }

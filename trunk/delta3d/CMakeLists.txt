@@ -88,6 +88,8 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
       ADD_SUBDIRECTORY(src/dtVoxel)
       ADD_SUBDIRECTORY(utilities/OpenVDBCompiler)
       SET(DTVOXEL_AVAILABLE "YES")
+   else()
+      FIND_PACKAGE(TBB)
    endif()
 
    ADD_SUBDIRECTORY(src/dtActors)

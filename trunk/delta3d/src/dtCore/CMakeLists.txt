@@ -23,6 +23,7 @@ file(GLOB LIB_PUBLIC_HEADERS
 
 SET(LIB_SOURCES 
                 abstractenumactorproperty.cpp
+                abstractparameter.cpp
                 actoractorproperty.cpp
                 actoridactorproperty.cpp
                 actorhierarchynode.cpp
@@ -208,17 +209,26 @@ SET(LIB_EXTERNAL_DEPS
      OSGPARTICLE_LIBRARY
      OSGUTIL_LIBRARY
      OPENTHREADS_LIBRARY
-     ODE_LIBRARY
      XERCES_LIBRARY
      UUID_LIBRARY)
+
+INCLUDE_DIRECTORIES(${TBB_INCLUDE_DIR}) 
 
 SET(LIB_DEPS 
    ${DTUTIL_LIBRARY}
    ${OPENGL_LIBRARY} 
    ${MATH_LIBRARY}
    ${APPSERVICES_LIBRARY}
-   )
+  )
 
+if (NOT TBB_FOUND)
+   ADD_DEFINITIONS(-DUSE_TBB_MEMORY_POOL)
+   set(LIB_DEPS 
+      ${LIB_DEPS}
+      ${TBB_LIBRARIES}
+      ${TBB_MALLOC_LIBRARIES}
+      )
+endif()
 
 
 DELTA3D_ADD_LIBRARY(${LIB_NAME} DT_CORE_LIBRARY)
