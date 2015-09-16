@@ -23,6 +23,7 @@
 #define DELTA_ABSTRACT_PARAMETER
 
 #include <dtUtil/refstring.h>
+#include <dtCore/export.h>
 #include <osg/Referenced>
 
 namespace dtUtil
@@ -39,7 +40,7 @@ namespace dtCore
     * @brief a common base class for actor property and named parameter, especially helpful in the load/save process.
     * More is expected to be added to this over time as features are unified between the two sets of classes.
     */
-   class AbstractParameter : public osg::Referenced
+   class DT_CORE_EXPORT AbstractParameter : public osg::Referenced
    {
       public:
 
