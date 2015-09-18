@@ -196,7 +196,7 @@ namespace dtNetGM
    ////////////////////////////////////////////////////////////////////////////////
    void ServerNetworkComponent::OnListenFailure(const GNE::Error& error, const GNE::Address& from, const GNE::ConnectionListener::sptr& listener)
    {
-      LOGN_ERROR("dtNetGM", "onListenFailure");
+      LOGN_ERROR("dtNetGM", "onListenFailure: " + error.toString());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
