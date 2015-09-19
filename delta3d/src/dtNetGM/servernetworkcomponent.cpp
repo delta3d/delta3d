@@ -196,7 +196,18 @@ namespace dtNetGM
    ////////////////////////////////////////////////////////////////////////////////
    void ServerNetworkComponent::OnListenFailure(const GNE::Error& error, const GNE::Address& from, const GNE::ConnectionListener::sptr& listener)
    {
-      LOGN_ERROR("dtNetGM", "onListenFailure: " + error.toString());
+      using namespace GNE;
+      std::ostringstream ss;
+      if (error.getCode() == Error::GNETheirVersionHigh || error.getCode() == Error::GNETheirVersionLow)
+      {
+         GNEProtocolVersionNumber pvn = getGNEProtocolVersion();
+         ss << "onListenFailure: " << error.toString() << " " << int(pvn.version) << " " << int(pvn.subVersion) << " " << int(pvn.build);
+      }
+      else
+      {
+         ss << "onListenFailure: " << error.toString();
+      }
+      LOGN_ERROR("dtNetGM", ss.str());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
