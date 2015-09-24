@@ -111,7 +111,7 @@ namespace dtNetGM
 
       LOGN_ALWAYS("dtNetGM", "Connecting to server at: " + address.toString());
 
-      mClient->waitForConnect();
+      GNE::Error error = mClient->waitForConnect();
 
       if (mClient->isConnected())
       {
@@ -121,7 +121,14 @@ namespace dtNetGM
       }
       else
       {
-         LOGN_ERROR("dtNetGM", "Could not connect to server \"" + host + "\" at " + address.toString() );
+         std::ostringstream ss;
+         ss << "Could not connect to server \"" << host << "\" at " << address.toString() << " with error :" <<  error.toString();
+         if (error.getCode() == GNE::Error::GNETheirVersionHigh || error.getCode() == GNE::Error::GNETheirVersionLow)
+         {
+            GNE::GNEProtocolVersionNumber pvn = GNE::getGNEProtocolVersion();
+            ss << "Protocol Version: " << int(pvn.version) << " " << int(pvn.subVersion) << " " << int(pvn.build);
+         }
+         LOGN_ERROR("dtNetGM", ss.str());
          return false;
       }
       return true;

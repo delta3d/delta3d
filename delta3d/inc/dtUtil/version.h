@@ -30,7 +30,7 @@ extern "C"
 
 #define DELTA3D_VERSION_MAJOR 2
 #define DELTA3D_VERSION_MINOR 8
-#define DELTA3D_VERSION_PATCH 0
+#define DELTA3D_VERSION_PATCH 100
 
 /**
   * delta3DGetVersion() returns the library version number.

@@ -33,6 +33,7 @@ namespace dtVoxel
 
       // whole number vec3's in this parameter for the indices
       static const dtUtil::RefString PARAM_INDICES_DEACTIVATED;
+
       VolumeUpdateMessage();
 
       typedef dtCore::NamedArrayParameter ArrayT;
@@ -40,8 +41,8 @@ namespace dtVoxel
       template<typename ValueType>
       void AddChangedValue(const osg::Vec3& idx, typename dtUtil::TypeTraits<ValueType>::param_type value)
       {
-         GetIndicesChanged()->AddParameter(*new dtCore::NamedVec3Parameter("x", idx));
-         GetValuesChanged()->AddParameter(*new typename dtCore::TypeToActorProperty<ValueType>::named_parameter_type("x", value));
+         GetIndicesChanged()->AddParameter(*new dtCore::NamedVec3Parameter(PARAM_ARRAY_ITEM, idx));
+         GetValuesChanged()->AddParameter(*new typename dtCore::TypeToActorProperty<ValueType>::named_parameter_type(PARAM_ARRAY_ITEM, value));
       }
 
       void AddDeactivatedIndex(const osg::Vec3& idx);
@@ -57,6 +58,12 @@ namespace dtVoxel
    protected:
       ~VolumeUpdateMessage() override;
    private:
+      static const dtUtil::RefString PARAM_ARRAY_ITEM;
+
+      // Using direct datamembers because in a complex voxel system with a lot of changes, just accessing the values can be slow.
+      dtCore::RefPtr<ArrayT> mIndicesChanged;
+      dtCore::RefPtr<ArrayT> mValuesChanged;
+      dtCore::RefPtr<ArrayT> mIndicesDeactivated;
    };
 
    typedef dtCore::RefPtr<const VolumeUpdateMessage> VolumeUpdateMessagePtr;

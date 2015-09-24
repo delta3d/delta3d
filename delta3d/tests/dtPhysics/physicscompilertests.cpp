@@ -231,16 +231,23 @@ namespace dtPhysics
       // In turn "Proxy" will be renamed to "Actor"
       // These typdefs are here to prevent confusion.
       typedef dtPhysics::MaterialActor PhysicsMaterialActor;
+
+      if (!dtPhysics::PhysicsWorld::IsInitialized())
+      {
+         mPhysicsWorld = new PhysicsWorld(mCurrentEngine);
+         mPhysicsWorld->Init();
+      }
+
       mGM->AddComponent(*new dtPhysics::PhysicsComponent(dtPhysics::PhysicsWorld::GetInstance(), false));
 
       dtCore::RefPtr<PhysicsMaterialActor> matA;
       dtCore::RefPtr<PhysicsMaterialActor> matB;
       dtCore::RefPtr<PhysicsMaterialActor> matC;
-      
+
       mGM->CreateActor(*dtPhysics::PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE, matA);
       mGM->CreateActor(*dtPhysics::PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE, matB);
       mGM->CreateActor(*dtPhysics::PhysicsActorRegistry::PHYSICS_MATERIAL_ACTOR_TYPE, matC);
-      
+
       matA->SetName(NAME_A);
       matB->SetName(NAME_B);
       matC->SetName(NAME_C);
@@ -249,7 +256,7 @@ namespace dtPhysics
       matA->GetMaterialDef().SetMaterialIndex(INDEX_A);
       matB->GetMaterialDef().SetMaterialIndex(INDEX_B);
       matC->GetMaterialDef().SetMaterialIndex(INDEX_C);
-      
+
       mGM->AddActor(*matA);
       mGM->AddActor(*matB);
       mGM->AddActor(*matC);

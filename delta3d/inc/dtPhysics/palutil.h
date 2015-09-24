@@ -134,7 +134,7 @@ namespace dtPhysics
       ContactConverter(std::vector<CollisionContact>& contacts)
       : mContacts(contacts)
       {}
-      void operator () (palContactPoint& contactPoint)
+      void operator () (const palContactPoint& contactPoint)
       {
          // Creating
          CollisionContact c;

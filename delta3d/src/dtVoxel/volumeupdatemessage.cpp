@@ -16,11 +16,16 @@ namespace dtVoxel
 
    const dtUtil::RefString VolumeUpdateMessage::PARAM_INDICES_DEACTIVATED("ParamIndicesDeactivated");
 
+   const dtUtil::RefString VolumeUpdateMessage::PARAM_ARRAY_ITEM("x");
+
    VolumeUpdateMessage::VolumeUpdateMessage()
+   : mIndicesChanged(new dtCore::NamedArrayParameter(PARAM_INDICES_CHANGED))
+   , mValuesChanged(new dtCore::NamedArrayParameter(PARAM_VALUES_CHANGED))
+   , mIndicesDeactivated(new dtCore::NamedArrayParameter(PARAM_INDICES_DEACTIVATED))
    {
-      AddParameter(new dtCore::NamedArrayParameter(PARAM_INDICES_CHANGED));
-      AddParameter(new dtCore::NamedArrayParameter(PARAM_VALUES_CHANGED));
-      AddParameter(new dtCore::NamedArrayParameter(PARAM_INDICES_DEACTIVATED));
+      AddParameter(mIndicesChanged);
+      AddParameter(mValuesChanged);
+      AddParameter(mIndicesDeactivated);
    }
 
    VolumeUpdateMessage::~VolumeUpdateMessage()
@@ -30,33 +35,33 @@ namespace dtVoxel
 
    void VolumeUpdateMessage::AddDeactivatedIndex(const osg::Vec3& idx)
    {
-      GetIndicesDeactivated()->AddParameter(*new dtCore::NamedVec3Parameter("x", idx));
+      GetIndicesDeactivated()->AddParameter(*new dtCore::NamedVec3Parameter(PARAM_ARRAY_ITEM, idx));
    }
 
    const VolumeUpdateMessage::ArrayT* VolumeUpdateMessage::GetIndicesChanged() const
    {
-      return static_cast<const VolumeUpdateMessage::ArrayT*>(GetParameter(VolumeUpdateMessage::PARAM_INDICES_CHANGED));
+      return mIndicesChanged;
    }
    const VolumeUpdateMessage::ArrayT* VolumeUpdateMessage::GetValuesChanged() const
    {
-      return static_cast<const VolumeUpdateMessage::ArrayT*>(GetParameter(VolumeUpdateMessage::PARAM_VALUES_CHANGED));
+      return mValuesChanged;
    }
    const VolumeUpdateMessage::ArrayT* VolumeUpdateMessage::GetIndicesDeactivated() const
    {
-      return static_cast<const VolumeUpdateMessage::ArrayT*>(GetParameter(VolumeUpdateMessage::PARAM_INDICES_DEACTIVATED));
+      return mIndicesDeactivated;
    }
 
    VolumeUpdateMessage::ArrayT* VolumeUpdateMessage::GetIndicesChanged()
    {
-      return static_cast<VolumeUpdateMessage::ArrayT*>(GetParameter(VolumeUpdateMessage::PARAM_INDICES_CHANGED));
+      return mIndicesChanged;
    }
    VolumeUpdateMessage::ArrayT* VolumeUpdateMessage::GetValuesChanged()
    {
-      return static_cast<VolumeUpdateMessage::ArrayT*>(GetParameter(VolumeUpdateMessage::PARAM_VALUES_CHANGED));
+      return mValuesChanged;
    }
    VolumeUpdateMessage::ArrayT* VolumeUpdateMessage::GetIndicesDeactivated()
    {
-      return static_cast<VolumeUpdateMessage::ArrayT*>(GetParameter(VolumeUpdateMessage::PARAM_INDICES_DEACTIVATED));
+      return mIndicesDeactivated;
    }
 
 
