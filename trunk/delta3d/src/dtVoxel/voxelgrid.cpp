@@ -299,7 +299,7 @@ namespace dtVoxel
                ++blockCount;
             }
             
-            std::cout << std::endl << mNumBlocks - blockCount << " Blocks remaining." << std::endl;
+            //std::cout << std::endl << mNumBlocks - blockCount << " Blocks remaining." << std::endl;
 
          }
       }
@@ -393,7 +393,7 @@ namespace dtVoxel
                   ++blockCount;
                }
 
-               std::cout << std::endl << mNumBlocks - blockCount << " Blocks remaining." << std::endl;
+               //std::cout << std::endl << mNumBlocks - blockCount << " Blocks remaining." << std::endl;
 
             }
          });
@@ -456,7 +456,7 @@ namespace dtVoxel
                   ++blockCount;
                }
 
-               std::cout << std::endl << mNumBlocks - blockCount << " Blocks remaining." << std::endl;
+               //std::cout << std::endl << mNumBlocks - blockCount << " Blocks remaining." << std::endl;
             }
          });
       }

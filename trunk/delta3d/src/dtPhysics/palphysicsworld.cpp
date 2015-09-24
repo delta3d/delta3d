@@ -754,6 +754,53 @@ namespace dtPhysics
       return mImpl->mActions.find(&action) != mImpl->mActions.end();
    }
 
+#if defined(PAL_VERSION_GREATER_OR_EQUAL) && PAL_VERSION_GREATER_OR_EQUAL(0,7,0)
+   //////////////////////////////////////////////////////////////////////////
+   void PhysicsWorld::GetContacts(PhysicsObject& obj, std::vector<CollisionContact>& contacts)
+   {
+      CheckBody(obj.GetBodyWrapper(), __LINE__);
+      palBodyBase& body = obj.GetBodyWrapper()->GetPalBodyBase();
+
+      palContact palContact;
+
+      ContactConverter cc(contacts);
+
+      mImpl->mPalCollisionDetection->ForEachContact(
+            [&cc, &body](const palContactPoint& curContact)
+            {
+               if (curContact.m_pBody1 == &body || curContact.m_pBody2 == &body)
+               {
+                  cc(curContact);
+               }
+            }
+            );
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void PhysicsWorld::GetContacts(PhysicsObject& obj1, PhysicsObject& obj2, std::vector<CollisionContact>& contacts)
+   {
+      CheckBody(obj1.GetBodyWrapper(), __LINE__);
+      CheckBody(obj2.GetBodyWrapper(), __LINE__);
+
+      palBodyBase& body1 = obj1.GetBodyWrapper()->GetPalBodyBase();
+      palBodyBase& body2 = obj2.GetBodyWrapper()->GetPalBodyBase();
+
+      palContact palContact;
+
+      ContactConverter cc(contacts);
+
+      mImpl->mPalCollisionDetection->ForEachContact(
+            [&cc, &body1, &body2](const palContactPoint& curContact)
+            {
+               if ((curContact.m_pBody1 == &body1 && curContact.m_pBody2 == &body2) ||
+                     (curContact.m_pBody2 == &body1 && curContact.m_pBody1 == &body2))
+               {
+                  cc(curContact);
+               }
+            }
+            );
+   }
+#else
    //////////////////////////////////////////////////////////////////////////
    void PhysicsWorld::GetContacts(PhysicsObject& obj, std::vector<CollisionContact>& contacts)
    {
@@ -784,6 +831,7 @@ namespace dtPhysics
       contacts.reserve(palContact.m_ContactPoints.size() + contacts.size());
       std::for_each(palContact.m_ContactPoints.begin(), palContact.m_ContactPoints.end(), ContactConverter(contacts));
    }
+#endif
 
    //////////////////////////////////////////////////////////////////////////
    void PhysicsWorld::ClearContacts()
