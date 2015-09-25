@@ -179,6 +179,7 @@ void MessageTests::setUp()
 
       mGameManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
       mGameManager->SetApplication(GetGlobalApplication());
+      mGameManager->LoadActorRegistry("dtActors");
       mGameManager->LoadActorRegistry(mTestGameActorLibrary);
       mGameManager->LoadActorRegistry(mTestActorLibrary);
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
@@ -216,6 +217,7 @@ void MessageTests::tearDown()
 
          mGameManager->UnloadActorRegistry(mTestGameActorLibrary);
          mGameManager->UnloadActorRegistry(mTestActorLibrary);
+         mGameManager->LoadActorRegistry("dtActors");
          mGameManager = NULL;
       }
       catch(const dtUtil::Exception& e)

@@ -60,6 +60,9 @@ namespace dtCore
          typedef void (*DestroyPluginRegistryFun)(ActorPluginRegistry*);
 
       public:
+
+         static const std::string DEFAULT_ACTOR_LIBRARY;
+
          /**
           * Simple structure for grouping the data corresponding to a
           * registry entry.
@@ -107,6 +110,12 @@ namespace dtCore
           *         functions are not found in the library.
           */
          void LoadActorRegistry(const std::string& libName);
+
+         ///Is the supplied library name already in the registry?
+         bool IsInRegistry(const std::string& libName) const;
+
+         ///If the supplied library exists, then try to load it.
+         void LoadOptionalActorRegistry(const std::string& libName);
 
          /**
            * Inserts the pair of parameters into the container.
@@ -239,12 +248,6 @@ namespace dtCore
           */
          virtual ~ActorFactory();
 
-
-         ///Is the supplied library name already in the registry?
-         bool IsInRegistry(const std::string& libName) const;
-
-         ///If the supplied library exists, then try to load it.
-         void LoadOptionalActorRegistry(const std::string& libName);
 
          ///Singleton instance of this class.
          static dtCore::RefPtr<ActorFactory> mInstance;

@@ -75,27 +75,19 @@ namespace dtAnim
       {
       }
 
-      void setUp()
+      void setUp() override
       {
-         dtCore::System::GetInstance().Config();
-
-         dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
-         dtCore::System::GetInstance().Start();
-
+         AnimModelLoadingTestFixture::setUp();
          mHelper = new AnimationHelper();
          Connect(mHelper);
-
-         dtCore::Project::GetInstance().SetContext("../examples/data");
-
          mModelPath = dtCore::ResourceDescriptor("SkeletalMeshes/Marine/marine_test.xml");
 
       }
 
-      void tearDown()
+      void tearDown() override
       {
          mHelper = NULL;
-
-         dtCore::System::GetInstance().Stop();
+         AnimModelLoadingTestFixture::tearDown();
       }
 
 

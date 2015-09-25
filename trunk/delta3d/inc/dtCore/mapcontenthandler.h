@@ -146,6 +146,10 @@ namespace dtCore
           * specified id by traversing up the previously processed actor.
           */
          BaseActorObject* FindActorById(const dtCore::UniqueId& id) const;
+         /**
+          * Wrapper function to encapsulate deprecation functionality.
+          */
+         static ActorTypePtr FindActorType(const std::string& actorTypeCategory, const std::string& actorTypeName);
 
          dtCore::RefPtr<Map> mMap;
 

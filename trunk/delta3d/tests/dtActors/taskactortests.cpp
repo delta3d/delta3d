@@ -52,7 +52,6 @@
 #include <dtCore/stringactorproperty.h>
 
 #include <dtGame/gamemanager.h>
-#include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/messagefactory.h>
 
@@ -60,16 +59,14 @@
 #include <dtUtil/stringutils.h>
 
 #include <vector>
-
+#include "../dtGame/basegmtests.h"
 #include <dtGame/testcomponent.h>
-
-extern dtABC::Application& GetGlobalApplication();
 
 /**
  * This test suite tests the base task actor proxy as well as the different
  * task subclasses.
  */
-class TaskActorTests : public CPPUNIT_NS::TestFixture
+class TaskActorTests : public dtGame::BaseGMTestFixture
 {
    CPPUNIT_TEST_SUITE(TaskActorTests);
       CPPUNIT_TEST(TestTaskActorDefaultValues);
@@ -86,8 +83,8 @@ class TaskActorTests : public CPPUNIT_NS::TestFixture
 
    public:
 
-      void setUp();
-      void tearDown();
+      void setUp() override;
+      void tearDown() override;
 
       // Helper Methods
       int GetEventCount(const dtCore::GameEvent& gameEvent);
@@ -108,10 +105,6 @@ class TaskActorTests : public CPPUNIT_NS::TestFixture
    private:
       void CreateParentChildProxies();
       dtCore::GameEventManager* mEventMgr;
-      dtCore::RefPtr<dtGame::GameManager> mGameManager;
-      dtCore::RefPtr<dtGame::TestComponent> mTestComp;
-      static const std::string mTestGameActorLibrary;
-      static const std::string mTestActorLibrary;
       dtCore::RefPtr<dtActors::TaskActorProxy> mParentProxy;
       dtCore::RefPtr<dtActors::TaskActorProxy> mChildProxy1;
       dtCore::RefPtr<dtActors::TaskActorProxy> mChildProxy2;
@@ -122,30 +115,14 @@ class TaskActorTests : public CPPUNIT_NS::TestFixture
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(TaskActorTests);
-
-const std::string TaskActorTests::mTestGameActorLibrary="testGameActorLibrary";
-const std::string TaskActorTests::mTestActorLibrary="testActorLibrary";
-
 ///////////////////////////////////////////////////////////////////////////////
 void TaskActorTests::setUp()
 {
+   dtGame::BaseGMTestFixture::setUp();
    try
    {
       // Setup the managers.
       mEventMgr = &dtCore::GameEventManager::GetInstance();
-      dtCore::Scene* scene = new dtCore::Scene();
-      mGameManager = new dtGame::GameManager(*scene);
-      dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
-      mGameManager->LoadActorRegistry(mTestGameActorLibrary);
-
-      // Setup the Test Component.
-      mTestComp = new dtGame::TestComponent("TestComponent");
-      mGameManager->AddComponent(*mTestComp, dtGame::GameManager::ComponentPriority::NORMAL);
-
-      // Start/restart the system.
-      dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
-      dtCore::System::GetInstance().Start();
-
       // Create some test events.
       mNotifyCompletedEvent = new dtCore::GameEvent("NotifyCompletedEvent");
       mEventMgr->AddEvent(*mNotifyCompletedEvent);
@@ -161,23 +138,12 @@ void TaskActorTests::setUp()
 ///////////////////////////////////////////////////////////////////////////////
 void TaskActorTests::tearDown()
 {
-   // Shutdown the system.
-   dtCore::System::GetInstance().SetPause(false);
-   dtCore::System::GetInstance().Stop();
-
-   // Clear the Game Manager.
-   if (mGameManager.valid())
-   {
-      mGameManager->DeleteAllActors();
-      mGameManager->UnloadActorRegistry(mTestGameActorLibrary);
-      mGameManager = NULL;
-   }
-
    // Clear all events
    mNotifyCompletedEvent = NULL;
    mNotifyFailedEvent = NULL;
    mEventMgr->ClearAllEvents();
    mEventMgr = NULL;
+   dtGame::BaseGMTestFixture::tearDown();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -225,11 +191,11 @@ void TaskActorTests::TestTaskActorDefaultValues()
    try
    {
       dtCore::RefPtr<const dtCore::ActorType> taskActorType =
-         mGameManager->FindActorType("dtcore.Tasks","Task Actor");
+         mGM->FindActorType("dtcore.Tasks","Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",taskActorType.valid());
 
       dtCore::RefPtr<dtActors::TaskActorProxy> proxy;
-      mGameManager->CreateActor(*taskActorType, proxy);
+      mGM->CreateActor(*taskActorType, proxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",proxy.valid());
       dtActors::TaskActor* task = NULL;
       proxy->GetDrawable(task);
@@ -304,12 +270,12 @@ void TaskActorTests::TestTaskSubTasks()
    try
    {
       dtCore::RefPtr<const dtCore::ActorType> taskActorType =
-         mGameManager->FindActorType("dtcore.Tasks","Task Actor");
+         mGM->FindActorType("dtcore.Tasks","Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type.", taskActorType.valid());
 
       dtCore::RefPtr<dtActors::TaskActorProxy> mParentProxy;
-      mGameManager->CreateActor(*taskActorType, mParentProxy);
-      mGameManager->AddActor(*mParentProxy, false, false);
+      mGM->CreateActor(*taskActorType, mParentProxy);
+      mGM->AddActor(*mParentProxy, false, false);
 
       CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.", mParentProxy.valid());
 
@@ -320,9 +286,9 @@ void TaskActorTests::TestTaskSubTasks()
       {
          dtCore::RefPtr<dtActors::TaskActorProxy> childProxy = NULL;
 
-         mGameManager->CreateActor(*taskActorType, childProxy);
+         mGM->CreateActor(*taskActorType, childProxy);
          CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.", childProxy.valid());
-         mGameManager->AddActor(*childProxy,false, false);
+         mGM->AddActor(*childProxy,false, false);
 
          children.push_back(childProxy.get());
 
@@ -420,25 +386,25 @@ void TaskActorTests::TestTaskSubTasks()
 void TaskActorTests::CreateParentChildProxies()
 {
    dtCore::RefPtr<const dtCore::ActorType> taskActorType =
-         mGameManager->FindActorType("dtcore.Tasks","Task Actor");
+         mGM->FindActorType("dtcore.Tasks","Task Actor");
    CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",taskActorType.valid());
 
-   mGameManager->CreateActor(*taskActorType, mParentProxy);
+   mGM->CreateActor(*taskActorType, mParentProxy);
    CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",mParentProxy.valid());
 
-   mGameManager->CreateActor(*taskActorType, mChildProxy1);
+   mGM->CreateActor(*taskActorType, mChildProxy1);
    CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",mChildProxy1.valid());
 
-   mGameManager->CreateActor(*taskActorType, mChildProxy2);
+   mGM->CreateActor(*taskActorType, mChildProxy2);
    CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",mChildProxy2.valid());
 
-   mGameManager->CreateActor(*taskActorType, mChildProxy3);
+   mGM->CreateActor(*taskActorType, mChildProxy3);
    CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",mChildProxy3.valid());
 
-   mGameManager->AddActor(*mParentProxy, false, false);
-   mGameManager->AddActor(*mChildProxy1, false, false);
-   mGameManager->AddActor(*mChildProxy2, false, false);
-   mGameManager->AddActor(*mChildProxy3, false, false);
+   mGM->AddActor(*mParentProxy, false, false);
+   mGM->AddActor(*mChildProxy1, false, false);
+   mGM->AddActor(*mChildProxy2, false, false);
+   mGM->AddActor(*mChildProxy3, false, false);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -545,16 +511,14 @@ void TaskActorTests::TestGameEventTaskActor()
 {
    try
    {
-      mGameManager->AddComponent(*(new dtGame::DefaultMessageProcessor()),
-                                   dtGame::GameManager::ComponentPriority::HIGHEST);
       dtCore::RefPtr<const dtCore::ActorType> actorType =
-            mGameManager->FindActorType("dtcore.Tasks","GameEvent Task Actor");
+            mGM->FindActorType("dtcore.Tasks","GameEvent Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",actorType.valid());
 
       dtCore::RefPtr<dtActors::TaskActorGameEventProxy> eventTaskProxy =
-            dynamic_cast<dtActors::TaskActorGameEventProxy*>(mGameManager->CreateActor(*actorType).get());
+            dynamic_cast<dtActors::TaskActorGameEventProxy*>(mGM->CreateActor(*actorType).get());
       CPPUNIT_ASSERT_MESSAGE("Could not create game event task actor proxy.",eventTaskProxy.valid());
-      mGameManager->AddActor(*eventTaskProxy,false,false);
+      mGM->AddActor(*eventTaskProxy,false,false);
 
       // Before we can listen for any game event messages, we have to register the event
       // with the event manager since other components rely on this behavior.
@@ -595,10 +559,10 @@ void TaskActorTests::TestGameEventTaskActor()
       // Pass a game event message on through the game manager and make sure
       // the game event task sees it and tracks it.
       dtCore::RefPtr<dtGame::GameEventMessage> eventMsg = static_cast<dtGame::GameEventMessage*>
-            (mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT).get());
+            (mGM->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT).get());
 
       eventMsg->SetGameEvent(*gameEvent);
-      mGameManager->SendMessage(*eventMsg);
+      mGM->SendMessage(*eventMsg);
       dtCore::System::GetInstance().Step();
 
       // Should be incomplete since the task should have only gotten the event once.
@@ -608,9 +572,9 @@ void TaskActorTests::TestGameEventTaskActor()
       double currSimTime;
       for (int i = 0; i < 4; ++i)
       {
-         mGameManager->SendMessage(*eventMsg);
+         mGM->SendMessage(*eventMsg);
          dtCore::System::GetInstance().Step();
-         currSimTime = mGameManager->GetSimulationTime();
+         currSimTime = mGM->GetSimulationTime();
       }
 
       // Now the task should have been marked complete.
@@ -631,7 +595,7 @@ void TaskActorTests::TestGameEventTaskActor()
 
       // --- Send the fail event.
       eventMsg->SetGameEvent(*failEvent);
-      mGameManager->SendMessage(*eventMsg);
+      mGM->SendMessage(*eventMsg);
       dtCore::System::GetInstance().Step();
 
       CPPUNIT_ASSERT(!task->IsComplete());
@@ -653,20 +617,17 @@ void TaskActorTests::TestRollupTaskActor()
       dtCore::RefPtr<dtActors::TaskActorGameEventProxy> eventProxyList[5];
       int i;
 
-      mGameManager->AddComponent(*(new dtGame::DefaultMessageProcessor()),
-                                   dtGame::GameManager::ComponentPriority::HIGHEST);
-
-      dtCore::RefPtr<const dtCore::ActorType> gameEventType = mGameManager->FindActorType("dtcore.Tasks","GameEvent Task Actor");
+      dtCore::RefPtr<const dtCore::ActorType> gameEventType = mGM->FindActorType("dtcore.Tasks","GameEvent Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type for game event task.",gameEventType.valid());
 
-      dtCore::RefPtr<const dtCore::ActorType> rollupActorType = mGameManager->FindActorType("dtcore.Tasks","Rollup Task Actor");
+      dtCore::RefPtr<const dtCore::ActorType> rollupActorType = mGM->FindActorType("dtcore.Tasks","Rollup Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type for rollup task.",rollupActorType.valid());
 
       // Create our test rollup task...
       dtCore::RefPtr<dtActors::TaskActorProxy> rollupTaskProxy;
-      mGameManager->CreateActor(*rollupActorType, rollupTaskProxy);
+      mGM->CreateActor(*rollupActorType, rollupTaskProxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create rollup task actor proxy.",rollupTaskProxy.valid());
-      mGameManager->AddActor(*rollupTaskProxy,false,false);
+      mGM->AddActor(*rollupTaskProxy,false,false);
 
       // Create some event tasks and add them as children to the rollup task.
       for (i = 0; i < 5; ++i)
@@ -675,7 +636,7 @@ void TaskActorTests::TestRollupTaskActor()
          mEventMgr->AddEvent(*gameEvent);
 
          dtCore::RefPtr<dtActors::TaskActorGameEventProxy> eventTaskProxy;
-         mGameManager->CreateActor(*gameEventType, eventTaskProxy);
+         mGM->CreateActor(*gameEventType, eventTaskProxy);
          CPPUNIT_ASSERT_MESSAGE("Could not create game event task actor proxy.",eventTaskProxy.valid());
 
          eventTaskProxy->GetProperty("GameEvent")->FromString(gameEvent->GetUniqueId().ToString());
@@ -684,7 +645,7 @@ void TaskActorTests::TestRollupTaskActor()
          CPPUNIT_ASSERT_EQUAL(std::string("0.2"), eventTaskProxy->GetProperty("Weight")->ToString());
 
          rollupTaskProxy->AddSubTask(*eventTaskProxy);
-         mGameManager->AddActor(*eventTaskProxy,false,false);
+         mGM->AddActor(*eventTaskProxy,false,false);
          eventList[i] = gameEvent;
          eventProxyList[i] = eventTaskProxy;
       }
@@ -699,10 +660,10 @@ void TaskActorTests::TestRollupTaskActor()
       for (i = 0; i < 5; ++i)
       {
          dtCore::RefPtr<dtGame::GameEventMessage> eventMsg = static_cast<dtGame::GameEventMessage*>
-               (mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT).get());
+               (mGM->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT).get());
 
          eventMsg->SetGameEvent(*eventList[i]);
-         mGameManager->SendMessage(*eventMsg);
+         mGM->SendMessage(*eventMsg);
          dtCore::System::GetInstance().Step();
 
          CPPUNIT_ASSERT_MESSAGE("Rollup task score was not calculated correctly.  The score was: " +
@@ -727,10 +688,10 @@ void TaskActorTests::TestRollupTaskActor()
       for (i = 0; i < 3; ++i)
       {
          dtCore::RefPtr<dtGame::GameEventMessage> eventMsg = static_cast<dtGame::GameEventMessage*>
-               (mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT).get());
+               (mGM->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT).get());
 
          eventMsg->SetGameEvent(*eventList[i]);
-         mGameManager->SendMessage(*eventMsg);
+         mGM->SendMessage(*eventMsg);
          dtCore::System::GetInstance().Step();
 
          CPPUNIT_ASSERT_MESSAGE("Rollup task score was not calculated correctly.  The score was: " +
@@ -758,38 +719,35 @@ void TaskActorTests::TestOrderedTaskActor()
       dtCore::RefPtr<dtGame::GameEventMessage> eventMsg;
       int i;
 
-      mGameManager->AddComponent(*(new dtGame::DefaultMessageProcessor()),
-                                   dtGame::GameManager::ComponentPriority::HIGHEST);
-
-      dtCore::RefPtr<const dtCore::ActorType> gameEventType = mGameManager->FindActorType("dtcore.Tasks","GameEvent Task Actor");
+      dtCore::RefPtr<const dtCore::ActorType> gameEventType = mGM->FindActorType("dtcore.Tasks","GameEvent Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type for game event task.",gameEventType.valid());
 
-      dtCore::RefPtr<const dtCore::ActorType> rollupActorType = mGameManager->FindActorType("dtcore.Tasks","Rollup Task Actor");
+      dtCore::RefPtr<const dtCore::ActorType> rollupActorType = mGM->FindActorType("dtcore.Tasks","Rollup Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type for rollup task.",rollupActorType.valid());
 
-      dtCore::RefPtr<const dtCore::ActorType> orderedActorType = mGameManager->FindActorType("dtcore.Tasks","Ordered Task Actor");
+      dtCore::RefPtr<const dtCore::ActorType> orderedActorType = mGM->FindActorType("dtcore.Tasks","Ordered Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type for ordered task.",orderedActorType.valid());
 
       // Create our test rollup task...
       dtCore::RefPtr<dtActors::TaskActorProxy> rollupTaskProxy;
-      mGameManager->CreateActor(*rollupActorType, rollupTaskProxy);
+      mGM->CreateActor(*rollupActorType, rollupTaskProxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create rollup task actor proxy.", rollupTaskProxy.valid());
-      mGameManager->AddActor(*rollupTaskProxy,false,false);
+      mGM->AddActor(*rollupTaskProxy,false,false);
 
       // Create our test ordered task...
       dtCore::RefPtr<dtActors::TaskActorProxy> orderedTaskProxy;
-      mGameManager->CreateActor(*orderedActorType, orderedTaskProxy);
+      mGM->CreateActor(*orderedActorType, orderedTaskProxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create ordered task actor proxy.", orderedTaskProxy.valid());
-      mGameManager->AddActor(*orderedTaskProxy,false,false);
+      mGM->AddActor(*orderedTaskProxy,false,false);
 
       // reate our test primary event task...
       primaryEvent = new dtCore::GameEvent("PrimaryEvent");
       mEventMgr->AddEvent(*primaryEvent);
 
-      mGameManager->CreateActor(*gameEventType, primaryEventProxy);
+      mGM->CreateActor(*gameEventType, primaryEventProxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create primary game event task actor proxy.",primaryEventProxy.valid());
       primaryEventProxy->GetProperty("GameEvent")->FromString(primaryEvent->GetUniqueId().ToString());
-      mGameManager->AddActor(*primaryEventProxy,false,false);
+      mGM->AddActor(*primaryEventProxy,false,false);
 
       // Add an event task which must be completed before the rollup task can be completed.
       orderedTaskProxy->AddSubTask(*primaryEventProxy);
@@ -802,7 +760,7 @@ void TaskActorTests::TestOrderedTaskActor()
          mEventMgr->AddEvent(*gameEvent);
 
          dtCore::RefPtr<dtActors::TaskActorGameEventProxy> eventTaskProxy;
-         mGameManager->CreateActor(*gameEventType, eventTaskProxy);
+         mGM->CreateActor(*gameEventType, eventTaskProxy);
          CPPUNIT_ASSERT_MESSAGE("Could not create game event task actor proxy.",eventTaskProxy.valid());
 
          eventTaskProxy->GetProperty("GameEvent")->FromString(gameEvent->GetUniqueId().ToString());
@@ -811,7 +769,7 @@ void TaskActorTests::TestOrderedTaskActor()
          CPPUNIT_ASSERT_EQUAL(std::string("0.2"), eventTaskProxy->GetProperty("Weight")->ToString());
 
          rollupTaskProxy->AddSubTask(*eventTaskProxy);
-         mGameManager->AddActor(*eventTaskProxy,false,false);
+         mGM->AddActor(*eventTaskProxy,false,false);
          eventList[i] = gameEvent;
          eventProxyList[i] = eventTaskProxy;
       }
@@ -826,10 +784,10 @@ void TaskActorTests::TestOrderedTaskActor()
       for (i = 0; i < 5; ++i)
       {
          eventMsg = static_cast<dtGame::GameEventMessage*>
-               (mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT).get());
+               (mGM->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT).get());
 
          eventMsg->SetGameEvent(*eventList[i]);
-         mGameManager->SendMessage(*eventMsg);
+         mGM->SendMessage(*eventMsg);
          dtCore::System::GetInstance().Step();
 
          CPPUNIT_ASSERT_MESSAGE("Event Task: " + dtUtil::ToString(i) + " should not have been complete.",
@@ -842,10 +800,10 @@ void TaskActorTests::TestOrderedTaskActor()
       // Now we will complete the primary event which should then allow the rollup task and its children
       // to be evaluated.
       eventMsg = static_cast<dtGame::GameEventMessage*>
-            (mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT).get());
+            (mGM->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT).get());
 
       eventMsg->SetGameEvent(*primaryEvent);
-      mGameManager->SendMessage(*eventMsg);
+      mGM->SendMessage(*eventMsg);
       dtCore::System::GetInstance().Step();
 
       CPPUNIT_ASSERT_MESSAGE("Primary Event Task should have been complete.",
@@ -855,10 +813,10 @@ void TaskActorTests::TestOrderedTaskActor()
       for (i = 0; i < 5; ++i)
       {
          eventMsg = static_cast<dtGame::GameEventMessage*>
-               (mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT).get());
+               (mGM->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT).get());
 
          eventMsg->SetGameEvent(*eventList[i]);
-         mGameManager->SendMessage(*eventMsg);
+         mGM->SendMessage(*eventMsg);
          dtCore::System::GetInstance().Step();
 
          CPPUNIT_ASSERT_MESSAGE("Event Task: " + dtUtil::ToString(i) + " should have been complete.",
@@ -886,16 +844,16 @@ void TaskActorTests::TestFailedAndComplete()
    try
    {
       dtCore::RefPtr<const dtCore::ActorType> taskActorType =
-         mGameManager->FindActorType("dtcore.Tasks","Task Actor");
+         mGM->FindActorType("dtcore.Tasks","Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",taskActorType.valid());
 
       dtCore::RefPtr<const dtCore::ActorType> rollupActorType =
-         mGameManager->FindActorType("dtcore.Tasks","Rollup Task Actor");
+         mGM->FindActorType("dtcore.Tasks","Rollup Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type for rollup task.",rollupActorType.valid());
 
 
       dtCore::RefPtr<dtActors::TaskActorProxy> proxy;
-      mGameManager->CreateActor(*taskActorType, proxy);
+      mGM->CreateActor(*taskActorType, proxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",proxy.valid());
 
       dtActors::TaskActor* actor = dynamic_cast<dtActors::TaskActor*>(proxy->GetDrawable());
@@ -983,7 +941,7 @@ void TaskActorTests::TestFailedAndComplete()
 
       // Create our parent rollup task...
       dtCore::RefPtr<dtActors::TaskActorProxy> rollupTaskProxy;
-      mGameManager->CreateActor(*rollupActorType, rollupTaskProxy);
+      mGM->CreateActor(*rollupActorType, rollupTaskProxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create rollup task actor proxy.", rollupTaskProxy.valid());
       dtActors::TaskActor* parentActor;
       rollupTaskProxy->GetDrawable(parentActor);
@@ -1014,29 +972,29 @@ void TaskActorTests::TestMutable()
    try
    {
       dtCore::RefPtr<const dtCore::ActorType> taskActorType =
-         mGameManager->FindActorType("dtcore.Tasks","Task Actor");
+         mGM->FindActorType("dtcore.Tasks","Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",taskActorType.valid());
 
-      dtCore::RefPtr<const dtCore::ActorType> orderedActorType = mGameManager->FindActorType("dtcore.Tasks","Ordered Task Actor");
+      dtCore::RefPtr<const dtCore::ActorType> orderedActorType = mGM->FindActorType("dtcore.Tasks","Ordered Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type for ordered task.",orderedActorType.valid());
 
       // Create our test child task
       dtCore::RefPtr<dtActors::TaskActorProxy> childProxy1;
-      mGameManager->CreateActor(*taskActorType, childProxy1);
+      mGM->CreateActor(*taskActorType, childProxy1);
       CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",childProxy1.valid());
-      mGameManager->AddActor(*childProxy1,false,false);
+      mGM->AddActor(*childProxy1,false,false);
 
       // Child 2 task
       dtCore::RefPtr<dtActors::TaskActorProxy> childProxy2;
-      mGameManager->CreateActor(*taskActorType, childProxy2);
+      mGM->CreateActor(*taskActorType, childProxy2);
       CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",childProxy2.valid());
-      mGameManager->AddActor(*childProxy2,false,false);
+      mGM->AddActor(*childProxy2,false,false);
 
       // Create our test ordered task...
       dtCore::RefPtr<dtActors::TaskActorProxy> orderedTaskProxy;
-      mGameManager->CreateActor(*orderedActorType, orderedTaskProxy);
+      mGM->CreateActor(*orderedActorType, orderedTaskProxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create ordered task actor proxy.", orderedTaskProxy.valid());
-      mGameManager->AddActor(*orderedTaskProxy,false,false);
+      mGM->AddActor(*orderedTaskProxy,false,false);
 
       dtActors::TaskActor* childActor1 = dynamic_cast<dtActors::TaskActor*>(childProxy1->GetDrawable());
       dtActors::TaskActor* childActor2 = dynamic_cast<dtActors::TaskActor*>(childProxy2->GetDrawable());
@@ -1120,27 +1078,27 @@ void TaskActorTests::TestNestedMutable()
    dtCore::RefPtr<dtActors::TaskActorGameEventProxy> eventThree;
    dtCore::RefPtr<dtActors::TaskActorGameEventProxy> eventFour;
 
-   mGameManager->CreateActor(*dtActors::EngineActorRegistry::ORDERED_TASK_ACTOR_TYPE, masterTask);
-   mGameManager->CreateActor(*dtActors::EngineActorRegistry::ORDERED_TASK_ACTOR_TYPE, subTaskOne);
-   mGameManager->CreateActor(*dtActors::EngineActorRegistry::ORDERED_TASK_ACTOR_TYPE, subTaskTwo);
+   mGM->CreateActor(*dtActors::EngineActorRegistry::ORDERED_TASK_ACTOR_TYPE, masterTask);
+   mGM->CreateActor(*dtActors::EngineActorRegistry::ORDERED_TASK_ACTOR_TYPE, subTaskOne);
+   mGM->CreateActor(*dtActors::EngineActorRegistry::ORDERED_TASK_ACTOR_TYPE, subTaskTwo);
 
-   mGameManager->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, eventSubOne);
-   mGameManager->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, eventSubTwo);
-   mGameManager->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, eventOne);
-   mGameManager->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, eventTwo);
-   mGameManager->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, eventThree);
-   mGameManager->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, eventFour);
+   mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, eventSubOne);
+   mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, eventSubTwo);
+   mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, eventOne);
+   mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, eventTwo);
+   mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, eventThree);
+   mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, eventFour);
 
-   mGameManager->AddActor(*masterTask, false, false);
-   mGameManager->AddActor(*subTaskOne, false, false);
-   mGameManager->AddActor(*subTaskTwo, false, false);
+   mGM->AddActor(*masterTask, false, false);
+   mGM->AddActor(*subTaskOne, false, false);
+   mGM->AddActor(*subTaskTwo, false, false);
 
-   mGameManager->AddActor(*eventSubOne, false, false);
-   mGameManager->AddActor(*eventSubTwo, false, false);
-   mGameManager->AddActor(*eventOne, false, false);
-   mGameManager->AddActor(*eventTwo, false, false);
-   mGameManager->AddActor(*eventThree, false, false);
-   mGameManager->AddActor(*eventFour, false, false);
+   mGM->AddActor(*eventSubOne, false, false);
+   mGM->AddActor(*eventSubTwo, false, false);
+   mGM->AddActor(*eventOne, false, false);
+   mGM->AddActor(*eventTwo, false, false);
+   mGM->AddActor(*eventThree, false, false);
+   mGM->AddActor(*eventFour, false, false);
 
    masterTask->SetName("MasterTask");
    subTaskOne->SetName("SubTaskOne");

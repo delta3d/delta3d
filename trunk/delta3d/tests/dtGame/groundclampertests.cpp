@@ -56,6 +56,8 @@
 #include <dtActors/infiniteterrainactorproxy.h>
 
 #include <dtABC/application.h>
+
+#include "basegmtests.h"
 extern dtABC::Application& GetGlobalApplication();
 
 namespace dtGame
@@ -149,7 +151,7 @@ namespace dtGame
          float mOffset;
    };
 
-   class GroundClamperTests : public CPPUNIT_NS::TestFixture
+   class GroundClamperTests : public BaseGMTestFixture
    {
       CPPUNIT_TEST_SUITE(GroundClamperTests);
 
@@ -175,35 +177,21 @@ namespace dtGame
       public:
 
          ///////////////////////////////////////////////////////////////////////
-         void setUp()
+         void setUp() override
          {
-            mGM = new dtGame::GameManager(*GetGlobalApplication().GetScene());
-            mGM->SetApplication(GetGlobalApplication());
+            BaseGMTestFixture::setUp();
             mGroundClamper = new TestClamper();
-            mGM->LoadActorRegistry(mTestGameActorRegistry);
 
             mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, mTestGameActor);
             CPPUNIT_ASSERT(mTestGameActor.valid());
 
-            dtCore::System::GetInstance().Config();
-
-            dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
-            dtCore::System::GetInstance().Start();
-            dtCore::System::GetInstance().Step();
          }
 
          ///////////////////////////////////////////////////////////////////////
-         void tearDown()
+         void tearDown() override
          {
-            dtCore::System::GetInstance().Stop();
-
-            if (mGM.valid())
-            {
-               mTestGameActor = NULL;
-               mGM->DeleteAllActors(true);
-               mGM->UnloadActorRegistry(mTestGameActorRegistry);
-               mGM = NULL;
-            }
+            mTestGameActor = NULL;
+            BaseGMTestFixture::tearDown();
          }
 
          ///////////////////////////////////////////////////////////////////////
@@ -1034,14 +1022,10 @@ namespace dtGame
 
       private:
 
-         dtCore::RefPtr<GameManager> mGM;
          dtCore::RefPtr<TestClamper> mGroundClamper;
          dtCore::RefPtr<GameActorProxy> mTestGameActor;
-         static const std::string mTestGameActorRegistry;
    };
 
    CPPUNIT_TEST_SUITE_REGISTRATION(GroundClamperTests);
-
-   const std::string GroundClamperTests::mTestGameActorRegistry("testGameActorLibrary");
 
 }

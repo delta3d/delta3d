@@ -51,8 +51,8 @@ namespace dtAnim
       CPPUNIT_TEST_SUITE_END();
 
       public:
-         void setUp();
-         void tearDown();
+         void setUp() override;
+         void tearDown() override;
 
          void TestCalculateWeights();
          void TestEdgeCases();
@@ -75,9 +75,10 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    void WalkRunBlendTests::setUp()
    {
+      AnimModelLoadingTestFixture::setUp();
+
       mAnimationAC = new AnimationHelper();
       Connect(mAnimationAC);
-      dtCore::Project::GetInstance().SetContext("../examples/data");
 
       dtCore::ResourceDescriptor modelPath("SkeletalMeshes:Marine:marine_test.xml");
 
@@ -102,6 +103,7 @@ namespace dtAnim
    void WalkRunBlendTests::tearDown()
    {
       mAnimationAC = NULL;
+      AnimModelLoadingTestFixture::tearDown();
    }
 
    class TestVelocityInterface: public osg::Referenced, public dtCore::VelocityInterface

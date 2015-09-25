@@ -78,6 +78,7 @@ class SoundActorTests : public CPPUNIT_NS::TestFixture
 
    private:
       static const std::string LIBRARY_TEST_GAME_ACTOR;
+      static const std::string LIBRARY_DT_AUDIO;
 
       dtCore::RefPtr<dtGame::GameManager> mGameManager;
       dtCore::RefPtr<dtAudio::SoundActor> mSndActor;
@@ -88,6 +89,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(SoundActorTests);
 
 ///////////////////////////////////////////////////////////////////////////////
 const std::string SoundActorTests::LIBRARY_TEST_GAME_ACTOR("testGameActorLibrary");
+const std::string SoundActorTests::LIBRARY_DT_AUDIO("dtAudio");
 
 ///////////////////////////////////////////////////////////////////////////////
 void SoundActorTests::setUp()
@@ -100,6 +102,7 @@ void SoundActorTests::setUp()
       mGameManager->SetApplication(GetGlobalApplication());
       dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
       mGameManager->LoadActorRegistry(LIBRARY_TEST_GAME_ACTOR);
+      mGameManager->LoadActorRegistry(LIBRARY_DT_AUDIO);
 
       dtAudio::AudioManager::Instantiate();
 

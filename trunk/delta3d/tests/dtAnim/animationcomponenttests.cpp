@@ -93,8 +93,8 @@ namespace dtAnim
       {
       }
 
-      void setUp();
-      void tearDown();
+      void setUp() override;
+      void tearDown() override;
 
       void TestAnimationComponent();
       void TestAnimationPerformance();
@@ -124,18 +124,10 @@ namespace dtAnim
          dtCore::System::GetInstance().Step();
       }
 
-      dtUtil::Log* mLogger;
-      dtCore::RefPtr<dtGame::GameManager> mGM;
       dtCore::RefPtr<AnimationComponent> mAnimComp;
       dtCore::RefPtr<dtGame::GameActorProxy> mTestGameActor;
       dtCore::RefPtr<AnimationHelper> mAnimAC;
 
-      dtCore::RefPtr<dtCore::Scene>          mScene;
-      dtCore::RefPtr<dtCore::Camera>         mCamera;
-      dtCore::RefPtr<dtCore::DeltaWin>       mWin;
-      dtCore::RefPtr<dtCore::View>           mView;
-
-      bool mModelLoaded, mModelUnloaded;
    };
 
    // Registers the fixture into the 'registry'
@@ -144,42 +136,40 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    void AnimationComponentTests::setUp()
    {
-      mLogger = &dtUtil::Log::GetInstance("animationcomponenttests.cpp");
-
-      dtABC::Application& app = GetGlobalApplication();
-      mScene = app.GetScene();
-      mWin = app.GetWindow();
-      mCamera = app.GetCamera();
-
-      dtCore::System::GetInstance().Config();
-      dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
-      dtCore::System::GetInstance().Start();
-
-      AnimNodeBuilder* nodeBuilder = ModelDatabase::GetInstance().GetNodeBuilder();
-      CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder should be valid.", nodeBuilder != NULL);
-      
-      if (nodeBuilder->SupportsSoftware())
+      AnimModelLoadingTestFixture::setUp();
+      try
       {
-         nodeBuilder->SetCreate(AnimNodeBuilder::CreateFunc(nodeBuilder, &AnimNodeBuilder::CreateSoftware));
+         AnimNodeBuilder* nodeBuilder = ModelDatabase::GetInstance().GetNodeBuilder();
+         CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder should be valid.", nodeBuilder != NULL);
+
+         if (nodeBuilder->SupportsSoftware())
+         {
+            nodeBuilder->SetCreate(AnimNodeBuilder::CreateFunc(nodeBuilder, &AnimNodeBuilder::CreateSoftware));
+         }
+         else
+         {
+            nodeBuilder->SetCreate(AnimNodeBuilder::CreateFunc(nodeBuilder, &AnimNodeBuilder::CreateNULL));
+         }
+
+         mAnimComp = new AnimationComponent();
+         mGM->AddComponent(*mAnimComp, dtGame::GameManager::ComponentPriority::NORMAL);
+
+         mGM->CreateActor(*dtAnim::AnimActorRegistry::ANIMATION_ACTOR_TYPE, mTestGameActor);
+         CPPUNIT_ASSERT(mTestGameActor.valid());
+
+         mTestGameActor->GetComponent(mAnimAC);
+         CPPUNIT_ASSERT(mAnimAC.valid());
+         Connect(mAnimAC);
       }
-      else
+      catch(dtUtil::Exception& e)
       {
-         nodeBuilder->SetCreate(AnimNodeBuilder::CreateFunc(nodeBuilder, &AnimNodeBuilder::CreateNULL));
+         CPPUNIT_FAIL(e.ToString());
+      }
+      catch(std::exception& e)
+      {
+         CPPUNIT_FAIL(e.what());
       }
 
-      dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
-      dtCore::System::GetInstance().Start();
-      mGM = new dtGame::GameManager(*mScene);
-      mGM->SetApplication(app);
-      mAnimComp = new AnimationComponent();
-      mGM->AddComponent(*mAnimComp, dtGame::GameManager::ComponentPriority::NORMAL);
-
-      mGM->CreateActor(*dtAnim::AnimActorRegistry::ANIMATION_ACTOR_TYPE, mTestGameActor);
-      CPPUNIT_ASSERT(mTestGameActor.valid());
-
-      mTestGameActor->GetComponent(mAnimAC);
-      CPPUNIT_ASSERT(mAnimAC.valid());
-      Connect(mAnimAC);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -188,16 +178,11 @@ namespace dtAnim
       dtCore::GameEventManager& gem = dtCore::GameEventManager::GetInstance();
       gem.ClearAllEvents();
 
-      dtCore::System::GetInstance().Stop();
-      if (mGM.valid())
-      {
-         mAnimAC = NULL;
-         mTestGameActor = NULL;
-         mGM->DeleteAllActors(true);
-         mGM = NULL;
-      }
+      mAnimAC = NULL;
+      mTestGameActor = NULL;
       mAnimComp = NULL;
       ModelDatabase::GetInstance().TruncateDatabase();
+      AnimModelLoadingTestFixture::tearDown();
    }
 
    /////////////////////////////////////////////////////////////////////////////

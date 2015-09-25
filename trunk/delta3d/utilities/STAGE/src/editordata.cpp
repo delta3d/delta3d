@@ -34,6 +34,7 @@
 #include <dtEditQt/baseuiplugin.h>
 #include <dtCore/map.h>
 #include <dtCore/datatype.h>
+#include <dtCore/actorfactory.h>
 #include <dtUtil/log.h>
 
 #include <QtCore/QObject>
@@ -72,7 +73,17 @@ namespace dtEditQt
             mGroupUIRegistry->RegisterPlugin(*groupUI);
          }
       }
+
       LOG_DEBUG("--- Finished Registering Static Group UI Plugins ---");
+
+      static const std::string AUDIO_ACTOR_LIBRARY("dtAudio");
+      static const std::string ANIM_ACTOR_LIBRARY("dtAnim");
+      static const std::string PHYSICS_ACTOR_LIBRARY("dtPhysics");
+      // TODO This should be in the config somewhere.
+      dtCore::ActorFactory::GetInstance().LoadActorRegistry(dtCore::ActorFactory::DEFAULT_ACTOR_LIBRARY);
+      dtCore::ActorFactory::GetInstance().LoadOptionalActorRegistry(AUDIO_ACTOR_LIBRARY);
+      dtCore::ActorFactory::GetInstance().LoadOptionalActorRegistry(ANIM_ACTOR_LIBRARY);
+      dtCore::ActorFactory::GetInstance().LoadOptionalActorRegistry(PHYSICS_ACTOR_LIBRARY);
    }
 
    ///////////////////////////////////////////////////////////////////////////////

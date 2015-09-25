@@ -61,8 +61,10 @@ namespace dtAnim
    public:
 
       //////////////////////////////////////////////////////////////////////////
-      void setUp()
+      void setUp() override
       {
+         AnimModelLoadingTestFixture::setUp();
+
          dtCore::Project::GetInstance().SetContext("../examples/data");
 
          dtCore::ResourceDescriptor modelPath("SkeletalMeshes/Marine/marine_test.xml");
@@ -75,10 +77,11 @@ namespace dtAnim
       }
 
       //////////////////////////////////////////////////////////////////////////
-      void tearDown()
+      void tearDown() override
       {
          mModel = NULL;
          mAnimHelper = NULL;
+         AnimModelLoadingTestFixture::tearDown();
       }
 
       //////////////////////////////////////////////////////////////////////////

@@ -218,6 +218,10 @@ namespace dtAnim
       {
          ex.LogException(dtUtil::Log::LOG_WARNING);
       }
+      catch(...)
+      {
+         LOG_ERROR("Unknown exception thrown while loading animation model: " + mResource.GetResourceIdentifier());
+      }
    }
 
 }

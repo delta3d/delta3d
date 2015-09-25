@@ -1,10 +1,24 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/sigslot.h>
 #include <dtAnim/animationhelper.h>
+#include "../dtGame/basegmtests.h"
 
-class AnimModelLoadingTestFixture: public CPPUNIT_NS::TestFixture, public sigslot::has_slots<>
+class AnimModelLoadingTestFixture: public dtGame::BaseGMTestFixture, public sigslot::has_slots<>
 {
 public:
+   AnimModelLoadingTestFixture()
+   : mModelLoaded()
+   , mModelUnloaded()
+   {
+
+   }
+
+   void GetRequiredLibraries(NameVector& namesOut) override
+   {
+      dtGame::BaseGMTestFixture::GetRequiredLibraries(namesOut);
+      namesOut.push_back("dtAnim");
+   }
+
    void Connect(dtAnim::AnimationHelper* helper)
    {
       helper->ModelLoadedSignal.connect_slot(this, &AnimModelLoadingTestFixture::OnModelLoaded);

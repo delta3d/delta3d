@@ -92,19 +92,14 @@ namespace dtAnim
       CPPUNIT_TEST_SUITE_END();
       
       public:
-         void setUp()
+         void setUp() override
          {
-            mLogger = &dtUtil::Log::GetInstance("attachmentcontrollertests.cpp");
-
-            dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
-            dtCore::System::GetInstance().Start();
-            
+            AnimModelLoadingTestFixture::setUp();
             mAnimHelper = new AnimationHelper();
             Connect(mAnimHelper);
             mAttach = new AttachmentControllerExtended();
             mAnimHelper->SetAttachmentController(mAttach);
 
-            dtCore::Project::GetInstance().SetContext("../examples/data");
             dtCore::ResourceDescriptor charModel("SkeletalMeshes:Marine:marine_test.xml");
 
             LoadModel(mAnimHelper, charModel);
@@ -117,11 +112,12 @@ namespace dtAnim
             mAnimHelper->GetModelWrapper()->SetScale(testScale);
          }
 
-         void tearDown()
+         void tearDown() override
          {
             dtAnim::ModelDatabase::GetInstance().TruncateDatabase();
             mAttach = NULL;
             mAnimHelper = NULL;
+            AnimModelLoadingTestFixture::tearDown();
          }
 
          void TestUpdate()
@@ -236,7 +232,6 @@ namespace dtAnim
 
       private:
 
-         dtUtil::Log* mLogger;
          dtCore::RefPtr<AnimationHelper> mAnimHelper;
          dtCore::RefPtr<AttachmentControllerExtended> mAttach;
 

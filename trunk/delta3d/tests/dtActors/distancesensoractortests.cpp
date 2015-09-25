@@ -29,28 +29,22 @@
 #include <prefix/unittestprefix.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <dtABC/application.h>
-
 #include <dtActors/distancesensoractor.h>
 #include <dtActors/engineactorregistry.h>
 #include <dtActors/gamemeshactor.h>
 
 #include <dtGame/basemessages.h>
-#include <dtGame/defaultmessageprocessor.h>
-#include <dtGame/gamemanager.h>
 
 #include <dtCore/actoractorproperty.h>
 #include <dtCore/floatactorproperty.h>
 #include <dtCore/actorfactory.h>
-
-#include <dtCore/scene.h>
 #include <dtCore/system.h>
 
 #include <dtUtil/stringutils.h>
 
-#include <vector>
+#include "../dtGame/basegmtests.h"
 
-extern dtABC::Application& GetGlobalApplication();
+#include <vector>
 
 namespace dtActors
 {
@@ -58,7 +52,7 @@ namespace dtActors
     * This test suite tests the base task actor proxy as well as the different
     * task subclasses.
     */
-   class DistanceSensorActorTests : public CPPUNIT_NS::TestFixture
+   class DistanceSensorActorTests : public dtGame::BaseGMTestFixture
    {
       CPPUNIT_TEST_SUITE(DistanceSensorActorTests);
          CPPUNIT_TEST(TestAttachToProperty);
@@ -69,17 +63,13 @@ namespace dtActors
 
    public:
       ///////////////////////////////////////////////////////////////////////////////
-      void setUp()
+      void setUp() override
       {
+         dtGame::BaseGMTestFixture::setUp();
          try
          {
-            mGameManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
-            mGameManager->SetApplication(GetGlobalApplication());
-            dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
-            dtCore::System::GetInstance().Start();
-
-            mGameManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, mParentProxy);
-            mGameManager->CreateActor(*dtActors::EngineActorRegistry::DISTANCE_SENSOR_ACTOR_TYPE, mDSProxy1);
+            mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, mParentProxy);
+            mGM->CreateActor(*dtActors::EngineActorRegistry::DISTANCE_SENSOR_ACTOR_TYPE, mDSProxy1);
 
             CPPUNIT_ASSERT(mParentProxy.valid());
             CPPUNIT_ASSERT(mDSProxy1.valid());
@@ -91,24 +81,18 @@ namespace dtActors
       }
 
       ///////////////////////////////////////////////////////////////////////////////
-      void tearDown()
+      void tearDown() override
       {
-         dtCore::System::GetInstance().SetPause(false);
-         dtCore::System::GetInstance().Stop();
          mParentProxy = NULL;
          mDSProxy1 = NULL;
-         if (mGameManager.valid())
-         {
-            mGameManager->DeleteAllActors();
-            mGameManager = NULL;
-         }
+         dtGame::BaseGMTestFixture::tearDown();
       }
 
       ///////////////////////////////////////////////////////////////////////////////
       void TestAttachToProperty()
       {
-         mGameManager->AddActor(*mParentProxy, false, false);
-         mGameManager->AddActor(*mDSProxy1, false, false);
+         mGM->AddActor(*mParentProxy, false, false);
+         mGM->AddActor(*mDSProxy1, false, false);
 
          dtCore::ActorActorProperty* aap;
          mDSProxy1->GetProperty(DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR, aap);
@@ -123,8 +107,8 @@ namespace dtActors
       ///////////////////////////////////////////////////////////////////////////////
       void TestTriggerDistanceProperty()
       {
-         mGameManager->AddActor(*mParentProxy, false, false);
-         mGameManager->AddActor(*mDSProxy1, false, false);
+         mGM->AddActor(*mParentProxy, false, false);
+         mGM->AddActor(*mDSProxy1, false, false);
 
          dtCore::FloatActorProperty* fap;
          mDSProxy1->GetProperty(DistanceSensorActorProxy::PROPERTY_TRIGGER_DISTANCE, fap);
@@ -147,8 +131,8 @@ namespace dtActors
             CPPUNIT_ASSERT(aap != NULL);
             aap->SetValue(mParentProxy.get());
 
-            mGameManager->AddActor(*mParentProxy, false, false);
-            mGameManager->AddActor(*mDSProxy1, false, false);
+            mGM->AddActor(*mParentProxy, false, false);
+            mGM->AddActor(*mDSProxy1, false, false);
 
             CPPUNIT_ASSERT(mDSProxy1->GetDrawable()->GetParent() == mParentProxy->GetDrawable());
          }
@@ -170,8 +154,8 @@ namespace dtActors
 
       void TestRegistration()
       {
-         mGameManager->AddActor(*mParentProxy, false, false);
-         mGameManager->AddActor(*mDSProxy1, false, false);
+         mGM->AddActor(*mParentProxy, false, false);
+         mGM->AddActor(*mDSProxy1, false, false);
 
          DistanceSensorActor* dsActor;
          mDSProxy1->GetDrawable(dsActor);
@@ -189,13 +173,12 @@ namespace dtActors
          CPPUNIT_ASSERT(!dsActor->RegisterWithSensor(TEST_NAME, *xformable, TestCallbackFunction()));
 
          dsActor->RemoveSensorRegistration(TEST_NAME);
-         dtCore::System::GetInstance().Step();
+         dtCore::System::GetInstance().Step(0.016f);
          CPPUNIT_ASSERT_MESSAGE("Registration should have been removed.",
                   !dsActor->HasRegistration(TEST_NAME));
       }
 
    private:
-      dtCore::RefPtr<dtGame::GameManager> mGameManager;
       dtCore::RefPtr<dtGame::GameActorProxy> mParentProxy;
       dtCore::RefPtr<DistanceSensorActorProxy> mDSProxy1;
    };
