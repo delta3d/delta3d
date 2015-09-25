@@ -117,6 +117,7 @@ class MapTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestMapSaveAndLoadNestedPropertyContainerArray);
    CPPUNIT_TEST(TestMapSaveAndLoadActorGroups);
    CPPUNIT_TEST(TestMapAddLibrariesOnSave);
+   CPPUNIT_TEST(TestMapCorrectLibraryListSetsModified);
    CPPUNIT_TEST(TestShouldSaveProperty);
    CPPUNIT_TEST(TestLibraryMethods);
    CPPUNIT_TEST(TestWildCard);
@@ -145,6 +146,7 @@ public:
    void TestMapSaveAndLoadNestedPropertyContainerArray();
    void TestMapSaveAndLoadActorGroups();
    void TestMapAddLibrariesOnSave();
+   void TestMapCorrectLibraryListSetsModified();
    void TestShouldSaveProperty();
    void TestIsMapFileValid();
    void TestLoadMapIntoScene();
@@ -498,7 +500,46 @@ void MapTests::TestMapAddLibrariesOnSave()
 
       project.SaveMap(map);
 
-      CPPUNIT_ASSERT(map.GetLibraryVersionMap().find(mExampleLibraryName) != map.GetLibraryVersionMap().end());
+      CPPUNIT_ASSERT(map.HasLibrary(mExampleLibraryName));
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+   }
+}
+///////////////////////////////////////////////////////////////////////////////////////
+void MapTests::TestMapCorrectLibraryListSetsModified()
+{
+   try
+   {
+      dtCore::Project& project = dtCore::Project::GetInstance();
+
+      dtCore::Map& map = project.CreateMap(std::string("Neato Map"), std::string("neatomap"));
+
+      dtCore::ActorFactory::GetInstance().LoadActorRegistry(mExampleLibraryName);
+
+      dtCore::RefPtr<const dtCore::ActorType> exampleType = dtCore::ActorFactory::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
+      CPPUNIT_ASSERT_MESSAGE("The example actor type is NULL", exampleType.valid());
+
+      dtCore::RefPtr<dtCore::BaseActorObject> actor1 = dtCore::ActorFactory::GetInstance().CreateActor(*exampleType);
+      CPPUNIT_ASSERT_MESSAGE("actor1 is NULL", actor1.valid());
+
+      map.AddProxy(*actor1);
+      CPPUNIT_ASSERT(map.IsModified());
+
+      map.SetModified(false);
+
+      CPPUNIT_ASSERT(!map.IsModified());
+
+      map.CorrectLibraryList(false);
+
+      CPPUNIT_ASSERT(map.HasLibrary(mExampleLibraryName));
+
+      CPPUNIT_ASSERT(map.IsModified());
+      map.SetModified(false);
+      map.CorrectLibraryList(false);
+
+      CPPUNIT_ASSERT_MESSAGE("Correcting the list where nothing changes should not result in the map being modified.", !map.IsModified());
 
    }
    catch (const dtUtil::Exception& e)
