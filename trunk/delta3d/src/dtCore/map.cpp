@@ -524,6 +524,7 @@ namespace dtCore
             if (!libraryName.empty() && !HasLibrary(libraryName))
             {
                AddLibrary(libraryName, versionNumber);
+               SetModified(true);
             }
          }
       }
