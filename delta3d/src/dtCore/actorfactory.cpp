@@ -32,9 +32,7 @@
 
 namespace dtCore
 {
-   static const std::string ACTOR_LIBRARY("dtActors");
-   static const std::string AUDIO_ACTOR_LIBRARY("dtAudio");
-   static const std::string ANIM_ACTOR_LIBRARY("dtAnim");
+   const std::string ActorFactory::DEFAULT_ACTOR_LIBRARY("dtActors");
 
    //Singleton global variable for the library manager.
    dtCore::RefPtr<ActorFactory> ActorFactory::mInstance(NULL);
@@ -51,12 +49,6 @@ namespace dtCore
    {
       mLogger = &dtUtil::Log::GetInstance("actorfactory.cpp");
       mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, "Initializing actor library manager.");
-      LoadActorRegistry(ACTOR_LIBRARY);
-
-      //try to load some optional actor libraries that depend on optional
-      //external dependencies.  If the file isn't found, don't try to load it.
-      LoadOptionalActorRegistry(AUDIO_ACTOR_LIBRARY);
-      LoadOptionalActorRegistry(ANIM_ACTOR_LIBRARY);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -337,10 +329,14 @@ namespace dtCore
                actorType.GetFullName().c_str());
       }
 
-      //Now we know which registry to use, so tell the registry to
-      //create the proxy object and return it.
-      dtCore::RefPtr<BaseActorObject> proxy = apr->CreateActor(actorType).get();
-      return proxy;
+      dtCore::RefPtr<BaseActorObject> result;
+      if (apr != nullptr)
+      {
+         //Now we know which registry to use, so tell the registry to
+         //create the proxy object and return it.
+         result = apr->CreateActor(actorType);
+      }
+      return result;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -444,10 +440,10 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    void ActorFactory::UnloadActorRegistry(const std::string& libName)
    {
-      if (libName == ACTOR_LIBRARY)
+      if (libName == DEFAULT_ACTOR_LIBRARY)
       {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-               "Unloading the default actor library \"%s\".", ACTOR_LIBRARY.c_str());
+               "Unloading the default actor library \"%s\".", DEFAULT_ACTOR_LIBRARY.c_str());
       }
 
       RegistryMapItor regItor = mRegistries.find(libName);

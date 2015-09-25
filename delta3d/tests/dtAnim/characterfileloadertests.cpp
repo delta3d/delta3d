@@ -72,8 +72,9 @@ namespace dtAnim
          {
          }
 
-         void setUp()
+         void setUp() override
          {
+            AnimModelLoadingTestFixture::setUp();
             dtCore::Project::GetInstance().SetContext("../examples/data");
             AnimNodeBuilder* nodeBuilder = dtAnim::ModelDatabase::GetInstance().GetNodeBuilder();
             CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder should be valid.", nodeBuilder != NULL);
@@ -87,10 +88,11 @@ namespace dtAnim
             Connect(mHelper);
          }
 
-         void tearDown()
+         void tearDown() override
          {
             dtAnim::ModelDatabase::GetInstance().TruncateDatabase();
             mHelper = NULL;
+            AnimModelLoadingTestFixture::tearDown();
          }
 
          void TestIsFileValid()

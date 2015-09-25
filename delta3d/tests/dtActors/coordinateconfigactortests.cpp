@@ -61,6 +61,7 @@ class CoordinateConfigActorTests : public CPPUNIT_NS::TestFixture
    public:
       void setUp()
       {
+         dtCore::ActorFactory::GetInstance().LoadActorRegistry(dtCore::ActorFactory::DEFAULT_ACTOR_LIBRARY);
          dtCore::RefPtr<dtCore::BaseActorObject> proxy = dtCore::ActorFactory::GetInstance().
             CreateActor(*dtActors::EngineActorRegistry::COORDINATE_CONFIG_ACTOR_TYPE);
 
@@ -72,6 +73,7 @@ class CoordinateConfigActorTests : public CPPUNIT_NS::TestFixture
       {
          mCoordinateProxy = NULL;
          mCoordinateConfigActor = NULL;
+         dtCore::ActorFactory::GetInstance().UnloadActorRegistry(dtCore::ActorFactory::DEFAULT_ACTOR_LIBRARY);
       }
 
       void TestBasics()

@@ -235,7 +235,7 @@ namespace  dtCore
             if (isActorElement)
             {
                ++mActorDepth;
-            }         
+            }
          }
          else if (mInGroup)
          {
@@ -407,7 +407,7 @@ namespace  dtCore
                   std::string actorTypeFullName = dtUtil::XMLStringConverter(chars).ToString();
                   std::pair<std::string, std::string> typeCatPair = ActorType::ParseNameAndCategory(actorTypeFullName);
 
-                  ActorFactory::GetInstance().FindActorType(typeCatPair.second, typeCatPair.first);
+                  MapContentHandler::FindActorType(typeCatPair.second, typeCatPair.first);
                   //mMap->SetPrefabActorType();
                }
                else if (topEl == MapXMLConstants::DESCRIPTION_ELEMENT)
@@ -566,18 +566,12 @@ namespace  dtCore
          // Make sure we have not tried to load this actor type already and failed.
          if (mMissingActorTypes.find(actorTypeFullName) == mMissingActorTypes.end())
          {
-            ActorTypePtr actorType =
-               ActorFactory::GetInstance().FindActorType(actorTypeCategory, actorTypeName);
+            ActorTypePtr actorType = FindActorType(actorTypeCategory, actorTypeName);
 
             dtCore::ActorComponentContainer* compContainer
                = dynamic_cast<dtCore::ActorComponentContainer*>(mBaseActorObject.get());
 
-            if (actorType == NULL)
-            {
-               actorType = ActorFactory::GetInstance().FindActorTypeReplacement(actorTypeCategory, actorTypeName);
-            }
-
-            if (compContainer && actorType == NULL)
+            if (compContainer && actorType == nullptr)
             {
                ActorPtrVector existingComponents;
                ActorTypePtr tempType = new dtCore::ActorType(actorTypeName, actorTypeCategory, std::string());
@@ -905,7 +899,7 @@ namespace  dtCore
    //////////////////////////////////////////////////////////////////////////
    void MapContentHandler::EndActorElement()
    {
-      if (mBaseActorObject != NULL)
+      if (mBaseActorObject != nullptr && !mIgnoreCurrentActor)
       {
          if ( ! mLoadingPrefab && ! mBaseActorObject->IsActorComponent())
          {
@@ -943,11 +937,13 @@ namespace  dtCore
       // the end element for the actor is for the proper level in
       // the actor-to-actor hierarchy.
       bool wasIgnored = mIgnoreCurrentActor;
-      if (mIgnoreCurrentActor
-         && (mActorDepth == 0 || mIgnoreActorDepth == mActorDepth))
+      if (mIgnoreCurrentActor)
       {
-         mIgnoreCurrentActor = false;
-         mIgnoreActorDepth = -1;
+         if (mActorDepth == 0 || mIgnoreActorDepth == mActorDepth)
+         {
+            mIgnoreCurrentActor = false;
+            mIgnoreActorDepth = -1;
+         }
       }
       else // Actor was valid and needs to be popped off the stack.
       {
@@ -970,7 +966,7 @@ namespace  dtCore
 
       --mActorDepth;
 
-      mInActor = mBaseActorObject != NULL;
+      mInActor = mActorDepth >= 0;
 
       if ( ! wasIgnored)
       {
@@ -1128,6 +1124,46 @@ namespace  dtCore
    bool MapContentHandler::HasDeprecatedProperty() const
    {
       return mPropSerializer->HasDeprecatedProperty();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   ActorTypePtr MapContentHandler::FindActorType(const std::string& actorTypeCategory, const std::string& actorTypeName)
+   {
+      ActorTypePtr actorType =
+         ActorFactory::GetInstance().FindActorType(actorTypeCategory, actorTypeName);
+
+      if (actorType == nullptr)
+      {
+         if (!ActorFactory::GetInstance().IsInRegistry(ActorFactory::DEFAULT_ACTOR_LIBRARY))
+         {
+            try
+            {
+               //Load old default registries
+               ActorFactory::GetInstance().LoadActorRegistry(ActorFactory::DEFAULT_ACTOR_LIBRARY);
+               ActorFactory::GetInstance().LoadOptionalActorRegistry("dtAnim");
+               ActorFactory::GetInstance().LoadOptionalActorRegistry("dtAudio");
+               //try again
+               actorType = ActorFactory::GetInstance().FindActorType(actorTypeCategory, actorTypeName);
+               if (actorType != nullptr)
+               {
+                  LOGN_WARNING("actorfactor.cpp", "ActorType \"" + actorType->GetFullName() +
+                        "\" was not found in any open libraries, but it was found in the " + ActorFactory::DEFAULT_ACTOR_LIBRARY +
+                        "or another old, default loaded one. Auto-loaded libraries is no longer supported. If you resave the map, it will correct the library list.");
+
+               }
+            }
+            catch (const dtUtil::Exception& ex)
+            {
+               // if dtActors isn't available, the application just may not be using it, so ignore.
+            }
+         }
+      }
+
+      if (actorType == nullptr)
+      {
+         actorType = ActorFactory::GetInstance().FindActorTypeReplacement(actorTypeCategory, actorTypeName);
+      }
+      return actorType;
    }
 
    //////////////////////////////////////////////////////////////////////////

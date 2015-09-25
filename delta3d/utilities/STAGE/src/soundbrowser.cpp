@@ -67,8 +67,8 @@ namespace dtEditQt
       mGrid->addWidget(listSoundGroup(), 1, 0);
       mGrid->addWidget(standardButtons(QString("Resource Tools")), 2, 0, Qt::AlignCenter);
 
-      mSoundBuffers[0] = NULL;
-      mSoundSources[0] = NULL;
+      mSoundBuffers[0] = 0U;
+      mSoundSources[0] = 0U;
    }
 
    ///////////////////////////////////////////////////////////////////////////////

@@ -24,6 +24,7 @@
 #include <dtGame/gamemanager.h>
 #include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/testcomponent.h>
+#include <dtCore/actorfactory.h>
 
 namespace dtGame
 {
@@ -39,6 +40,7 @@ namespace dtGame
 
       virtual void GetRequiredLibraries(NameVector& namesOut)
       {
+         namesOut.push_back(dtCore::ActorFactory::DEFAULT_ACTOR_LIBRARY);
          namesOut.push_back(mTestActorLibrary);
          namesOut.push_back(mTestGameActorLibrary);
       }

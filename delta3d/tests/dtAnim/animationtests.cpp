@@ -116,8 +116,8 @@ namespace dtAnim
       CPPUNIT_TEST_SUITE_END();
       
       public:
-         void setUp();
-         void tearDown();
+         void setUp() override;
+         void tearDown() override;
 
          void UnitTestAnimatable(); 
          void TestAnimatableEventNames();
@@ -182,9 +182,9 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    void AnimationTests::setUp()
    {
+      AnimModelLoadingTestFixture::setUp();
       mHelper = new AnimationHelper();
       Connect(mHelper);
-      dtCore::Project::GetInstance().SetContext(dtUtil::GetDeltaRootPath() + "/examples/data");
       
       dtCore::ResourceDescriptor modelPath = dtCore::ResourceDescriptor("SkeletalMeshes:Marine:marine_test.xml");
 
@@ -236,6 +236,7 @@ namespace dtAnim
       mAnimatable2 = NULL;
       mHelper = NULL;
       mLastAnimatableCompleted = NULL;
+      AnimModelLoadingTestFixture::tearDown();
    }
 
 

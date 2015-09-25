@@ -111,6 +111,7 @@ ProxyTest::~ProxyTest()
 void ProxyTest::setUp()
 {
    //dtUtil::Log::GetInstance("librarymanager.cpp").SetLogLevel(dtUtil::Log::LOG_DEBUG);
+   libMgr.LoadActorRegistry(dtCore::ActorFactory::DEFAULT_ACTOR_LIBRARY);
    libMgr.LoadActorRegistry(mExampleLibraryName);
    libMgr.GetActorTypes(actors);
    CPPUNIT_ASSERT(actors.size() > 0);
@@ -122,6 +123,7 @@ void ProxyTest::tearDown()
    proxies.clear();
    actors.clear();
    libMgr.UnloadActorRegistry(mExampleLibraryName);
+   libMgr.UnloadActorRegistry(dtCore::ActorFactory::DEFAULT_ACTOR_LIBRARY);
    dtCore::GameEventManager::GetInstance().ClearAllEvents();
 }
 

@@ -103,71 +103,73 @@ extern dtABC::Application& GetGlobalApplication();
 class MapTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(MapTests);
-      CPPUNIT_TEST(TestAddRegistryWithoutLibrary);
-      CPPUNIT_TEST(TestMapAddRemoveProxies);
-      CPPUNIT_TEST(TestMapProxySearch);
-      CPPUNIT_TEST(TestMapLibraryHandling);
-      CPPUNIT_TEST(TestMapEventsModified);
-      CPPUNIT_TEST(TestIsMapFileValid);
-      CPPUNIT_TEST(TestLoadMapIntoScene);
-      CPPUNIT_TEST(TestMapSaveAndLoad);
-      CPPUNIT_TEST(TestMapSaveAndLoadEvents);
-      CPPUNIT_TEST(TestMapSaveAndLoadGroup);
-      CPPUNIT_TEST(TestMapSaveAndLoadPropertyContainerProperty);
-      CPPUNIT_TEST(TestMapSaveAndLoadNestedPropertyContainerArray);
-      CPPUNIT_TEST(TestMapSaveAndLoadActorGroups);
-      CPPUNIT_TEST(TestShouldSaveProperty);
-      CPPUNIT_TEST(TestLibraryMethods);
-      CPPUNIT_TEST(TestWildCard);
-      CPPUNIT_TEST(TestEnvironmentMapLoading);
-      CPPUNIT_TEST(TestLoadEnvironmentMapIntoScene);
-      CPPUNIT_TEST(TestActorProxyRemoveProperties);
-      CPPUNIT_TEST(TestRemovePropertiesByPointer);
-      CPPUNIT_TEST(TestCreateMapsMultiContext);
-      CPPUNIT_TEST(TestSaveAsMultiContext);
-      CPPUNIT_TEST(TestParsingMapHeaderData);
+   CPPUNIT_TEST(TestAddRegistryWithoutLibrary);
+   CPPUNIT_TEST(TestMapAddRemoveProxies);
+   CPPUNIT_TEST(TestMapProxySearch);
+   CPPUNIT_TEST(TestMapLibraryHandling);
+   CPPUNIT_TEST(TestMapEventsModified);
+   CPPUNIT_TEST(TestIsMapFileValid);
+   CPPUNIT_TEST(TestLoadMapIntoScene);
+   CPPUNIT_TEST(TestMapSaveAndLoad);
+   CPPUNIT_TEST(TestMapSaveAndLoadEvents);
+   CPPUNIT_TEST(TestMapSaveAndLoadGroup);
+   CPPUNIT_TEST(TestMapSaveAndLoadPropertyContainerProperty);
+   CPPUNIT_TEST(TestMapSaveAndLoadNestedPropertyContainerArray);
+   CPPUNIT_TEST(TestMapSaveAndLoadActorGroups);
+   CPPUNIT_TEST(TestMapAddLibrariesOnSave);
+   CPPUNIT_TEST(TestShouldSaveProperty);
+   CPPUNIT_TEST(TestLibraryMethods);
+   CPPUNIT_TEST(TestWildCard);
+   CPPUNIT_TEST(TestEnvironmentMapLoading);
+   CPPUNIT_TEST(TestLoadEnvironmentMapIntoScene);
+   CPPUNIT_TEST(TestActorProxyRemoveProperties);
+   CPPUNIT_TEST(TestRemovePropertiesByPointer);
+   CPPUNIT_TEST(TestCreateMapsMultiContext);
+   CPPUNIT_TEST(TestSaveAsMultiContext);
+   CPPUNIT_TEST(TestParsingMapHeaderData);
    CPPUNIT_TEST_SUITE_END();
 
-   public:
-      void setUp();
-      void tearDown();
+public:
+   void setUp();
+   void tearDown();
 
-      void TestAddRegistryWithoutLibrary();
-      void TestMapAddRemoveProxies();
-      void TestMapProxySearch();
-      void TestMapLibraryHandling();
-      void TestMapEventsModified();
-      void TestMapSaveAndLoad();
-      void TestMapSaveAndLoadEvents();
-      void TestMapSaveAndLoadGroup();
-      void TestMapSaveAndLoadPropertyContainerProperty();
-      void TestMapSaveAndLoadNestedPropertyContainerArray();
-      void TestMapSaveAndLoadActorGroups();
-      void TestShouldSaveProperty();
-      void TestIsMapFileValid();
-      void TestLoadMapIntoScene();
-      void TestLibraryMethods();
-      void TestEnvironmentMapLoading();
-      void TestLoadEnvironmentMapIntoScene();
-      void TestWildCard();
-      void TestActorProxyRemoveProperties();
-      void TestRemovePropertiesByPointer();
-      void TestCreateMapsMultiContext();
-      void TestSaveAsMultiContext();
-      void TestParsingMapHeaderData();
+   void TestAddRegistryWithoutLibrary();
+   void TestMapAddRemoveProxies();
+   void TestMapProxySearch();
+   void TestMapLibraryHandling();
+   void TestMapEventsModified();
+   void TestMapSaveAndLoad();
+   void TestMapSaveAndLoadEvents();
+   void TestMapSaveAndLoadGroup();
+   void TestMapSaveAndLoadPropertyContainerProperty();
+   void TestMapSaveAndLoadNestedPropertyContainerArray();
+   void TestMapSaveAndLoadActorGroups();
+   void TestMapAddLibrariesOnSave();
+   void TestShouldSaveProperty();
+   void TestIsMapFileValid();
+   void TestLoadMapIntoScene();
+   void TestLibraryMethods();
+   void TestEnvironmentMapLoading();
+   void TestLoadEnvironmentMapIntoScene();
+   void TestWildCard();
+   void TestActorProxyRemoveProperties();
+   void TestRemovePropertiesByPointer();
+   void TestCreateMapsMultiContext();
+   void TestSaveAsMultiContext();
+   void TestParsingMapHeaderData();
 
-      static const std::string TEST_PROJECT_DIR;
-      static const std::string TEST_PROJECT_DIR_2;
+   static const std::string TEST_PROJECT_DIR;
+   static const std::string TEST_PROJECT_DIR_2;
 
-   private:
-       static const std::string mExampleLibraryName;
-       static const std::string mExampleGameLibraryName;
+private:
+   static const std::string mExampleLibraryName;
+   static const std::string mExampleGameLibraryName;
 
-       void createActors(dtCore::Map& map);
-       dtCore::ActorProperty* getActorProperty(dtCore::Map& map,
+   void createActors(dtCore::Map& map);
+   dtCore::ActorProperty* getActorProperty(dtCore::Map& map,
          const std::string& propName, dtCore::DataType& type, unsigned which = 0);
 
-       dtUtil::Log* logger;
+   dtUtil::Log* logger;
 };
 
 // Registers the fixture into the 'registry'
@@ -188,7 +190,7 @@ class TestObjectRegistry : public dtCore::ActorPluginRegistry
 {
 public:
    TestObjectRegistry(const std::string& name, const std::string& desc)
-   : dtCore::ActorPluginRegistry(name, desc)
+: dtCore::ActorPluginRegistry(name, desc)
    {}
    virtual void RegisterActorTypes() {}
 };
@@ -196,55 +198,55 @@ public:
 ///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::setUp()
 {
-    try
-    {
-        dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
-        std::string logName("mapTest");
+   try
+   {
+      dtCore::ActorFactory::GetInstance().LoadActorRegistry(dtCore::ActorFactory::DEFAULT_ACTOR_LIBRARY);
+      dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
+      std::string logName("mapTest");
 
-        logger = &dtUtil::Log::GetInstance(logName);
+      logger = &dtUtil::Log::GetInstance(logName);
 
-        dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-        std::string currentDir = fileUtils.CurrentDirectory();
-        std::string projectDir("dtCore");
-        if (currentDir.substr(currentDir.size() - projectDir.size()) != projectDir)
-        {
-            fileUtils.PushDirectory(projectDir);
-        }
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      std::string currentDir = fileUtils.CurrentDirectory();
+      std::string projectDir("dtCore");
+      if (currentDir.substr(currentDir.size() - projectDir.size()) != projectDir)
+      {
+         fileUtils.PushDirectory(projectDir);
+      }
 
+      if (fileUtils.DirExists(TEST_PROJECT_DIR))
+      {
+         fileUtils.DirDelete(TEST_PROJECT_DIR, true);
+      }
 
-        if (fileUtils.DirExists(TEST_PROJECT_DIR))
-        {
-           fileUtils.DirDelete(TEST_PROJECT_DIR, true);
-        }
+      if (fileUtils.DirExists(TEST_PROJECT_DIR_2))
+      {
+         fileUtils.DirDelete(TEST_PROJECT_DIR_2, true);
+      }
 
-        if (fileUtils.DirExists(TEST_PROJECT_DIR_2))
-        {
-           fileUtils.DirDelete(TEST_PROJECT_DIR_2, true);
-        }
+      // Create without a maps directory so the code will test that will be created on demand.
+      dtCore::Project::GetInstance().CreateContext(TEST_PROJECT_DIR, false);
+      dtCore::Project::GetInstance().SetContext(TEST_PROJECT_DIR);
+      dtCore::Project::GetInstance().CreateContext(TEST_PROJECT_DIR_2, true);
+      dtCore::Project::GetInstance().AddContext(TEST_PROJECT_DIR_2);
 
-        // Create without a maps directory so the code will test that will be created on demand.
-        dtCore::Project::GetInstance().CreateContext(TEST_PROJECT_DIR, false);
-        dtCore::Project::GetInstance().SetContext(TEST_PROJECT_DIR);
-        dtCore::Project::GetInstance().CreateContext(TEST_PROJECT_DIR_2, true);
-        dtCore::Project::GetInstance().AddContext(TEST_PROJECT_DIR_2);
+      CPPUNIT_ASSERT_MESSAGE("Context 0 should have no maps dir",
+            !fileUtils.DirExists(dtCore::Project::GetInstance().GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + "maps"));
+      CPPUNIT_ASSERT_MESSAGE("Context 1 should have a maps dir",
+            fileUtils.DirExists(dtCore::Project::GetInstance().GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps"));
 
-        CPPUNIT_ASSERT_MESSAGE("Context 0 should have no maps dir",
-                 !fileUtils.DirExists(dtCore::Project::GetInstance().GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + "maps"));
-        CPPUNIT_ASSERT_MESSAGE("Context 1 should have a maps dir",
-                 fileUtils.DirExists(dtCore::Project::GetInstance().GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps"));
+      //copy the vector because the act of deleting a map will reload the map names list.
+      const std::set<std::string> v = dtCore::Project::GetInstance().GetMapNames();
 
-        //copy the vector because the act of deleting a map will reload the map names list.
-        const std::set<std::string> v = dtCore::Project::GetInstance().GetMapNames();
-
-        for (std::set<std::string>::const_iterator i = v.begin(); i != v.end(); ++i)
-        {
-            dtCore::Project::GetInstance().DeleteMap(*i, true);
-        }
-    }
-    catch (const dtUtil::Exception& e)
-    {
-        CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
-    }
+      for (std::set<std::string>::const_iterator i = v.begin(); i != v.end(); ++i)
+      {
+         dtCore::Project::GetInstance().DeleteMap(*i, true);
+      }
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+   }
 }
 
 
@@ -287,6 +289,7 @@ void MapTests::tearDown()
       {
          dtCore::ActorFactory::GetInstance().UnloadActorRegistry(mExampleLibraryName);
       }
+      dtCore::ActorFactory::GetInstance().LoadActorRegistry(dtCore::ActorFactory::DEFAULT_ACTOR_LIBRARY);
 
       if (shouldPopDir)
       {
@@ -323,11 +326,11 @@ void MapTests::createActors(dtCore::Map& map)
    {
       // In order to keep the tests fasts, we skip the nasty slow ones.
       if (actorTypes[i]->GetName() == dtActors::EngineActorRegistry::CLOUD_PLANE_ACTOR_TYPE->GetName() ||
-          actorTypes[i]->GetName() == dtActors::EngineActorRegistry::CLOUD_DOME_ACTOR_TYPE->GetName()  ||
-          actorTypes[i]->GetName() == dtActors::EngineActorRegistry::WEATHER_ENVIRONMENT_ACTOR_TYPE->GetName() ||
-          actorTypes[i]->GetName() == "Test Environment Actor" ||
-          actorTypes[i]->GetName() == "Waypoint" ||
-          actorTypes[i]->GetName() == "Sound Actor")
+            actorTypes[i]->GetName() == dtActors::EngineActorRegistry::CLOUD_DOME_ACTOR_TYPE->GetName()  ||
+            actorTypes[i]->GetName() == dtActors::EngineActorRegistry::WEATHER_ENVIRONMENT_ACTOR_TYPE->GetName() ||
+            actorTypes[i]->GetName() == "Test Environment Actor" ||
+            actorTypes[i]->GetName() == "Waypoint" ||
+            actorTypes[i]->GetName() == "Sound Actor")
       {
          ++skippedActors;
          continue; // go to next actor
@@ -339,7 +342,7 @@ void MapTests::createActors(dtCore::Map& map)
       dtCore::Timer_t testClockStart = testClock.Tick();
 
       logger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
-                         "Creating actor proxy with type \"" + actorTypes[i]->GetFullName() + "\"." );
+            "Creating actor proxy with type \"" + actorTypes[i]->GetFullName() + "\"." );
 
       proxy = libMgr.CreateActor(*actorTypes[i]);
       snprintf(nameAsString, 21, "%d", nameCounter);
@@ -347,14 +350,14 @@ void MapTests::createActors(dtCore::Map& map)
       ++nameCounter;
 
       logger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
-                         "Set proxy name to: %s", proxy->GetName().c_str());
+            "Set proxy name to: %s", proxy->GetName().c_str());
 
       proxy->GetPropertyList(props);
       for (unsigned int j=0; j<props.size(); ++j)
       {
          logger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
-                            "Property: Name: %s, Type: %s",
-                            props[j]->GetName().c_str(), props[j]->GetDataType().GetName().c_str());
+               "Property: Name: %s, Type: %s",
+               props[j]->GetName().c_str(), props[j]->GetDataType().GetName().c_str());
       }
 
       // Temporary timing for map tests...  when we get a slow one, we should exclude it from
@@ -363,18 +366,18 @@ void MapTests::createActors(dtCore::Map& map)
       double timeToCreate = testClock.DeltaSec(testClockStart, testClockDone);
       if (timeToCreate > 0.5) // more than .5 seconds is too long for 1 object in a test
          logger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__,
-                            "SLOW ACTOR CREATED IN TESTS - Type: %s, time[%f].  To ignore this slow actor in tests, modify these files (maptests.cpp, messagetests.cpp, proxytests.cpp, and gamemanagertests.cpp)",
-                            actorTypes[i]->GetName().c_str(), timeToCreate);
+               "SLOW ACTOR CREATED IN TESTS - Type: %s, time[%f].  To ignore this slow actor in tests, modify these files (maptests.cpp, messagetests.cpp, proxytests.cpp, and gamemanagertests.cpp)",
+               actorTypes[i]->GetName().c_str(), timeToCreate);
 
       map.AddProxy(*proxy);
 
       CPPUNIT_ASSERT_MESSAGE("Proxy list has the wrong size.",
-                             map.GetAllProxies().size() == (i + 1 - skippedActors));
+            map.GetAllProxies().size() == (i + 1 - skippedActors));
       CPPUNIT_ASSERT_MESSAGE("Last proxy in the list should equal the new proxy.",
-                             map.GetAllProxies().find(proxy->GetId())->second == proxy.get());
+            map.GetAllProxies().find(proxy->GetId())->second == proxy.get());
    }
    CPPUNIT_ASSERT_MESSAGE("The actors that should have been skipped when creating the actors for the test were not found.  This code is out of date.",
-      skippedActors >= 2);
+         skippedActors >= 2);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -394,417 +397,447 @@ void MapTests::TestAddRegistryWithoutLibrary()
    }
    catch (const dtUtil::Exception& ex)
    {
-       CPPUNIT_FAIL(ex.ToString());
+      CPPUNIT_FAIL(ex.ToString());
    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestMapAddRemoveProxies()
 {
-    try
-    {
-        dtCore::Project& project = dtCore::Project::GetInstance();
+   try
+   {
+      dtCore::Project& project = dtCore::Project::GetInstance();
 
-        dtCore::Map& map = project.CreateMap(std::string("Neato Map"), std::string("neatomap"));
+      dtCore::Map& map = project.CreateMap(std::string("Neato Map"), std::string("neatomap"));
 
-        createActors(map);
+      createActors(map);
 
-        std::set<std::string> copy;
-        CPPUNIT_ASSERT_MESSAGE("The set of actor classes should not be empty.",
+      std::set<std::string> copy;
+      CPPUNIT_ASSERT_MESSAGE("The set of actor classes should not be empty.",
             !map.GetProxyActorClasses().empty());
-        copy.insert(map.GetProxyActorClasses().begin(), map.GetProxyActorClasses().end());
-        map.RebuildProxyActorClassSet();
-        CPPUNIT_ASSERT_MESSAGE("The set of actor classes should not be empty.",
+      copy.insert(map.GetProxyActorClasses().begin(), map.GetProxyActorClasses().end());
+      map.RebuildProxyActorClassSet();
+      CPPUNIT_ASSERT_MESSAGE("The set of actor classes should not be empty.",
             !map.GetProxyActorClasses().empty());
-        CPPUNIT_ASSERT_MESSAGE("The set of actor classes should be the same size as the copy.",
+      CPPUNIT_ASSERT_MESSAGE("The set of actor classes should be the same size as the copy.",
             map.GetProxyActorClasses().size() == copy.size() );
 
-        unsigned int maxId = map.GetAllProxies().size();
-        for (unsigned int x = 0;  x < maxId; ++x)
-        {
-            CPPUNIT_ASSERT_MESSAGE("Unable to remove item 0",
-                map.RemoveProxy(*map.GetAllProxies().begin()->second));
+      unsigned int maxId = map.GetAllProxies().size();
+      for (unsigned int x = 0;  x < maxId; ++x)
+      {
+         CPPUNIT_ASSERT_MESSAGE("Unable to remove item 0",
+               map.RemoveProxy(*map.GetAllProxies().begin()->second));
 
-            CPPUNIT_ASSERT_MESSAGE("Proxy list has the wrong size.",
-                map.GetAllProxies().size() == (unsigned int)(maxId - (x + 1)));
-        }
-        map.RebuildProxyActorClassSet();
-        CPPUNIT_ASSERT_MESSAGE("The set of actor classes should be empty.",
+         CPPUNIT_ASSERT_MESSAGE("Proxy list has the wrong size.",
+               map.GetAllProxies().size() == (unsigned int)(maxId - (x + 1)));
+      }
+      map.RebuildProxyActorClassSet();
+      CPPUNIT_ASSERT_MESSAGE("The set of actor classes should be empty.",
             map.GetProxyActorClasses().empty());
 
-        dtCore::ActorRefPtrVector proxies;
-        map.GetAllProxies(proxies);
+      dtCore::ActorRefPtrVector proxies;
+      map.GetAllProxies(proxies);
 
-        map.AddLibrary(mExampleLibraryName, "1.0");
-        dtCore::ActorFactory::GetInstance().LoadActorRegistry(mExampleLibraryName);
+      map.AddLibrary(mExampleLibraryName, "1.0");
+      dtCore::ActorFactory::GetInstance().LoadActorRegistry(mExampleLibraryName);
 
-        dtCore::RefPtr<const dtCore::ActorType> exampleType = dtCore::ActorFactory::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
-        CPPUNIT_ASSERT_MESSAGE("The example type is NULL", exampleType.valid());
+      dtCore::RefPtr<const dtCore::ActorType> exampleType = dtCore::ActorFactory::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
+      CPPUNIT_ASSERT_MESSAGE("The example type is NULL", exampleType.valid());
 
-        dtCore::RefPtr<dtCore::BaseActorObject> proxy1 = dtCore::ActorFactory::GetInstance().CreateActor(*exampleType);
-        CPPUNIT_ASSERT_MESSAGE("proxy1 is NULL", proxy1.valid());
+      dtCore::RefPtr<dtCore::BaseActorObject> proxy1 = dtCore::ActorFactory::GetInstance().CreateActor(*exampleType);
+      CPPUNIT_ASSERT_MESSAGE("proxy1 is NULL", proxy1.valid());
 
-        dtCore::RefPtr<dtCore::BaseActorObject> proxy2 = dtCore::ActorFactory::GetInstance().CreateActor(*exampleType);
-        CPPUNIT_ASSERT_MESSAGE("proxy2 is NULL", proxy2.valid());
+      dtCore::RefPtr<dtCore::BaseActorObject> proxy2 = dtCore::ActorFactory::GetInstance().CreateActor(*exampleType);
+      CPPUNIT_ASSERT_MESSAGE("proxy2 is NULL", proxy2.valid());
 
-        dtCore::RefPtr<dtCore::BaseActorObject> proxy3 = dtCore::ActorFactory::GetInstance().CreateActor(*exampleType);
-        CPPUNIT_ASSERT_MESSAGE("proxy3 is NULL", proxy3.valid());
+      dtCore::RefPtr<dtCore::BaseActorObject> proxy3 = dtCore::ActorFactory::GetInstance().CreateActor(*exampleType);
+      CPPUNIT_ASSERT_MESSAGE("proxy3 is NULL", proxy3.valid());
 
-        dtCore::RefPtr<dtCore::BaseActorObject> proxy4 = dtCore::ActorFactory::GetInstance().CreateActor(*exampleType);
-        CPPUNIT_ASSERT_MESSAGE("proxy4 is NULL", proxy4.valid());
+      dtCore::RefPtr<dtCore::BaseActorObject> proxy4 = dtCore::ActorFactory::GetInstance().CreateActor(*exampleType);
+      CPPUNIT_ASSERT_MESSAGE("proxy4 is NULL", proxy4.valid());
 
-        map.AddProxy(*proxy1.get());
-        map.AddProxy(*proxy2.get());
-        map.AddProxy(*proxy3.get());
-        map.AddProxy(*proxy4.get());
+      map.AddProxy(*proxy1.get());
+      map.AddProxy(*proxy2.get());
+      map.AddProxy(*proxy3.get());
+      map.AddProxy(*proxy4.get());
 
-        dynamic_cast<dtCore::ActorIDActorProperty*>(proxy1->GetProperty("Test_Actor"))->SetValue(proxy2->GetId());
-        dynamic_cast<dtCore::ActorIDActorProperty*>(proxy2->GetProperty("Test_Actor"))->SetValue(proxy4->GetId());
-        dynamic_cast<dtCore::ActorIDActorProperty*>(proxy3->GetProperty("Test_Actor"))->SetValue(proxy4->GetId());
+      dynamic_cast<dtCore::ActorIDActorProperty*>(proxy1->GetProperty("Test_Actor"))->SetValue(proxy2->GetId());
+      dynamic_cast<dtCore::ActorIDActorProperty*>(proxy2->GetProperty("Test_Actor"))->SetValue(proxy4->GetId());
+      dynamic_cast<dtCore::ActorIDActorProperty*>(proxy3->GetProperty("Test_Actor"))->SetValue(proxy4->GetId());
 
-        map.RemoveProxy(*proxy4.get());
+      map.RemoveProxy(*proxy4.get());
 
-        CPPUNIT_ASSERT_MESSAGE("Proxy 1 should still be linked to proxy2", dynamic_cast<dtCore::ActorIDActorProperty*>(proxy1->GetProperty("Test_Actor"))->GetValue() == proxy2->GetId());
-        CPPUNIT_ASSERT_MESSAGE("Proxy 2 is linked still", dynamic_cast<dtCore::ActorIDActorProperty*>(proxy2->GetProperty("Test_Actor"))->GetValue().ToString().empty());
-        CPPUNIT_ASSERT_MESSAGE("Proxy 3 is linked still", dynamic_cast<dtCore::ActorIDActorProperty*>(proxy3->GetProperty("Test_Actor"))->GetValue().ToString().empty());
-    }
-    catch (const dtUtil::Exception& ex)
-    {
-        CPPUNIT_FAIL(ex.ToString());
-    }
+      CPPUNIT_ASSERT_MESSAGE("Proxy 1 should still be linked to proxy2", dynamic_cast<dtCore::ActorIDActorProperty*>(proxy1->GetProperty("Test_Actor"))->GetValue() == proxy2->GetId());
+      CPPUNIT_ASSERT_MESSAGE("Proxy 2 is linked still", dynamic_cast<dtCore::ActorIDActorProperty*>(proxy2->GetProperty("Test_Actor"))->GetValue().ToString().empty());
+      CPPUNIT_ASSERT_MESSAGE("Proxy 3 is linked still", dynamic_cast<dtCore::ActorIDActorProperty*>(proxy3->GetProperty("Test_Actor"))->GetValue().ToString().empty());
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      CPPUNIT_FAIL(ex.ToString());
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+void MapTests::TestMapAddLibrariesOnSave()
+{
+   try
+   {
+      dtCore::Project& project = dtCore::Project::GetInstance();
+
+      dtCore::Map& map = project.CreateMap(std::string("Neato Map"), std::string("neatomap"));
+
+      dtCore::ActorFactory::GetInstance().LoadActorRegistry(mExampleLibraryName);
+
+      dtCore::RefPtr<const dtCore::ActorType> exampleType = dtCore::ActorFactory::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
+      CPPUNIT_ASSERT_MESSAGE("The example actor type is NULL", exampleType.valid());
+
+      dtCore::RefPtr<dtCore::BaseActorObject> actor1 = dtCore::ActorFactory::GetInstance().CreateActor(*exampleType);
+      CPPUNIT_ASSERT_MESSAGE("actor1 is NULL", actor1.valid());
+
+      map.AddProxy(*actor1);
+
+      project.SaveMap(map);
+
+      CPPUNIT_ASSERT(map.GetLibraryVersionMap().find(mExampleLibraryName) != map.GetLibraryVersionMap().end());
+
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestMapProxySearch()
 {
-    try
-    {
-        dtCore::Project& project = dtCore::Project::GetInstance();
+   try
+   {
+      dtCore::Project& project = dtCore::Project::GetInstance();
 
-        project.SetContext(TEST_PROJECT_DIR);
+      project.SetContext(TEST_PROJECT_DIR);
 
-        dtCore::Map& map = project.CreateMap(std::string("Neato Map"), std::string("neatomap"));
+      dtCore::Map& map = project.CreateMap(std::string("Neato Map"), std::string("neatomap"));
 
-        createActors(map);
+      createActors(map);
 
-        unsigned maxId = map.GetAllProxies().size();
+      unsigned maxId = map.GetAllProxies().size();
 
-        dtCore::ActorRefPtrVector results;
+      dtCore::ActorRefPtrVector results;
 
-        map.FindProxies(results, "", "dtcore", "");
+      map.FindProxies(results, "", "dtcore", "");
 
-        map.FindProxies(results, "", "dtc", "");
+      map.FindProxies(results, "", "dtc", "");
 
-        CPPUNIT_ASSERT_MESSAGE("Only full category names should return results.", results.size() == 0);
+      CPPUNIT_ASSERT_MESSAGE("Only full category names should return results.", results.size() == 0);
 
-        map.FindProxies(results, "", "dtcore.", "");
-        CPPUNIT_ASSERT_MESSAGE("trailing dots should end with no results.", results.size() == 0);
+      map.FindProxies(results, "", "dtcore.", "");
+      CPPUNIT_ASSERT_MESSAGE("trailing dots should end with no results.", results.size() == 0);
 
-        map.FindProxies(results, "", "", "","", dtCore::Map::Placeable);
-        for (dtCore::ActorRefPtrVector::iterator i = results.begin();
+      map.FindProxies(results, "", "", "","", dtCore::Map::Placeable);
+      for (dtCore::ActorRefPtrVector::iterator i = results.begin();
             i != results.end(); ++i)
-        {
-            CPPUNIT_ASSERT_MESSAGE(std::string("Proxy ") + (*i)->GetName()
-                + " should not be in the results, it is not placeable",
-                 (*i)->IsPlaceable());
-        }
+      {
+         CPPUNIT_ASSERT_MESSAGE(std::string("Proxy ") + (*i)->GetName()
+               + " should not be in the results, it is not placeable",
+               (*i)->IsPlaceable());
+      }
 
-        map.FindProxies(results, "", "", "","", dtCore::Map::NotPlaceable);
-        for (dtCore::ActorRefPtrVector::iterator i = results.begin();
+      map.FindProxies(results, "", "", "","", dtCore::Map::NotPlaceable);
+      for (dtCore::ActorRefPtrVector::iterator i = results.begin();
             i != results.end(); ++i)
-        {
-            CPPUNIT_ASSERT_MESSAGE(std::string("Proxy ") + (*i)->GetName()
-                + " should not be in the results, it is placeable",
-                !(*i)->IsPlaceable());
-        }
+      {
+         CPPUNIT_ASSERT_MESSAGE(std::string("Proxy ") + (*i)->GetName()
+               + " should not be in the results, it is placeable",
+               !(*i)->IsPlaceable());
+      }
 
-        map.FindProxies(results, "", "", "","dtCore::Light");
-        CPPUNIT_ASSERT_MESSAGE("There should be some lights in the results.", results.size() >= 3);
+      map.FindProxies(results, "", "", "","dtCore::Light");
+      CPPUNIT_ASSERT_MESSAGE("There should be some lights in the results.", results.size() >= 3);
 
 
-        for (dtCore::ActorRefPtrVector::iterator i = results.begin();
+      for (dtCore::ActorRefPtrVector::iterator i = results.begin();
             i != results.end(); ++i)
-        {
-            CPPUNIT_ASSERT_MESSAGE("All results should be instances of dtCore::Light",
-                (*i)->IsInstanceOf("dtCore::Light"));
-        }
+      {
+         CPPUNIT_ASSERT_MESSAGE("All results should be instances of dtCore::Light",
+               (*i)->IsInstanceOf("dtCore::Light"));
+      }
 
-        dtCore::ActorRefPtrVector proxies;
+      dtCore::ActorRefPtrVector proxies;
 
-        map.GetAllProxies(proxies);
+      map.GetAllProxies(proxies);
 
-        for (unsigned x = 0;  x < proxies.size(); ++x)
-        {
-            dtCore::RefPtr<dtCore::BaseActorObject> proxyPTR = map.GetProxyById(proxies[x]->GetId());
+      for (unsigned x = 0;  x < proxies.size(); ++x)
+      {
+         dtCore::RefPtr<dtCore::BaseActorObject> proxyPTR = map.GetProxyById(proxies[x]->GetId());
 
-            CPPUNIT_ASSERT_MESSAGE("Proxy should be found in the map by the project.", &map == dtCore::Project::GetInstance().GetMapForActorProxy(*proxyPTR));
+         CPPUNIT_ASSERT_MESSAGE("Proxy should be found in the map by the project.", &map == dtCore::Project::GetInstance().GetMapForActorProxy(*proxyPTR));
 
-            CPPUNIT_ASSERT_MESSAGE((std::string("Proxy not found with id: ") + proxies[x]->GetId().ToString()).c_str()
-                , proxyPTR != NULL);
+         CPPUNIT_ASSERT_MESSAGE((std::string("Proxy not found with id: ") + proxies[x]->GetId().ToString()).c_str()
+               , proxyPTR != NULL);
 
-            dtCore::BaseActorObject& proxy = *proxyPTR.get();
+         dtCore::BaseActorObject& proxy = *proxyPTR.get();
 
-            CPPUNIT_ASSERT_MESSAGE((std::string("Proxy has the wrong id. ") + proxy.GetId().ToString()).c_str() ,
-                proxy.GetId() == proxies[x]->GetId());
+         CPPUNIT_ASSERT_MESSAGE((std::string("Proxy has the wrong id. ") + proxy.GetId().ToString()).c_str() ,
+               proxy.GetId() == proxies[x]->GetId());
 
-            const std::string& cat = proxy.GetActorType().GetCategory();
-            const std::string& typeName = proxy.GetActorType().GetName();
+         const std::string& cat = proxy.GetActorType().GetCategory();
+         const std::string& typeName = proxy.GetActorType().GetName();
 
-            map.FindProxies(results, proxy.GetName(), cat, typeName, "",
-                proxy.IsPlaceable() ? dtCore::Map::Placeable : dtCore::Map::NotPlaceable);
+         map.FindProxies(results, proxy.GetName(), cat, typeName, "",
+               proxy.IsPlaceable() ? dtCore::Map::Placeable : dtCore::Map::NotPlaceable);
 
-            CPPUNIT_ASSERT_MESSAGE((std::string("Results should have exactly one proxy. Id:") +
-                proxies[x]->GetId().ToString()).c_str() , results.size() == 1);
-            CPPUNIT_ASSERT_MESSAGE((std::string("Correct proxy was not found with full search. Id:") +
-                proxies[x]->GetId().ToString()).c_str() ,
-                results.front() == &proxy);
+         CPPUNIT_ASSERT_MESSAGE((std::string("Results should have exactly one proxy. Id:") +
+               proxies[x]->GetId().ToString()).c_str() , results.size() == 1);
+         CPPUNIT_ASSERT_MESSAGE((std::string("Correct proxy was not found with full search. Id:") +
+               proxies[x]->GetId().ToString()).c_str() ,
+               results.front() == &proxy);
 
-            map.FindProxies(results, proxyPTR->GetName());
+         map.FindProxies(results, proxyPTR->GetName());
 
-            CPPUNIT_ASSERT_EQUAL_MESSAGE((std::string("Results should have exactly one proxy. Id:") +
-                proxies[x]->GetId().ToString()).c_str(), size_t(1), results.size());
-            CPPUNIT_ASSERT_MESSAGE((std::string("Correct proxy was not found with name search. Id:") +
-                proxies[x]->GetId().ToString()).c_str() ,
-                results.front() == &proxy);
+         CPPUNIT_ASSERT_EQUAL_MESSAGE((std::string("Results should have exactly one proxy. Id:") +
+               proxies[x]->GetId().ToString()).c_str(), size_t(1), results.size());
+         CPPUNIT_ASSERT_MESSAGE((std::string("Correct proxy was not found with name search. Id:") +
+               proxies[x]->GetId().ToString()).c_str() ,
+               results.front() == &proxy);
 
-            map.FindProxies(results, std::string(""), cat, typeName);
+         map.FindProxies(results, std::string(""), cat, typeName);
 
-            for (unsigned j = 0; j < results.size(); ++j)
-            {
-               const dtCore::ActorType& at = results[j]->GetActorType();
-               std::ostringstream ss;
-               ss << "Each proxy in the results should have the type or be a subtype of \"" << cat << "." << typeName <<
+         for (unsigned j = 0; j < results.size(); ++j)
+         {
+            const dtCore::ActorType& at = results[j]->GetActorType();
+            std::ostringstream ss;
+            ss << "Each proxy in the results should have the type or be a subtype of \"" << cat << "." << typeName <<
                   "\".  The result has type \"" << at << "\"";
-               CPPUNIT_ASSERT_MESSAGE(ss.str(), at.InstanceOf(proxy.GetActorType()));
-            }
+            CPPUNIT_ASSERT_MESSAGE(ss.str(), at.InstanceOf(proxy.GetActorType()));
+         }
 
-            map.RemoveProxy(proxy);
+         map.RemoveProxy(proxy);
 
-            CPPUNIT_ASSERT_MESSAGE("Proxy list has the wrong size.",
-                map.GetAllProxies().size() == (unsigned)(maxId - (x + 1)));
-        }
-    }
-    catch (const dtUtil::Exception& e)
-    {
-        CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
-    }
+         CPPUNIT_ASSERT_MESSAGE("Proxy list has the wrong size.",
+               map.GetAllProxies().size() == (unsigned)(maxId - (x + 1)));
+      }
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 dtCore::ActorProperty* MapTests::getActorProperty(dtCore::Map& map,
-    const std::string& propName, dtCore::DataType& type, unsigned which)
+      const std::string& propName, dtCore::DataType& type, unsigned which)
 {
-    for (std::map<dtCore::UniqueId, dtCore::RefPtr<dtCore::BaseActorObject> >::const_iterator i = map.GetAllProxies().begin();
-        i != map.GetAllProxies().end(); ++i)
-    {
+   for (std::map<dtCore::UniqueId, dtCore::RefPtr<dtCore::BaseActorObject> >::const_iterator i = map.GetAllProxies().begin();
+         i != map.GetAllProxies().end(); ++i)
+   {
 
-        dtCore::BaseActorObject* proxy = map.GetProxyById(i->first);
+      dtCore::BaseActorObject* proxy = map.GetProxyById(i->first);
 
-        CPPUNIT_ASSERT_MESSAGE("ERROR: Proxy is NULL", proxy!= NULL );
+      CPPUNIT_ASSERT_MESSAGE("ERROR: Proxy is NULL", proxy!= NULL );
 
-        if (propName != "")
-        {
-            dtCore::ActorProperty* prop = proxy->GetProperty(propName);
-            //if a prop of a certain name is requested, readonly is allowed since the called should know which property
-            //They will be getting.
-            if (prop != NULL)
+      if (propName != "")
+      {
+         dtCore::ActorProperty* prop = proxy->GetProperty(propName);
+         //if a prop of a certain name is requested, readonly is allowed since the called should know which property
+         //They will be getting.
+         if (prop != NULL)
+         {
+            if (prop->GetDataType() == type && which-- == 0)
             {
-                if (prop->GetDataType() == type && which-- == 0)
-                {
-                   LOGN_DEBUG("maptests.cpp", proxy->GetActorType().GetName());
-                   return prop;
-                }
+               LOGN_DEBUG("maptests.cpp", proxy->GetActorType().GetName());
+               return prop;
             }
-        }
-        else
-        {
-            std::vector<dtCore::ActorProperty*> props;
-            proxy->GetPropertyList(props);
-            for (std::vector<dtCore::ActorProperty*>::iterator j = props.begin(); j<props.end(); ++j)
+         }
+      }
+      else
+      {
+         std::vector<dtCore::ActorProperty*> props;
+         proxy->GetPropertyList(props);
+         for (std::vector<dtCore::ActorProperty*>::iterator j = props.begin(); j<props.end(); ++j)
+         {
+            dtCore::ActorProperty* prop = *j;
+            if (!prop->IsReadOnly() && prop->GetDataType() == type && which-- == 0)
             {
-                dtCore::ActorProperty* prop = *j;
-                if (!prop->IsReadOnly() && prop->GetDataType() == type && which-- == 0)
-                {
-                    //std::cout << "Using prop " << prop->GetName() << " on actor with id " << proxy->GetId() << std::endl;
-                    //std::cout << "  " << proxy->GetActorType().GetName() << std::endl;
-                    return prop;
-                }
+               //std::cout << "Using prop " << prop->GetName() << " on actor with id " << proxy->GetId() << std::endl;
+               //std::cout << "  " << proxy->GetActorType().GetName() << std::endl;
+               return prop;
             }
-        }
-    }
+         }
+      }
+   }
 
-    CPPUNIT_FAIL(std::string("No property found with name \"")
-        + propName + "\", type \"" + type.GetName() + "\".");
-    //This line will never be reached because fail will throw and exception.
-    return NULL;
+   CPPUNIT_FAIL(std::string("No property found with name \"")
+   + propName + "\", type \"" + type.GetName() + "\".");
+   //This line will never be reached because fail will throw and exception.
+   return NULL;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestLibraryMethods()
 {
-    try
-    {
-        dtCore::Project& project = dtCore::Project::GetInstance();
+   try
+   {
+      dtCore::Project& project = dtCore::Project::GetInstance();
 
-        dtCore::Map* map = &project.CreateMap("Neato Map", "neatomap");
+      dtCore::Map* map = &project.CreateMap("Neato Map", "neatomap");
 
-        std::string lib1("hello1");
-        std::string lib2("hello2");
-        std::string lib3("hello3");
+      std::string lib1("hello1");
+      std::string lib2("hello2");
+      std::string lib3("hello3");
 
-        map->AddLibrary(lib1, "");
+      map->AddLibrary(lib1, "");
 
-        CPPUNIT_ASSERT_MESSAGE(lib1 +" should be added to the map.", map->HasLibrary(lib1));
-        CPPUNIT_ASSERT_MESSAGE(lib2 +" should not be added to the map.", !map->HasLibrary(lib2));
-        CPPUNIT_ASSERT_MESSAGE(lib3 +" should not be added to the map.", !map->HasLibrary(lib3));
+      CPPUNIT_ASSERT_MESSAGE(lib1 +" should be added to the map.", map->HasLibrary(lib1));
+      CPPUNIT_ASSERT_MESSAGE(lib2 +" should not be added to the map.", !map->HasLibrary(lib2));
+      CPPUNIT_ASSERT_MESSAGE(lib3 +" should not be added to the map.", !map->HasLibrary(lib3));
 
-        CPPUNIT_ASSERT_MESSAGE(lib1 + "version should be \"\"", map->GetLibraryVersion(lib1) == "");
+      CPPUNIT_ASSERT_MESSAGE(lib1 + "version should be \"\"", map->GetLibraryVersion(lib1) == "");
 
-        CPPUNIT_ASSERT_MESSAGE("Map should have 1 library", map->GetAllLibraries().size() == 1);
+      CPPUNIT_ASSERT_MESSAGE("Map should have 1 library", map->GetAllLibraries().size() == 1);
 
-        map->InsertLibrary(0, lib1, "1.0");
+      map->InsertLibrary(0, lib1, "1.0");
 
-        CPPUNIT_ASSERT_MESSAGE(lib1 +" should be added to the map.", map->HasLibrary(lib1));
-        CPPUNIT_ASSERT_MESSAGE(lib1 + "version should be \"\"", map->GetLibraryVersion(lib1) == "1.0");
-        CPPUNIT_ASSERT_MESSAGE("Map should have 1 library", map->GetAllLibraries().size() == 1);
+      CPPUNIT_ASSERT_MESSAGE(lib1 +" should be added to the map.", map->HasLibrary(lib1));
+      CPPUNIT_ASSERT_MESSAGE(lib1 + "version should be \"\"", map->GetLibraryVersion(lib1) == "1.0");
+      CPPUNIT_ASSERT_MESSAGE("Map should have 1 library", map->GetAllLibraries().size() == 1);
 
-        map->AddLibrary(lib1, "2.0");
+      map->AddLibrary(lib1, "2.0");
 
-        CPPUNIT_ASSERT_MESSAGE(lib1 +" should be added to the map.", map->HasLibrary(lib1));
-        CPPUNIT_ASSERT_MESSAGE(lib1 + "version should be \"\"", map->GetLibraryVersion(lib1) == "2.0");
-        CPPUNIT_ASSERT_MESSAGE("Map should have 1 library", map->GetAllLibraries().size() == 1);
+      CPPUNIT_ASSERT_MESSAGE(lib1 +" should be added to the map.", map->HasLibrary(lib1));
+      CPPUNIT_ASSERT_MESSAGE(lib1 + "version should be \"\"", map->GetLibraryVersion(lib1) == "2.0");
+      CPPUNIT_ASSERT_MESSAGE("Map should have 1 library", map->GetAllLibraries().size() == 1);
 
-        map->AddLibrary(lib2, "");
+      map->AddLibrary(lib2, "");
 
-        CPPUNIT_ASSERT_MESSAGE(lib1 +" should be added to the map.", map->HasLibrary(lib1));
-        CPPUNIT_ASSERT_MESSAGE(lib2 +" should be added to the map.", map->HasLibrary(lib2));
-        CPPUNIT_ASSERT_MESSAGE(lib1 + "version should be \"\"", map->GetLibraryVersion(lib1) == "2.0");
-        CPPUNIT_ASSERT_MESSAGE(lib2 + "version should be \"\"", map->GetLibraryVersion(lib2) == "");
-        CPPUNIT_ASSERT_MESSAGE("Map should have 2 libraries", map->GetAllLibraries().size() == 2);
-        CPPUNIT_ASSERT_MESSAGE(lib1 + " should be the first lib.", map->GetAllLibraries()[0] == lib1);
-        CPPUNIT_ASSERT_MESSAGE(lib2 + " should be the second lib.", map->GetAllLibraries()[1] == lib2);
+      CPPUNIT_ASSERT_MESSAGE(lib1 +" should be added to the map.", map->HasLibrary(lib1));
+      CPPUNIT_ASSERT_MESSAGE(lib2 +" should be added to the map.", map->HasLibrary(lib2));
+      CPPUNIT_ASSERT_MESSAGE(lib1 + "version should be \"\"", map->GetLibraryVersion(lib1) == "2.0");
+      CPPUNIT_ASSERT_MESSAGE(lib2 + "version should be \"\"", map->GetLibraryVersion(lib2) == "");
+      CPPUNIT_ASSERT_MESSAGE("Map should have 2 libraries", map->GetAllLibraries().size() == 2);
+      CPPUNIT_ASSERT_MESSAGE(lib1 + " should be the first lib.", map->GetAllLibraries()[0] == lib1);
+      CPPUNIT_ASSERT_MESSAGE(lib2 + " should be the second lib.", map->GetAllLibraries()[1] == lib2);
 
-        map->InsertLibrary(1, lib3, "1.0");
+      map->InsertLibrary(1, lib3, "1.0");
 
-        CPPUNIT_ASSERT_MESSAGE(lib1 +" should be added to the map.", map->HasLibrary(lib1));
-        CPPUNIT_ASSERT_MESSAGE(lib2 +" should be added to the map.", map->HasLibrary(lib2));
-        CPPUNIT_ASSERT_MESSAGE(lib3 +" should be added to the map.", map->HasLibrary(lib3));
-        CPPUNIT_ASSERT_MESSAGE(lib1 + "version should be \"\"", map->GetLibraryVersion(lib1) == "2.0");
-        CPPUNIT_ASSERT_MESSAGE(lib2 + "version should be \"\"", map->GetLibraryVersion(lib2) == "");
-        CPPUNIT_ASSERT_MESSAGE(lib3 + "version should be \"\"", map->GetLibraryVersion(lib3) == "1.0");
-        CPPUNIT_ASSERT_MESSAGE("Map should have 3 libraries", map->GetAllLibraries().size() == 3);
-        CPPUNIT_ASSERT_MESSAGE(lib1 + " should be the first lib.", map->GetAllLibraries()[0] == lib1);
-        CPPUNIT_ASSERT_MESSAGE(lib3 + " should be the second lib.", map->GetAllLibraries()[1] == lib3);
-        CPPUNIT_ASSERT_MESSAGE(lib2 + " should be the third lib.", map->GetAllLibraries()[2] == lib2);
+      CPPUNIT_ASSERT_MESSAGE(lib1 +" should be added to the map.", map->HasLibrary(lib1));
+      CPPUNIT_ASSERT_MESSAGE(lib2 +" should be added to the map.", map->HasLibrary(lib2));
+      CPPUNIT_ASSERT_MESSAGE(lib3 +" should be added to the map.", map->HasLibrary(lib3));
+      CPPUNIT_ASSERT_MESSAGE(lib1 + "version should be \"\"", map->GetLibraryVersion(lib1) == "2.0");
+      CPPUNIT_ASSERT_MESSAGE(lib2 + "version should be \"\"", map->GetLibraryVersion(lib2) == "");
+      CPPUNIT_ASSERT_MESSAGE(lib3 + "version should be \"\"", map->GetLibraryVersion(lib3) == "1.0");
+      CPPUNIT_ASSERT_MESSAGE("Map should have 3 libraries", map->GetAllLibraries().size() == 3);
+      CPPUNIT_ASSERT_MESSAGE(lib1 + " should be the first lib.", map->GetAllLibraries()[0] == lib1);
+      CPPUNIT_ASSERT_MESSAGE(lib3 + " should be the second lib.", map->GetAllLibraries()[1] == lib3);
+      CPPUNIT_ASSERT_MESSAGE(lib2 + " should be the third lib.", map->GetAllLibraries()[2] == lib2);
 
-        map->InsertLibrary(0, lib3, "3.0");
+      map->InsertLibrary(0, lib3, "3.0");
 
-        CPPUNIT_ASSERT_MESSAGE(lib1 +" should be added to the map.", map->HasLibrary(lib1));
-        CPPUNIT_ASSERT_MESSAGE(lib2 +" should be added to the map.", map->HasLibrary(lib2));
-        CPPUNIT_ASSERT_MESSAGE(lib3 +" should be added to the map.", map->HasLibrary(lib3));
-        CPPUNIT_ASSERT_MESSAGE(lib1 + "version should be \"\"", map->GetLibraryVersion(lib1) == "2.0");
-        CPPUNIT_ASSERT_MESSAGE(lib2 + "version should be \"\"", map->GetLibraryVersion(lib2) == "");
-        CPPUNIT_ASSERT_MESSAGE(lib3 + "version should be \"\"", map->GetLibraryVersion(lib3) == "3.0");
-        CPPUNIT_ASSERT_MESSAGE("Map should have 3 libraries", map->GetAllLibraries().size() == 3);
-        CPPUNIT_ASSERT_MESSAGE(lib3 + " should be the first lib.", map->GetAllLibraries()[0] == lib3);
-        CPPUNIT_ASSERT_MESSAGE(lib1 + " should be the second lib.", map->GetAllLibraries()[1] == lib1);
-        CPPUNIT_ASSERT_MESSAGE(lib2 + " should be the third lib.", map->GetAllLibraries()[2] == lib2);
+      CPPUNIT_ASSERT_MESSAGE(lib1 +" should be added to the map.", map->HasLibrary(lib1));
+      CPPUNIT_ASSERT_MESSAGE(lib2 +" should be added to the map.", map->HasLibrary(lib2));
+      CPPUNIT_ASSERT_MESSAGE(lib3 +" should be added to the map.", map->HasLibrary(lib3));
+      CPPUNIT_ASSERT_MESSAGE(lib1 + "version should be \"\"", map->GetLibraryVersion(lib1) == "2.0");
+      CPPUNIT_ASSERT_MESSAGE(lib2 + "version should be \"\"", map->GetLibraryVersion(lib2) == "");
+      CPPUNIT_ASSERT_MESSAGE(lib3 + "version should be \"\"", map->GetLibraryVersion(lib3) == "3.0");
+      CPPUNIT_ASSERT_MESSAGE("Map should have 3 libraries", map->GetAllLibraries().size() == 3);
+      CPPUNIT_ASSERT_MESSAGE(lib3 + " should be the first lib.", map->GetAllLibraries()[0] == lib3);
+      CPPUNIT_ASSERT_MESSAGE(lib1 + " should be the second lib.", map->GetAllLibraries()[1] == lib1);
+      CPPUNIT_ASSERT_MESSAGE(lib2 + " should be the third lib.", map->GetAllLibraries()[2] == lib2);
 
-        map->RemoveLibrary(lib3);
+      map->RemoveLibrary(lib3);
 
-        CPPUNIT_ASSERT_MESSAGE(lib1 +" should be added to the map.", map->HasLibrary(lib1));
-        CPPUNIT_ASSERT_MESSAGE(lib2 +" should be added to the map.", map->HasLibrary(lib2));
-        CPPUNIT_ASSERT_MESSAGE(lib3 +" should be NOT added to the map.", !map->HasLibrary(lib3));
-        CPPUNIT_ASSERT_MESSAGE(lib1 + "version should be \"\"", map->GetLibraryVersion(lib1) == "2.0");
-        CPPUNIT_ASSERT_MESSAGE(lib2 + "version should be \"\"", map->GetLibraryVersion(lib2) == "");
-        CPPUNIT_ASSERT_MESSAGE("Map should have 2 libraries", map->GetAllLibraries().size() == 2);
-        CPPUNIT_ASSERT_MESSAGE(lib1 + " should be the first lib.", map->GetAllLibraries()[0] == lib1);
-        CPPUNIT_ASSERT_MESSAGE(lib2 + " should be the second lib.", map->GetAllLibraries()[1] == lib2);
+      CPPUNIT_ASSERT_MESSAGE(lib1 +" should be added to the map.", map->HasLibrary(lib1));
+      CPPUNIT_ASSERT_MESSAGE(lib2 +" should be added to the map.", map->HasLibrary(lib2));
+      CPPUNIT_ASSERT_MESSAGE(lib3 +" should be NOT added to the map.", !map->HasLibrary(lib3));
+      CPPUNIT_ASSERT_MESSAGE(lib1 + "version should be \"\"", map->GetLibraryVersion(lib1) == "2.0");
+      CPPUNIT_ASSERT_MESSAGE(lib2 + "version should be \"\"", map->GetLibraryVersion(lib2) == "");
+      CPPUNIT_ASSERT_MESSAGE("Map should have 2 libraries", map->GetAllLibraries().size() == 2);
+      CPPUNIT_ASSERT_MESSAGE(lib1 + " should be the first lib.", map->GetAllLibraries()[0] == lib1);
+      CPPUNIT_ASSERT_MESSAGE(lib2 + " should be the second lib.", map->GetAllLibraries()[1] == lib2);
 
-    }
-    catch (const dtUtil::Exception& e)
-    {
-        CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
-    }
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestMapLibraryHandling()
 {
-    try
-    {
-       dtCore::Project& project = dtCore::Project::GetInstance();
+   try
+   {
+      dtCore::Project& project = dtCore::Project::GetInstance();
 
-       const std::string mapName("Neato Map");
-       const std::string mapFileName("neatomap");
+      const std::string mapName("Neato Map");
+      const std::string mapFileName("neatomap");
 
-       dtCore::Map* map = &project.CreateMap(mapName, mapFileName);
-       const std::string fileNameToTest = mapFileName + dtCore::Map::MAP_FILE_EXTENSION;
+      dtCore::Map* map = &project.CreateMap(mapName, mapFileName);
+      const std::string fileNameToTest = mapFileName + dtCore::Map::MAP_FILE_EXTENSION;
 
-       CPPUNIT_ASSERT_EQUAL_MESSAGE("A newly created Map doesn't have the expected generated filename.",
-                                    fileNameToTest, map->GetFileName());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("A newly created Map doesn't have the expected generated filename.",
+            fileNameToTest, map->GetFileName());
 
-       map->AddLibrary(mExampleLibraryName, "1.0");
-       dtCore::ActorFactory::GetInstance().LoadActorRegistry(mExampleLibraryName);
+      map->AddLibrary(mExampleLibraryName, "1.0");
+      dtCore::ActorFactory::GetInstance().LoadActorRegistry(mExampleLibraryName);
 
-       createActors(*map);
+      createActors(*map);
 
-       dtCore::ActorPluginRegistry* reg = dtCore::ActorFactory::GetInstance().GetRegistry(mExampleLibraryName);
-       CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
+      dtCore::ActorPluginRegistry* reg = dtCore::ActorFactory::GetInstance().GetRegistry(mExampleLibraryName);
+      CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
 
-       project.SaveMap(*map);
+      project.SaveMap(*map);
 
-       project.CloseMap(*map, true);
+      project.CloseMap(*map, true);
 
-       reg = dtCore::ActorFactory::GetInstance().GetRegistry(mExampleLibraryName);
-       CPPUNIT_ASSERT_MESSAGE("testActorLibrary should have been closed.", reg == NULL);
+      reg = dtCore::ActorFactory::GetInstance().GetRegistry(mExampleLibraryName);
+      CPPUNIT_ASSERT_MESSAGE("testActorLibrary should have been closed.", reg == NULL);
 
-       map = &project.GetMap(mapName);
+      map = &project.GetMap(mapName);
 
-       reg = dtCore::ActorFactory::GetInstance().GetRegistry(mExampleLibraryName);
-       CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
+      reg = dtCore::ActorFactory::GetInstance().GetRegistry(mExampleLibraryName);
+      CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
 
-       dtCore::ActorRefPtrVector proxies;
-       //hold onto all the proxies so that the actor libraries can't be closed.
-       map->GetAllProxies(proxies);
+      dtCore::ActorRefPtrVector proxies;
+      //hold onto all the proxies so that the actor libraries can't be closed.
+      map->GetAllProxies(proxies);
 
-       project.CloseMap(*map, true);
+      project.CloseMap(*map, true);
 
-       reg = dtCore::ActorFactory::GetInstance().GetRegistry(mExampleLibraryName);
-       CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
+      reg = dtCore::ActorFactory::GetInstance().GetRegistry(mExampleLibraryName);
+      CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
 
-       //cleanup the proxies
-       proxies.clear();
+      //cleanup the proxies
+      proxies.clear();
 
-       map = &project.GetMap(mapName);
-       //create a new map that will ALSO use the same libraries
-       project.CreateMap(mapName + "1", mapFileName + "1").AddLibrary(mExampleLibraryName, "1.0");
+      map = &project.GetMap(mapName);
+      //create a new map that will ALSO use the same libraries
+      project.CreateMap(mapName + "1", mapFileName + "1").AddLibrary(mExampleLibraryName, "1.0");
 
-       createActors(project.GetMap(mapName + "1"));
+      createActors(project.GetMap(mapName + "1"));
 
-       project.CloseMap(*map, true);
+      project.CloseMap(*map, true);
 
-       reg = dtCore::ActorFactory::GetInstance().GetRegistry(mExampleLibraryName);
-       CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
+      reg = dtCore::ActorFactory::GetInstance().GetRegistry(mExampleLibraryName);
+      CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
 
-       //when the second map is closed, the libraries should not close if false is passed.
-       project.CloseMap(project.GetMap(mapName + "1"), false);
+      //when the second map is closed, the libraries should not close if false is passed.
+      project.CloseMap(project.GetMap(mapName + "1"), false);
 
-       reg = dtCore::ActorFactory::GetInstance().GetRegistry(mExampleLibraryName);
-       CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
+      reg = dtCore::ActorFactory::GetInstance().GetRegistry(mExampleLibraryName);
+      CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
 
-       //reopen the map and close it with true to make sure the libraries close.
-       project.CloseMap(project.GetMap(mapName), true);
+      //reopen the map and close it with true to make sure the libraries close.
+      project.CloseMap(project.GetMap(mapName), true);
 
-       reg = dtCore::ActorFactory::GetInstance().GetRegistry(mExampleLibraryName);
-       CPPUNIT_ASSERT_MESSAGE("testActorLibrary should have been closed.", reg == NULL);
+      reg = dtCore::ActorFactory::GetInstance().GetRegistry(mExampleLibraryName);
+      CPPUNIT_ASSERT_MESSAGE("testActorLibrary should have been closed.", reg == NULL);
 
-    }
-    catch (const dtUtil::Exception& e)
-    {
-        CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
-    }
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -1169,7 +1202,7 @@ void MapTests::TestMapSaveAndLoadEvents()
          dtCore::GameEvent* ge = map->GetEventManager().FindEvent(expectedEvent.GetUniqueId());
 
          CPPUNIT_ASSERT_MESSAGE("All of the game events saved should have been loaded with the same id's",
-            ge != NULL);
+               ge != NULL);
 
          CPPUNIT_ASSERT_EQUAL(expectedEvent.GetName(), ge->GetName());
          CPPUNIT_ASSERT_EQUAL(expectedEvent.GetDescription(), ge->GetDescription());
@@ -1199,13 +1232,13 @@ void MapTests::TestMapSaveAndLoadGroup()
 
       dtCore::RefPtr<dtCore::NamedGroupParameter> expectedResult = new dtCore::NamedGroupParameter("TestGroup");
       dtCore::RefPtr<dtCore::NamedGroupParameter> secondInternalGroup = static_cast<dtCore::NamedGroupParameter*>(expectedResult->AddParameter("FloatGroup", dtCore::DataType::GROUP));
-    
+
       {
          dtCore::Map* map = &project.CreateMap(mapName, mapFileName);
          map->AddLibrary(mExampleLibraryName, "1.0");
 
          dtCore::RefPtr<dtCore::BaseActorObject> proxy = dtCore::ActorFactory::GetInstance().CreateActor(*at);
-       
+
          dtCore::GroupActorProperty* groupProp;
          proxy->GetProperty("TestGroup", groupProp);
 
@@ -1251,7 +1284,7 @@ void MapTests::TestMapSaveAndLoadGroup()
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The map was saved with one proxy.  It should have one when loaded.", toFill.size(), size_t(1));
 
       dtCore::RefPtr<dtCore::BaseActorObject> proxy = toFill[0];
- 
+
       dtCore::GroupActorProperty* groupProp;
       proxy->GetProperty("TestGroup", groupProp);
 
@@ -1264,7 +1297,7 @@ void MapTests::TestMapSaveAndLoadGroup()
       CPPUNIT_ASSERT_MESSAGE("The loaded result parameter should have group filled with floats.", actualFloatGroup.valid());
 
       CPPUNIT_ASSERT_MESSAGE("The returned group parameter doesn't match the actual\n" + actualResult->ToString() + " \n\n " + expectedResult->ToString(),
-                              *expectedResult == *actualResult);
+            *expectedResult == *actualResult);
 
       std::vector<dtCore::NamedParameter*> savedFloatParams;
       secondInternalGroup->GetParameters(savedFloatParams);
@@ -1273,39 +1306,39 @@ void MapTests::TestMapSaveAndLoadGroup()
          dtCore::NamedParameter* np = actualFloatGroup->GetParameter(savedFloatParams[i]->GetName());
          CPPUNIT_ASSERT_MESSAGE(np->GetName() + " should be a parameter in the FloatGroup parameter group loaded from the map." , np != NULL);
          CPPUNIT_ASSERT_MESSAGE(np->GetName() + " parameter should have the same data type as it did before it was saved in a map." ,
-            np->GetDataType() == savedFloatParams[i]->GetDataType());
+               np->GetDataType() == savedFloatParams[i]->GetDataType());
       }
 
       std::string valueString = actualFloatGroup->ToString() + "\n\n" + secondInternalGroup->ToString();
 
       CPPUNIT_ASSERT_MESSAGE("The loaded vec2 parameter should match the one saved: \n" + valueString,
-         dtUtil::Equivalent(
-            static_cast<dtCore::NamedVec2Parameter*>(secondInternalGroup->GetParameter("CuteVec2"))->GetValue(),
-            static_cast<dtCore::NamedVec2Parameter*>(actualFloatGroup->GetParameter("CuteVec2"))->GetValue(), 1e-3f));
+            dtUtil::Equivalent(
+                  static_cast<dtCore::NamedVec2Parameter*>(secondInternalGroup->GetParameter("CuteVec2"))->GetValue(),
+                  static_cast<dtCore::NamedVec2Parameter*>(actualFloatGroup->GetParameter("CuteVec2"))->GetValue(), 1e-3f));
 
       CPPUNIT_ASSERT_MESSAGE("The loaded vec3 parameter should match the one saved: \n" + valueString,
-         dtUtil::Equivalent(
-            static_cast<dtCore::NamedVec3Parameter*>(secondInternalGroup->GetParameter("CuteVec3"))->GetValue(),
-            static_cast<dtCore::NamedVec3Parameter*>(actualFloatGroup->GetParameter("CuteVec3"))->GetValue(), 1e-3f));
+            dtUtil::Equivalent(
+                  static_cast<dtCore::NamedVec3Parameter*>(secondInternalGroup->GetParameter("CuteVec3"))->GetValue(),
+                  static_cast<dtCore::NamedVec3Parameter*>(actualFloatGroup->GetParameter("CuteVec3"))->GetValue(), 1e-3f));
 
       CPPUNIT_ASSERT_MESSAGE("The loaded vec4 parameter should match the one saved: \n" + valueString,
-         dtUtil::Equivalent(
-            static_cast<dtCore::NamedVec4Parameter*>(secondInternalGroup->GetParameter("CuteVec4"))->GetValue(),
-            static_cast<dtCore::NamedVec4Parameter*>(actualFloatGroup->GetParameter("CuteVec4"))->GetValue(), 1e-3f));
+            dtUtil::Equivalent(
+                  static_cast<dtCore::NamedVec4Parameter*>(secondInternalGroup->GetParameter("CuteVec4"))->GetValue(),
+                  static_cast<dtCore::NamedVec4Parameter*>(actualFloatGroup->GetParameter("CuteVec4"))->GetValue(), 1e-3f));
 
       CPPUNIT_ASSERT_MESSAGE("The loaded color parameter should match the one saved: \n" + valueString,
-         dtUtil::Equivalent(
-            static_cast<dtCore::NamedRGBAColorParameter*>(secondInternalGroup->GetParameter("CuteColor"))->GetValue(),
-            static_cast<dtCore::NamedRGBAColorParameter*>(actualFloatGroup->GetParameter("CuteColor"))->GetValue(), 1e-3f));
+            dtUtil::Equivalent(
+                  static_cast<dtCore::NamedRGBAColorParameter*>(secondInternalGroup->GetParameter("CuteColor"))->GetValue(),
+                  static_cast<dtCore::NamedRGBAColorParameter*>(actualFloatGroup->GetParameter("CuteColor"))->GetValue(), 1e-3f));
 
       CPPUNIT_ASSERT_MESSAGE("The loaded float parameter should match the one saved: \n" + valueString,
-         osg::equivalent(
-            static_cast<dtCore::NamedFloatParameter*>(secondInternalGroup->GetParameter("CuteFloat"))->GetValue(),
-            static_cast<dtCore::NamedFloatParameter*>(actualFloatGroup->GetParameter("CuteFloat"))->GetValue(), 1e-3f));
+            osg::equivalent(
+                  static_cast<dtCore::NamedFloatParameter*>(secondInternalGroup->GetParameter("CuteFloat"))->GetValue(),
+                  static_cast<dtCore::NamedFloatParameter*>(actualFloatGroup->GetParameter("CuteFloat"))->GetValue(), 1e-3f));
       CPPUNIT_ASSERT_MESSAGE("The loaded double parameter should match the one saved: \n" + valueString,
-         osg::equivalent(
-            static_cast<dtCore::NamedDoubleParameter*>(secondInternalGroup->GetParameter("CuteDouble"))->GetValue(),
-            static_cast<dtCore::NamedDoubleParameter*>(actualFloatGroup->GetParameter("CuteDouble"))->GetValue(), 1e-3));
+            osg::equivalent(
+                  static_cast<dtCore::NamedDoubleParameter*>(secondInternalGroup->GetParameter("CuteDouble"))->GetValue(),
+                  static_cast<dtCore::NamedDoubleParameter*>(actualFloatGroup->GetParameter("CuteDouble"))->GetValue(), 1e-3));
 
       project.DeleteMap(*map, false);
    }
@@ -1614,61 +1647,61 @@ void MapTests::TestWildCard()
 ///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestLoadMapIntoScene()
 {
-    try
-    {
-        dtCore::Project& project = dtCore::Project::GetInstance();
+   try
+   {
+      dtCore::Project& project = dtCore::Project::GetInstance();
 
-        dtCore::Map& map = project.CreateMap(std::string("Neato Map"), std::string("neatomap"));
+      dtCore::Map& map = project.CreateMap(std::string("Neato Map"), std::string("neatomap"));
 
-        createActors(map);
+      createActors(map);
 
-        std::set<dtCore::UniqueId> ids;
+      std::set<dtCore::UniqueId> ids;
 
-        //add all the names of the actors that should be in the scene to set so we can track them.
-        for (std::map<dtCore::UniqueId, dtCore::RefPtr<dtCore::BaseActorObject> >::const_iterator i = map.GetAllProxies().begin();
+      //add all the names of the actors that should be in the scene to set so we can track them.
+      for (std::map<dtCore::UniqueId, dtCore::RefPtr<dtCore::BaseActorObject> >::const_iterator i = map.GetAllProxies().begin();
             i != map.GetAllProxies().end(); ++i)
-        {
-            const dtCore::BaseActorObject::RenderMode &renderMode = const_cast<dtCore::BaseActorObject&>(*i->second).GetRenderMode();
+      {
+         const dtCore::BaseActorObject::RenderMode &renderMode = const_cast<dtCore::BaseActorObject&>(*i->second).GetRenderMode();
 
-            if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR ||
-                renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
-                ids.insert(i->first);
-        }
+         if (renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR ||
+               renderMode == dtCore::BaseActorObject::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
+            ids.insert(i->first);
+      }
 
-        dtCore::RefPtr<dtABC::Application> app(&GetGlobalApplication());
-        dtCore::Scene& scene = *app->GetScene();
-        //actually load the map into the scene.
-        //TODO, test with the last param as false to make sure ALL proxies end up in the scene.
-        project.LoadMapIntoScene(map, scene);
+      dtCore::RefPtr<dtABC::Application> app(&GetGlobalApplication());
+      dtCore::Scene& scene = *app->GetScene();
+      //actually load the map into the scene.
+      //TODO, test with the last param as false to make sure ALL proxies end up in the scene.
+      project.LoadMapIntoScene(map, scene);
 
-        //spin through the scene removing each actor found from the set.
-        for (unsigned x = 0; x < (unsigned)scene.GetNumberOfAddedDrawable(); ++x)
-        {
-            dtCore::DeltaDrawable* dd = scene.GetChild(x);
-            std::set<dtCore::UniqueId>::iterator found = ids.find(dd->GetUniqueId());
-            //Need to check to see if the actor exists in the set before removing it
-            //because this is a test and because the scene could add drawables itself.
-            if (found != ids.end())
-            {
-                ids.erase(found);
-            }
-        }
+      //spin through the scene removing each actor found from the set.
+      for (unsigned x = 0; x < (unsigned)scene.GetNumberOfAddedDrawable(); ++x)
+      {
+         dtCore::DeltaDrawable* dd = scene.GetChild(x);
+         std::set<dtCore::UniqueId>::iterator found = ids.find(dd->GetUniqueId());
+         //Need to check to see if the actor exists in the set before removing it
+         //because this is a test and because the scene could add drawables itself.
+         if (found != ids.end())
+         {
+            ids.erase(found);
+         }
+      }
 
-        std::set<dtCore::UniqueId>::iterator idItr,idItrEnd;
-        idItr = ids.begin();
-        idItrEnd = ids.end();
+      std::set<dtCore::UniqueId>::iterator idItr,idItrEnd;
+      idItr = ids.begin();
+      idItrEnd = ids.end();
 
-        for (; idItr != idItrEnd; ++idItr)
-        {
-           dtCore::BaseActorObject* actTmp = map.GetProxyById(*idItr);
-           CPPUNIT_ASSERT_MESSAGE("All actors in the map not found in the scene should not have drawables.", actTmp->GetDrawable() == NULL);
-        }
+      for (; idItr != idItrEnd; ++idItr)
+      {
+         dtCore::BaseActorObject* actTmp = map.GetProxyById(*idItr);
+         CPPUNIT_ASSERT_MESSAGE("All actors in the map not found in the scene should not have drawables.", actTmp->GetDrawable() == NULL);
+      }
 
-    }
-    catch (dtUtil::Exception& ex)
-    {
-        CPPUNIT_FAIL((std::string("Error: ") + ex.What()).c_str());
-    }
+   }
+   catch (dtUtil::Exception& ex)
+   {
+      CPPUNIT_FAIL((std::string("Error: ") + ex.What()).c_str());
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -1687,7 +1720,7 @@ void MapTests::TestEnvironmentMapLoading()
       for (unsigned int i = 0; i < numProxies; ++i)
       {
          dtCore::RefPtr<dtCore::BaseActorObject> p =
-            dtCore::ActorFactory::GetInstance().CreateActor("dtcore.examples", "Test All Properties");
+               dtCore::ActorFactory::GetInstance().CreateActor("dtcore.examples", "Test All Properties");
          CPPUNIT_ASSERT(p.valid());
          container.push_back(p);
       }
@@ -1750,7 +1783,7 @@ void MapTests::TestLoadEnvironmentMapIntoScene()
    for (unsigned int i = 0; i < numProxies; ++i)
    {
       dtCore::RefPtr<dtCore::BaseActorObject> p =
-         dtCore::ActorFactory::GetInstance().CreateActor("dtcore.examples", "Test All Properties");
+            dtCore::ActorFactory::GetInstance().CreateActor("dtcore.examples", "Test All Properties");
       CPPUNIT_ASSERT(p.valid());
       container.push_back(p);
    }
@@ -1864,13 +1897,13 @@ void MapTests::TestCreateMapsMultiContext()
 
       CPPUNIT_ASSERT(fileUtils.FileExists(p.GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map1 + ".dtmap"));
       CPPUNIT_ASSERT_MESSAGE( "The new map file should not be in context 0",
-               ! fileUtils.FileExists(p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map1 + ".dtmap"));
+            ! fileUtils.FileExists(p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map1 + ".dtmap"));
 
       CPPUNIT_ASSERT_NO_THROW(p.CreateMap(map2, map2, 0));
 
       CPPUNIT_ASSERT(fileUtils.FileExists(p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map2 + ".dtmap"));
       CPPUNIT_ASSERT_MESSAGE( "The new map file should not be in context 1",
-               ! fileUtils.FileExists(p.GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map2 + ".dtmap"));
+            ! fileUtils.FileExists(p.GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map2 + ".dtmap"));
 
       // Same file name, different name, different context.
       CPPUNIT_ASSERT_NO_THROW(p.CreateMap(map3, map2, 1));
@@ -1883,7 +1916,7 @@ void MapTests::TestCreateMapsMultiContext()
       CPPUNIT_ASSERT( ! fileUtils.FileExists(p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map2 + ".dtmap"));
 
       CPPUNIT_ASSERT_MESSAGE("the map with the same file name in context 1 should not have been deleted.",
-               fileUtils.FileExists(p.GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map2 + ".dtmap"));
+            fileUtils.FileExists(p.GetContext(1) + dtUtil::FileUtils::PATH_SEPARATOR + "maps" + dtUtil::FileUtils::PATH_SEPARATOR + map2 + ".dtmap"));
 
       p.DeleteMap(map3);
 
@@ -1963,7 +1996,7 @@ void MapTests::TestParsingMapHeaderData()
    map.SetAuthor(author);
    map.SetComment(comment);
    map.SetCopyright(copyright);
-   
+
    //save/close Map
    dtCore::Project::GetInstance().SaveMap(mapName);
    dtCore::Project::GetInstance().CloseAllMaps(true);
@@ -1978,7 +2011,7 @@ void MapTests::TestParsingMapHeaderData()
    }
    catch (const dtCore::MapParsingException& e)
    {
-   	CPPUNIT_FAIL(e.ToString());
+      CPPUNIT_FAIL(e.ToString());
    }
    catch (const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
    {
@@ -1989,7 +2022,7 @@ void MapTests::TestParsingMapHeaderData()
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Map header author didn't get parsed correctly", author, header.mAuthor);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Map header comment didn't get parsed correctly", comment, header.mComment);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Map header copyright didn't get parsed correctly", copyright, header.mCopyright);
-   
+
    //delete the temp map file
    dtCore::Project::GetInstance().DeleteMap(mapName, true);
    dtCore::Project::GetInstance().ClearAllContexts();

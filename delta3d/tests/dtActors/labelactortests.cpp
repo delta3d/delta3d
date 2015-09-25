@@ -82,6 +82,7 @@ void LabelActorTests::setUp()
       // Make sure we have an active context
       dtCore::System::GetInstance().Step();
       // Create the actor for testing.
+      dtCore::ActorFactory::GetInstance().LoadActorRegistry(dtCore::ActorFactory::DEFAULT_ACTOR_LIBRARY);
       dtCore::RefPtr<dtCore::BaseActorObject> proxy = dtCore::ActorFactory::GetInstance()
          .CreateActor(*dtActors::EngineActorRegistry::LABEL_ACTOR_TYPE);
       mLabelProxy = dynamic_cast<dtActors::LabelActorProxy*>(proxy.get());
@@ -100,6 +101,7 @@ void LabelActorTests::setUp()
 ////////////////////////////////////////////////////////////////////////////////
 void LabelActorTests::tearDown()
 {
+   dtCore::ActorFactory::GetInstance().UnloadActorRegistry(dtCore::ActorFactory::DEFAULT_ACTOR_LIBRARY);
    // Shutdown the system.
    dtCore::System::GetInstance().SetPause(false);
    dtCore::System::GetInstance().Stop();
