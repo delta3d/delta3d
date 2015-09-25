@@ -599,6 +599,7 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    void MapWriter::Save(Map& map, std::ostream& stream)
    {
+      map.CorrectLibraryList(false);
       mFormatTarget.SetOutputStream(&stream);
       mPropSerializer->Reset();
       mPropSerializer->SetMap(&map);
