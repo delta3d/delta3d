@@ -2211,6 +2211,7 @@ namespace dtEditQt
    void EditorActions::AddActorToMap(dtCore::BaseActorObject& actor, dtCore::Map& map, bool renumber)
    {
       map.AddProxy(actor, renumber);
+      map.CorrectLibraryList(false);
    }
 
    //////////////////////////////////////////////////////////////////////////
