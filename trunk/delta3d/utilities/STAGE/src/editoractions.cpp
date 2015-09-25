@@ -587,10 +587,17 @@ namespace dtEditQt
             return;
          }
 
+         newMap->SetModified(false);
+         newMap->CorrectLibraryList(false);
+         if (newMap->IsModified())
+         {
+            QMessageBox::information((QWidget *)EditorData::GetInstance().getMainWindow(),
+               tr("Library List Modified"),tr("The list of libraries on which the map depends was corrected when the map was loaded. The map is marked modified so you can save this change."),tr("OK"));
+         }
+
          // Finally, change to the requested map.
          dtCore::RefPtr<dtCore::Map> mapRef = newMap;
          EditorData::GetInstance().getMainWindow()->checkAndLoadBackup(newMap->GetName());
-         newMap->SetModified(false);
       }
 
       slotRestartAutosave();
@@ -1977,7 +1984,7 @@ namespace dtEditQt
       dtCore::Map* currMap = EditorData::GetInstance().getCurrentMap();
       int result = QMessageBox::NoButton;
 
-      if (currMap == NULL || !currMap->IsModified())
+      if (currMap == nullptr || !currMap->IsModified())
       {
          return QMessageBox::Ignore;
       }
