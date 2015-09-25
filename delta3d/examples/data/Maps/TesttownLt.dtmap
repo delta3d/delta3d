@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TesttownLt</name>
@@ -7,8 +8,8 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2006-07-12T14:52:23.0-08:00</createTimestamp>
-        <lastUpdateTimestamp>2009-04-28T15:55:46-05:00</lastUpdateTimestamp>
-        <editorVersion>2.0.0</editorVersion>
+        <lastUpdateTimestamp>2015-09-25T19:53:09-05:00</lastUpdateTimestamp>
+        <editorVersion>2.8.100</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
     <libraries>
@@ -16,10 +17,14 @@
             <name>dtAI</name>
             <version></version>
         </library>
+        <library>
+            <name>dtActors</name>
+            <version>1.0</version>
+        </library>
     </libraries>
     <actors>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>1d56d6ef-5dda-4ff5-97d0-2d12d77aaa28</id>
             <name>StaticMesh0</name>
             <property>
@@ -43,52 +48,14 @@
                 <boolean>true</boolean>
             </property>
             <property>
-                <name>Show Collision Geometry</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>NONE</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Length</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
                 <name>Render Proxy Node</name>
                 <boolean>false</boolean>
             </property>
             <property>
-                <name>Enable Dynamics</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Mass</name>
-                <float>4.1887898</float>
-            </property>
-            <property>
-                <name>Center of Gravity</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName></resourceDisplayName>
+                <resource></resource>
             </property>
             <property>
                 <name>Scale</name>
@@ -114,17 +81,40 @@
                     <value3>0.000000</value3>
                 </vec3>
             </property>
-            <property>
-                <name>static mesh</name>
-                <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName></resourceDisplayName>
-                <resource></resource>
-            </property>
         </actor>
         <actor>
             <type>dtai.AIInterface.AI Interface Actor</type>
             <id>2398d24b-0a3a-4ee1-be41-926c2949c734</id>
             <name>DeltaDrawable</name>
+            <property>
+                <name>dtAI::WaypointRenderInfo</name>
+                <propertyContainer>
+                    <property>
+                        <name>EnableDepthTest</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>RenderWaypoints</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>RenderWaypointID</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>RenderWaypointText</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>RenderNavMesh</name>
+                        <boolean>false</boolean>
+                    </property>
+                    <property>
+                        <name>RenderNavMeshText</name>
+                        <boolean>false</boolean>
+                    </property>
+                </propertyContainer>
+            </property>
             <property>
                 <name>dtAI::WaypointFilename</name>
                 <resourceType>StaticMeshes</resourceType>
@@ -179,41 +169,13 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>-90.000000</value1>
-                    <value2>180.000000</value2>
-                    <value3>0.000000</value3>
+                    <value2>0.000005</value2>
+                    <value3>180.000000</value3>
                 </vec3>
             </property>
             <property>
                 <name>Normal Rescaling</name>
                 <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Show Collision Geometry</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>NONE</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Length</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>false</boolean>
             </property>
             <property>
                 <name>Render Proxy Node</name>
@@ -276,34 +238,6 @@
                 <boolean>true</boolean>
             </property>
             <property>
-                <name>Show Collision Geometry</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>NONE</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Length</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
                 <name>Render Proxy Node</name>
                 <boolean>false</boolean>
             </property>
@@ -317,7 +251,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>761d96a3-2f52-4e49-a9f1-43b0df7b77c3</id>
             <name>StaticMesh2</name>
             <property>
@@ -341,52 +275,14 @@
                 <boolean>true</boolean>
             </property>
             <property>
-                <name>Show Collision Geometry</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>NONE</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Length</name>
-                <float>0</float>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
                 <name>Render Proxy Node</name>
                 <boolean>false</boolean>
             </property>
             <property>
-                <name>Enable Dynamics</name>
-                <boolean>false</boolean>
-            </property>
-            <property>
-                <name>Mass</name>
-                <float>4.1887898</float>
-            </property>
-            <property>
-                <name>Center of Gravity</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>TestTownLt.IVE</resourceDisplayName>
+                <resource>StaticMeshes::TestTownLt.ive</resource>
             </property>
             <property>
                 <name>Scale</name>
@@ -412,12 +308,8 @@
                     <value3>0.000000</value3>
                 </vec3>
             </property>
-            <property>
-                <name>static mesh</name>
-                <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>TestTownLt.IVE</resourceDisplayName>
-                <resource>StaticMeshes::TestTownLt.ive</resource>
-            </property>
         </actor>
     </actors>
+    <groups></groups>
+    <presetCameras></presetCameras>
 </map>

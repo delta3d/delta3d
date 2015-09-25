@@ -8,8 +8,8 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2007-05-10T16:08:18.0-05:00</createTimestamp>
-        <lastUpdateTimestamp>2013-07-10T13:00:33-05:00</lastUpdateTimestamp>
-        <editorVersion>2.7.5</editorVersion>
+        <lastUpdateTimestamp>2015-09-25T19:53:01-05:00</lastUpdateTimestamp>
+        <editorVersion>2.8.100</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
     <libraries>
@@ -17,12 +17,34 @@
             <name>dtAnim</name>
             <version></version>
         </library>
+        <library>
+            <name>dtActors</name>
+            <version>1.0</version>
+        </library>
     </libraries>
     <actors>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>02c09ce4-a587-473e-91af-4b1dd08ee1a6</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>9253D73C-ACAA-4761-9F0D-6FCC9F9FCAC7</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -39,22 +61,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>0af0a6f3-4989-4c00-9cf1-bc1da25c817b</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>0F6E9C32-254A-493C-89B1-C9A0648B5300</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -71,22 +100,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>0f166ce5-9301-4f6c-b1a2-ace327be440a</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>26AC5AC6-211C-4514-B2A6-3FCE266FCDF8</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -103,22 +139,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>0f2d32b3-e11f-4820-adbb-0d64aa8774ea</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>7AD43C3B-EF3B-4C67-9565-C519B1344C4F</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -135,22 +178,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>1a425687-05f1-4a05-af2a-7667689d56ac</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>3DD78D79-D105-48E6-A5A4-087058DB27E4</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -167,22 +217,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>1df35eef-da9a-4e77-a815-6f77aebbadcb</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>8163FAAA-20F0-46F4-801D-B1815728635F</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -199,22 +256,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>26ec38fa-f1bf-4130-9c7c-42a4872121a2</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>C51E8825-5D55-4DA0-BEED-BE01AEB52D61</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -231,22 +295,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>28e3d3de-031e-4304-8cd8-c32428a6be88</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>DC2EC886-D0CD-4B8E-987C-F8D6B313DD52</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -263,22 +334,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>3292525d-e562-4e4f-a77d-dbdfdb44ff62</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>0974FB66-6FC6-40AF-8432-0F389CCEE944</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -295,22 +373,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>34dfbf08-3d70-4225-bf2b-aefdd095fef6</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>BA8D6D45-97BB-4C79-9D93-C7309F2B586B</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -327,22 +412,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>38bafa38-c477-46a8-b4e2-1bc9ed3f7eb8</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>5CA66CAC-ABA1-43AB-8DA9-D94CF70A2D38</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -359,22 +451,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>3a6a6f83-46f7-4c61-b81e-e6ae7353ae10</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>B15341F8-D464-44CF-974A-F31138D5945D</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -391,22 +490,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>3b5da565-cd0e-4252-8ff5-bd87236a6543</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>2F3ABC28-E220-4566-AB55-43D3B8A9080B</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -423,22 +529,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>3da7de4e-f1be-4910-b49f-9c275f58a0f3</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>0A1D320A-8F66-4430-960F-5CCC42C3E855</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -455,22 +568,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>3e1db21f-dd88-41b9-a174-34ce84968f58</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>2768958D-C5FD-46B3-B3AE-85E7FAEFB0E9</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -487,22 +607,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>3e654279-dff7-4442-8cce-91d18e963579</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>30076222-78EA-4E81-8054-6E43B5E56B6E</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -519,22 +646,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>4519df52-e27a-4773-ad32-b7398fc716be</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>16B7403A-ABB9-45A6-BFC4-37EA4D894077</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -551,22 +685,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>45621aa6-6c5a-4ac9-8597-8ee7545a7456</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>B8B09A9D-D307-4CAF-8E54-5E4899AB7C70</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -583,22 +724,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>466a0722-9254-4a6f-a06d-03f9bf37d0fb</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>C308DE31-CDCB-4681-BDB5-812D1AB237EB</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -615,22 +763,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>48921f0e-da9c-49fb-a6ae-6e187399423c</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>E8036A3B-5301-4882-976C-F7F85020AD08</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -647,22 +802,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>4a064c1e-b36c-4550-bd8c-86e499ecd21e</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>7ED3B43D-92B0-45A7-B390-9B53E7B93FC1</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -679,22 +841,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>4f44cb03-7bf8-4f3d-ac03-05c1e6ae5240</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>7945A62C-F339-40B2-9ECB-BA2A340050D5</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -711,22 +880,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>55ce97f1-60f2-49d1-a863-6e8f837f6209</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>4CAA8155-1ECC-449E-A22E-AB346F0289EC</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -743,22 +919,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>5da348ce-1bb9-4d2e-a147-771caefcff03</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>EAEF2CFE-E735-4BA0-B3E9-78E11AD58561</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -775,22 +958,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>609bcb34-49a7-4057-b4de-56c982495308</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>E8A3071C-09FD-4F1B-963C-5EB1543F5CD8</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -807,22 +997,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>61f78a0c-4741-4046-8b24-1cebb27ec691</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>A3EC7470-135E-447D-AEE2-1C216633D215</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -839,22 +1036,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>642c2484-41f1-4e34-9716-ad843f9baf64</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>BFF54B83-0AE9-4F99-ABD1-0F11BDE29048</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -871,22 +1075,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>647f4139-22bf-4744-bfa3-3ea2b6e5fc69</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>62E6E896-D26A-4BC3-897B-7095A5120473</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -903,22 +1114,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>65989127-3d28-4c0f-8486-9e736c50790c</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>01FCCEA1-26CB-490A-88C1-05D04E412E9B</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -934,17 +1152,6 @@
                     <value2>56.213959</value2>
                     <value3>6.299999</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
             </property>
         </actor>
         <actor>
@@ -987,6 +1194,24 @@
             <type>dtanim.AnimationGameActor</type>
             <id>676f652f-84c1-4173-8125-d7c8b0b6d883</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>876A46FD-55C8-4486-BCED-0C921C00DB79</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1003,22 +1228,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>6bcc7c76-ee3a-4e8a-ac5a-557e87aef181</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>43A2FECC-35F2-4725-AD14-644DFFE5AEA7</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1035,22 +1267,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>74e4ae6a-5ef8-4e32-b449-942fa36b8dc9</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>A4BA3D8F-75EB-4E94-9F82-37DCDDBEF9C1</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1067,22 +1306,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>75860ad7-0789-4ad4-9e3f-29777e975b8e</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>DA3A0672-86A5-4797-9F41-FB1FDEC0C314</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1099,22 +1345,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>78458f49-beb3-49f2-a098-7d178f124c5c</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>080BE9B7-9461-454B-B9CC-49485323B0B7</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1131,22 +1384,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>793e6890-7fb1-491e-8124-c072aa01549c</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>39588573-6D74-49C3-86DD-A36196A51234</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1163,22 +1423,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>7e1d97e2-2db7-4b52-a653-bad397eebc01</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>61D1F4A8-84F6-43BE-A85B-F58A5E6CE1E6</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1195,22 +1462,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>82f92aea-5f5a-467c-b348-5718c419edb0</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>0DDC2265-4C37-4E89-8A21-98C667F5814B</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1227,22 +1501,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>8433ee83-35a4-4019-9d6a-b128b9dd97f1</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>D091C67F-77AA-4D90-BC46-4551EF94B818</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1259,22 +1540,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>8524ca68-fd0c-453e-af4a-ac9308280523</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>4520A0D1-0278-485D-85AA-0000B3A15176</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1291,22 +1579,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>8901e1d1-4224-43b4-8f23-242a3f1ad005</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>80249F8C-EEF5-4397-9409-7A8FBDDF56A2</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1323,22 +1618,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>8cc0dbad-200a-450f-b606-8e88fd3c0663</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>DF2B7ED3-1FEE-4B65-A43F-80603585635C</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1355,22 +1657,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>8d55273c-a9a1-4de3-b0e3-2e48143a4f04</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>B16C99EC-8FE8-48D9-AF76-74048117BDA9</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1387,22 +1696,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>90770738-cc2e-4044-94f8-1068e9ec7e5c</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>4C99EC47-CF89-4CB6-AA7C-3B59DE425706</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1419,22 +1735,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>93cbee7e-ab6f-4422-a7b5-9474aa608949</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>B43538D7-E614-4A74-81F9-507836E15E3F</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1451,22 +1774,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>940fde31-b182-4f7a-a480-c9e5246c3ff3</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>53BF68B0-385F-4F3E-9A3B-BBD467A62F14</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1483,22 +1813,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>9aeafe13-d574-4b37-beef-55562ff6e0e2</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>59111707-D51C-42AE-AE4B-9B176DB055BB</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1515,22 +1852,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>9d081e2b-a875-43cf-bd80-2d21286a598a</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>A5BB1BEF-99D4-4969-AE71-82AB3B0531D2</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1547,22 +1891,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>9d6da020-9cd9-458e-8e34-3254887cdd2c</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>4019091E-B0C7-495D-9553-6F4BBF151B3D</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1579,22 +1930,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>a1219358-54bf-4a40-a70d-542bf088f3ed</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>F30C2A60-BB34-46D9-9232-20FE089792AA</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1611,22 +1969,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>a12953c3-7521-492c-b2ee-7211371e8d94</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>B771DA1D-8EA3-40D2-A859-A6BB2148344E</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1643,22 +2008,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>a1a472ee-5824-4131-b84c-6958ef6c36de</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>56BDD342-7DB0-44C9-8BB0-6565CD419A09</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1675,22 +2047,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>a41db601-5fb2-4492-b10a-c0ca9d39ee51</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>1363A4E3-ED2C-44E2-90DB-CD0CC47F92FF</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1707,22 +2086,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>a837c1e3-36c0-4147-bf55-187c947f0116</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>F4140035-1349-466F-BC4D-BA55F8B7BC90</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1739,22 +2125,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>aa31ca26-359b-4fb4-aa38-82bfd08ef241</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>EB91CA21-7595-48AA-94C9-1D40A9057299</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1771,22 +2164,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>af593636-91d4-43fc-8962-2ad5c10805ad</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>B1DEEF64-A85E-49EF-92D4-DD39922CCB8F</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1803,22 +2203,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>b1d43d78-83d7-46c6-aa09-5ed4e0d4d36b</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>2C2F6F12-EA2B-42C6-8FCB-AFE18C235D58</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1835,22 +2242,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>bb73a078-672c-4ad0-a5df-710477dddd7d</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>0AC6F385-05B6-4021-9196-6B63585F974A</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1867,22 +2281,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>bc35fc2e-6c50-423f-abaf-bf840865197f</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>1AC14B98-710F-467F-A6DD-B31E018E77A1</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1899,22 +2320,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>bd9373c8-4ac1-4516-a389-578f43baa394</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>EF21DA9B-EF84-4FBA-BDF3-A776ED0222A1</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1931,22 +2359,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>bdb5db33-a3d0-4a29-893d-8cbecc812a56</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>8F450842-78F0-4F25-B8B6-04BF72F3FDC6</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1963,22 +2398,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>cb41d616-a953-40de-80a2-09c61c938c0d</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>02102F8E-505E-4D00-A4F2-F1560977DB1D</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -1995,22 +2437,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>d3d2f69c-982f-420c-b60b-e861af137ea7</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>245E2006-E274-438D-A6A4-97690B715107</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -2027,22 +2476,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>d57d0bcc-e417-422c-b888-53a9f2ca85ce</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>FF5CB9DA-7E41-4B75-94D8-1C77BBE8C88F</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -2059,22 +2515,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>d9a61013-eda3-40c6-b900-e9bdc8e27396</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>6CC87440-CDFC-4228-94C3-A929375C0FDA</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -2091,22 +2554,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>dadb03b9-83bb-4509-873a-f9b00ce1153c</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>E3597F9B-A313-4486-A7A0-DB827CBED4BB</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -2123,22 +2593,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>db5d1ce8-f346-4c9f-bbc6-afb15166ccd8</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>632C9498-7E94-402A-8778-297895D5230C</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -2155,22 +2632,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>dce25bd4-8f54-45c8-b769-3af7ad0841d8</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>C0154411-E9BA-4D88-9D33-5CE134A34BFF</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -2187,22 +2671,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>e39619c2-a9a1-4ad0-a973-a82a1a87d6a9</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>EAFB8FE5-2104-400D-A422-01450B7F2030</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -2219,22 +2710,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>e5d1a24d-58ca-405c-89bc-7f99af213488</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>3EEDC5C8-D31B-4AC5-97F2-35C96F383EA7</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -2251,20 +2749,9 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>e6b14232-fbd0-4ffe-b2b2-75ea9df9d5a8</id>
             <name>GroundActor</name>
             <property>
@@ -2274,14 +2761,6 @@
                     <value2>19.999998</value2>
                     <value3>-0.000001</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>MESH</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
             </property>
             <property>
                 <name>static mesh</name>
@@ -2294,6 +2773,24 @@
             <type>dtanim.AnimationGameActor</type>
             <id>eb2bc2d4-d948-45b5-b96b-746ec71c71d9</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>663B9A93-53B4-4191-A38E-2EFB27B5E522</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -2310,22 +2807,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>eba9a991-cb7c-4f84-b597-e1b582ec3ea2</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>FA1DC7A0-E4B5-4D45-961D-B563ED1484BC</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -2342,22 +2846,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>ee009730-b9fb-435d-9ccb-6f73eb87fcdd</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>2EDA2A28-9613-426E-BB09-39C0742A577F</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -2374,22 +2885,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>fc4a10e1-c859-4f0d-83ef-3a89ccf8bc18</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>DBEE541D-335C-4856-91F5-FAA05344EEC1</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -2406,22 +2924,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>fc87ef37-0183-4615-86c5-ce7466621ec8</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>D5A9FD80-7B2D-4A61-8030-9546A77D179B</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -2438,22 +2963,29 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>fdc5e75e-e6bc-4434-be29-c9b6b070150b</id>
             <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>D516079C-0F3B-4DD8-A93A-6851178FB7C9</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -2470,20 +3002,8 @@
                     <value3>6.299999</value3>
                 </vec3>
             </property>
-            <property>
-                <name>ShaderGroup</name>
-                <string>
-            </string>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
-            </property>
         </actor>
     </actors>
     <groups></groups>
-    <drawablehierarchy></drawablehierarchy>
     <presetCameras></presetCameras>
 </map>

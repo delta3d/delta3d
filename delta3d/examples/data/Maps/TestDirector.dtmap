@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TestDirector</name>
@@ -7,14 +8,22 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2009-12-21T16:14:44-08:00</createTimestamp>
-        <lastUpdateTimestamp>2011-12-15T13:32:10-08:00</lastUpdateTimestamp>
-        <editorVersion>2.7.3</editorVersion>
+        <lastUpdateTimestamp>2015-09-25T19:53:18-05:00</lastUpdateTimestamp>
+        <editorVersion>2.8.100</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
     <libraries>
         <library>
             <name>dtActors</name>
             <version></version>
+        </library>
+        <library>
+            <name>dtAnim</name>
+            <version>1.0</version>
+        </library>
+        <library>
+            <name>dtAudio</name>
+            <version>1.0</version>
         </library>
     </libraries>
     <events>
@@ -111,7 +120,7 @@
             <property>
                 <name>Rotation</name>
                 <vec3>
-                    <value1>-6.799252</value1>
+                    <value1>-6.799253</value1>
                     <value2>-5.637355</value2>
                     <value3>0.000000</value3>
                 </vec3>
@@ -123,18 +132,6 @@
                     <value2>16.645224</value2>
                     <value3>4.932168</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Category Mask</name>
-                <bitMask>160</bitMask>
             </property>
             <property>
                 <name>static mesh</name>
@@ -190,18 +187,6 @@
                     <value1>16.030802</value1>
                     <value2>14.966557</value2>
                     <value3>0.467493</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>5.000000</value1>
-                    <value2>7.000000</value2>
-                    <value3>5.000000</value3>
                 </vec3>
             </property>
         </actor>
@@ -273,14 +258,6 @@
                     <value3>2.000000</value3>
                 </vec3>
             </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>SPHERE</enumerated>
-            </property>
-            <property>
-                <name>Collision Radius</name>
-                <float>0.69999999</float>
-            </property>
         </actor>
         <actor>
             <type>dtActors.Trigger Volume Actor</type>
@@ -294,23 +271,24 @@
                     <value3>0.467493</value3>
                 </vec3>
             </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>5.000000</value1>
-                    <value2>7.000000</value2>
-                    <value3>5.000000</value3>
-                </vec3>
-            </property>
         </actor>
         <actor>
             <type>dtanim.AnimationGameActor</type>
             <id>18fa9c48-9524-40d5-8206-6126dac12e8c</id>
             <name>Marine</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>401B0624-FCA9-4DBA-BC67-E3D092FE6EDA</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -326,12 +304,6 @@
                     <value2>8.538706</value2>
                     <value3>0.073650</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Skeletal Mesh</name>
-                <resourceType>SkeletalMeshes</resourceType>
-                <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
-                <resource>SkeletalMeshes:Marine:marine.xml</resource>
             </property>
         </actor>
         <actor>
@@ -356,7 +328,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>1b61b5e1-d329-487d-b0ec-07720f8a6dbf</id>
             <name>TerrainMesh_11</name>
             <property>
@@ -374,18 +346,6 @@
                     <value2>7.097543</value2>
                     <value3>0.000000</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>MESH</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
             </property>
             <property>
                 <name>static mesh</name>
@@ -417,18 +377,6 @@
                     <value1>32.067413</value1>
                     <value2>7.097543</value2>
                     <value3>0.467493</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>5.000000</value1>
-                    <value2>7.000000</value2>
-                    <value3>5.000000</value3>
                 </vec3>
             </property>
         </actor>
@@ -645,7 +593,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>34d10ee1-74a1-42fa-acba-fa0a3f277eb8</id>
             <name>Door_01</name>
             <property>
@@ -665,18 +613,6 @@
                 </vec3>
             </property>
             <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
-            </property>
-            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
@@ -684,7 +620,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>352f2d91-2296-45cc-ad31-4b38d43d88d7</id>
             <name>TerrainMesh_01</name>
             <property>
@@ -694,18 +630,6 @@
                     <value2>14.966557</value2>
                     <value3>0.000000</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>MESH</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
             </property>
             <property>
                 <name>static mesh</name>
@@ -735,18 +659,6 @@
                 </vec3>
             </property>
             <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Category Mask</name>
-                <bitMask>160</bitMask>
-            </property>
-            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
@@ -764,18 +676,6 @@
                     <value2>21.274246</value2>
                     <value3>6.235940</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Category Mask</name>
-                <bitMask>160</bitMask>
             </property>
             <property>
                 <name>static mesh</name>
@@ -803,18 +703,6 @@
                     <value2>16.553099</value2>
                     <value3>6.212490</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Category Mask</name>
-                <bitMask>160</bitMask>
             </property>
             <property>
                 <name>static mesh</name>
@@ -898,7 +786,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>44072ca2-c5ad-46e7-ac8e-29985790e03f</id>
             <name>TerrainMesh_03</name>
             <property>
@@ -910,18 +798,6 @@
                 </vec3>
             </property>
             <property>
-                <name>Collision Type</name>
-                <enumerated>MESH</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
-            </property>
-            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
@@ -929,7 +805,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>46281d40-658d-40a8-b033-5434a7153b33</id>
             <name>TerrainMesh_13</name>
             <property>
@@ -949,18 +825,6 @@
                 </vec3>
             </property>
             <property>
-                <name>Collision Type</name>
-                <enumerated>MESH</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
-            </property>
-            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
@@ -975,7 +839,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>3.099205</value1>
-                    <value2>-5.914005</value2>
+                    <value2>-5.913978</value2>
                     <value3>4.485304</value3>
                 </vec3>
             </property>
@@ -986,18 +850,6 @@
                     <value2>17.734758</value2>
                     <value3>6.235940</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Category Mask</name>
-                <bitMask>160</bitMask>
             </property>
             <property>
                 <name>static mesh</name>
@@ -1028,7 +880,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>4ad8b969-83c2-42e1-9174-fd50f4cd2416</id>
             <name>Door_05</name>
             <property>
@@ -1040,16 +892,10 @@
                 </vec3>
             </property>
             <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
+                <resource>StaticMeshes::Door_Pivot.IVE</resource>
             </property>
             <property>
                 <name>Model Translation</name>
@@ -1058,12 +904,6 @@
                     <value2>0.000000</value2>
                     <value3>-2.200000</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>static mesh</name>
-                <resourceType>StaticMeshes</resourceType>
-                <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
-                <resource>StaticMeshes::Door_Pivot.IVE</resource>
             </property>
         </actor>
         <actor>
@@ -1075,7 +915,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-179.000000</value3>
+                    <value3>-178.999985</value3>
                 </vec3>
             </property>
             <property>
@@ -1114,18 +954,6 @@
                 </vec3>
             </property>
             <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Category Mask</name>
-                <bitMask>160</bitMask>
-            </property>
-            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
@@ -1139,9 +967,9 @@
             <property>
                 <name>Rotation</name>
                 <vec3>
-                    <value1>-3.364213</value1>
+                    <value1>-3.364241</value1>
                     <value2>0.705246</value2>
-                    <value3>-6.166257</value3>
+                    <value3>-6.166230</value3>
                 </vec3>
             </property>
             <property>
@@ -1153,18 +981,6 @@
                 </vec3>
             </property>
             <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Category Mask</name>
-                <bitMask>160</bitMask>
-            </property>
-            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
@@ -1172,7 +988,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>58552008-f8df-446c-a48f-cf2ff4100a24</id>
             <name>TerrainMesh_14</name>
             <property>
@@ -1190,18 +1006,6 @@
                     <value2>7.097543</value2>
                     <value3>0.000000</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>MESH</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
             </property>
             <property>
                 <name>static mesh</name>
@@ -1231,18 +1035,6 @@
                 </vec3>
             </property>
             <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Category Mask</name>
-                <bitMask>160</bitMask>
-            </property>
-            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
@@ -1250,7 +1042,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>601dce08-3f58-4f75-8512-f6f7458c9bc5</id>
             <name>Door_10</name>
             <property>
@@ -1260,18 +1052,6 @@
                     <value2>14.969722</value2>
                     <value3>0.001683</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
             </property>
             <property>
                 <name>static mesh</name>
@@ -1346,7 +1126,7 @@
             <property>
                 <name>Model Rotation</name>
                 <vec3>
-                    <value1>-180.000000</value1>
+                    <value1>180.000000</value1>
                     <value2>0.000000</value2>
                     <value3>-0.000000</value3>
                 </vec3>
@@ -1364,18 +1144,6 @@
                     <value3>0.467493</value3>
                 </vec3>
             </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>5.000000</value1>
-                    <value2>7.000000</value2>
-                    <value3>5.000000</value3>
-                </vec3>
-            </property>
         </actor>
         <actor>
             <type>dtActors.Trigger Volume Actor</type>
@@ -1387,18 +1155,6 @@
                     <value1>0.000000</value1>
                     <value2>14.966557</value2>
                     <value3>0.467493</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>5.000000</value1>
-                    <value2>7.000000</value2>
-                    <value3>5.000000</value3>
                 </vec3>
             </property>
         </actor>
@@ -1416,7 +1172,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>7e4d26e9-c882-4178-9e28-9f420e48b5f5</id>
             <name>Door_08</name>
             <property>
@@ -1426,18 +1182,6 @@
                     <value2>14.969722</value2>
                     <value3>0.001683</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
             </property>
             <property>
                 <name>static mesh</name>
@@ -1458,18 +1202,6 @@
                     <value3>0.467493</value3>
                 </vec3>
             </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>5.000000</value1>
-                    <value2>5.000000</value2>
-                    <value3>5.000000</value3>
-                </vec3>
-            </property>
         </actor>
         <actor>
             <type>dtcore.Label</type>
@@ -1479,7 +1211,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>90.000000</value1>
-                    <value2>-89.999969</value2>
+                    <value2>-89.999947</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -1509,7 +1241,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>82ce6904-557d-40de-b861-13b93be82aa7</id>
             <name>Door_04</name>
             <property>
@@ -1519,18 +1251,6 @@
                     <value2>14.969722</value2>
                     <value3>0.001683</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
             </property>
             <property>
                 <name>static mesh</name>
@@ -1587,18 +1307,6 @@
                 </vec3>
             </property>
             <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Category Mask</name>
-                <bitMask>160</bitMask>
-            </property>
-            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
@@ -1643,7 +1351,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>9265fb37-9cca-4705-9384-a020f418cc72</id>
             <name>TerrainMesh_17</name>
             <property>
@@ -1661,18 +1369,6 @@
                     <value2>11.031294</value2>
                     <value3>-0.010767</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>MESH</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
             </property>
             <property>
                 <name>static mesh</name>
@@ -1762,7 +1458,7 @@
             <property>
                 <name>Rotation</name>
                 <vec3>
-                    <value1>-3.841179</value1>
+                    <value1>-3.841207</value1>
                     <value2>0.000000</value2>
                     <value3>0.000000</value3>
                 </vec3>
@@ -1774,18 +1470,6 @@
                     <value2>20.194136</value2>
                     <value3>4.932168</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Category Mask</name>
-                <bitMask>160</bitMask>
             </property>
             <property>
                 <name>static mesh</name>
@@ -1803,7 +1487,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-89.999969</value3>
+                    <value3>-89.999947</value3>
                 </vec3>
             </property>
             <property>
@@ -1812,18 +1496,6 @@
                     <value1>-4.047139</value1>
                     <value2>11.031294</value2>
                     <value3>0.467493</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>5.000000</value1>
-                    <value2>12.000000</value2>
-                    <value3>5.000000</value3>
                 </vec3>
             </property>
         </actor>
@@ -1848,18 +1520,6 @@
                 </vec3>
             </property>
             <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Category Mask</name>
-                <bitMask>160</bitMask>
-            </property>
-            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
@@ -1878,18 +1538,6 @@
                     <value3>0.467493</value3>
                 </vec3>
             </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>5.000000</value1>
-                    <value2>7.000000</value2>
-                    <value3>5.000000</value3>
-                </vec3>
-            </property>
         </actor>
         <actor>
             <type>dtActors.Trigger Volume Actor</type>
@@ -1901,18 +1549,6 @@
                     <value1>12.203482</value1>
                     <value2>11.031294</value2>
                     <value3>0.000001</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>20.000000</value1>
-                    <value2>7.500000</value2>
-                    <value3>5.000000</value3>
                 </vec3>
             </property>
         </actor>
@@ -1937,18 +1573,6 @@
                 </vec3>
             </property>
             <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Category Mask</name>
-                <bitMask>160</bitMask>
-            </property>
-            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
@@ -1956,7 +1580,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>a4918859-e2f2-4f56-8a20-c60768f363c1</id>
             <name>TerrainMesh_15</name>
             <property>
@@ -1968,18 +1592,6 @@
                 </vec3>
             </property>
             <property>
-                <name>Collision Type</name>
-                <enumerated>MESH</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
-            </property>
-            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
@@ -1987,7 +1599,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>aa68b82e-e9b0-43aa-9e4f-4093bd6a58cd</id>
             <name>TerrainMesh_12</name>
             <property>
@@ -1995,7 +1607,7 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>0.000000</value2>
-                    <value3>-179.999969</value3>
+                    <value3>-179.999954</value3>
                 </vec3>
             </property>
             <property>
@@ -2005,18 +1617,6 @@
                     <value2>7.097543</value2>
                     <value3>0.000000</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>MESH</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
             </property>
             <property>
                 <name>static mesh</name>
@@ -2137,7 +1737,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>b2acefd8-12a5-47a1-8035-b6537de811d7</id>
             <name>TerrainMesh_02</name>
             <property>
@@ -2147,18 +1747,6 @@
                     <value2>14.966557</value2>
                     <value3>0.000000</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>MESH</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
             </property>
             <property>
                 <name>static mesh</name>
@@ -2177,18 +1765,6 @@
                     <value1>8.017442</value1>
                     <value2>7.097543</value2>
                     <value3>0.467493</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>5.000000</value1>
-                    <value2>7.000000</value2>
-                    <value3>5.000000</value3>
                 </vec3>
             </property>
         </actor>
@@ -2230,7 +1806,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>b636db5e-420e-4eb1-959f-c90907f243cf</id>
             <name>Door_02</name>
             <property>
@@ -2242,18 +1818,6 @@
                 </vec3>
             </property>
             <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
-            </property>
-            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
@@ -2261,7 +1825,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>b64986aa-9b84-4ded-9ee0-21c7af3ea01c</id>
             <name>TerrainMesh_18</name>
             <property>
@@ -2279,18 +1843,6 @@
                     <value2>11.031294</value2>
                     <value3>-0.010767</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>MESH</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
             </property>
             <property>
                 <name>static mesh</name>
@@ -2357,18 +1909,6 @@
                 </vec3>
             </property>
             <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Category Mask</name>
-                <bitMask>160</bitMask>
-            </property>
-            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
@@ -2376,7 +1916,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>b8e97236-f4f7-4ed1-a720-d6de419470a2</id>
             <name>Door_03</name>
             <property>
@@ -2386,18 +1926,6 @@
                     <value2>7.097942</value2>
                     <value3>0.001683</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
             </property>
             <property>
                 <name>static mesh</name>
@@ -2455,18 +1983,6 @@
                     <value3>0.467493</value3>
                 </vec3>
             </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>5.000000</value1>
-                    <value2>7.000000</value2>
-                    <value3>5.000000</value3>
-                </vec3>
-            </property>
         </actor>
         <actor>
             <type>dtcore.Game.Actors.Game Mesh Actor</type>
@@ -2476,7 +1992,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>1.658467</value1>
-                    <value2>-0.825896</value2>
+                    <value2>-0.825869</value2>
                     <value3>4.348612</value3>
                 </vec3>
             </property>
@@ -2489,18 +2005,6 @@
                 </vec3>
             </property>
             <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Category Mask</name>
-                <bitMask>160</bitMask>
-            </property>
-            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:physics_crate.ive</resourceDisplayName>
@@ -2508,7 +2012,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>c86d5c63-aee3-4266-9826-316fb7966e8b</id>
             <name>Floor_Button</name>
             <property>
@@ -2528,26 +2032,6 @@
                 </vec3>
             </property>
             <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>1.500000</value1>
-                    <value2>0.500000</value2>
-                    <value3>1.500000</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
-            </property>
-            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:bigbutton.ive</resourceDisplayName>
@@ -2564,18 +2048,6 @@
                     <value1>0.000000</value1>
                     <value2>7.097543</value2>
                     <value3>0.467493</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>5.000000</value1>
-                    <value2>7.000000</value2>
-                    <value3>5.000000</value3>
                 </vec3>
             </property>
         </actor>
@@ -2662,7 +2134,7 @@
                 <vec3>
                     <value1>4.468463</value1>
                     <value2>5.815420</value2>
-                    <value3>-2.638383</value3>
+                    <value3>-2.638410</value3>
                 </vec3>
             </property>
             <property>
@@ -2672,18 +2144,6 @@
                     <value2>21.274246</value2>
                     <value3>3.554796</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Category Mask</name>
-                <bitMask>160</bitMask>
             </property>
             <property>
                 <name>static mesh</name>
@@ -2712,21 +2172,9 @@
                     <value3>0.467493</value3>
                 </vec3>
             </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>5.000000</value1>
-                    <value2>12.000000</value2>
-                    <value3>5.000000</value3>
-                </vec3>
-            </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>d92ca978-6864-4ba6-86b0-500d20069db6</id>
             <name>Door_09</name>
             <property>
@@ -2738,18 +2186,6 @@
                 </vec3>
             </property>
             <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
-            </property>
-            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
@@ -2757,7 +2193,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>db497d67-d757-40a8-8c0e-894e0f491b9c</id>
             <name>TerrainMesh_04</name>
             <property>
@@ -2769,18 +2205,6 @@
                 </vec3>
             </property>
             <property>
-                <name>Collision Type</name>
-                <enumerated>MESH</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
-            </property>
-            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
@@ -2788,7 +2212,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>dcb940c3-0b75-4a28-9366-aedd649a8050</id>
             <name>Door_11</name>
             <property>
@@ -2798,18 +2222,6 @@
                     <value2>7.097942</value2>
                     <value3>0.001683</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
             </property>
             <property>
                 <name>static mesh</name>
@@ -2856,7 +2268,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>e51674f5-5dd6-4088-af8f-dbbe5a3d1d0d</id>
             <name>Door_07</name>
             <property>
@@ -2866,18 +2278,6 @@
                     <value2>7.097942</value2>
                     <value3>0.001683</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
             </property>
             <property>
                 <name>static mesh</name>
@@ -2896,18 +2296,6 @@
                     <value1>32.067413</value1>
                     <value2>14.966557</value2>
                     <value3>0.467493</value3>
-                </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Collision Box</name>
-                <vec3>
-                    <value1>5.000000</value1>
-                    <value2>7.000000</value2>
-                    <value3>5.000000</value3>
                 </vec3>
             </property>
         </actor>
@@ -2956,7 +2344,7 @@
                 <name>Rotation</name>
                 <vec3>
                     <value1>90.000000</value1>
-                    <value2>-89.999969</value2>
+                    <value2>-89.999947</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -2986,7 +2374,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>f2588a57-5422-48da-9bdc-09ab214081e4</id>
             <name>Door_06</name>
             <property>
@@ -2998,18 +2386,6 @@
                 </vec3>
             </property>
             <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
-            </property>
-            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot.IVE</resourceDisplayName>
@@ -3017,7 +2393,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>f29947de-1f1b-4cb3-a2f8-90e73bf169f4</id>
             <name>TerrainMesh_16</name>
             <property>
@@ -3037,18 +2413,6 @@
                 </vec3>
             </property>
             <property>
-                <name>Collision Type</name>
-                <enumerated>MESH</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
-            </property>
-            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes::Door_Pivot_Room.IVE</resourceDisplayName>
@@ -3056,7 +2420,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>fa229e7e-002d-4254-abd0-7e77b5ec9625</id>
             <name>Door_12</name>
             <property>
@@ -3074,18 +2438,6 @@
                     <value2>11.512392</value2>
                     <value3>0.001683</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Collision Type</name>
-                <enumerated>CUBE</enumerated>
-            </property>
-            <property>
-                <name>Enable Collision</name>
-                <boolean>true</boolean>
-            </property>
-            <property>
-                <name>Collision Collide Mask</name>
-                <bitMask>2</bitMask>
             </property>
             <property>
                 <name>static mesh</name>
@@ -3170,7 +2522,6 @@
         </actor>
     </actors>
     <groups></groups>
-    <drawablehierarchy></drawablehierarchy>
     <presetCameras>
         <presetCamera>
             <index>1</index>

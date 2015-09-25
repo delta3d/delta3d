@@ -8,8 +8,8 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2015-07-01T21:01:06-05:00</lastUpdateTimestamp>
-        <editorVersion>2.8.0</editorVersion>
+        <lastUpdateTimestamp>2015-09-25T19:46:29-05:00</lastUpdateTimestamp>
+        <editorVersion>2.8.100</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
     <libraries>
@@ -32,6 +32,10 @@
         <library>
             <name>dtPhysics</name>
             <version></version>
+        </library>
+        <library>
+            <name>dtActors</name>
+            <version>1.0</version>
         </library>
     </libraries>
     <events>
@@ -1502,17 +1506,6 @@
             <name>youngman_09_Statue</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>734b518a-504a-4ce1-be04-23c1c8eab041</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>7b6da810-2b82-4eca-9cf3-4c2eaa62c413</id>
                     <name></name>
@@ -1521,6 +1514,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:YoungMan:YoungMan.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:YoungMan:YoungMan.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>734b518a-504a-4ce1-be04-23c1c8eab041</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -2166,17 +2170,6 @@
             <name>FireworkG_Controller</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>8f881829-34b5-4b62-a650-f408d387bd1e</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.BezierController</type>
                     <id>df2d226b-92e9-4fd4-8a42-ef66138baa73</id>
                     <name></name>
@@ -2215,6 +2208,17 @@
                     <property>
                         <name>Event On End</name>
                         <gameevent>b4e6dcb8-077a-45f6-a297-45059101b43a</gameevent>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>8f881829-34b5-4b62-a650-f408d387bd1e</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -2496,17 +2500,6 @@
             <name>Billy_Statue</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>b1a99a1e-bd11-4361-a28c-e7951f0fc7c5</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>8a4ac8a1-51d6-4a58-b80f-4db87946c2e7</id>
                     <name></name>
@@ -2515,6 +2508,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:YoungMan_African:Billy.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:YoungMan_African:Billy.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>b1a99a1e-bd11-4361-a28c-e7951f0fc7c5</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -4318,17 +4322,6 @@
             <name>Bartender</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>e722d159-cb4e-4203-ae1c-4d4494129c73</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>bceda8ca-c084-4c8b-a7d9-23db65f2b2ec</id>
                     <name></name>
@@ -4337,6 +4330,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:Gina:Gina.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:Gina:Gina.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>e722d159-cb4e-4203-ae1c-4d4494129c73</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -8511,17 +8515,6 @@
             <name>Camera_C_Controller</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>1ea78752-fdd3-41dc-a954-3c5eaac16f3b</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.BezierController</type>
                     <id>c7bf7883-974d-484e-9bff-ab417affb9c7</id>
                     <name></name>
@@ -8560,6 +8553,17 @@
                     <property>
                         <name>Event On End</name>
                         <gameevent></gameevent>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>1ea78752-fdd3-41dc-a954-3c5eaac16f3b</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -8779,17 +8783,6 @@
             <name>Firework_PS_09</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>7f9c9801-64d1-42e2-957c-4043f878f100</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.Light</type>
                     <id>d39d31f9-bb18-46db-acb8-34270cfcbed9</id>
                     <name>ParticleSystem_Light</name>
@@ -8816,6 +8809,17 @@
                     <property>
                         <name>Attach light to owner</name>
                         <boolean>true</boolean>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>7f9c9801-64d1-42e2-957c-4043f878f100</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -9051,17 +9055,6 @@
             <name>youngasianman_04_Walkway</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>46b549af-ac21-49de-8627-39b6b30bd94f</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>948eff18-c82c-4b3c-a62a-07e35d099ae0</id>
                     <name></name>
@@ -9070,6 +9063,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:YoungMan_African:Adam.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:YoungMan_African:Adam.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>46b549af-ac21-49de-8627-39b6b30bd94f</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -10085,17 +10089,6 @@
             <name>Firework_PS_03</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>2e8ba4ad-558f-400b-ac08-63137933f924</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.Light</type>
                     <id>2cbf3400-68b6-4390-8167-3d285d0748de</id>
                     <name>ParticleSystem_Light</name>
@@ -10122,6 +10115,17 @@
                     <property>
                         <name>Attach light to owner</name>
                         <boolean>true</boolean>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>2e8ba4ad-558f-400b-ac08-63137933f924</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -10977,17 +10981,6 @@
             <name>Bartender_01</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>e8ba5a46-b690-4131-97fb-cce3be9c588f</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>072c3b47-05d5-4b6e-b307-0c443cac4248</id>
                     <name></name>
@@ -10996,6 +10989,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:YoungMan_African:Adam.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:YoungMan_African:Adam.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>e8ba5a46-b690-4131-97fb-cce3be9c588f</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -11916,17 +11920,6 @@
             <name>youngman_01</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>b3d3e89f-cea1-4f3e-9b76-c48a89b08aae</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>680dae77-3d41-41bf-bfdc-1d8ad2168ece</id>
                     <name></name>
@@ -11935,6 +11928,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:YoungMan:YoungMan_Jogger.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:YoungMan:YoungMan_Jogger.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>b3d3e89f-cea1-4f3e-9b76-c48a89b08aae</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -12186,17 +12190,6 @@
             <name>Gina_04_Bar</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>d2afddfe-005d-45ff-a1c9-a632b5616f9a</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>487bba3b-a11d-4219-abef-81b31e754ffb</id>
                     <name></name>
@@ -12205,6 +12198,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>d2afddfe-005d-45ff-a1c9-a632b5616f9a</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -13875,17 +13879,6 @@
             <name>Firework_PS_02</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>26cf323e-704f-41a7-8343-134c432ede58</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.Light</type>
                     <id>344c133d-f2bd-4c9d-89b7-44348fc5d65a</id>
                     <name>ParticleSystem_Light</name>
@@ -13912,6 +13905,17 @@
                     <property>
                         <name>Attach light to owner</name>
                         <boolean>true</boolean>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>26cf323e-704f-41a7-8343-134c432ede58</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -13953,17 +13957,6 @@
             <name>SailBoat2_Controller</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>093535f6-bb21-4138-957d-3231496a4e57</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.BezierController</type>
                     <id>a2c3aa0a-875c-4e69-9d74-b42f6dd9b8f2</id>
                     <name></name>
@@ -14002,6 +13995,17 @@
                     <property>
                         <name>Event On End</name>
                         <gameevent></gameevent>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>093535f6-bb21-4138-957d-3231496a4e57</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -14128,17 +14132,6 @@
             <name>Firework_PS_07</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>e506e2d0-1bbe-456f-8a32-86ea57648e2a</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.Light</type>
                     <id>526c9394-c49e-4a29-9c06-293525acf7c6</id>
                     <name>ParticleSystem_Light</name>
@@ -14165,6 +14158,17 @@
                     <property>
                         <name>Attach light to owner</name>
                         <boolean>true</boolean>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>e506e2d0-1bbe-456f-8a32-86ea57648e2a</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -14696,17 +14700,6 @@
             <name>Eve_02_Bar</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>50ad5544-7b90-45ad-9253-64f7e6c0d791</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>1227a68b-018f-418e-bacd-9649d51a9aad</id>
                     <name></name>
@@ -14715,6 +14708,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:Gina:Eve_SwimWear.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:Gina:Eve_SwimWear.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>50ad5544-7b90-45ad-9253-64f7e6c0d791</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -16975,17 +16979,6 @@
             <name>youngman_02</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>f7c3f2d7-507d-4a04-9d9e-46f20ef6bc46</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>dfba3179-234d-4cfb-a268-2fa07fa8ee50</id>
                     <name></name>
@@ -16994,6 +16987,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:YoungMan:YoungMan_Swimmer.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:YoungMan:YoungMan_Swimmer.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>f7c3f2d7-507d-4a04-9d9e-46f20ef6bc46</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -17458,14 +17462,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-112.636803</value3>
+                    <value3>-111.978371</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-427.570557</value1>
-                    <value2>-296.579163</value2>
+                    <value1>-413.256958</value1>
+                    <value2>-302.454468</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -17500,17 +17504,6 @@
             <id>4213e10d-1695-4ce0-9b85-4b65a5ebe286</id>
             <name>Camera_B_Controller</name>
             <actorComponents>
-                <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>dba39279-c338-42ea-b6f7-803e30b931ce</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
                 <actor>
                     <type>ActorComponents.BezierController</type>
                     <id>2e315b21-2fe2-4da8-8cd1-e6943da926b2</id>
@@ -17550,6 +17543,17 @@
                     <property>
                         <name>Event On End</name>
                         <gameevent></gameevent>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>dba39279-c338-42ea-b6f7-803e30b931ce</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -18627,17 +18631,6 @@
             <name>FireworkI_Controller</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>a14204cd-6d64-41c6-88ad-6c137b996594</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.BezierController</type>
                     <id>e7ed76be-bccc-4256-a97b-cea88111a020</id>
                     <name></name>
@@ -18676,6 +18669,17 @@
                     <property>
                         <name>Event On End</name>
                         <gameevent>d11c0446-d54c-49d2-9957-4bbde831b8f4</gameevent>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>a14204cd-6d64-41c6-88ad-6c137b996594</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -18966,17 +18970,6 @@
             <name>youngman_08_Walkway</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>ca07395a-e6fb-4697-8974-b33bffc6628e</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>e14e4318-c302-48db-a2e5-26f35eaedcb5</id>
                     <name></name>
@@ -18985,6 +18978,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:YoungMan:YoungMan_Jogger.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:YoungMan:YoungMan_Jogger.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>ca07395a-e6fb-4697-8974-b33bffc6628e</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -20716,17 +20720,6 @@
             <name>Petunia_01_Bar</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>61ed5b0c-ffc7-4229-a2e3-ac0cb455b933</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>fe978274-c725-479f-9dfe-cafc0f109b38</id>
                     <name></name>
@@ -20735,6 +20728,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:Gina:Petunia_SwimWear.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:Gina:Petunia_SwimWear.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>61ed5b0c-ffc7-4229-a2e3-ac0cb455b933</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -21221,17 +21225,6 @@
             <name>Gina_01</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>0f66fad2-d4ed-4ac2-8309-e0d75793646c</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>d848554d-30ff-474e-b68a-7f93a75051d5</id>
                     <name></name>
@@ -21240,6 +21233,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>0f66fad2-d4ed-4ac2-8309-e0d75793646c</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -23479,17 +23483,6 @@
             <name>Firework_PS_04</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>407fb279-de45-4e53-acbc-3411a2a6caa5</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.Light</type>
                     <id>1cf28364-4ce2-4c19-a70e-7c349b6b7cff</id>
                     <name>ParticleSystem_Light</name>
@@ -23516,6 +23509,17 @@
                     <property>
                         <name>Attach light to owner</name>
                         <boolean>true</boolean>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>407fb279-de45-4e53-acbc-3411a2a6caa5</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -23566,17 +23570,6 @@
             <name>youngasianman_01_Bar</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>6de80f94-1906-469c-83ac-a514149500f3</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>4deb17bd-ddd1-4d70-8416-f532028fd05d</id>
                     <name></name>
@@ -23585,6 +23578,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:YoungMan_Asian:YoungMan_Asian_Swimmer.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:YoungMan_Asian:YoungMan_Asian_Swimmer.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>6de80f94-1906-469c-83ac-a514149500f3</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -25885,15 +25889,15 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-90.432961</value3>
+                    <value3>-90.138031</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-2561.541992</value1>
-                    <value2>-432.593994</value2>
-                    <value3>75.000000</value3>
+                    <value1>-1376.927734</value1>
+                    <value2>-439.653229</value2>
+                    <value3>74.999992</value3>
                 </vec3>
             </property>
             <property>
@@ -27683,17 +27687,6 @@
             <name>Sailboat3_Controller</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>52f0748e-941f-485d-bc17-f1429a432036</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.BezierController</type>
                     <id>974cb5a1-64c7-4e29-b987-a63a29dec063</id>
                     <name></name>
@@ -27732,6 +27725,17 @@
                     <property>
                         <name>Event On End</name>
                         <gameevent></gameevent>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>52f0748e-941f-485d-bc17-f1429a432036</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -29771,17 +29775,6 @@
             <name>FireworkB_Controller</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>6e32a35f-5cac-410a-be5f-c6e807bd95ae</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.BezierController</type>
                     <id>a1f9069f-246c-412f-9ce6-13c009f76b47</id>
                     <name></name>
@@ -29820,6 +29813,17 @@
                     <property>
                         <name>Event On End</name>
                         <gameevent>c3a8f2ff-6f36-485c-8ceb-b4b672847d90</gameevent>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>6e32a35f-5cac-410a-be5f-c6e807bd95ae</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -30434,17 +30438,6 @@
             <name>Eve_01_BeachChair</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>3f05c592-7e5a-4f9b-b5df-679b822b5035</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>18a896df-2eeb-4b3c-8e09-f7b9a483f704</id>
                     <name></name>
@@ -30453,6 +30446,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:Gina:Eve_SwimWear.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:Gina:Eve_SwimWear.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>3f05c592-7e5a-4f9b-b5df-679b822b5035</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -30955,17 +30959,6 @@
             <name>Terrain</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>30430ae5-7dc5-4a1a-bdca-a9446e523693</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.PhysicsActComp</type>
                     <id>0b5dd92d-bcd9-447a-a873-236422165c0b</id>
                     <name></name>
@@ -31026,6 +31019,17 @@
                         <array>
                             <size>0</size>
                         </array>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>30430ae5-7dc5-4a1a-bdca-a9446e523693</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -31917,17 +31921,6 @@
             <name>SailBoat_Controller</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>78dfeae1-e864-4fc1-8734-31986d0e79ac</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.BezierController</type>
                     <id>45f736d7-7645-4d3c-924f-d7638c6faa86</id>
                     <name></name>
@@ -31966,6 +31959,17 @@
                     <property>
                         <name>Event On End</name>
                         <gameevent></gameevent>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>78dfeae1-e864-4fc1-8734-31986d0e79ac</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -32386,17 +32390,6 @@
             <name>Camera_F_Controller</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>aae6e40a-245c-4f97-860e-175dfd3dd8aa</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.BezierController</type>
                     <id>741aa3c4-1429-45bc-b7d8-44e022a18223</id>
                     <name></name>
@@ -32435,6 +32428,17 @@
                     <property>
                         <name>Event On End</name>
                         <gameevent></gameevent>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>aae6e40a-245c-4f97-860e-175dfd3dd8aa</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -32658,17 +32662,6 @@
             <name>Gina_05_Bench</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>2feda418-108d-4e32-a956-5f87db0eac95</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>ca070e45-c8a4-4a3e-b579-16927361c0df</id>
                     <name></name>
@@ -32677,6 +32670,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>2feda418-108d-4e32-a956-5f87db0eac95</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -33401,17 +33405,6 @@
             <name>Camera_D_Controller</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>c2449793-9088-4be8-b0df-51b98088a469</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.BezierController</type>
                     <id>909d8505-2f22-4f98-a6a6-9eae356fe88b</id>
                     <name></name>
@@ -33450,6 +33443,17 @@
                     <property>
                         <name>Event On End</name>
                         <gameevent></gameevent>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>c2449793-9088-4be8-b0df-51b98088a469</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -34059,17 +34063,6 @@
             <name>FireworkE_Controller</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>d71fec2f-7ceb-4a5a-b015-1a91ed7fca24</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.BezierController</type>
                     <id>72f39c94-6e0c-4e6e-b4a5-1ae09a243893</id>
                     <name></name>
@@ -34108,6 +34101,17 @@
                     <property>
                         <name>Event On End</name>
                         <gameevent>c3a8f2ff-6f36-485c-8ceb-b4b672847d90</gameevent>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>d71fec2f-7ceb-4a5a-b015-1a91ed7fca24</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -34432,17 +34436,6 @@
             <name>FireworkD_Controller</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>169fca3a-6e60-4f29-8b80-4f0472ddace5</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.BezierController</type>
                     <id>6e5d578d-749d-4324-8838-0469167697d9</id>
                     <name></name>
@@ -34481,6 +34474,17 @@
                     <property>
                         <name>Event On End</name>
                         <gameevent>b4e6dcb8-077a-45f6-a297-45059101b43a</gameevent>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>169fca3a-6e60-4f29-8b80-4f0472ddace5</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -34914,17 +34918,6 @@
             <name>youngman_04_BeachChair</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>7612d63c-dba3-49fb-80b3-3c6c58493ff6</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>42ba9f94-7454-4694-a1ac-f17cbfa834a9</id>
                     <name></name>
@@ -34933,6 +34926,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:YoungMan:YoungMan_Swimmer.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:YoungMan:YoungMan_Swimmer.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>7612d63c-dba3-49fb-80b3-3c6c58493ff6</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -39148,17 +39152,6 @@
             <name>youngman_03_Bar</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>3b6e3df0-dea4-4706-9e59-48f88a7537a4</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>db219263-c8c7-4069-a3e8-6ef10da8e808</id>
                     <name></name>
@@ -39167,6 +39160,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:YoungMan:YoungMan_Jogger.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:YoungMan:YoungMan_Jogger.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>3b6e3df0-dea4-4706-9e59-48f88a7537a4</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -40886,17 +40890,6 @@
             <name>Gina_02_BeachChair</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>af736118-d2d0-4fa5-8787-86c5efc546b5</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>5e983493-06ca-4073-9e75-82e0a9cb3174</id>
                     <name></name>
@@ -40905,6 +40898,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>af736118-d2d0-4fa5-8787-86c5efc546b5</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -41156,17 +41160,6 @@
             <name>Camera_G_Controller</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>c3ed0006-2a47-4334-bea2-61d3bbf927a3</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.BezierController</type>
                     <id>6467fce7-f23b-42d1-9074-ccd85776f8aa</id>
                     <name></name>
@@ -41205,6 +41198,17 @@
                     <property>
                         <name>Event On End</name>
                         <gameevent></gameevent>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>c3ed0006-2a47-4334-bea2-61d3bbf927a3</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -42626,14 +42630,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-48.364494</value3>
+                    <value3>-45.117123</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-468.007080</value1>
-                    <value2>-223.180573</value2>
+                    <value1>-447.120544</value1>
+                    <value2>-203.580292</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -42659,14 +42663,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>47.715305</value3>
+                    <value3>47.668941</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>152.279999</value1>
-                    <value2>-366.998474</value2>
+                    <value1>131.870834</value1>
+                    <value2>-348.426086</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -42878,17 +42882,6 @@
             <name>Firework_PS_08</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>b47c2112-4c49-40ba-9ea7-f98557c75430</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.Light</type>
                     <id>bad7bfcb-37fd-4eed-99cd-9ace78703e63</id>
                     <name>ParticleSystem_Light</name>
@@ -42915,6 +42908,17 @@
                     <property>
                         <name>Attach light to owner</name>
                         <boolean>true</boolean>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>b47c2112-4c49-40ba-9ea7-f98557c75430</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -44200,17 +44204,6 @@
             <name>youngman_05_Sand</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>8870dbc4-7467-49a6-879f-df2f7b520e7e</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>615baaef-3832-4890-b409-fa2cde25b015</id>
                     <name></name>
@@ -44219,6 +44212,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:YoungMan:YoungMan_Swimmer.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:YoungMan:YoungMan_Swimmer.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>8870dbc4-7467-49a6-879f-df2f7b520e7e</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -45124,17 +45128,6 @@
             <name>youngafricanman_03_BeachChair</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>a3968f0c-cdc5-4340-b6c0-0d5ac0722b0c</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>01927d8a-0560-4fd9-8019-66fbaf8c6b80</id>
                     <name></name>
@@ -45143,6 +45136,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:YoungMan_African:YoungMan_African_Swimmer.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:YoungMan_African:YoungMan_African_Swimmer.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>a3968f0c-cdc5-4340-b6c0-0d5ac0722b0c</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -45394,17 +45398,6 @@
             <name>Eve_03_BeachChair</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>c35f8ac9-83fc-43dc-b3e3-17569e50696a</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>7441d75a-1fb4-4d00-997d-1e2430756b1f</id>
                     <name></name>
@@ -45413,6 +45406,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:Gina:Eve_SwimWear.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:Gina:Eve_SwimWear.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>c35f8ac9-83fc-43dc-b3e3-17569e50696a</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -45865,17 +45869,6 @@
             <name>youngman_07_BeachChair</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>0fa862ae-fd97-4138-a4c3-2dbe0d780ebb</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>cad09751-216d-4901-b5e3-d36450f0104d</id>
                     <name></name>
@@ -45884,6 +45877,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:YoungMan_Asian:YoungMan_Asian_Swimmer.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:YoungMan_Asian:YoungMan_Asian_Swimmer.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>0fa862ae-fd97-4138-a4c3-2dbe0d780ebb</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -46353,17 +46357,6 @@
             <name>FireworkA_Controller</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>81dba059-8c39-42ab-9d79-e6a3fc81d998</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.BezierController</type>
                     <id>7a5498dc-d0a0-4901-8d4c-1244173c1ae2</id>
                     <name></name>
@@ -46402,6 +46395,17 @@
                     <property>
                         <name>Event On End</name>
                         <gameevent>b4e6dcb8-077a-45f6-a297-45059101b43a</gameevent>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>81dba059-8c39-42ab-9d79-e6a3fc81d998</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -50557,17 +50561,6 @@
             <name>Boat_Controller</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>51602065-05e8-4695-8023-89edf3570d44</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.BezierController</type>
                     <id>d89bcfba-022f-47a8-b7e9-760258ac6361</id>
                     <name></name>
@@ -50606,6 +50599,17 @@
                     <property>
                         <name>Event On End</name>
                         <gameevent></gameevent>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>51602065-05e8-4695-8023-89edf3570d44</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -51026,17 +51030,6 @@
             <name>Firework_PS_05</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>aa35e3bf-86c3-4551-9312-5c55e8c0f7c6</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.Light</type>
                     <id>3ceffdc7-cca3-4331-9864-1a70f84feff5</id>
                     <name>ParticleSystem_Light</name>
@@ -51063,6 +51056,17 @@
                     <property>
                         <name>Attach light to owner</name>
                         <boolean>true</boolean>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>aa35e3bf-86c3-4551-9312-5c55e8c0f7c6</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -51340,17 +51344,6 @@
             <name>Firework_PS_06</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>fa7aea09-4150-4fd1-91bb-d09f0c6f5d02</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.Light</type>
                     <id>7c84d4af-58c7-426e-9fd1-c64f3560caac</id>
                     <name>ParticleSystem_Light</name>
@@ -51377,6 +51370,17 @@
                     <property>
                         <name>Attach light to owner</name>
                         <boolean>true</boolean>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>fa7aea09-4150-4fd1-91bb-d09f0c6f5d02</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -55670,17 +55674,6 @@
             <name>Camera_E_Controller</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>8ef03f82-a224-4aa1-941d-079668dd6e2e</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.BezierController</type>
                     <id>18a05d56-53a8-4045-af62-d4809dc941ea</id>
                     <name></name>
@@ -55719,6 +55712,17 @@
                     <property>
                         <name>Event On End</name>
                         <gameevent></gameevent>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>8ef03f82-a224-4aa1-941d-079668dd6e2e</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -55955,17 +55959,6 @@
             <name>FireworkF_Controller</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>6e663784-8d25-466b-adda-d3f83051f034</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.BezierController</type>
                     <id>e15788fd-6754-40be-8671-5b6f125542d8</id>
                     <name></name>
@@ -56004,6 +55997,17 @@
                     <property>
                         <name>Event On End</name>
                         <gameevent>d11c0446-d54c-49d2-9957-4bbde831b8f4</gameevent>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>6e663784-8d25-466b-adda-d3f83051f034</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -57499,17 +57503,6 @@
             <name>youngasianman_03_Sand</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>eb136031-731a-4b61-a278-7db0800613a6</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>86fd4426-1755-4747-9a30-0b5cb6080162</id>
                     <name></name>
@@ -57518,6 +57511,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:YoungMan_Asian:YoungMan_Asian_Jogger.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:YoungMan_Asian:YoungMan_Asian_Jogger.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>eb136031-731a-4b61-a278-7db0800613a6</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -58571,17 +58575,6 @@
             <name>youngafricanman_05_Walkway</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>512148e7-c375-4f63-b9ce-53eb405b535c</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>8e5b8a64-c4a3-404c-a6b3-9afd9689ff42</id>
                     <name></name>
@@ -58590,6 +58583,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:YoungMan_African:YoungMan_African.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:YoungMan_African:YoungMan_African.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>512148e7-c375-4f63-b9ce-53eb405b535c</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -58881,17 +58885,6 @@
             <name>FireworkH_Controller</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>9b79cd08-302d-41ee-9c90-322efa4c21a5</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.BezierController</type>
                     <id>bba3730d-6475-4b82-ae5a-6a375b037187</id>
                     <name></name>
@@ -58930,6 +58923,17 @@
                     <property>
                         <name>Event On End</name>
                         <gameevent>c3a8f2ff-6f36-485c-8ceb-b4b672847d90</gameevent>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>9b79cd08-302d-41ee-9c90-322efa4c21a5</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -59741,17 +59745,6 @@
             <name>FireworkC_Controller</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>0f182df6-16d4-4d8b-9bfe-de2a780f2cbc</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.BezierController</type>
                     <id>4a94b975-2092-43cf-b4a3-ed9a56054929</id>
                     <name></name>
@@ -59790,6 +59783,17 @@
                     <property>
                         <name>Event On End</name>
                         <gameevent>d11c0446-d54c-49d2-9957-4bbde831b8f4</gameevent>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>0f182df6-16d4-4d8b-9bfe-de2a780f2cbc</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -61812,17 +61816,6 @@
             <name>youngasianman_02_Walkway</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>90626b06-f707-4f6b-86aa-dfc2c4baa5a1</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>83184afd-833e-4966-82e9-895d13b17618</id>
                     <name></name>
@@ -61831,6 +61824,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:YoungMan_Asian:YoungMan_Asian_Swimmer.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:YoungMan_Asian:YoungMan_Asian_Swimmer.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>90626b06-f707-4f6b-86aa-dfc2c4baa5a1</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -62476,17 +62480,6 @@
             <name>Petunia_02_BeachChair</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>d7cb4bd4-2a05-44b1-be61-efb5750b0fd7</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>41eae721-df81-4d40-9ee1-373a4279c15c</id>
                     <name></name>
@@ -62495,6 +62488,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:Gina:Petunia_SwimWear.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:Gina:Petunia_SwimWear.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>d7cb4bd4-2a05-44b1-be61-efb5750b0fd7</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -64997,17 +65001,6 @@
             <name>youngman_06_BeachChair</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>36aee2ed-8cf2-4824-a222-77e4e12a78bb</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>edaede30-4c6d-4c44-b3cb-25c3006aac2c</id>
                     <name></name>
@@ -65016,6 +65009,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:YoungMan:YoungMan_Swimmer.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:YoungMan:YoungMan_Swimmer.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>36aee2ed-8cf2-4824-a222-77e4e12a78bb</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -66051,17 +66055,6 @@
             <name>planecontroller</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>f63b9dee-4d74-40df-baff-987fd6cfcb86</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.BezierController</type>
                     <id>fa08c8cf-6a48-4a57-8bbf-a7be40f59d33</id>
                     <name></name>
@@ -66100,6 +66093,17 @@
                     <property>
                         <name>Event On End</name>
                         <gameevent></gameevent>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>f63b9dee-4d74-40df-baff-987fd6cfcb86</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -66151,17 +66155,6 @@
             <name>Camera_A_Controller</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>65780135-be36-4f32-abde-be0922cdb1e0</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.BezierController</type>
                     <id>b858a07b-caff-4dd7-8307-fee0e9f9e16d</id>
                     <name></name>
@@ -66200,6 +66193,17 @@
                     <property>
                         <name>Event On End</name>
                         <gameevent></gameevent>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>65780135-be36-4f32-abde-be0922cdb1e0</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
@@ -66843,17 +66847,6 @@
             <name>Controller_02</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>0de554ae-bb42-4bb9-aeb8-2cb18b5d10c3</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.BezierController</type>
                     <id>8840b8c1-8d28-405f-81af-ff0c48e6e988</id>
                     <name></name>
@@ -66894,6 +66887,17 @@
                         <gameevent></gameevent>
                     </property>
                 </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>0de554ae-bb42-4bb9-aeb8-2cb18b5d10c3</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
+                    </property>
+                </actor>
             </actorComponents>
             <property>
                 <name>Render Path</name>
@@ -66906,17 +66910,6 @@
             <name>Gina_03_BeachChair</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>d5bd2c3f-9bb2-48a8-9bf8-661a474e13d5</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.AnimationActorComponent</type>
                     <id>7ffc334c-bc8e-4941-84d3-cc57ede42eaf</id>
                     <name></name>
@@ -66925,6 +66918,17 @@
                         <resourceType>SkeletalMeshes</resourceType>
                         <resourceDisplayName>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resourceDisplayName>
                         <resource>SkeletalMeshes:Gina:Gina_SwimWear.dtchar</resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>d5bd2c3f-9bb2-48a8-9bf8-661a474e13d5</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
                 <actor>
@@ -70281,17 +70285,6 @@
             <name>Firework_PS_01</name>
             <actorComponents>
                 <actor>
-                    <type>ActorComponents.ShaderActorComponent</type>
-                    <id>a9eae61f-6546-49d5-add8-3f49f48684bd</id>
-                    <name></name>
-                    <property>
-                        <name>CurrentShader</name>
-                        <resourceType>Shaders</resourceType>
-                        <resourceDisplayName></resourceDisplayName>
-                        <resource></resource>
-                    </property>
-                </actor>
-                <actor>
                     <type>ActorComponents.Light</type>
                     <id>3e1de85f-1858-4d9d-baa8-2a333e9f243e</id>
                     <name>ParticleSystem_Light</name>
@@ -70318,6 +70311,17 @@
                     <property>
                         <name>Attach light to owner</name>
                         <boolean>true</boolean>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>a9eae61f-6546-49d5-add8-3f49f48684bd</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
                     </property>
                 </actor>
             </actorComponents>
