@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>MyCoolMap</name>
@@ -7,16 +8,64 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2005-07-20T15:24:07.0-05:00</createTimestamp>
-        <lastUpdateTimestamp>2014-11-14T11:31:23-05:00</lastUpdateTimestamp>
-        <editorVersion>2.8.0</editorVersion>
+        <lastUpdateTimestamp>2015-09-25T19:52:48-05:00</lastUpdateTimestamp>
+        <editorVersion>2.8.100</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
-    <libraries></libraries>
+    <libraries>
+        <library>
+            <name>dtActors</name>
+            <version>1.0</version>
+        </library>
+    </libraries>
     <actors>
         <actor>
             <type>dtcore.Action.Bezier Controller</type>
             <id>2b67341e-1c25-4f8f-92d6-7a57fc082d1e</id>
             <name>Controller0</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.BezierController</type>
+                    <id>ABF877DB-A987-4792-87B1-2F8547DB693B</id>
+                    <name></name>
+                    <property>
+                        <name>Event To Start</name>
+                        <gameevent></gameevent>
+                    </property>
+                    <property>
+                        <name>Event To Pause</name>
+                        <gameevent></gameevent>
+                    </property>
+                    <property>
+                        <name>Event To Unpause</name>
+                        <gameevent></gameevent>
+                    </property>
+                    <property>
+                        <name>Event On Start</name>
+                        <gameevent></gameevent>
+                    </property>
+                    <property>
+                        <name>Event On Pause</name>
+                        <gameevent></gameevent>
+                    </property>
+                    <property>
+                        <name>Event On Unpause</name>
+                        <gameevent></gameevent>
+                    </property>
+                    <property>
+                        <name>Event On Next Step</name>
+                        <gameevent></gameevent>
+                    </property>
+                    <property>
+                        <name>Event On Restart</name>
+                        <gameevent></gameevent>
+                    </property>
+                    <property>
+                        <name>Event On End</name>
+                        <gameevent></gameevent>
+                    </property>
+                </actor>
+            </actorComponents>
             <property>
                 <name>Time Step</name>
                 <float>0.0099999998</float>
@@ -38,10 +87,6 @@
             <type>dtcore.Curve.Bezier Control Point</type>
             <id>33013719-065f-4369-ab49-d17ba5b851c3</id>
             <name>ControlPoint1</name>
-            <property>
-                <name>Name</name>
-                <string>ControlPoint1</string>
-            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -68,15 +113,11 @@
             <id>39c7f896-d8a9-493f-87dd-4d155cdf13b3</id>
             <name>helo</name>
             <property>
-                <name>Name</name>
-                <string>helo</string>
-            </property>
-            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>14.509837</value1>
-                    <value2>-11.987243</value2>
-                    <value3>-170.535324</value3>
+                    <value2>-11.987245</value2>
+                    <value3>-170.535339</value3>
                 </vec3>
             </property>
             <property>
@@ -86,10 +127,6 @@
                     <value2>-29.126230</value2>
                     <value3>5.657811</value3>
                 </vec3>
-            </property>
-            <property>
-                <name>Mass</name>
-                <float>4.1887898</float>
             </property>
             <property>
                 <name>Initial Ownership</name>
@@ -106,10 +143,6 @@
             <type>dtcore.Curve.Bezier Node</type>
             <id>3d2da066-2fea-4980-acf8-4c74db250795</id>
             <name>BezierNode1</name>
-            <property>
-                <name>Name</name>
-                <string>BezierNode1</string>
-            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -152,13 +185,9 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>3ee83bce-267b-441e-ba2a-59b55c9c3373</id>
             <name>StaticMesh1</name>
-            <property>
-                <name>Name</name>
-                <string>StaticMesh1</string>
-            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -176,10 +205,6 @@
                 </vec3>
             </property>
             <property>
-                <name>Mass</name>
-                <float>4.1887898</float>
-            </property>
-            <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
                 <resourceDisplayName>StaticMeshes:cypress1.ive</resourceDisplayName>
@@ -190,10 +215,6 @@
             <type>dtcore.Curve.Bezier Control Point</type>
             <id>44a9a42f-46be-423e-849c-01cfb62eab87</id>
             <name>ControlPoint3</name>
-            <property>
-                <name>Name</name>
-                <string>ControlPoint3</string>
-            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -219,10 +240,6 @@
             <type>dtcore.Curve.Bezier Node</type>
             <id>658c6682-2808-4863-bdfc-c61a2f118915</id>
             <name>BezierNode2</name>
-            <property>
-                <name>Name</name>
-                <string>BezierNode2</string>
-            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -303,13 +320,9 @@
             </property>
         </actor>
         <actor>
-            <type>dtcore.Static Mesh</type>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
             <id>a215ea47-5c0b-4b47-8320-1eb943384bba</id>
             <name>terrain</name>
-            <property>
-                <name>Name</name>
-                <string>terrain</string>
-            </property>
             <property>
                 <name>static mesh</name>
                 <resourceType>StaticMeshes</resourceType>
@@ -321,10 +334,6 @@
             <type>dtcore.Curve.Bezier Node</type>
             <id>a6999cb5-af09-4cf3-bc55-14b0424218f6</id>
             <name>BezierNode8</name>
-            <property>
-                <name>Name</name>
-                <string>BezierNode8</string>
-            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -400,10 +409,6 @@
             <id>c56e759a-c5ec-4597-868e-0a55035ac1e0</id>
             <name>startPosition</name>
             <property>
-                <name>Name</name>
-                <string>startPosition</string>
-            </property>
-            <property>
                 <name>Rotation</name>
                 <vec3>
                     <value1>-7.399734</value1>
@@ -424,10 +429,6 @@
             <type>dtcore.Curve.Bezier Control Point</type>
             <id>f5e207ef-b4ba-4647-98a1-79ab291dbba5</id>
             <name>ControlPoint2</name>
-            <property>
-                <name>Name</name>
-                <string>ControlPoint2</string>
-            </property>
             <property>
                 <name>Rotation</name>
                 <vec3>
@@ -451,6 +452,5 @@
         </actor>
     </actors>
     <groups></groups>
-    <drawablehierarchy></drawablehierarchy>
     <presetCameras></presetCameras>
 </map>
