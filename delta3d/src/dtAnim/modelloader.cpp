@@ -210,7 +210,14 @@ namespace dtAnim
 
    void LoadTask::operator()()
    {
-      mLoader->LoadModel(mResource, false);
+      try
+      {
+         mLoader->LoadModel(mResource, false);
+      }
+      catch(const dtUtil::Exception& ex)
+      {
+         ex.LogException(dtUtil::Log::LOG_WARNING);
+      }
    }
 
 }
