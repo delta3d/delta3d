@@ -75,6 +75,7 @@ namespace dtVoxel
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, DynamicResolution)
       DT_DECLARE_ACCESSOR_INLINE(osg::Vec3, Offset)
       DT_DECLARE_ACCESSOR_INLINE(unsigned, MaxCellsToUpdatePerFrame)
+      DT_DECLARE_ACCESSOR_INLINE(unsigned, MinCellsToUpdatePerFrame)
       DT_DECLARE_ACCESSOR_INLINE(bool, UpdateCellsOnBackgroundThread)
       DT_DECLARE_ACCESSOR_INLINE(unsigned, NumLODs)
 
