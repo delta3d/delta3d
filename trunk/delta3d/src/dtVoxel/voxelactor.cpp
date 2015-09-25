@@ -52,6 +52,7 @@ namespace dtVoxel
    , mSimplify(false)
    , mSampleRatio(0.2f)
    , mMaxCellsToUpdatePerFrame(1)
+   , mMinCellsToUpdatePerFrame(0)
    , mUpdateCellsOnBackgroundThread(true)
    , mNumLODs(0)
    , mCreateRemotePhysics(false)
@@ -96,7 +97,7 @@ namespace dtVoxel
       else if (rd.IsEmpty())
       {
          std::cout << "Unloading Grid" << std::endl;
-         mGrids = NULL;
+         mGrids.reset();
       }
    }
 
@@ -120,6 +121,7 @@ namespace dtVoxel
       DT_REGISTER_PROPERTY_WITH_LABEL(DynamicResolution, "Dynamic Resolution", "The resolution to sample the VDB database for the dynamic deformable data.", RegHelper, regHelper);
       DT_REGISTER_PROPERTY_WITH_LABEL(Offset, "Offset", "The offset of the database in world space.", RegHelper, regHelper);
       DT_REGISTER_PROPERTY(MaxCellsToUpdatePerFrame, "The number of dirty cells to regenerate per frame", RegHelper, regHelper);
+      DT_REGISTER_PROPERTY(MinCellsToUpdatePerFrame, "The minimum number to regenerate.  If this is less than max, it will decrease the number if simulation can't simulate as fast as configured in fixed time step. See system.h", RegHelper, regHelper);
       DT_REGISTER_PROPERTY(UpdateCellsOnBackgroundThread, "If this should push the update task to a thread pool BACKGROUND task.  If true, runs multithreaded but blocks the main thread until it completes.", RegHelper, regHelper);
       DT_REGISTER_PROPERTY(NumLODs, "The number of LODs to generate, can be 0, 1, 2 or 3", RegHelper, regHelper);
       DT_REGISTER_PROPERTY_WITH_LABEL(CreateRemotePhysics, "Create Remote Physics", "Create the voxel geometry for the physics if this actor is remote.", RegHelper, regHelper);
@@ -223,27 +225,36 @@ namespace dtVoxel
                   });
             mUpdateMessages.clear();
 
-            double correctSimTime = dtCore::System::GetInstance().GetCorrectSimulationTime();
-            double timeDiff = dtUtil::Max(correctSimTime - tickMessage.GetSimulationTime(), 0.0);
-            if (timeDiff < tickMessage.GetDeltaSimTime())
+            if (mMinCellsToUpdatePerFrame >= mMaxCellsToUpdatePerFrame)
             {
-               double fractionOfTickBehind = (tickMessage.GetDeltaSimTime()-timeDiff)/tickMessage.GetDeltaRealTime();
-               unsigned numToUpdate = unsigned(std::ceil(fractionOfTickBehind * double(mMaxCellsToUpdatePerFrame)));
-               //if (numToUpdate != mMaxCellsToUpdatePerFrame)
-               //   std::cout << "Updating at most " << numToUpdate << " cells." << std::endl;
-               mVisualGrid->BeginNewUpdates(pos, numToUpdate, mUpdateCellsOnBackgroundThread);
-               mTicksSinceVisualUpdate = 0;
-            }
-            else if (mTicksSinceVisualUpdate > 2)
-            {
-               //std::cout << "Updating forced to 1 cell." << std::endl;
-               mVisualGrid->BeginNewUpdates(pos, 1U, mUpdateCellsOnBackgroundThread);
-               mTicksSinceVisualUpdate = 0;
+               mVisualGrid->BeginNewUpdates(pos, mMaxCellsToUpdatePerFrame, mUpdateCellsOnBackgroundThread);
             }
             else
             {
-               ++mTicksSinceVisualUpdate;
-               //std::cout << "Skipping visual update to help catch up." << std::endl;
+               double correctSimTime = dtCore::System::GetInstance().GetCorrectSimulationTime();
+               double timeDiff = dtUtil::Max(correctSimTime - tickMessage.GetSimulationTime(), 0.0);
+               if (timeDiff < tickMessage.GetDeltaSimTime())
+               {
+                  double fractionOfTickBehind = (tickMessage.GetDeltaSimTime()-timeDiff)/tickMessage.GetDeltaRealTime();
+                  unsigned numToUpdate = unsigned(std::ceil(fractionOfTickBehind * double(mMaxCellsToUpdatePerFrame)));
+                  if (numToUpdate < mMinCellsToUpdatePerFrame)
+                     numToUpdate = mMinCellsToUpdatePerFrame;
+                  //if (numToUpdate != mMaxCellsToUpdatePerFrame)
+                  //   std::cout << "Updating at most " << numToUpdate << " cells." << std::endl;
+                  mVisualGrid->BeginNewUpdates(pos, numToUpdate, mUpdateCellsOnBackgroundThread);
+                  mTicksSinceVisualUpdate = 0;
+               }
+               else if (mTicksSinceVisualUpdate > 2)
+               {
+                  //std::cout << "Updating forced to 1 cell." << std::endl;
+                  mVisualGrid->BeginNewUpdates(pos, 1U, mUpdateCellsOnBackgroundThread);
+                  mTicksSinceVisualUpdate = 0;
+               }
+               else
+               {
+                  ++mTicksSinceVisualUpdate;
+                  //std::cout << "Skipping visual update to help catch up." << std::endl;
+               }
             }
          }
       }
@@ -278,7 +289,7 @@ namespace dtVoxel
 
       openvdb::Vec3d lastVector;
       osg::BoundingBox bb;
-      for (unsigned i = 0; i < indices->GetSize(); ++i)
+      for (unsigned i = 0, iend = indices->GetSize(); i < iend; ++i)
       {
          const dtCore::NamedParameter* indexP = indices->GetParameter(i);
          if (indexP != nullptr && indexP->GetDataType() == dtCore::DataType::VEC3)
@@ -329,7 +340,7 @@ namespace dtVoxel
       first = true;
       MarkVisualDirty(bb, 0);
 
-      for (unsigned i = 0; i < indicesDeactivated->GetSize(); ++i)
+      for (unsigned i = 0, iend = indicesDeactivated->GetSize(); i < iend; ++i)
       {
          const dtCore::NamedParameter* indexP = indicesDeactivated->GetParameter(i);
          if (indexP != nullptr && indexP->GetDataType() == dtCore::DataType::VEC3)
