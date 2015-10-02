@@ -7,7 +7,7 @@ INCLUDE(delta3d_common)
 FIND_DELTA3D_LIBRARY(DTCORE_LIBRARY         dtCore)
 
 
-set(SUB_PACKAGES OpenThreads OSG ODE XercesC)
+set(SUB_PACKAGES OpenThreads OSG XercesC)
 IF (NOT WIN32 AND NOT APPLE)
    list(APPEND SUB_PACKAGES UUID)
 ENDIF ()
