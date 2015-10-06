@@ -148,59 +148,59 @@ namespace dtGame
        * @param type The type-string of the ActorComponent to get
        * @return the selected ActorComponents (will be empty if not found)
        */
-      DEPRECATE_FUNC virtual std::vector<ActorComponent*> GetComponents(ActorComponent::ACType type) const;
-      DEPRECATE_FUNC virtual void GetComponents(ActorComponent::ACType type, ActorComponentVector& toFill) const;
+      DEPRECATE_FUNC virtual std::vector<ActorComponent*> GetComponents(ActorComponent::ACType type) const override;
+      DEPRECATE_FUNC virtual void GetComponents(ActorComponent::ACType type, ActorComponentVector& toFill) const override;
 
       /**
        * Fill the vector with all the actor components.
        */
-      DEPRECATE_FUNC virtual void GetAllComponents(ActorComponentVector& toFill);
-      DEPRECATE_FUNC virtual void GetAllComponents(ActorComponentVectorConst& toFill) const;
+      DEPRECATE_FUNC virtual void GetAllComponents(ActorComponentVector& toFill) override;
+      DEPRECATE_FUNC virtual void GetAllComponents(ActorComponentVectorConst& toFill) const override;
 
       /**
        * Does base contain a component of given type?
        * @param type The type-string of the ActorComponent to query
        * @return true if ActorComponent is found, false otherwise
        */
-      DEPRECATE_FUNC virtual bool HasComponent(ActorComponent::ACType type) const ;
+      DEPRECATE_FUNC virtual bool HasComponent(ActorComponent::ACType type) const override;
 
       /**
        * Add an ActorComponent. Only one ActorComponent of a given type can be added.
        * @param component The ActorComponent to try to add
        */
-      DEPRECATE_FUNC virtual void AddComponent(ActorComponent& component);
+      DEPRECATE_FUNC virtual void AddComponent(ActorComponent& component) override;
 
       /**
        * Remove component by reference
        * @param component : Pointer to the ActorComponent to remove
        */
-      DEPRECATE_FUNC virtual void RemoveComponent(ActorComponent& component);
+      DEPRECATE_FUNC virtual void RemoveComponent(ActorComponent& component) override;
 
       /**
        * Removes all components with a particular type
        * @param type The type-string of the ActorComponent to remove
        */
-      DEPRECATE_FUNC void RemoveAllComponentsOfType(ActorComponent::ACType type);
+      DEPRECATE_FUNC void RemoveAllComponentsOfType(ActorComponent::ACType type) override;
 
       /**
        * Remove all contained ActorComponent
        */
-      DEPRECATE_FUNC virtual void RemoveAllComponents();
+      DEPRECATE_FUNC virtual void RemoveAllComponents() override;
 
       /**
        * Loop through all ActorComponents call their OnEnteredWorld()
        */
-      DEPRECATE_FUNC virtual void CallOnEnteredWorldForActorComponents();
+      DEPRECATE_FUNC virtual void CallOnEnteredWorldForActorComponents() override;
 
       /**
        * Loop through all ActorComponents call their OnRemovedWorld()
        */
-      DEPRECATE_FUNC virtual void CallOnRemovedFromWorldForActorComponents();
+      DEPRECATE_FUNC virtual void CallOnRemovedFromWorldForActorComponents() override;
 
       /**
        * Call the BuildPropertyMap() method of all registered ActorComponent
        */
-      DEPRECATE_FUNC virtual void BuildComponentPropertyMaps();
+      DEPRECATE_FUNC virtual void BuildComponentPropertyMaps() override;
    protected:
       /// Destructor
       virtual ~GameActor();

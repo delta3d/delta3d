@@ -64,7 +64,7 @@ namespace dtPhysics
    class DT_PHYSICS_EXPORT PhysicsObject: public dtCore::PropertyContainer, virtual public dtCore::VelocityInterface, virtual public dtCore::AngularVelocityInterface
    {
    public:
-      DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE
+      DT_DECLARE_VIRTUAL_REF_INTERFACE_OVERRIDE_INLINE
 
    protected:
       PhysicsObject();//name will be generated
