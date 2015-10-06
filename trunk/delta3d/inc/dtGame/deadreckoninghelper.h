@@ -81,7 +81,7 @@ namespace dtGame
    class DT_GAME_EXPORT DeadReckoningActorComponent : public dtGame::ActorComponent , public dtCore::MotionInterface
    {
       public:
-         DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE
+         DT_DECLARE_VIRTUAL_REF_INTERFACE_OVERRIDE_INLINE
 
          static const float DEFAULT_MAX_SMOOTHING_TIME_ROT;
          static const float DEFAULT_MAX_SMOOTHING_TIME_POS;
@@ -253,8 +253,8 @@ namespace dtGame
          DeadReckoningActorComponent();
 
          // base methods for actor components.
-         virtual void OnAddedToActor(dtCore::BaseActorObject& actor);
-         virtual void OnRemovedFromActor(dtCore::BaseActorObject& actor);
+         void OnAddedToActor(dtCore::BaseActorObject& actor) override;
+         void OnRemovedFromActor(dtCore::BaseActorObject& actor) override;
 
          DT_DECLARE_ACCESSOR(bool, AutoRegisterWithGMComponent);
 
@@ -262,12 +262,12 @@ namespace dtGame
          void UnregisterWithGMComponent();
 
          /// Called when the parent actor enters the "world".
-         virtual void OnEnteredWorld();
+         void OnEnteredWorld() override;
          /// Called when the parent actor leaves the "world".
-         virtual void OnRemovedFromWorld();
+         void OnRemovedFromWorld() override;
 
          /** add actor component properties to game actor for configuring in STAGE */
-         virtual void BuildPropertyMap();
+         void BuildPropertyMap() override;
 
          /** 
           * Use these externally to know if something other than pos, rot, accel, etc were changed
@@ -558,7 +558,7 @@ namespace dtGame
          bool GetForceUprightRotation() const;
 
          /// Supports the following deprecated properties: 'Flying' 
-         virtual dtCore::RefPtr<dtCore::ActorProperty> GetDeprecatedProperty(const std::string& name);
+         dtCore::RefPtr<dtCore::ActorProperty> GetDeprecatedProperty(const std::string& name) override;
 
       protected:
          virtual ~DeadReckoningActorComponent();// {}

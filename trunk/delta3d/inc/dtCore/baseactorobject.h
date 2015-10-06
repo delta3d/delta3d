@@ -336,7 +336,7 @@ namespace dtCore
        * to the newly created clone.
        * @return The cloned actor.
        */
-      virtual dtCore::RefPtr<BaseActorObject> Clone();
+      virtual RefPtr<BaseActorObject> Clone();
 
       /**
        * Returns true if called from STAGE
@@ -410,19 +410,19 @@ namespace dtCore
        * displayable qualities.  For example, if a static mesh has no mesh
        * currently assigned to it, the billboard will display instead.
        */
-      dtCore::RefPtr<ActorProxyIcon> mBillBoardIcon;
+      RefPtr<ActorProxyIcon> mBillBoardIcon;
 
    private:
 
 
       ///Pointer to the Delta3D object (Actor) this actor is wrapping.
-      dtCore::RefPtr<dtCore::DeltaDrawable> mDrawable;
+      RefPtr<DeltaDrawable> mDrawable;
       ///ActorType corresponding to this actor.
-      dtCore::RefPtr<const ActorType> mActorType;
+      RefPtr<const ActorType> mActorType;
       // This needs to be converted to a reference
-      dtCore::ObserverPtr<BaseActorObject> mPrototype;
+      ObserverPtr<BaseActorObject> mPrototype;
       dtUtil::RefString mName;
-      dtCore::UniqueId mId;
+      UniqueId mId;
 
 
 
@@ -439,7 +439,7 @@ namespace dtCore
 
    typedef dtCore::RefPtr<BaseActorObject> ActorPtr;
    typedef std::vector<BaseActorObject*> ActorPtrVector;
-   typedef std::vector<RefPtr<BaseActorObject> > ActorRefPtrVector;
+   typedef std::vector<ActorPtr> ActorRefPtrVector;
 }
 
 #endif /* BASEACTOROBJECT_H_ */

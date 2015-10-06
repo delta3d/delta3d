@@ -132,10 +132,10 @@ namespace dtABC
       Application(const std::string& configFilename = "", dtCore::DeltaWin* win = NULL);
 
       ///Start the Application
-      virtual void Run();
+      void Run() override;
 
       //overridden the load config properties into settings.
-      virtual void Config();
+      void Config() override;
 
       /// Generate a default configuration file.
       /// This method writes out all the default attributes from the internal Application
@@ -280,19 +280,19 @@ namespace dtABC
    protected:
       virtual ~Application();
 
-      virtual void EventTraversal(const double deltaSimTime);
+      void EventTraversal(const double deltaSimTime) override;
 
       ///override for preframe
-      virtual void PreFrame(const double deltaSimTime);
+      void PreFrame(const double deltaSimTime) override;
 
       ///override for frame
-      virtual void Frame(const double deltaSimTime);
+      void Frame(const double deltaSimTime) override;
 
       ///override for postframe
-      virtual void PostFrame(const double deltaSimTime);
+      void PostFrame(const double deltaSimTime) override;
 
       ///override for pause -- replaces PreFrame when game is paused.
-      virtual void Pause(const double deltaRealTime);
+      void Pause(const double deltaRealTime) override;
 
       ///Create basic instances and set up system hooks
       virtual void CreateInstances(const ApplicationConfigData& configData);/*const std::string& name = "defaultWin", int x = 100, int y = 100,

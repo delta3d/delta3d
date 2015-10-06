@@ -108,20 +108,20 @@ namespace dtAnim
       DT_DECLARE_ACCESSOR(bool, AutoRegisterWithGMComponent);
 
       /// Called when the parent actor enters the "world".
-      virtual void OnEnteredWorld();
+      void OnEnteredWorld() override;
       /// Called when the parent actor leaves the "world".
-      virtual void OnRemovedFromWorld();
+      void OnRemovedFromWorld() override;
 
       /**
        * This function is used to create the proper actor properties this actor component
        */
-      virtual void BuildPropertyMap();
+      void BuildPropertyMap() override;
 
       /**
        * The user should call Update() on a per frame basis
        * this function updates the sequence mixer and the Cal3DAnimator
        */
-      virtual void Update(float dt);
+      void Update(float dt) override;
 
       DT_DECLARE_ACCESSOR(dtCore::ResourceDescriptor, SkeletalMesh);
 

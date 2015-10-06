@@ -53,7 +53,7 @@ namespace dtGame
 
       const dtCore::SystemComponentType& GetType() const;
 
-      /*implemented*/ bool IsPlaceable() const;
+      bool IsPlaceable() const override;
 
    protected:
       /// Destructor
