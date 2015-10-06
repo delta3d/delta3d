@@ -46,15 +46,15 @@ class FIRE_FIGHTER_EXPORT FireActor : public GameItemActor
       FireActor();
 
       /// Builds the properties of this actor
-      virtual void BuildPropertyMap();
+      void BuildPropertyMap() override;
 
       /// Builds the invokables of this actor
-      virtual void BuildInvokables();
+      void BuildInvokables() override;
 
       // Used in STAGE
-      dtCore::ActorProxyIcon* GetBillBoardIcon();
+      dtCore::ActorProxyIcon* GetBillBoardIcon() override;
 
-      virtual const dtCore::BaseActorObject::RenderMode& GetRenderMode()
+      const dtCore::BaseActorObject::RenderMode& GetRenderMode() override
       {
          return dtCore::BaseActorObject::RenderMode::DRAW_ACTOR;
       }

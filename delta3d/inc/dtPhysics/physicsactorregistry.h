@@ -37,7 +37,7 @@ namespace dtPhysics
       // constructor
       PhysicsActorRegistry();
 
-      void RegisterActorTypes();
+      void RegisterActorTypes() override;
       void GetReplacementActorTypes(ActorTypeReplacements& replacements) const override;
    };
 } // end namespace

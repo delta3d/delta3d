@@ -139,7 +139,7 @@ namespace dtNetGM
        * messages to the functions processing these messages.
        * @param The Message to be process
        */
-      virtual void ProcessMessage(const dtGame::Message& message);
+      void ProcessMessage(const dtGame::Message& message) override;
 
       /**
       * Processes a MessageType::TICK_LOCAL Message.
@@ -269,7 +269,7 @@ namespace dtNetGM
        * Function called by a GameManager to send Messages across a Network
        * @param The Message to be sent
        */
-      virtual void DispatchNetworkMessage(const dtGame::Message& message);
+      void DispatchNetworkMessage(const dtGame::Message& message) override;
 
       /// Simple utility that takes this message and adds it to the end of the output message buffer. 
       void AddMessageToOutputBuffer(const dtGame::Message& message);

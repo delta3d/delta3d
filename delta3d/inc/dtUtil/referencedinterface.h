@@ -53,6 +53,12 @@ namespace dtUtil
 //   using osg::Referenced::unref_nodelete;\
 //   using osg::Referenced::getOrCreateObserverSet;
 
+#define DT_DECLARE_VIRTUAL_REF_INTERFACE_OVERRIDE_INLINE \
+      int ref() override { return osg::Referenced::ref(); }\
+      int unref() override { return osg::Referenced::unref(); }\
+      int unref_nodelete() override { return osg::Referenced::unref_nodelete(); }\
+      osg::ObserverSet* getOrCreateObserverSet() const override { return osg::Referenced::getOrCreateObserverSet(); }
+
 #define DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE \
       virtual int ref() { return osg::Referenced::ref(); }\
       virtual int unref() { return osg::Referenced::unref(); }\

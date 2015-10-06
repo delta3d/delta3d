@@ -91,12 +91,12 @@ namespace dtActors
       /**
       * Initializes the actor.
       */
-      virtual bool Initialize();
+      virtual bool Initialize() override;
 
       /**
       * This will visualize the current actor.
       */
-      virtual void Visualize(void);
+      virtual void Visualize(void) override;
 
       void SetTransform(const dtCore::Transform& xform, dtCore::Transformable::CoordSysEnum cs = ABS_CS) override;
 
@@ -105,7 +105,7 @@ namespace dtActors
       *
       * @param[in]  pointIndex  The point to update.
       */
-      virtual void Visualize(int pointIndex);
+      virtual void Visualize(int pointIndex) override;
 
       /**
       * Adds a new point into the point array.
@@ -113,7 +113,7 @@ namespace dtActors
       * @param[in]  location  The location of the new point to be added.
       * @param[in]  index     The index to insert the new point, -1 to append.
       */
-      void AddPoint(osg::Vec3 location, int index = -1);
+      void AddPoint(osg::Vec3 location, int index = -1) override;
 
       /**
       * Inserts a new point on a segment that is closest to
@@ -124,14 +124,14 @@ namespace dtActors
       * @return     Returns the index of the new point created, or -1 if
       *             the point could not be created.
       */
-      int AddPointOnSegment(osg::Vec3 location);
+      int AddPointOnSegment(osg::Vec3 location) override;
 
       /**
       * Removes a point from the array.
       *
       * @param[in]  index  The index of the point to remove.
       */
-      void RemovePoint(int index);
+      void RemovePoint(int index) override;
 
       /**
       * Changes the position or rotation of a point at the given index.
@@ -140,8 +140,8 @@ namespace dtActors
       * @param[in]  location  The new location of the point.
       * @param[in]  rotation  The new rotation of the point.
       */
-      void SetPointPosition(int index, osg::Vec3 location);
-      void SetPointRotation(int index, osg::Vec3 rotation);
+      void SetPointPosition(int index, osg::Vec3 location) override;
+      void SetPointRotation(int index, osg::Vec3 rotation) override;
 
       /**
       * Retrieves the index of a point given a transformable.
@@ -150,7 +150,7 @@ namespace dtActors
       *
       * @return     Returns the index of the found transformable or -1 if it doesn't exist.
       */
-      int GetPointIndex(dtCore::DeltaDrawable* drawable, osg::Vec3 pickPos);
+      int GetPointIndex(dtCore::DeltaDrawable* drawable, osg::Vec3 pickPos) override;
 
       ///**
       //* Retrieves the attached actor list.
@@ -247,7 +247,7 @@ namespace dtActors
       *
       * @return               The new drawable.
       */
-      virtual dtCore::Transformable* CreatePointDrawable(osg::Vec3 position);
+      dtCore::Transformable* CreatePointDrawable(osg::Vec3 position) override;
 
       ///**
       //* Called when the SetRotation function is called.  The rotation will

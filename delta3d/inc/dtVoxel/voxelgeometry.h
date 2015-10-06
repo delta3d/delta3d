@@ -69,7 +69,7 @@ namespace dtVoxel
                      1, 2, 4,
                      4, 2, 5  // -y
                };
-         typedef typename GridType::ValueOnIter GridItr;
+         //typedef typename GridType::ValueOnIter GridItr;
          openvdb::BBoxd worldBoundingBox(openvdb::Vec3d(bbBox.min.x,bbBox.min.y,bbBox.min.z), openvdb::Vec3d(bbBox.max.x,bbBox.max.y,bbBox.max.z));
          openvdb::CoordBBox collideBox;
          GridPtr grid = mGrid;
