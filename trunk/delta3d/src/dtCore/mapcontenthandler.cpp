@@ -29,7 +29,6 @@
 #include <dtCore/actorproxy.h>
 #include <dtCore/arrayactorpropertybase.h>
 #include <dtCore/containeractorproperty.h>
-#include <dtCore/datatype.h>
 #include <dtCore/environmentactor.h>
 #include <dtCore/exceptionenum.h>
 #include <dtCore/gameevent.h>
@@ -1134,7 +1133,7 @@ namespace  dtCore
 
       if (actorType == nullptr)
       {
-         if (!ActorFactory::GetInstance().IsInRegistry(ActorFactory::DEFAULT_ACTOR_LIBRARY))
+         if (!ActorFactory::GetInstance().IsInRegistry(ActorFactory::DEFAULT_ACTOR_LIBRARY) && actorTypeCategory.find("dt") == 0)
          {
             try
             {
@@ -1146,9 +1145,9 @@ namespace  dtCore
                actorType = ActorFactory::GetInstance().FindActorType(actorTypeCategory, actorTypeName);
                if (actorType != nullptr)
                {
-                  LOGN_WARNING("actorfactor.cpp", "ActorType \"" + actorType->GetFullName() +
+                  LOGN_WARNING("actorfactory.cpp", "ActorType \"" + actorType->GetFullName() +
                         "\" was not found in any open libraries, but it was found in the " + ActorFactory::DEFAULT_ACTOR_LIBRARY +
-                        "or another old, default loaded one. Auto-loaded libraries is no longer supported. If you resave the map, it will correct the library list.");
+                        " or another old, default loaded one. Auto-loaded libraries are no longer supported. If you resave the map, it will correct the library list.");
 
                }
             }

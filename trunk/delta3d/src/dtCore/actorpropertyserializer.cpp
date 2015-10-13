@@ -2143,6 +2143,49 @@ namespace dtCore
             return true;
          }
 
+         bool isSimple1, isSimple2;
+         switch (dataType->GetTypeId())
+         {
+         case DataType::FLOAT_ID:
+         case DataType::DOUBLE_ID:
+         case DataType::INT_ID:
+         case DataType::LONGINT_ID:
+         case DataType::STRING_ID:
+         case DataType::BOOLEAN_ID:
+         case DataType::ENUMERATION_ID:
+         case DataType::BIT_MASK_ID:
+            isSimple1 = true;
+            break;
+         default:
+            isSimple1 = false;
+         }
+
+         switch (actorProperty->GetDataType().GetTypeId())
+         {
+         case DataType::FLOAT_ID:
+         case DataType::DOUBLE_ID:
+         case DataType::INT_ID:
+         case DataType::LONGINT_ID:
+         case DataType::STRING_ID:
+         case DataType::BOOLEAN_ID:
+         case DataType::ENUMERATION_ID:
+         case DataType::BIT_MASK_ID:
+            isSimple2 = true;
+            break;
+         default:
+            isSimple2 = false;
+         }
+
+         if (isSimple1 && isSimple2)
+         {
+            mParser->mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+               "Allowing simple datatypes to attempt to set the value from string.  It may convert. %s %s %s",
+               actorProperty->GetName().c_str(), dataType->GetName().c_str(), actorProperty->GetDataType().GetName().c_str());
+            (dataType) = &actorProperty->GetDataType();
+            return true;
+         }
+
+
          mParser->mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
             "Parameter/Property '%s' was saved as type %s, but is now of type %s. Data will be ignored",
             actorProperty->GetName().c_str(),
