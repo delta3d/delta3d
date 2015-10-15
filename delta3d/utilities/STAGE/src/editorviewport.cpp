@@ -27,9 +27,8 @@
  * Jeffrey P Houde
  */
 
+#include <dtActors/prefabactor.h>
 #include <prefix/stageprefix.h>
-
-#include <dtActors/prefabactorproxy.h>
 
 #include <dtCore/deltadrawable.h>
 #include <dtCore/transform.h>

@@ -41,7 +41,7 @@
 
 #include <dtQt/dynamicabstractcontrol.h>
 #include <dtQt/dynamiccontainercontrol.h>
-#include <dtQt/dynamicgroupcontrol.h>
+#include <dtQt/dynamicpropertycontainercontrol.h>
 #include <dtQt/dynamiclabelcontrol.h>
 //#include <dtEditQt/dynamicnamecontrol.h>
 #include <dtQt/propertyeditormodel.h>
@@ -95,7 +95,7 @@ namespace dtQt
    BasePropertyEditor::~BasePropertyEditor()
    {
       delete mRootControl;
-      mRootControl = NULL;
+      mRootControl = nullptr;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -151,7 +151,17 @@ namespace dtQt
 
       // create the base model and root properties for our tree
       propertyModel = new PropertyEditorModel(this);
-      mRootControl = new DynamicGroupControl("root");
+      mRootControl = new DynamicPropertyContainerControl();
+      mRootControl->SetTreeView(propertyTree);
+      mRootControl->SetDynamicControlFactory(&GetDynamicControlFactory());
+
+      connect(mRootControl, SIGNAL(PropertyAboutToChange(dtCore::PropertyContainer&, dtCore::ActorProperty&,
+         const std::string&, const std::string&)),
+         this, SLOT(PropertyAboutToChangeFromControl(dtCore::PropertyContainer&, dtCore::ActorProperty&,
+         const std::string&, const std::string&)));
+
+      connect(mRootControl, SIGNAL(PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
+         this, SLOT(PropertyChangedFromControl(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
 
       // Left here.  This is the code you need here if you want to NOT recreate the
       // tree everytime.  See the comment a few methods down.
@@ -304,125 +314,12 @@ namespace dtQt
    ////////////////////////////////////////////////////////////////////////////////
    void BasePropertyEditor::buildDynamicControls()
    {
-      int PCCount = (int)mSelectedPC.size();
-      if (PCCount == 0)
-      {
-         return;
-      }
-
-      DynamicGroupControl* parent = GetRootControl();
-
-      // Use our first selected item as our base.
-      dtCore::RefPtr<dtCore::PropertyContainer> basePC = mSelectedPC[0];
-      std::vector<dtCore::ActorProperty*> propList;
-      GetNestedPropertyList(*basePC, propList);
-
-      // Walk the properties that belong to the base container.
-      int propCount = (int)propList.size();
-      for (int propIndex = 0; propIndex < propCount; ++propIndex)
-      {
-         dtCore::ActorProperty* baseProp = propList[propIndex];
-
-         // Test all other selected containers to see if they also
-         // contain the same property.  If they do not, we will
-         // not show this property in the editor.
-         bool propertyMatch = true;
-
-         for (int PCIndex = 1; PCIndex < PCCount; ++PCIndex)
-         {
-            dtCore::PropertyContainer* propCon = mSelectedPC[PCIndex];
-            if (propCon != NULL)
-            {
-               dtCore::ActorProperty* linkedProp = FindNestedProperty(*propCon, baseProp->GetName());
-
-               // If this container does not contain the base property, has
-               // a different group name, or has a different data type then
-               // they do not match, so we should not show this property.
-               if (linkedProp == NULL || linkedProp->GetGroupName() != baseProp->GetGroupName() ||
-                  linkedProp->GetDataType() != baseProp->GetDataType())
-               {
-                  propertyMatch = false;
-                  break;
-               }
-            }
-         }
-
-         // If this property is a match between all selected containers,
-         // show the property within the editor.
-         if (propertyMatch)
-         {
-            try
-            {
-               // first create the control.  Sometimes the controls aren't creatable, so
-               // check that first before we do other work.  Excepts if it fails
-               DynamicAbstractControl* newControl = mControlFactory->CreateDynamicControl(*baseProp);
-               if (newControl == NULL)
-               {
-                  LOG_ERROR("Object Factory failed to create a control for property: " + baseProp->GetDataType().GetName());
-               }
-               else
-               {
-                  newControl->SetTreeView(propertyTree);
-                  newControl->SetDynamicControlFactory(mControlFactory.get());
-
-                  connect(newControl, SIGNAL(PropertyAboutToChange(dtCore::PropertyContainer&, dtCore::ActorProperty&,
-                     const std::string&, const std::string&)),
-                     this, SLOT(PropertyAboutToChangeFromControl(dtCore::PropertyContainer&, dtCore::ActorProperty&,
-                     const std::string&, const std::string&)));
-
-                  connect(newControl, SIGNAL(PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
-                     this, SLOT(PropertyChangedFromControl(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
-
-                  // Now add all other linked properties to this control.
-                  for (int PCIndex = 1; PCIndex < PCCount; ++PCIndex)
-                  {
-                     dtCore::RefPtr<dtCore::PropertyContainer> propCon = mSelectedPC[PCIndex];
-                     if (propCon.valid())
-                     {
-                        dtCore::ActorProperty* linkedProp = FindNestedProperty(*propCon, baseProp->GetName());
-                        newControl->AddLinkedProperty(propCon, linkedProp);
-                     }
-                  }
-
-                  // Work with the group.  Requires finding an existing group or creating one,
-                  // and eventually adding our new control to that group control
-                  const std::string& groupName = baseProp->GetGroupName();
-                  if (!groupName.empty())
-                  {
-                     // find our group
-                     DynamicGroupControl* groupControl = parent->getChildGroupControl(QString(groupName.c_str()));
-
-                     // if no group, then create one.
-                     if (groupControl == NULL)
-                     {
-                        groupControl = new DynamicGroupControl(groupName);
-                        groupControl->InitializeData(parent, propertyModel, basePC, NULL);
-                        parent->addChildControlSorted(groupControl, propertyModel);
-                     }
-
-                     // add our new control to the group.
-                     newControl->InitializeData(groupControl, propertyModel, basePC, baseProp);
-                     groupControl->addChildControl(newControl, propertyModel);
-                  }
-                  else
-                  {
-                     // there's no group, so use the root.
-                     newControl->InitializeData(parent, propertyModel, basePC, baseProp);
-                     parent->addChildControl(newControl, propertyModel);
-                  }
-               }
-            }
-            catch (dtUtil::Exception& ex)
-            {
-               LOG_ERROR("Failed to create a control for property: " + baseProp->GetDataType().GetName() +
-                  " with error: " + ex.What());
-            }
-         }
-      }
+      DynamicPropertyContainerControl* parent = GetRootControl();
+      parent->InitWithPropertyContainers(mSelectedPC, &GetPropertyEditorModel());
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   DynamicGroupControl* BasePropertyEditor::GetRootControl()
+   DynamicPropertyContainerControl* BasePropertyEditor::GetRootControl()
    {
       return mRootControl;
    }

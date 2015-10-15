@@ -52,6 +52,7 @@ namespace dtQt
    {
       Q_OBJECT
    public:
+      typedef DynamicAbstractParentControl BaseClass;
       /**
        * Constructor
        */
@@ -91,13 +92,13 @@ namespace dtQt
       /**
        * @see DynamicAbstractControl#getDisplayName
        */
-      virtual const QString getDisplayName();
+      virtual const QString getDisplayName() override;
 
       /**
        * Overwritten to also check if all child Properties are Default.
        * @return True if all child ActorProperties are default, false otherwise
        */
-      virtual bool IsPropertyDefault();
+      virtual bool IsPropertyDefault() override;
 
       /**
        * When a property changes, we have to update our editor.  It is likely that
@@ -108,23 +109,31 @@ namespace dtQt
        * @note The default implementation does nothing.
        */
       virtual void actorPropertyChanged(dtCore::PropertyContainer& propCon,
-               dtCore::ActorProperty& property);
+               dtCore::ActorProperty& property)  override;
 
       /**
        * @see DynamicAbstractControl#isEditable
        */
-      virtual bool isEditable();
+      virtual bool isEditable() override;
 
    public slots:
 
       /**
        * @see DynamicAbstractControl#updateData
        */
-      virtual bool updateData(QWidget* widget);
+      virtual bool updateData(QWidget* widget)  override;
+
+      void PropertyAboutToChangePassThrough(dtCore::PropertyContainer& pc, dtCore::ActorProperty& prop,
+               std::string oldValue, std::string newValue) override;
+
+      void PropertyChangedPassThrough(dtCore::PropertyContainer& pc, dtCore::ActorProperty& prop) override;
+
+
 
    protected:
 
    private:
+      void ConnectNewChildSlots(DynamicAbstractControl* child);
       QString mName;
    };
 

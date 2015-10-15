@@ -188,7 +188,7 @@ namespace dtQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtCore::BaseActorObject* DynamicActorControl::getActorProxy()
+   dtCore::BaseActorObject* DynamicActorControl::getActor()
    {
       if (mProperty)
       {
@@ -240,8 +240,8 @@ namespace dtQt
 
       if (doPropertiesMatch())
       {
-         dtCore::BaseActorObject* proxy = getActorProxy();
-         if (!proxy)
+         dtCore::BaseActorObject* actor = getActor();
+         if (!actor)
          {
             dtCore::ActorProperty* prop = getActorProperty();
             if (prop && !prop->ToString().empty())
@@ -252,7 +252,7 @@ namespace dtQt
             return "<None>";
          }
 
-         return proxy->GetName().c_str();
+         return actor->GetName().c_str();
       }
       else
       {

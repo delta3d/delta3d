@@ -406,7 +406,7 @@ namespace dtEditQt
          // listen for property change events and update the tree.  These can be generated
          // by the viewports, or the tree itself.
          connect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(dtCore::ActorPtr, ActorPropertyRefPtr)),
-                  mPropertyWindow, SLOT(MarkEdited()));
+                  this, SLOT(MarkEdited()));
 
          // listen for name changes so we can update our group box label or handle undo changes
          connect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtCore::BaseActorObject&, std::string)),

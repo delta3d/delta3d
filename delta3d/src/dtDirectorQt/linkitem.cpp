@@ -1810,7 +1810,7 @@ namespace dtDirector
    {
       if (!mouseEvent) return;
 
-      QPointF mousePos = mouseEvent->scenePos();
+      //QPointF mousePos = mouseEvent->scenePos();
 
       //ValueLink* link = mNodeItem->GetValues()[mLinkIndex].link;
 

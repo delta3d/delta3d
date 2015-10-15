@@ -71,38 +71,38 @@ namespace dtQt
       * @NOTE - In all likelihood, this method won't need the widget that's passed in,
       * since it's tracked by the individual subclass.
       */
-      virtual void updateEditorFromModel(QWidget* widget);
+      virtual void updateEditorFromModel(QWidget* widget) override;
 
       /**
        * @see DynamicAbstractControl#InitializeData
        */
       virtual void InitializeData(DynamicAbstractControl* newParent, PropertyEditorModel* model,
-         dtCore::PropertyContainer* newPC, dtCore::ActorProperty* property);
+         dtCore::PropertyContainer* newPC, dtCore::ActorProperty* property) override;
 
       /**
        * @see DynamicAbstractControl#createEditor
        */
-      virtual QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index);
+      virtual QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) override;
 
       /**
        * @see DynamicAbstractControl#handleSubEditDestroy
        */
-      virtual void handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);
+      virtual void handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint) override;
 
       /**
        * @see DynamicAbstractControl#getDisplayName
        */
-      virtual const QString getDisplayName();
+      virtual const QString getDisplayName() override;
 
       /**
        * @see DynamicAbstractControl#getDescription
        */
-      virtual const QString getDescription();
+      virtual const QString getDescription() override;
 
       /**
        * @see DynamicAbstractControl#getValueAsString
        */
-      virtual const QString getValueAsString();
+      virtual const QString getValueAsString() override;
 
       /**
        * Resize the number of children in the array based on the actual property.
@@ -150,7 +150,7 @@ namespace dtQt
       /**
        * Signal when the data is updated.
        */
-      virtual bool updateData(QWidget* widget);
+      virtual bool updateData(QWidget* widget) override;
 
       /**
        * Signal when the Add button has been clicked.
@@ -165,7 +165,7 @@ namespace dtQt
       /**
        * Signal when the Reset button has been clicked.
        */
-      virtual void onResetClicked();
+      void onResetClicked() override;
 
       virtual void onItemShiftUpClicked(int itemIndex);
       virtual void onItemShiftDownClicked(int itemIndex);
@@ -181,7 +181,7 @@ namespace dtQt
       /**
        * Updates the enabled status of the control buttons after an update.
        */
-      virtual void UpdateButtonStates();
+      void UpdateButtonStates() override;
 
       dtCore::RefPtr<dtCore::ArrayActorPropertyBase> mProperty;
 
