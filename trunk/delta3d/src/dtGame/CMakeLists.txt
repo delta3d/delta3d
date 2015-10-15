@@ -25,6 +25,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/componenttypestatics.cpp
     ${SOURCE_PATH}/deadreckoningcomponent.cpp
     ${SOURCE_PATH}/deadreckoninghelper.cpp
+    ${SOURCE_PATH}/defaultgameentrypoint.cpp
     ${SOURCE_PATH}/defaultgroundclamper.cpp
     ${SOURCE_PATH}/defaultmessageprocessor.cpp
     ${SOURCE_PATH}/defaultnetworkpublishingcomponent.cpp
