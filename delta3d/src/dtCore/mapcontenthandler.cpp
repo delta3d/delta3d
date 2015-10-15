@@ -613,6 +613,9 @@ namespace  dtCore
                      // TODO This is actually pretty bad because it means you can't load multiple of the same
                      // type.
                      mBaseActorObject = existingComponents[0];
+                     // Actor components created in code won't have their defaults initialized unless the developer
+                     // created it through the factory.
+                     mBaseActorObject->InitDefaults();
                   }
                   else
                   {
