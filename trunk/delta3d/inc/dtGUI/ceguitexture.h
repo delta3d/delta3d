@@ -58,7 +58,7 @@ public:
 
 
    /********************************************************************************
-                              CEGUI-Inteface
+                              CEGUI-Interface
    ********************************************************************************/
 
    ///get the original with of the texture (cegui-textures are automatically resized to pot)
