@@ -24,7 +24,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
-#include <dtGame/gameentrypoint.h>
+#include <dtGame/defaultgameentrypoint.h>
 #include "export.h"
 #include <dtABC/baseabc.h>
 #include <dtABC/application.h>
@@ -55,7 +55,7 @@ using namespace dtExample;
 ////////////////////////////////////////////////////////////////////////////////
 // CLASS CODE
 ////////////////////////////////////////////////////////////////////////////////
-class TestApp : public dtGame::GameEntryPoint
+class TestApp : public dtGame::DefaultGameEntryPoint
 {
 
 public:
@@ -82,16 +82,6 @@ public:
 
 private:
 
-   /**
-    * Helper method to parse command line options
-    * @note This method will parse command line options
-    * and set values as necessary. For instance, it will
-    * set the data path of the application
-    */
-   void ParseCommandLineOptions(int argc, char **argv);
-   std::string mProjectPath;
-   std::string mMapName;
-   std::string mBaseMapName;
 };
 
 
@@ -110,7 +100,9 @@ extern "C" TEST_APP_EXPORT void DestroyGameEntryPoint(dtGame::GameEntryPoint* en
 ////////////////////////////////////////////////////////////////////////////////
 TestApp::TestApp()
 {
-
+   SetProjectPath("");
+   SetMapName("TestApp");
+   SetBaseMapName("BaseMap");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -121,6 +113,7 @@ TestApp::~TestApp()
 ////////////////////////////////////////////////////////////////////////////////
 void TestApp::Initialize(dtABC::BaseABC& app, int argc, char** argv)
 {
+
    srand((unsigned int)(time(0)));
 
    dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
@@ -140,12 +133,13 @@ void TestApp::Initialize(dtABC::BaseABC& app, int argc, char** argv)
       LOG_INFO("No map.xsd was found in the search path: \"" + dtUtil::GetDataFilePathList() + "\"<BR>\n Hopefully it will be found in the project context.");
    }
 
-   ParseCommandLineOptions(argc, argv);
+   DefaultGameEntryPoint::Initialize(app, argc, argv);
 
-   if (mProjectPath.empty())
+   if (GetProjectPath().empty())
    {
       // TODO look in the mac bundle.
       std::vector<std::string> projectPaths;
+      projectPaths.push_back("./examples");
       projectPaths.push_back(executablePath + "/../examples");
       projectPaths.push_back(executablePath + "/../share/delta3d/examples");
       projectPaths.push_back(executablePath + "/../../examples");
@@ -153,7 +147,7 @@ void TestApp::Initialize(dtABC::BaseABC& app, int argc, char** argv)
       // TODO compile in the install prefix for linux?
       projectPaths.push_back("/usr/share/delta3d/examples");
       projectPaths.push_back("/usr/local/share/delta3d/examples");
-      mProjectPath = dtUtil::FindFileInPathList("data", projectPaths);
+      SetProjectPath(dtUtil::FindFileInPathList("data", projectPaths));
    }
 
 }
@@ -162,45 +156,7 @@ void TestApp::Initialize(dtABC::BaseABC& app, int argc, char** argv)
 ////////////////////////////////////////////////////////////////////////////////
 void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
 {
-   if (mProjectPath.empty())
-   {
-      mProjectPath = gameManager.GetConfiguration().GetConfigPropertyValue("ProjectPath");
-   }
-
-   dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-
-   dtUtil::FileInfo fi = fileUtils.GetFileInfo(mProjectPath);
-   if (fi.fileType == dtUtil::DIRECTORY || fi.fileType == dtUtil::ARCHIVE)
-   {
-      try
-      {
-         dtCore::Project::GetInstance().SetContext(mProjectPath, true);
-         LOG_ALWAYS("Using project context path: " + mProjectPath);
-      }
-      catch (dtUtil::Exception& )
-      {
-         throw dtGame::GameApplicationConfigException(
-               "Invalid project context path: " + mProjectPath, __FILE__, __LINE__);
-      }
-   }
-   else if (fi.fileType == dtUtil::REGULAR_FILE)
-   {
-      try
-      {
-         dtCore::Project::GetInstance().SetupFromProjectConfigFile(mProjectPath);
-         LOG_ALWAYS("Using project config: " + mProjectPath);
-      }
-      catch (dtUtil::Exception& )
-      {
-         throw dtGame::GameApplicationConfigException(
-               "Invalid project config file: " + mProjectPath, __FILE__, __LINE__);
-      }
-   }
-   else
-   {
-      throw dtGame::GameApplicationConfigException(
-            "Invalid or unknown project path: " + mProjectPath, __FILE__, __LINE__);
-   }
+   DefaultGameEntryPoint::OnStartup(app, gameManager);
 
    // Setup Message Processor
    dtCore::RefPtr<dtGame::DefaultMessageProcessor> mp = new dtGame::DefaultMessageProcessor();
@@ -237,6 +193,7 @@ void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
       world = new dtPhysics::PhysicsWorld(gameManager.GetConfiguration());
       world->Init();
    }
+
    dtCore::RefPtr<dtPhysics::PhysicsComponent> physicsComponent = new dtPhysics::PhysicsComponent(dtPhysics::PhysicsWorld::GetInstance(), false);
    // Keep the human kinematic cylinder from colliding with the terrain and its own shape walking shape.
    physicsComponent->SetGroupCollision(0, 6, false);
@@ -256,79 +213,12 @@ void TestApp::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
    gameManager.GetApplication().GetCamera()->GetPerspectiveParams(vfov, aspect, nearClip, farClip);
    cam->SetPerspectiveParams(vfov, aspect, 0.5f, 15000.0f);
 
-   cam->GetOSGCamera()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);   
+   cam->GetOSGCamera()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
    cam->GetOSGCamera()->setCullingMode(osg::CullSettings::ENABLE_ALL_CULLING);
-
-   ValidateMap(mBaseMapName);
-   ValidateMap(mMapName);
-
-   dtGame::GameManager::NameVector mapNames;
-   mapNames.push_back(mBaseMapName);
-   mapNames.push_back(mMapName);
-
-   gameManager.ChangeMapSet(mapNames);
-   //gameManager.OpenAdditionalMapSet(mapNames);
-}
-
-void TestApp::ValidateMap(const std::string& mapToValidate)
-{
-   std::set<std::string> mapNames = dtCore::Project::GetInstance().GetMapNames();
-   bool containsMap = false;
-   for(std::set<std::string>::iterator i = mapNames.begin(); i != mapNames.end(); ++i)
-      if(*i == mapToValidate)
-         containsMap = true;
-
-   if(!containsMap)
-   {
-      std::ostringstream oss;
-      oss << "A map named: " << mapToValidate << " could not be located in the project context: "
-            << mProjectPath;
-      throw dtGame::GameApplicationConfigException(
-            oss.str(), __FILE__, __LINE__);
-   }   
 }
 
 void TestApp::OnShutdown(dtABC::BaseABC& /*app*/, dtGame::GameManager& /*gamemanager*/)
 {
 
-}
-
-void TestApp::ParseCommandLineOptions(int argc, char** argv)
-{
-   osg::ArgumentParser argParser(&argc, argv);
-
-   argParser.getApplicationUsage()->setCommandLineUsage("TestApp [options] value ...");
-   argParser.getApplicationUsage()->addCommandLineOption("-h or --help","Display command line options");
-   argParser.getApplicationUsage()->addCommandLineOption("--projectPath", "The path to the project config or project contexct directory.");
-   argParser.getApplicationUsage()->addCommandLineOption("--mapName", "The name of the map to load in. This must be a map that is located within the project path specified");
-   argParser.getApplicationUsage()->addCommandLineOption("--baseMap", "The name of the base map to load in. This must be a map that is located within the project path specified");
-
-   if (argParser.read("-h") || argParser.read("--help") || argParser.argc() == 0)
-   {
-      argParser.getApplicationUsage()->write(std::cerr);
-      throw dtGame::GameApplicationConfigException(
-            "Command Line Error.", __FILE__, __LINE__);
-   }
-
-   argParser.read("--projectPath", mProjectPath);
-
-   if (!argParser.read("--mapName", mMapName))
-   {
-      mMapName = "TestApp";
-   }
-
-   if (!argParser.read("--baseMap", mBaseMapName))
-   {
-      mBaseMapName = "BaseMap";
-   }
-
-
-   argParser.reportRemainingOptionsAsUnrecognized();
-   if (argParser.errors())
-   {
-      std::ostringstream oss;
-      argParser.writeErrorMessages(oss);
-      LOG_ERROR("Command line error: " + oss.str());
-   }
 }
 
