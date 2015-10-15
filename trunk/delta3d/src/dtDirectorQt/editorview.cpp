@@ -104,7 +104,7 @@ namespace dtDirector
       {
          float inc = mGoalScale / mCurrentScale;
 
-         if (abs(inc) > 0.02f)
+         if (std::abs(inc) > 0.02f)
          {
             inc = 1.0f + ((inc - 1.0f) * 0.33f);
          }

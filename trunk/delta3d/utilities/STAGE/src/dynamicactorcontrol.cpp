@@ -91,15 +91,15 @@ namespace dtEditQt
    void STAGEDynamicActorControl::onGotoClicked()
    {
       NotifyParentOfPreUpdate();
-      dtCore::BaseActorObject* proxy = getActorProxy();
-      if (proxy != NULL)
+      dtCore::BaseActorObject* actor = getActor();
+      if (actor != NULL)
       {
-         dtCore::RefPtr<dtCore::BaseActorObject> refProxy(proxy);
+         dtCore::ActorPtr actorPtr(actor);
 
-         EditorEvents::GetInstance().emitGotoActor(refProxy);
+         EditorEvents::GetInstance().emitGotoActor(actorPtr);
 
          std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > vec;
-         vec.push_back(refProxy);
+         vec.push_back(actorPtr);
 
          EditorEvents::GetInstance().emitActorsSelected(vec);
       }

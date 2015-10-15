@@ -77,7 +77,7 @@ namespace dtQt
          /**
           * Retrieves the Actor from the ID.
           */
-         dtCore::BaseActorObject* getActorProxy();
+         dtCore::BaseActorObject* getActor();
 
          /**
           * Retrieves the current actor property.

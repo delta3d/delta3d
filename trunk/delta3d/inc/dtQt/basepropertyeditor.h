@@ -37,6 +37,8 @@
 #include <dtCore/propertycontainer.h>
 #include <dtCore/actorproperty.h>
 #include <dtCore/actortype.h>
+#include <dtGame/actorcomponent.h>
+#include <dtGame/actorcomponentcontainer.h>
 #include <dtQt/typedefs.h>
 
 #include <dtQt/dynamicabstractcontrol.h>
@@ -60,7 +62,7 @@ namespace dtQt
 
    class DynamicAbstractControl;
    class DynamicAbstractParentControl;
-   class DynamicGroupControl;
+   class DynamicPropertyContainerControl;
    class PropertyEditorTreeView;
    class PropertyEditorModel;
 
@@ -121,6 +123,8 @@ namespace dtQt
       virtual void OnContainersSelected(const std::vector<dtCore::RefPtr<dtCore::PropertyContainer> >& selection);
 
       static void GetNestedPropertyList(dtCore::PropertyContainer& pc, std::vector<dtCore::ActorProperty*>& toFill);
+      template <typename BinaryFuncType>
+      static void ForEachNestedProperty(dtCore::PropertyContainer& pc, BinaryFuncType);
 
       static dtCore::ActorProperty* FindNestedProperty(dtCore::PropertyContainer& pc, const std::string& name);
 
@@ -153,7 +157,7 @@ namespace dtQt
       virtual QString GetGroupBoxLabelText(const QString& baseGroupBoxName);
       virtual std::string GetContainerGroupName(dtCore::PropertyContainer* propertyContainer);
 
-      DynamicGroupControl* GetRootControl();
+      DynamicPropertyContainerControl* GetRootControl();
 
       PropertyEditorModel& GetPropertyEditorModel();
 
@@ -161,7 +165,7 @@ namespace dtQt
 
    private:
       // list of what the editor thinks is the last known selected actors
-      std::vector<dtCore::RefPtr<dtCore::PropertyContainer> > mSelectedPC;
+      dtCore::PropContRefPtrVector mSelectedPC;
 
       dtCore::RefPtr<DynamicControlFactory> mControlFactory;
 
@@ -173,7 +177,7 @@ namespace dtQt
       QGridLayout*            dynamicControlLayout;
       PropertyEditorTreeView* propertyTree;
       PropertyEditorModel*    propertyModel;
-      DynamicGroupControl*    mRootControl;
+      DynamicPropertyContainerControl*    mRootControl;
 
       // this is a tree of property group names which were expanded.  It is used
       // when we change selected actors.  We walk the property tree and look for
@@ -229,6 +233,28 @@ namespace dtQt
       void recurseRestorePreviousExpansion(DynamicAbstractControl* parent, dtUtil::tree<QString>& currentTree);
 
    };
+
+   template <typename BinaryFuncType>
+   void BasePropertyEditor::ForEachNestedProperty(dtCore::PropertyContainer& pc, BinaryFuncType func)
+   {
+      pc.ForEachProperty([&](dtCore::ActorProperty* prop)
+            {
+         func(pc, *prop);
+            });
+      dtGame::ActorComponentContainer* acc = dynamic_cast<dtGame::ActorComponentContainer*>(&pc);
+      if (acc != NULL)
+      {
+         dtGame::ActorComponentVector acv;
+         acc->GetAllComponents(acv);
+         for (unsigned i = 0; i < acv.size(); ++i)
+         {
+            acv[i]->ForEachProperty([&](dtCore::ActorProperty* prop)
+                  {
+               func(*acv[i], *prop);
+                  });
+         }
+      }
+   }
 
 } // namespace dtQt
 

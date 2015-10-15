@@ -24,6 +24,7 @@
 
 #include <prefix/dtqtprefix.h>
 #include <dtQt/dynamicpropertycontainercontrol.h>
+#include <dtQt/basepropertyeditor.h> // just for 2 static methods.
 #include <dtCore/namedpropertycontainerparameter.h>
 #include <dtCore/namedgroupparameter.inl>
 #include <dtCore/datatype.h>
@@ -32,6 +33,7 @@
 namespace dtQt
 {
    DynamicPropertyContainerControl::DynamicPropertyContainerControl()
+   : DynamicGroupControl("PropertyContainer")
    {
    }
 
@@ -49,55 +51,26 @@ namespace dtQt
          DynamicAbstractControl::InitializeData(newParent, newModel, newPC, newProperty);
 
          dtCore::PropertyContainer* pc = mProperty->GetValue();
+         dtCore::PropContRefPtrVector containers;
          if (pc != NULL)
          {
-            std::vector<dtCore::ActorProperty*> properties;
-            pc->GetPropertyList(properties);
-            std::vector<dtCore::ActorProperty*>::iterator i, iend;
-            i = properties.begin();
-            iend = properties.end();
-            for (; i != iend ; ++i)
+            containers.push_back(pc);
+            size_t linkCount = mLinkedProperties.size();
+            for (size_t linkIndex = 0; linkIndex < linkCount; ++linkIndex)
             {
-               dtCore::ActorProperty* propType = *i;
-               if (propType != NULL)
+               LinkedPropertyData& data = mLinkedProperties[linkIndex];
+               dtCore::BasePropertyContainerActorProperty* linkedProp =
+                  dynamic_cast<dtCore::BasePropertyContainerActorProperty*>(data.property);
+               if (linkedProp != NULL)
                {
-                  DynamicAbstractControl* propertyControl = GetDynamicControlFactory()->CreateDynamicControl(*propType);
-                  if (propertyControl != NULL)
+                  dtCore::PropertyContainerPtr linkedCon = linkedProp->GetValue();
+                  if (linkedCon.valid())
                   {
-                     propertyControl->SetTreeView(mPropertyTree);
-                     propertyControl->SetDynamicControlFactory(GetDynamicControlFactory());
-
-                     size_t linkCount = mLinkedProperties.size();
-                     for (size_t linkIndex = 0; linkIndex < linkCount; ++linkIndex)
-                     {
-                        LinkedPropertyData& data = mLinkedProperties[linkIndex];
-                        dtCore::BasePropertyContainerActorProperty* linkedProp =
-                           dynamic_cast<dtCore::BasePropertyContainerActorProperty*>(data.property);
-                        if (linkedProp != NULL)
-                        {
-                           dtCore::RefPtr<dtCore::PropertyContainer> linkedCon = linkedProp->GetValue();
-                           if (linkedCon.valid())
-                           {
-                              propertyControl->AddLinkedProperty(linkedCon, linkedCon->GetProperty(propType->GetName()));
-                           }
-                        }
-                     }
-
-                     // Note using the new property container as the container for this sub control.
-                     propertyControl->InitializeData(this, newModel, pc, propType);
-
-                     connect(propertyControl, SIGNAL(PropertyAboutToChange(dtCore::PropertyContainer&, dtCore::ActorProperty&,
-                                       const std::string&, const std::string&)),
-                              this, SLOT(PropertyAboutToChangePassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&,
-                                       const std::string&, const std::string&)));
-
-                     connect(propertyControl, SIGNAL(PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
-                              this, SLOT(PropertyChangedPassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
-
-                     mChildren.push_back(propertyControl);
+                     containers.push_back(linkedCon);
                   }
                }
             }
+            InitWithPropertyContainers(containers, newModel);
          }
       }
       else
@@ -106,12 +79,88 @@ namespace dtQt
          LOG_ERROR("Cannot create dynamic control because property [" +
             propertyName + "] is not the correct type.");
       }
+
+   }
+
+   void DynamicPropertyContainerControl::InitWithPropertyContainers(const dtCore::PropContRefPtrVector& propContainers, PropertyEditorModel* newModel)
+   {
+      if (propContainers.empty())
+         return;
+
+      dtCore::PropertyContainerPtr pc = propContainers[0];
+      dtQt::BasePropertyEditor::ForEachNestedProperty(*pc, [&](dtCore::PropertyContainer& cont, dtCore::ActorProperty& prop)
+            {
+         dtCore::ActorProperty* baseProp = &prop;
+
+         try
+         {
+            // first create the control.  Sometimes the controls aren't creatable, so
+            // check that first before we do other work.  Excepts if it fails
+            DynamicAbstractControl* newControl = GetDynamicControlFactory()->CreateDynamicControl(*baseProp);
+            if (newControl == NULL)
+            {
+               LOG_ERROR("Object Factory failed to create a control for property: " + baseProp->GetDataType().GetName());
+            }
+            else
+            {
+
+               newControl->SetTreeView(mPropertyTree);
+               newControl->SetDynamicControlFactory(GetDynamicControlFactory());
+
+
+               for (size_t linkIndex = 1, linkCount = propContainers.size(); linkIndex < linkCount; ++linkIndex)
+               {
+                  dtCore::RefPtr<dtCore::PropertyContainer> linkedCon = propContainers[linkIndex];
+                  if (linkedCon.valid())
+                  {
+                     dtCore::PropertyPtr linkedProp = dtQt::BasePropertyEditor::FindNestedProperty(*linkedCon, baseProp->GetName());
+                     if (linkedProp.valid())
+                        newControl->AddLinkedProperty(linkedCon, linkedProp.get());
+                  }
+               }
+
+               // Work with the group.  Requires finding an existing group or creating one,
+               // and eventually adding our new control to that group control
+               const std::string& groupName = baseProp->GetGroupName();
+               if (!groupName.empty())
+               {
+                  // find our group
+                  DynamicGroupControl* groupControl = getChildGroupControl(QString(groupName.c_str()));
+
+                  // if no group, then create one.
+                  if (groupControl == nullptr)
+                  {
+                     groupControl = new DynamicGroupControl(groupName);
+                     groupControl->InitializeData(this, newModel, pc, nullptr);
+                     addChildControlSorted(groupControl, newModel);
+                  }
+
+                  // add our new control to the group.
+                  newControl->InitializeData(groupControl, newModel, &cont, baseProp);
+                  groupControl->addChildControl(newControl, newModel);
+               }
+               else
+               {
+                  // there's no group, so use the root.
+                  newControl->InitializeData(this, newModel, &cont, baseProp);
+                  addChildControl(newControl, newModel);
+               }
+            }
+         }
+         catch (dtUtil::Exception& ex)
+         {
+            LOG_ERROR("Failed to create a control for property: " + baseProp->GetDataType().GetName() +
+               " with error: " + ex.What());
+         }
+
+            });
+
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicPropertyContainerControl::getDisplayName()
    {
-      QString name = DynamicAbstractParentControl::getDisplayName();
+      QString name = DynamicGroupControl::getDisplayName();
       if (!name.isEmpty())
       {
          return name;
@@ -171,22 +220,36 @@ namespace dtQt
    void DynamicPropertyContainerControl::PropertyAboutToChangePassThrough(dtCore::PropertyContainer& pc, dtCore::ActorProperty& prop,
             std::string oldValue, std::string newValue)
    {
-      dtCore::RefPtr<dtCore::NamedPropertyContainerParameter> val = new dtCore::NamedPropertyContainerParameter(mProperty->GetName());
+      if (mPropContainer.valid())
+      {
+         dtCore::RefPtr<dtCore::NamedPropertyContainerParameter> val = new dtCore::NamedPropertyContainerParameter(mProperty->GetName());
 
-      dtCore::NamedParameter* subParam =  val->AddParameter(prop.GetName(), prop.GetDataType());
-      subParam->FromString(oldValue);
-      // Workaround.  Because the undo/redo system doesn't (yet) support the values of nested properties, I have to change it to
-      // using the containing property and adding the changed property as a value.
-      oldValue = val->ToString();
-      subParam->FromString(newValue);
-      newValue = val->ToString();
-      emit PropertyAboutToChange(*mPropContainer, *mProperty, oldValue, newValue);
+         dtCore::NamedParameter* subParam =  val->AddParameter(prop.GetName(), prop.GetDataType());
+         subParam->FromString(oldValue);
+         // Workaround.  Because the undo/redo system doesn't (yet) support the values of nested properties, I have to change it to
+         // using the containing property and adding the changed property as a value.
+         oldValue = val->ToString();
+         subParam->FromString(newValue);
+         newValue = val->ToString();
+         emit PropertyAboutToChange(*mPropContainer, *mProperty, oldValue, newValue);
+      }
+      else
+      {
+         DynamicGroupControl::PropertyAboutToChangePassThrough(pc, prop, oldValue, newValue);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void DynamicPropertyContainerControl::PropertyChangedPassThrough(dtCore::PropertyContainer& pc, dtCore::ActorProperty& prop)
    {
-      emit PropertyChanged(*mPropContainer, *mProperty);
+      if (mPropContainer.valid())
+      {
+         emit PropertyChanged(*mPropContainer, *mProperty);
+      }
+      else
+      {
+         DynamicGroupControl::PropertyChangedPassThrough(pc, prop);
+      }
    }
 
 

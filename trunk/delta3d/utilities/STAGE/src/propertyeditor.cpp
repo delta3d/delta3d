@@ -224,14 +224,14 @@ namespace dtEditQt
    void PropertyEditor::PropertyAboutToChangeFromControl(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& prop,
             const std::string& oldValue, const std::string& newValue)
    {
-      dtCore::BaseActorObject* proxy = dynamic_cast<dtCore::BaseActorObject*>(&propCon);
+      dtCore::BaseActorObject* actor = dynamic_cast<dtCore::BaseActorObject*>(&propCon);
       if (prop.GetName() == "Actor Name")
       {
-         EditorEvents::GetInstance().emitProxyNameChanged(*proxy, oldValue);
+         EditorEvents::GetInstance().emitProxyNameChanged(*actor, oldValue);
       }
-      else if (proxy != NULL)
+      else if (actor != nullptr)
       {
-         EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, &prop, oldValue, newValue);
+         EditorEvents::GetInstance().emitActorPropertyAboutToChange(actor, &prop, oldValue, newValue);
       }
       else
       {
@@ -245,10 +245,10 @@ namespace dtEditQt
    {
       BasePropertyEditor::PropertyChangedFromControl(propCon, prop);
 
-      dtCore::BaseActorObject* proxy = dynamic_cast<dtCore::BaseActorObject*>(&propCon);
-      if (proxy != NULL)
+      dtCore::BaseActorObject* actor = dynamic_cast<dtCore::BaseActorObject*>(&propCon);
+      if (actor != NULL)
       {
-         EditorEvents::GetInstance().emitActorPropertyChanged(proxy, &prop);
+         EditorEvents::GetInstance().emitActorPropertyChanged(actor, &prop);
       }
       else
       {

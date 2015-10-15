@@ -70,6 +70,17 @@ namespace dtQt
       return result;
    }
 
+   void DynamicGroupControl::ConnectNewChildSlots(DynamicAbstractControl* child)
+   {
+      connect(child, SIGNAL(PropertyAboutToChange(dtCore::PropertyContainer&, dtCore::ActorProperty&,
+         const std::string&, const std::string&)),
+         this, SLOT(PropertyAboutToChangePassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&,
+         const std::string&, const std::string&)));
+
+      connect(child, SIGNAL(PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
+         this, SLOT(PropertyChangedPassThrough(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
+   }
+
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicGroupControl::addChildControl(DynamicAbstractControl* child, PropertyEditorModel* model)
    {
@@ -78,6 +89,7 @@ namespace dtQt
       if (child != NULL)
       {
          mChildren.push_back(child);
+         ConnectNewChildSlots(child);
       }
    }
 
@@ -108,6 +120,7 @@ namespace dtQt
          {
             mChildren.push_back(child);
          }
+         ConnectNewChildSlots(child);
       }
    }
 
@@ -166,6 +179,31 @@ namespace dtQt
          ++itr;
       }
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicGroupControl::PropertyAboutToChangePassThrough(dtCore::PropertyContainer& pc, dtCore::ActorProperty& prop,
+            std::string oldValue, std::string newValue)
+   {
+      // Subcontrols can have their own property containers, but that doesn't work with the
+      // undo system.  It expects the parent or for now, we switch the container back to the one on the group.
+      if (!mPropContainer.valid())
+         BaseClass::PropertyAboutToChangePassThrough(pc, prop, oldValue, newValue);
+      else
+         BaseClass::PropertyAboutToChangePassThrough(*mPropContainer, prop, oldValue, newValue);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicGroupControl::PropertyChangedPassThrough(dtCore::PropertyContainer& pc, dtCore::ActorProperty& prop)
+   {
+      // Subcontrols can have their own property containers, but that doesn't work with the
+      // undo system.  It expects the parent or for now, we switch the container back to the one on the group.
+      if (!mPropContainer.valid())
+         BaseClass::PropertyChangedPassThrough(pc, prop);
+      else
+         BaseClass::PropertyChangedPassThrough(*mPropContainer, prop);
+   }
+
+
 
    ////////////////////////////////////////////////////////////////////////////////
    bool DynamicGroupControl::isEditable()

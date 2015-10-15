@@ -322,9 +322,11 @@ namespace dtQt
                linkedProp->FromString(baseValue);
                emit PropertyAboutToChange(*data.propCon, *linkedProp, oldValue, baseValue);
                emit PropertyChanged(*data.propCon, *linkedProp);
-               if (resetAlwaysSave)
-                  linkedProp->SetAlwaysSave(false);
             }
+
+            if (resetAlwaysSave)
+               linkedProp->SetAlwaysSave(false);
+
          }
       }
    }
@@ -528,7 +530,7 @@ namespace dtQt
       // emitting property changed probably flags always save to true, which is the opposite of what we want here.
       mBaseProperty->SetAlwaysSave(false);
 
-      CopyBaseValueToLinkedProperties();
+      CopyBaseValueToLinkedProperties(true);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

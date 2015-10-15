@@ -26,7 +26,7 @@
 #define DYNAMICPROPERTYCONTAINERCONTROL_H_
 
 
-#include <dtQt/dynamicabstractparentcontrol.h>
+#include <dtQt/dynamicgroupcontrol.h>
 
 #include <dtCore/propertycontaineractorproperty.h>
 
@@ -38,7 +38,7 @@ namespace dtQt
     * @class DynamicLongControl
     * @brief This is the dynamic control for a nested property container property.
     */
-   class DT_QT_EXPORT DynamicPropertyContainerControl : public DynamicAbstractParentControl
+   class DT_QT_EXPORT DynamicPropertyContainerControl : public DynamicGroupControl
    {
       Q_OBJECT;
    public:
@@ -49,23 +49,25 @@ namespace dtQt
       /**
        * @see DynamicAbstractControl#InitializeData
        */
-      virtual void InitializeData(DynamicAbstractControl* newParent, PropertyEditorModel* model,
-         dtCore::PropertyContainer* newPC, dtCore::ActorProperty* property);
+      void InitializeData(DynamicAbstractControl* newParent, PropertyEditorModel* model,
+         dtCore::PropertyContainer* newPC, dtCore::ActorProperty* property) override;
+
+      void InitWithPropertyContainers(const dtCore::PropContRefPtrVector& propContainers, PropertyEditorModel* newModel);
 
       /**
        * @see DynamicAbstractControl#getDisplayName
        */
-      virtual const QString getDisplayName();
+      virtual const QString getDisplayName() override;
 
       /**
        * @see DynamicAbstractControl#getDescription
        */
-      virtual const QString getDescription();
+      virtual const QString getDescription() override;
 
       /**
        * @see DynamicAbstractControl#getValueAsString
        */
-      virtual const QString getValueAsString();
+      virtual const QString getValueAsString() override;
 
 
    public slots:
@@ -77,10 +79,10 @@ namespace dtQt
 
       ////////////////////////////////////////////////////////////////////////////////
       void PropertyAboutToChangePassThrough(dtCore::PropertyContainer& pc, dtCore::ActorProperty& prop,
-               std::string oldValue, std::string newValue);
+               std::string oldValue, std::string newValue) override;
 
       ////////////////////////////////////////////////////////////////////////////////
-      void PropertyChangedPassThrough(dtCore::PropertyContainer& pc, dtCore::ActorProperty& prop);
+      void PropertyChangedPassThrough(dtCore::PropertyContainer& pc, dtCore::ActorProperty& prop) override;
 
    private:
 
