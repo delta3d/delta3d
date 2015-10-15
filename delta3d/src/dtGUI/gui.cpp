@@ -503,27 +503,9 @@ void GUI::_SetupSystemAndRenderer()
 ////////////////////////////////////////////////////////////////////////////////
 void GUI::_SetupDefaultUI()
 {
-   //generate unique root-window-name:
-   std::string generatedUniquePrefix="";
+   dtCore::UniqueId rootSheetId;
 
-   //generate unqiue prefix
-   for (unsigned int i = 0; i < 65000; i++)
-   {
-      std::stringstream ssTryName;
-      ssTryName << "gui" << i;
-      if (!CEGUI::WindowManager::getSingleton().isWindowPresent(ssTryName.str()+"rootsheet"))
-      {
-         generatedUniquePrefix = ssTryName.str();
-         break;
-      }
-   }
-   if (generatedUniquePrefix=="")
-   {
-      LOG_ERROR("cannot generate prefix");
-      return;
-   }
-
-   mRootSheet = CEGUI::WindowManager::getSingleton().createWindow("DefaultWindow", std::string(generatedUniquePrefix + "rootsheet").c_str());
+   mRootSheet = CEGUI::WindowManager::getSingleton().createWindow("DefaultWindow", std::string(rootSheetId.ToString() + "rootsheet").c_str());
    mRootSheet->setMousePassThroughEnabled(true);
 #if CEGUI_VERSION_MAJOR >= 0 && CEGUI_VERSION_MINOR >= 7 && CEGUI_VERSION_PATCH > 1
    mRootSheet->setMouseInputPropagationEnabled(true);
@@ -918,6 +900,9 @@ dtCore::RefPtr<osg::Texture2D> GUI::CreateRenderTargetTexture(Widget& widget,
       CEGUI::Size ceguiDims = widget.getPixelSize();
       dims.set(ceguiDims.d_width, ceguiDims.d_height);
    }
+
+   if (dims.x() < 1.0) dims.x() = 1.0;
+   if (dims.y() < 1.0) dims.y() = 1.0;
 
    // If no image name was specified, use the image set name.
    const std::string& imageName = newImageName.empty() ? newImagesetName : newImageName;
