@@ -1196,7 +1196,7 @@ namespace dtDirector
          else
          {
             float top = height;
-            float yOffset = abs(start.y() - end.y()) / 4.0f + 25;
+            float yOffset = std::abs(start.y() - end.y()) / 4.0f + 25;
             if (start.y() < top)
             {
                top = start.y();
@@ -1207,7 +1207,7 @@ namespace dtDirector
             }
             top -= yOffset;
 
-            float len = abs(start.x() - end.x());
+            float len = std::abs(start.x() - end.x());
 
             float higherPoint = dtUtil::Min<float>(start.y(), end.y());
             if (len < higherPoint - top)
