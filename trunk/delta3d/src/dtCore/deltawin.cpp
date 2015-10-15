@@ -103,6 +103,10 @@ void DeltaWin::CreateGraphicsWindow(osg::GraphicsContext::Traits& traits,
       {
          mOsgViewerGraphicsWindow->realize();
          mOsgViewerGraphicsWindow->makeCurrent();
+         mOsgViewerGraphicsWindow->setClearMask(~0);
+         mOsgViewerGraphicsWindow->clear();
+         mOsgViewerGraphicsWindow->swapBuffers();
+         mOsgViewerGraphicsWindow->setClearMask(0);
       }
 
    }
