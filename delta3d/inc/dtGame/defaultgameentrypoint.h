@@ -12,6 +12,7 @@
 #include <dtUtil/getsetmacros.h>
 #include <osg/ArgumentParser>
 #include <dtGame/gamemanager.h>
+#include <memory>
 
 namespace dtGame
 {
