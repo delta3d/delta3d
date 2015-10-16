@@ -8,6 +8,7 @@
 #ifndef INC_DTGAME_DEFAULTGAMEENTRYPOINT_H_
 #define INC_DTGAME_DEFAULTGAMEENTRYPOINT_H_
 
+#include <dtGame/export.h>
 #include <dtGame/gameentrypoint.h>
 #include <dtUtil/getsetmacros.h>
 #include <osg/ArgumentParser>
@@ -17,7 +18,7 @@
 namespace dtGame
 {
 
-   class DefaultGameEntryPoint: public GameEntryPoint
+   class DT_GAME_EXPORT DefaultGameEntryPoint: public GameEntryPoint
    {
    public:
       DefaultGameEntryPoint();
