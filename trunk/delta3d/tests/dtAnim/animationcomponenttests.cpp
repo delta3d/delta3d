@@ -277,9 +277,8 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    void AnimationComponentTests::TestAnimationPerformance()
    {
-      typedef dtCore::ActorPtrVector ProxyContainer;
-      ProxyContainer proxies;
-      ProxyContainer groundActor;
+      dtCore::ActorPtrVector actors;
+      dtCore::ActorPtrVector groundActor;
 
       //load map
       try
@@ -290,29 +289,29 @@ namespace dtAnim
          mGM->ChangeMap("AnimationPerformance");
 
          //step a few times to ensure the map loaded
-         dtCore::System::GetInstance().Step();
-         dtCore::System::GetInstance().Step();
-         dtCore::System::GetInstance().Step();
+         dtCore::System::GetInstance().Step(0.016);
+         dtCore::System::GetInstance().Step(0.016);
+         dtCore::System::GetInstance().Step(0.016);
 
-         mGM->FindActorsByName("CharacterEntity", proxies);
+         mGM->FindActorsByName("CharacterEntity", actors);
          mGM->FindActorsByName("groundActor", groundActor);
 
          // we only want 20 for the test, so delete the rest.
-         int size = proxies.size();
+         int size = actors.size();
          int numToDelete = size - 20;
          CPPUNIT_ASSERT_MESSAGE("There should be at least 20 character actors in the map to pref test.",
                   numToDelete >= 0);
 
          for (int i = 0; i < numToDelete; ++i)
          {
-            mGM->DeleteActor(*proxies[i]);
+            mGM->DeleteActor(*actors[i]);
          }
          //Make sure they are deleted.
          dtCore::System::GetInstance().Step();
 
          //re-fetch the actors.
-         proxies.clear();
-         mGM->FindActorsByName("CharacterEntity", proxies);
+         actors.clear();
+         mGM->FindActorsByName("CharacterEntity", actors);
          CPPUNIT_ASSERT_MESSAGE("There should be at exactly 20 actors in the vector",
                   numToDelete >= 0);
       }
@@ -323,11 +322,11 @@ namespace dtAnim
 
       mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__,
             "Performance testing AnimationComponent with " +
-            dtUtil::ToString(proxies.size()) + " animated entities.");
+            dtUtil::ToString(actors.size()) + " animated entities.");
 
       //register animation actors
-      ProxyContainer::iterator iter, end;
-      for (iter = proxies.begin(), end = proxies.end(); iter != end; ++iter)
+      dtCore::ActorPtrVector::iterator iter, end;
+      for (iter = actors.begin(), end = actors.end(); iter != end; ++iter)
       {
          dtGame::GameActorProxy* actor = dynamic_cast<dtGame::GameActorProxy*>(*iter);
          if (actor)
@@ -345,11 +344,18 @@ namespace dtAnim
       dtCore::Timer_t timerStart, timerEnd;
 
       timerStart = timer.Tick();
-      for (iter = proxies.begin(), end = proxies.end(); iter != end; ++iter)
+      for (iter = actors.begin(), end = actors.end(); iter != end; ++iter)
       {
          dtGame::GameActorProxy* actor = dynamic_cast<dtGame::GameActorProxy*>(*iter);
-         if (actor)
+         if (actor != nullptr)
          {
+            dtAnim::AnimationHelper* animAC = actor->GetComponent<dtAnim::AnimationHelper>();
+            for (unsigned i = 0 ; i < 10 && animAC->IsLoadingAsynchronously(); ++i)
+            {
+               dtCore::AppSleep(50);
+               animAC->CheckLoadingState();
+            }
+            CPPUNIT_ASSERT(!animAC->IsLoadingAsynchronously());
             actor->GetComponent<dtAnim::AnimationHelper>()->PlayAnimation("Walk");
          }
       }
@@ -392,7 +398,7 @@ namespace dtAnim
 
       if (!groundActor.empty())
       {
-         ProxyContainer::iterator iter = groundActor.begin();
+         dtCore::ActorPtrVector::iterator iter = groundActor.begin();
          dtCore::BaseActorObject* proxy = dynamic_cast<dtCore::BaseActorObject*>(*iter);
          if (proxy)
          {
@@ -432,12 +438,13 @@ namespace dtAnim
             "Testing performance of ClearAnimation()");
 
       timerStart = timer.Tick();
-      for (iter = proxies.begin(), end = proxies.end(); iter != end; ++iter)
+      for (iter = actors.begin(), end = actors.end(); iter != end; ++iter)
       {
          dtGame::GameActorProxy* actor = dynamic_cast<dtGame::GameActorProxy*>((*iter));
-         if (actor)
+         if (actor != nullptr)
          {
-            actor->GetComponent<dtAnim::AnimationHelper>()->ClearAnimation("Walk", 0.0);
+            dtAnim::AnimationHelper* animAC = actor->GetComponent<dtAnim::AnimationHelper>();
+            animAC->ClearAnimation("Walk", 0.0);
          }
       }
       timerEnd = timer.Tick();
