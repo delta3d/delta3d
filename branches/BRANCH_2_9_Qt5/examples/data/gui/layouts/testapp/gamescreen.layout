@@ -1,0 +1,319 @@
+<?xml version="1.0" ?>
+<GUILayout>
+   <!-- MAIN CONTAINER WINDOW (ROOT & BACKGROUND IMAGE) -->
+
+   <!-- FRAME -->
+   <Window Name="Root_GameScreen" Type="DefaultWindow">
+      <Property Name="UnifiedSize" Value="{{1.0,0},{1.0,0}}"/>
+      <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+      <Property Name="MousePassThroughEnabled" Value="True"/>
+      <Property Name="ZOrderChangeEnabled" Value="False"/>
+      <Property Name="AlwaysOnTop" Value="True"/>
+      <Property Name="HorizontalAlignment" Value="Left"/>
+      <Property Name="VerticalAlignment" Value="Bottom"/>
+
+      <!-- TEXT - MOTION MODEL TYPE -->
+      <Window Name="GameScreen_MotionModelType" Type="WindowsLook/StaticText">
+         <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{-0.025,0},{0.0,0}}"/>
+         <Property Name="MousePassThroughEnabled" Value="True"/>
+         <Property Name="ZOrderChangeEnabled" Value="False"/>
+         <Property Name="BackgroundEnabled" Value="False"/>
+         <Property Name="FrameEnabled" Value="False"/>
+         <Property Name="HorzFormatting" Value="RightAligned"/>
+         <Property Name="HorizontalAlignment" Value="Right"/>
+         <Property Name="VerticalAlignment" Value="Top"/>
+         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="AlwaysOnTop" Value="True"/>
+         <Property Name="TextColours" Value="FFFFFFFF"/>
+         <Property Name="Text" Value="MotionModel"/>
+      </Window>
+
+      <!-- CONTROL PANEL -->
+      <Window Name="GameScreen_ControlPanel" Type="WindowsLook/StaticImage">
+         <Property Name="UnifiedSize" Value="{{0.2,0},{0.9,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+         <Property Name="ZOrderChangeEnabled" Value="False"/>
+         <Property Name="AlwaysOnTop" Value="True"/>
+         <Property Name="HorizontalAlignment" Value="Right"/>
+         <Property Name="VerticalAlignment" Value="Bottom"/>
+         <Property Name="BackgroundColours" Value="99000000"/>
+         <Property Name="FrameColours" Value="00000000"/>
+         <Property Name="Visible" Value="False"/>
+         <Property Name="MousePassThroughEnabled" Value="False"/>
+
+         <!-- SCENE CONTROLS -->
+         <Window Name="GameScreen_SceneControls" Type="DefaultWindow">
+            <Property Name="UnifiedSize" Value="{{1.0,-10},{0.5,-5}}"/>
+            <Property Name="UnifiedPosition" Value="{{0.0,5},{0.0,5}}"/>
+            <Property Name="ZOrderChangeEnabled" Value="False"/>
+            <Property Name="AlwaysOnTop" Value="True"/>
+            <Property Name="HorizontalAlignment" Value="Left"/>
+            <Property Name="VerticalAlignment" Value="Top"/>
+            <Property Name="MousePassThroughEnabled" Value="False"/>
+
+            <!-- LABEL - SCENE CONTROLS -->
+            <Window Name="GameScreen_SceneControlsLabel" Type="WindowsLook/StaticText">
+               <Property Name="UnifiedSize" Value="{{1.0,0},{0.1,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+               <Property Name="ZOrderChangeEnabled" Value="False"/>
+               <Property Name="BackgroundEnabled" Value="False"/>
+               <Property Name="FrameEnabled" Value="False"/>
+               <Property Name="HorizontalAlignment" Value="Left"/>
+               <Property Name="Font" Value="DejaVuSans-10"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="TextColours" Value="FFFFFFFF"/>
+               <Property Name="Text" Value="Scene Controls"/>
+            </Window>
+
+            <!-- LABEL - TIME SPINNER -->
+            <Window Name="GameScreen_TimeSpinnerLabel" Type="WindowsLook/StaticText">
+               <Property Name="UnifiedSize" Value="{{0.75,0},{0.1,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.09,0}}"/>
+               <Property Name="ZOrderChangeEnabled" Value="False"/>
+               <Property Name="BackgroundEnabled" Value="False"/>
+               <Property Name="FrameEnabled" Value="False"/>
+               <Property Name="HorizontalAlignment" Value="Left"/>
+               <Property Name="Font" Value="DejaVuSans-10"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="TextColours" Value="FFFFFFFF"/>
+               <Property Name="Text" Value="Hour Offset"/>
+            </Window>
+
+            <!-- TIME SPINNER -->
+            <Window Name="GameScreen_TimeSpinner" Type="WindowsLook/Spinner">
+               <Property Name="UnifiedSize" Value="{{0.25,0},{0.08,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.09,0}}"/>
+               <Property Name="ZOrderChangeEnabled" Value="False"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="HorizontalAlignment" Value="Right"/>
+               <Property Name="MousePassThroughEnabled" Value="False"/>
+               <Property Name="TextInputMode" Value="FloatingPoint"/>
+               <Property Name="StepSize" Value="0.5"/>
+            </Window>
+
+            <!-- LABEL - LAMP SPINNER -->
+            <Window Name="GameScreen_LampSpinnerLabel" Type="WindowsLook/StaticText">
+               <Property Name="UnifiedSize" Value="{{0.75,0},{0.1,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.18,0}}"/>
+               <Property Name="ZOrderChangeEnabled" Value="False"/>
+               <Property Name="BackgroundEnabled" Value="False"/>
+               <Property Name="FrameEnabled" Value="False"/>
+               <Property Name="HorizontalAlignment" Value="Left"/>
+               <Property Name="Font" Value="DejaVuSans-10"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="TextColours" Value="FFFFFFFF"/>
+               <Property Name="Text" Value="Lamp Intensity"/>
+            </Window>
+
+            <!-- LAMP SPINNER -->
+            <Window Name="GameScreen_LampSpinner" Type="WindowsLook/Spinner">
+               <Property Name="UnifiedSize" Value="{{0.25,0},{0.08,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.18,0}}"/>
+               <Property Name="ZOrderChangeEnabled" Value="False"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="HorizontalAlignment" Value="Right"/>
+               <Property Name="MousePassThroughEnabled" Value="False"/>
+               <Property Name="TextInputMode" Value="FloatingPoint"/>
+               <Property Name="StepSize" Value="0.1"/>
+               <Property Name="MinimumValue" Value="0.0"/>
+               <Property Name="MaximumValue" Value="1.0"/>
+            </Window>
+
+            <!-- LABEL - LUMINANCE SPINNER -->
+            <Window Name="GameScreen_LuminanceSpinnerLabel" Type="WindowsLook/StaticText">
+               <Property Name="UnifiedSize" Value="{{0.75,0},{0.1,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.27,0}}"/>
+               <Property Name="ZOrderChangeEnabled" Value="False"/>
+               <Property Name="BackgroundEnabled" Value="False"/>
+               <Property Name="FrameEnabled" Value="False"/>
+               <Property Name="HorizontalAlignment" Value="Left"/>
+               <Property Name="Font" Value="DejaVuSans-10"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="TextColours" Value="FFFFFFFF"/>
+               <Property Name="Text" Value="Luminance"/>
+            </Window>
+
+            <!-- LUMINANCE SPINNER -->
+            <Window Name="GameScreen_LuminanceSpinner" Type="WindowsLook/Spinner">
+               <Property Name="UnifiedSize" Value="{{0.25,0},{0.08,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.27,0}}"/>
+               <Property Name="ZOrderChangeEnabled" Value="False"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="HorizontalAlignment" Value="Right"/>
+               <Property Name="MousePassThroughEnabled" Value="False"/>
+               <Property Name="TextInputMode" Value="FloatingPoint"/>
+               <Property Name="StepSize" Value="0.1"/>
+               <Property Name="MinimumValue" Value="0.0"/>
+               <Property Name="MaximumValue" Value="2.0"/>
+            </Window>
+
+            <!-- LABEL - AMBIENCE SPINNER -->
+            <Window Name="GameScreen_AmbienceSpinnerLabel" Type="WindowsLook/StaticText">
+               <Property Name="UnifiedSize" Value="{{0.75,0},{0.1,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.36,0}}"/>
+               <Property Name="ZOrderChangeEnabled" Value="False"/>
+               <Property Name="BackgroundEnabled" Value="False"/>
+               <Property Name="FrameEnabled" Value="False"/>
+               <Property Name="HorizontalAlignment" Value="Left"/>
+               <Property Name="Font" Value="DejaVuSans-10"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="TextColours" Value="FFFFFFFF"/>
+               <Property Name="Text" Value="Ambience"/>
+            </Window>
+
+            <!-- AMBIENCE SPINNER -->
+            <Window Name="GameScreen_AmbienceSpinner" Type="WindowsLook/Spinner">
+               <Property Name="UnifiedSize" Value="{{0.25,0},{0.08,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.36,0}}"/>
+               <Property Name="ZOrderChangeEnabled" Value="False"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="HorizontalAlignment" Value="Right"/>
+               <Property Name="MousePassThroughEnabled" Value="False"/>
+               <Property Name="TextInputMode" Value="FloatingPoint"/>
+               <Property Name="StepSize" Value="0.05"/>
+               <Property Name="MinimumValue" Value="0.0"/>
+               <Property Name="MaximumValue" Value="5.0"/>
+            </Window>
+
+            <!-- LABEL - SEA STATE SPINNER -->
+            <Window Name="GameScreen_SeaStateSpinnerLabel" Type="WindowsLook/StaticText">
+               <Property Name="UnifiedSize" Value="{{0.75,0},{0.1,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.45,0}}"/>
+               <Property Name="ZOrderChangeEnabled" Value="False"/>
+               <Property Name="BackgroundEnabled" Value="False"/>
+               <Property Name="FrameEnabled" Value="False"/>
+               <Property Name="HorizontalAlignment" Value="Left"/>
+               <Property Name="Font" Value="DejaVuSans-10"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="TextColours" Value="FFFFFFFF"/>
+               <Property Name="Text" Value="Sea State"/>
+            </Window>
+
+            <!-- SEA STATE SPINNER -->
+            <Window Name="GameScreen_SeaStateSpinner" Type="WindowsLook/Spinner">
+               <Property Name="UnifiedSize" Value="{{0.25,0},{0.08,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.45,0}}"/>
+               <Property Name="ZOrderChangeEnabled" Value="False"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="HorizontalAlignment" Value="Right"/>
+               <Property Name="MousePassThroughEnabled" Value="False"/>
+               <Property Name="TextInputMode" Value="Integer"/>
+               <Property Name="StepSize" Value="1"/>
+               <Property Name="MinimumValue" Value="0"/>
+               <Property Name="MaximumValue" Value="12"/>
+            </Window>
+
+            <!-- LABEL - SEA CHOP -->
+            <Window Name="GameScreen_SeaChopLabel" Type="WindowsLook/StaticText">
+               <Property Name="UnifiedSize" Value="{{0.5,0},{0.1,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.54,0}}"/>
+               <Property Name="ZOrderChangeEnabled" Value="False"/>
+               <Property Name="BackgroundEnabled" Value="False"/>
+               <Property Name="FrameEnabled" Value="False"/>
+               <Property Name="HorizontalAlignment" Value="Left"/>
+               <Property Name="Font" Value="DejaVuSans-10"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="TextColours" Value="FFFFFFFF"/>
+               <Property Name="Text" Value="Sea Chop"/>
+            </Window>
+
+            <!-- SEA CHOP SPINNER -->
+            <Window Name="GameScreen_SeaChopSpinner" Type="WindowsLook/Spinner">
+               <Property Name="UnifiedSize" Value="{{0.25,0},{0.08,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.54,0}}"/>
+               <Property Name="ZOrderChangeEnabled" Value="False"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="HorizontalAlignment" Value="Right"/>
+               <Property Name="MousePassThroughEnabled" Value="False"/>
+               <Property Name="TextInputMode" Value="Integer"/>
+               <Property Name="StepSize" Value="1"/>
+               <Property Name="MinimumValue" Value="0"/>
+               <Property Name="MaximumValue" Value="3"/>
+            </Window>
+
+            <!-- BUTTON - TOGGLE FIREWORKS -->
+            <Window Name="GameScreen_ToggleFireworks" Type="WindowsLook/Button">
+               <Property Name="UnifiedSize" Value="{{1.0,0},{0.08,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.63,0}}"/>
+               <Property Name="ZOrderChangeEnabled" Value="False"/>
+               <Property Name="HorizontalAlignment" Value="Right"/>
+               <Property Name="Font" Value="DejaVuSans-10"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="Text" Value="Toggle Fireworks"/>
+            </Window>
+
+            <!-- BUTTON - TOGGLE PHYSICS DRAW -->
+            <Window Name="GameScreen_ToggleAIWaypoints" Type="WindowsLook/Button">
+               <Property Name="UnifiedSize" Value="{{1.0,0},{0.08,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.72,0}}"/>
+               <Property Name="ZOrderChangeEnabled" Value="False"/>
+               <Property Name="HorizontalAlignment" Value="Right"/>
+               <Property Name="Font" Value="DejaVuSans-10"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="Text" Value="Toggle AI Waypoints"/>
+            </Window>
+            
+            <!-- BUTTON - TOGGLE PHYSICS DRAW -->
+            <Window Name="GameScreen_TogglePhysicsDraw" Type="WindowsLook/Button">
+               <Property Name="UnifiedSize" Value="{{1.0,0},{0.08,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.81,0}}"/>
+               <Property Name="ZOrderChangeEnabled" Value="False"/>
+               <Property Name="HorizontalAlignment" Value="Right"/>
+               <Property Name="Font" Value="DejaVuSans-10"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="Text" Value="Toggle Physics Draw"/>
+            </Window>
+
+            <!-- BUTTON - RELOAD SHADERS -->
+            <Window Name="GameScreen_ReloadShaders" Type="WindowsLook/Button">
+               <Property Name="UnifiedSize" Value="{{1.0,0},{0.08,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.9,0}}"/>
+               <Property Name="ZOrderChangeEnabled" Value="False"/>
+               <Property Name="HorizontalAlignment" Value="Right"/>
+               <Property Name="Font" Value="DejaVuSans-10"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="Text" Value="Reload Shaders"/>
+            </Window>
+            
+         </Window>
+
+         <!-- CAMERA CONTROLS -->
+         <Window Name="GameScreen_CameraControls" Type="DefaultWindow">
+            <Property Name="UnifiedSize" Value="{{1.0,-10},{0.5,-5}}"/>
+            <Property Name="UnifiedPosition" Value="{{0.0,5},{0.0,-5}}"/>
+            <Property Name="ZOrderChangeEnabled" Value="False"/>
+            <Property Name="AlwaysOnTop" Value="True"/>
+            <Property Name="HorizontalAlignment" Value="Left"/>
+            <Property Name="VerticalAlignment" Value="Bottom"/>
+
+            <!-- LABEL - ACTOR LIST -->
+            <Window Name="GameScreen_ActorListLabel" Type="WindowsLook/StaticText">
+               <Property Name="UnifiedSize" Value="{{1.0,0},{0.1,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+               <Property Name="ZOrderChangeEnabled" Value="False"/>
+               <Property Name="BackgroundEnabled" Value="False"/>
+               <Property Name="FrameEnabled" Value="False"/>
+               <Property Name="HorizontalAlignment" Value="Left"/>
+               <Property Name="Font" Value="DejaVuSans-10"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="TextColours" Value="FFFFFFFF"/>
+               <Property Name="Text" Value="Attachable Actors"/>
+            </Window>
+
+            <!-- ACTOR LIST -->
+            <Window Name="GameScreen_ActorList" Type="WindowsLook/ItemListbox">
+               <Property Name="UnifiedSize" Value="{{1.0,0},{0.9,0}}"/>
+               <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+               <Property Name="HorizontalAlignment" Value="Right"/>
+               <Property Name="VerticalAlignment" Value="Bottom"/>
+               <Property Name="Font" Value="Hobo"/>
+               <Property Name="AlwaysOnTop" Value="True"/>
+               <Property Name="Text" Value="Game Screen"/>
+            </Window>
+
+         </Window>
+      </Window>
+        
+	</Window>
+</GUILayout>

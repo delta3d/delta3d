@@ -1,0 +1,9 @@
+<MATERIAL VERSION="1000" NUMMAPS="0">
+    <AMBIENT>0 0 0 255</AMBIENT>
+    <DIFFUSE>150 112 86 255</DIFFUSE>
+    <SPECULAR>76 76 76 255</SPECULAR>
+    <SHININESS>1</SHININESS>
+    <MAP>materials/Skin_Caucasian.png</MAP>
+    <MAP>materials/NONE_NORM.png</MAP>
+    <MAP>materials/Skin_SPEC.png</MAP>
+</MATERIAL>

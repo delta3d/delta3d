@@ -1,0 +1,63 @@
+<?xml version="1.0" ?>
+<GUILayout>
+   <!-- MAIN CONTAINER WINDOW (ROOT & BACKGROUND IMAGE) -->
+
+   <!-- FRAME -->
+   <Window Name="Root_GlobalOverlay" Type="DefaultWindow">
+      <Property Name="UnifiedSize" Value="{{1.0,0},{1.0,0}}"/>
+      <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+      <Property Name="MousePassThroughEnabled" Value="True"/>
+      <Property Name="ZOrderChangeEnabled" Value="False"/>
+      <Property Name="AlwaysOnTop" Value="True"/>
+      <Property Name="HorizontalAlignment" Value="Left"/>
+      <Property Name="VerticalAlignment" Value="Bottom"/>
+
+      <!-- BACKGROUND -->
+      <Window Name="GlobalOverlay_Background" Type="WindowsLook/StaticImage">
+         <Property Name="UnifiedSize" Value="{{1.0,0},{1.0,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.0,0},{0.0,0}}"/>
+         <Property Name="MousePassThroughEnabled" Value="True"/>
+         <Property Name="ZOrderChangeEnabled" Value="False"/>
+         <Property Name="BackgroundEnabled" Value="True"/>
+         <Property Name="FrameEnabled" Value="False"/>
+         <Property Name="HorizontalAlignment" Value="Left"/>
+         <Property Name="VerticalAlignment" Value="Top"/>
+         <Property Name="BackgroundColours" Value="88000000"/>
+      </Window>
+
+      <!-- TEXT - HELP KEY -->
+      <Window Name="GlobalOverlay_HelpKey" Type="WindowsLook/StaticText">
+         <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.025,0},{0.0,0}}"/>
+         <Property Name="MousePassThroughEnabled" Value="True"/>
+         <Property Name="ZOrderChangeEnabled" Value="False"/>
+         <Property Name="BackgroundEnabled" Value="False"/>
+         <Property Name="FrameEnabled" Value="False"/>
+         <Property Name="HorzFormatting" Value="LeftAligned"/>
+         <Property Name="HorizontalAlignment" Value="Left"/>
+         <Property Name="VerticalAlignment" Value="Top"/>
+         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="AlwaysOnTop" Value="True"/>
+         <Property Name="TextColours" Value="FFFFFFFF"/>
+         <Property Name="Text" Value="(H) Help"/>
+      </Window>
+
+      <!-- TEXT - STATUS -->
+      <Window Name="GlobalOverlay_Status" Type="WindowsLook/StaticText">
+         <Property Name="UnifiedSize" Value="{{0.8,0},{0.095,0}}"/>
+         <Property Name="UnifiedPosition" Value="{{0.025,0},{0.0,0}}"/>
+         <Property Name="MousePassThroughEnabled" Value="True"/>
+         <Property Name="ZOrderChangeEnabled" Value="False"/>
+         <Property Name="BackgroundEnabled" Value="False"/>
+         <Property Name="FrameEnabled" Value="False"/>
+         <Property Name="HorzFormatting" Value="LeftAligned"/>
+         <Property Name="HorizontalAlignment" Value="Left"/>
+         <Property Name="VerticalAlignment" Value="Bottom"/>
+         <Property Name="Font" Value="DejaVuSans-10"/>
+         <Property Name="AlwaysOnTop" Value="True"/>
+         <Property Name="TextColours" Value="FFFFFFFF"/>
+         <Property Name="Text" Value="Status"/>
+      </Window>
+        
+	</Window>
+</GUILayout>

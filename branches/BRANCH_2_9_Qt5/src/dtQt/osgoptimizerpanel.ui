@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>OsgOptimizerPanel</class>
+ <widget class="QWidget" name="OsgOptimizerPanel">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>450</width>
+    <height>438</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>OSG Optimizer Options</string>
+  </property>
+  <widget class="QGroupBox" name="mGroupGeometry">
+   <property name="geometry">
+    <rect>
+     <x>240</x>
+     <y>140</y>
+     <width>201</width>
+     <height>291</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Options that affect vertex data.</string>
+   </property>
+   <property name="title">
+    <string>Geometry</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QCheckBox" name="mCheckGeometry">
+      <property name="text">
+       <string>Check Geometry</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="mTristripGeometry">
+      <property name="text">
+       <string>Tristrip Geometry</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="mTessellateGeometry">
+      <property name="text">
+       <string>Tessellate Geometry</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="mMergeGeometry">
+      <property name="text">
+       <string>Merge Geometry</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="mMakeFastGeometry">
+      <property name="text">
+       <string>Make Fast Geometry</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="mIndexMesh">
+      <property name="text">
+       <string>Index Mesh</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="mFlattenBillboards">
+      <property name="text">
+       <string>Flatten Billboards</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="mVertexPostTransform">
+      <property name="text">
+       <string>Vertex Post-Transform</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="mVertexPreTransform">
+      <property name="text">
+       <string>Vertex Pre-Transform</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="mGroupTextures">
+   <property name="geometry">
+    <rect>
+     <x>240</x>
+     <y>10</y>
+     <width>201</width>
+     <height>114</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Options that affect how textures are stored and referenced.</string>
+   </property>
+   <property name="title">
+    <string>Textures/Materials</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QCheckBox" name="mOptimizeTextureSettings">
+      <property name="text">
+       <string>Optimize Texture Settings</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="mTextureAtlasBuilder">
+      <property name="text">
+       <string>Build Texture Atlas</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="mShareDuplicatState">
+      <property name="text">
+       <string>Share Duplicate State</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="mGroupGraphOrganization">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>140</y>
+     <width>221</width>
+     <height>291</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Options that affect the arrangement of nodes in the resulting scene graph.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="title">
+    <string>Graph Organization</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <item>
+     <widget class="QCheckBox" name="mFlattenStaticTransforms">
+      <property name="text">
+       <string>Flatten Static Transforms</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="mSpatializeGroups">
+      <property name="text">
+       <string>Spatialize Groups</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="mCopySharedNodes">
+      <property name="text">
+       <string>Copy Shared Nodes</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="mStaticObjectDetection">
+      <property name="text">
+       <string>Static Object Detection</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="mMergeGeodes">
+      <property name="text">
+       <string>Merge Geodes</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="mCombineAdjacentLODs">
+      <property name="text">
+       <string>Combine Adjacent LODs</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="mRemoveRedundantNodes">
+      <property name="text">
+       <string>Remove Redundant Nodes</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="mRemoveLoadedProxyNodes">
+      <property name="text">
+       <string>Remove Loaded Proxy Nodes</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="mFlattenSTDSS">
+      <property name="text">
+       <string>Flatten Static Transforms
+Duplicating Shared Subgraphs</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QComboBox" name="mPreset">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>30</y>
+     <width>201</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>List of preset files. Selection of a preset will cause relevant options to be selected/deselected.</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>10</y>
+     <width>111</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Optimizer Preset</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="mButtonSaveAs">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>60</y>
+     <width>93</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Save selected options to a preset file for later use.</string>
+   </property>
+   <property name="text">
+    <string>Save As</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="mButtonDefaults">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>100</y>
+     <width>93</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Selects default OSG optimizer options.</string>
+   </property>
+   <property name="text">
+    <string>Defaults</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="mButtonSelectAll">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>100</y>
+     <width>93</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Selects options relavant to full optimizations, as flagged in osgUtil::Optimizer::ALL_OPTIMIZATIONS. </string>
+   </property>
+   <property name="text">
+    <string>Select All</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

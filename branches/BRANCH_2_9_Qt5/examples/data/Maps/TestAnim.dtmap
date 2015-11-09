@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
+    <header>
+        <name>TestAnim</name>
+        <description></description>
+        <author></author>
+        <comment></comment>
+        <copyright></copyright>
+        <createTimestamp>2007-05-10T16:08:18.0-05:00</createTimestamp>
+        <lastUpdateTimestamp>2015-09-25T18:32:26-05:00</lastUpdateTimestamp>
+        <editorVersion>2.8.100</editorVersion>
+        <schemaVersion>1.0</schemaVersion>
+    </header>
+    <libraries>
+        <library>
+            <name>dtActors</name>
+            <version>1.0</version>
+        </library>
+        <library>
+            <name>dtAnim</name>
+            <version>1.0</version>
+        </library>
+    </libraries>
+    <actors>
+        <actor>
+            <type>dtcore.Lights.Infinite Light</type>
+            <id>6729376f-a271-4794-b263-a68f2f663d31</id>
+            <name>defaultInfiniteLight</name>
+            <property>
+                <name>Enable</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>LightNum</name>
+                <integer>0</integer>
+            </property>
+            <property>
+                <name>Lighting Mode</name>
+                <enumerated>GLOBAL</enumerated>
+            </property>
+            <property>
+                <name>Ambient</name>
+                <colorRGBA>
+                    <valueR>0.509804</valueR>
+                    <valueG>0.509804</valueG>
+                    <valueB>0.509804</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>Diffuse</name>
+                <colorRGBA>
+                    <valueR>0.800000</valueR>
+                    <valueG>0.800000</valueG>
+                    <valueB>0.800000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>Specular</name>
+                <colorRGBA>
+                    <valueR>0.050000</valueR>
+                    <valueG>0.050000</valueG>
+                    <valueB>0.050000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+        </actor>
+        <actor>
+            <type>dtanim.AnimationGameActor</type>
+            <id>e39619c2-a9a1-4ad0-a973-a82a1a87d6a9</id>
+            <name>CharacterEntity</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.AnimationActorComponent</type>
+                    <id>DE828D7C-A33F-4E97-8794-F04EBF09DCA7</id>
+                    <name></name>
+                    <property>
+                        <name>Skeletal Mesh</name>
+                        <resourceType>SkeletalMeshes</resourceType>
+                        <resourceDisplayName>SkeletalMeshes:Marine:marine.xml</resourceDisplayName>
+                        <resource>SkeletalMeshes:Marine:marine.xml</resource>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-180.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-1.967511</value1>
+                    <value2>33.840588</value2>
+                    <value3>6.299999</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>e6b14232-fbd0-4ffe-b2b2-75ea9df9d5a8</id>
+            <name>GroundActor</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>19.999998</value2>
+                    <value3>-0.000001</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>terrain_simple.ive</resourceDisplayName>
+                <resource>StaticMeshes:terrain_simple.ive</resource>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+    </actors>
+    <groups></groups>
+    <presetCameras></presetCameras>
+</map>

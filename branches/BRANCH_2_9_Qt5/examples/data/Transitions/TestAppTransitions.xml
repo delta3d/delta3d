@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<TransitionList>
+
+   <!-- LOADING STATE -->
+   <Transition>
+      <Event Type="TRANSITION_FORWARD"/>
+      <FromState Type="STATE_LOADING"/>
+      <ToState Type="STATE_TITLE"/>
+   </Transition>
+   
+   <!-- TITLE STATE -->
+   <Transition>
+      <Event Type="TRANSITION_FORWARD"/>
+      <FromState Type="STATE_TITLE"/>
+      <ToState Type="STATE_GAME"/>
+   </Transition>
+
+   <!-- MENU STATE -->
+   <!--Transition>
+      <Event Type="TRANSITION_BACK"/>
+      <FromState Type="STATE_MENU"/>
+      <ToState Type="STATE_TITLE"/>
+   </Transition>
+
+   <Transition>
+      <Event Type="TRANSITION_FORWARD"/>
+      <FromState Type="STATE_MENU"/>
+      <ToState Type="STATE_GAME"/>
+   </Transition-->
+
+   <!-- GAME STATE -->
+   <Transition>
+      <Event Type="TRANSITION_BACK"/>
+      <FromState Type="STATE_GAME"/>
+      <ToState Type="STATE_GAME_QUIT"/>
+   </Transition>
+
+   <Transition>
+      <Event Type="TRANSITION_MENU"/>
+      <FromState Type="STATE_GAME"/>
+      <ToState Type="STATE_GAME_OPTIONS"/>
+   </Transition>
+
+   <!-- GAME OPTIONS STATE -->
+   <Transition>
+      <Event Type="TRANSITION_BACK"/>
+      <FromState Type="STATE_GAME_OPTIONS"/>
+      <ToState Type="STATE_GAME"/>
+   </Transition>
+   
+   <!-- GAME QUIT STATE -->
+   <Transition>
+      <Event Type="TRANSITION_FORWARD"/>
+      <FromState Type="STATE_GAME_QUIT"/>
+      <ToState Type="STATE_TITLE"/>
+   </Transition>
+   
+   <Transition>
+      <Event Type="TRANSITION_BACK"/>
+      <FromState Type="STATE_GAME_QUIT"/>
+      <ToState Type="STATE_GAME"/>
+   </Transition>
+
+   <StartState Type="STATE_LOADING" />
+</TransitionList>
