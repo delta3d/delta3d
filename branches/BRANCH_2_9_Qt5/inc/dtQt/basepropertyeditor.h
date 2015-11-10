@@ -29,7 +29,7 @@
 #ifndef DELTA_BASE_PROPERTY_EDITOR
 #define DELTA_BASE_PROPERTY_EDITOR
 
-#include <QtGui/QDockWidget>
+#include <QtWidgets/QDockWidget>
 #include <vector>
 
 

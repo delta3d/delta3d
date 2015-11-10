@@ -34,7 +34,7 @@
 #include <QtCore/QSettings>
 #include <QtCore/QString>
 #include <QtCore/QVariant>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QMessageBox>
 #include <sstream>
 
 using namespace dtUtil;

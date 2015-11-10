@@ -30,7 +30,7 @@
 #include <dtDirector/node.h>
 #include <dtDirector/nodemanager.h>
 
-#include <QtGui/QGraphicsRectItem>
+#include <QtWidgets/QGraphicsRectItem>
 
 
 namespace dtDirector

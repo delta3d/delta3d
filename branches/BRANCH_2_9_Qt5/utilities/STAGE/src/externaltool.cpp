@@ -2,8 +2,8 @@
 #include <dtEditQt/externaltool.h>
 #include <dtEditQt/externaltoolargparser.h>
 #include <dtEditQt/editoractions.h>
-#include <QtGui/QAction>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QMessageBox>
 #include <QtCore/QProcess>
 #include <iostream>
 

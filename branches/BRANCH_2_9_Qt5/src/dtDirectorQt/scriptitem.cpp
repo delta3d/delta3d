@@ -32,9 +32,9 @@
 
 #include <dtDirectorNodes/referencescriptaction.h>
 
-#include <QtGui/QGraphicsScene>
-#include <QtGui/QMenu>
-#include <QtGui/QGraphicsColorizeEffect>
+#include <QtWidgets/QGraphicsScene>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QGraphicsColorizeEffect>
 
 #include <osg/Vec2>
 

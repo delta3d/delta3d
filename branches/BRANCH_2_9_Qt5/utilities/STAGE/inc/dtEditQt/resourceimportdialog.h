@@ -31,15 +31,15 @@
 #define DELTA_RESOURCE_IMPORT_DIALOG
 
 #include <QtCore/QStringList>
-#include <QtGui/QPushButton>
+#include <QtWidgets/QPushButton>
 #include <QtCore/QString>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QGridLayout>
-#include <QtGui/QLineEdit>
-#include <QtGui/QLabel>
-#include <QtGui/QDialog>
-#include <QtGui/QGroupBox>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QGroupBox>
 #include <QtCore/QList>
 
 #include <osg/Referenced>

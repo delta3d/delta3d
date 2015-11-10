@@ -32,10 +32,10 @@
 #include <dtQt/propertyeditortreeview.h>
 #include <dtQt/propertyeditordelegate.h>
 #include <QtCore/QDebug>
-#include <QtGui/QItemDelegate>
-#include <QtGui/QHeaderView>
+#include <QtWidgets/QItemDelegate>
+#include <QtWidgets/QHeaderView>
 #include <QtGui/QPainter>
-#include <QtGui/QScrollBar>
+#include <QtWidgets/QScrollBar>
 #include <QtCore/QAbstractItemModel>
 
 namespace dtQt
@@ -148,7 +148,7 @@ namespace dtQt
       {
          setRootIndex(propertyModel->IndexOf(propertyModel->GetRootControl()));
 
-         header()->setResizeMode(1, QHeaderView::Stretch);
+         header()->setSectionResizeMode(1, QHeaderView::Stretch);
 
          resizeColumnToContents(0);
          setExpanded(propertyModel->IndexOf(propertyModel->GetRootControl()), true);

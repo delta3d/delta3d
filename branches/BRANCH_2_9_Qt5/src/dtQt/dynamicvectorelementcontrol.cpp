@@ -41,7 +41,7 @@
 #include <QtCore/QLocale>
 
 #include <QtGui/QDoubleValidator>
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 
 #include <sstream>
 

@@ -27,18 +27,18 @@
  * Jeffrey P. Houde
  */
 #include <prefix/stageprefix.h>
-#include <QtGui/QAction>
+#include <QtWidgets/QAction>
 #include <QtGui/QIcon>
-#include <QtGui/QToolButton>
-#include <QtGui/QLabel>
-#include <QtGui/QMenu>
+#include <QtWidgets/QToolButton>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QMenu>
 #include <QtGui/QContextMenuEvent>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QFrame>
-#include <QtGui/QLineEdit>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QFrame>
+#include <QtWidgets/QLineEdit>
 #include <QtGui/QDoubleValidator>
-#include <QtGui/QCheckBox>
+#include <QtWidgets/QCheckBox>
 #include <dtEditQt/editorviewportcontainer.h>
 #include <dtEditQt/viewportmanager.h>
 #include <dtEditQt/uiresources.h>

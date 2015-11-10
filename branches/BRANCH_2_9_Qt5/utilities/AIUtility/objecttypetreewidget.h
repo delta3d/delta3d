@@ -30,8 +30,8 @@
 #ifndef DELTA_OBJECTTYPETREEWIDGET
 #define DELTA_OBJECTTYPETREEWIDGET
 
-#include <QtGui/QTreeWidgetItem>
-#include <QtGui/QTreeWidget>
+#include <QtWidgets/QTreeWidgetItem>
+#include <QtWidgets/QTreeWidget>
 #include <dtCore/objecttype.h>
 
 /**

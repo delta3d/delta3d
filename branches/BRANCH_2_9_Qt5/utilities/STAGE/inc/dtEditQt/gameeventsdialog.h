@@ -32,10 +32,10 @@
 
 #include <vector>
 
-#include <QtGui/QDialog>
-#include <QtGui/QWidget>
-#include <QtGui/QTreeWidget>
-#include <QtGui/QTreeWidgetItem>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QTreeWidget>
+#include <QtWidgets/QTreeWidgetItem>
 
 class QTableWidget;
 class QGridLayout;

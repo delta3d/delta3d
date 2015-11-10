@@ -11,8 +11,8 @@
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
 #include <QtCore/QString>
-#include <QtGui/QMessageBox>
-#include <QtGui/QApplication>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QApplication>
 
 #include "ObjectViewer.h"
 #include "ObjectViewerData.h"

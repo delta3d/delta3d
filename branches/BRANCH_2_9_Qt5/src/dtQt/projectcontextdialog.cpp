@@ -23,14 +23,14 @@
 #include <prefix/dtqtprefix.h>
 #include <dtQt/projectcontextdialog.h>
 
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QPushButton>
-#include <QtGui/QGroupBox>
-#include <QtGui/QGridLayout>
-#include <QtGui/QLineEdit>
-#include <QtGui/QFileDialog>
-#include <QtGui/QLabel>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QLabel>
 
 #include <dtCore/project.h>
 

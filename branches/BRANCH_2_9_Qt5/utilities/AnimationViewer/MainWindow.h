@@ -1,7 +1,7 @@
 #ifndef __ANIMATION_VIEWER_MAIN_WINDOW_H__
 #define __ANIMATION_VIEWER_MAIN_WINDOW_H__
 
-#include <QtGui/QMainWindow>
+#include <QtWidgets/QMainWindow>
 
 class AnimationSliderPanel;
 class AnimationTableWidget;

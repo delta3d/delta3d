@@ -26,7 +26,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "ui_propertycontrolresource.h"
 #include <dtQt/propertycontrolresource.h>
-#include <QtGui/QFileDialog.h>
+#include <QtWidgets/QFileDialog>
 
 
 

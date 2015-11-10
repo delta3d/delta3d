@@ -5,11 +5,11 @@
 #include "ResourceDelegates.h"
 #include "ResourceDialogs.h"
 // Qt
-#include <QtGui/QFileDialog>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QLineEdit>
-#include <QtGui/QMessageBox>
-#include <QtGui/QPushButton>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QPushButton>
 // OSG
 #include <osg/Texture2D>
 #include <osgDB/FileNameUtils>

@@ -48,16 +48,16 @@
 #include <dtUtil/log.h>
 
 #include <QtCore/QStringList>
-#include <QtGui/QGridLayout>
-#include <QtGui/QGroupBox>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QHeaderView>
-#include <QtGui/QMainWindow>
-#include <QtGui/QMessageBox>
-#include <QtGui/QPushButton>
-#include <QtGui/QTableWidget>
-#include <QtGui/QTableWidgetItem>
-#include <QtGui/QVBoxLayout>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QTableWidget>
+#include <QtWidgets/QTableWidgetItem>
+#include <QtWidgets/QVBoxLayout>
 
 using std::vector;
 using dtCore::GameEvent;
@@ -89,14 +89,14 @@ namespace dtEditQt
 
       //mGameEventView->setRowCount(eventNames.size());
       mGameEventView->setColumnCount(2);
-      mGameEventView->header()->setResizeMode(QHeaderView::Stretch);
+      mGameEventView->header()->setSectionResizeMode(QHeaderView::Stretch);
       mGameEventView->header()->setFixedHeight(20);
 
       // set the headers
       QStringList headerLabels;
       headerLabels << "Event" << "Description";
       mGameEventView->setHeaderLabels(headerLabels);
-      mGameEventView->header()->setClickable(true);
+      mGameEventView->header()->setSectionsClickable(true);
 
       gridLayout->addWidget(mGameEventView, 0, 0);
 

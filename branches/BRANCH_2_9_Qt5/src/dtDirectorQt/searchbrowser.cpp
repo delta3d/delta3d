@@ -29,12 +29,12 @@
 
 #include <dtUtil/stringutils.h>
 
-#include <QtGui/QWidget>
-#include <QtGui/QGroupBox>
-#include <QtGui/QGridLayout>
-#include <QtGui/QTreeWidget>
-#include <QtGui/QLineEdit>
-#include <QtGui/QToolButton>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QTreeWidget>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QToolButton>
 
 
 namespace dtDirector

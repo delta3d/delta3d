@@ -30,18 +30,18 @@
 
 #include <dtEditQt/gameeventdialog.h>
 
-#include <QtGui/QLineEdit>
+#include <QtWidgets/QLineEdit>
 #include <QtGui/QCloseEvent>
-#include <QtGui/QPushButton>
-#include <QtGui/QTextEdit>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QTextEdit>
 
-#include <QtGui/QGroupBox>
-#include <QtGui/QGridLayout>
-#include <QtGui/QLabel>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QLabel>
 
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QMessageBox>
 
 #include <dtCore/gameevent.h>
 

@@ -39,11 +39,11 @@
 
 #include <dtUtil/log.h>
 
-#include <QtGui/QGridLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QWidget>
-#include <QtGui/QMenu>
-#include <QtGui/QAction>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QAction>
 #include <QtCore/QVariant>
 
 #include <assert.h>

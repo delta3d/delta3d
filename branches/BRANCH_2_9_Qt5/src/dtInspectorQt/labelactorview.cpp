@@ -1,6 +1,6 @@
 #include <dtInspectorQt/labelactorview.h>
 #include "ui_dtinspectorqt.h"
-#include <QtGui/QColorDialog>
+#include <QtWidgets/QColorDialog>
 
 //////////////////////////////////////////////////////////////////////////
 dtInspectorQt::LabelActorView::LabelActorView(Ui::InspectorWidget& ui)

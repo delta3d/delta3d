@@ -35,8 +35,8 @@
 #include <dtCore/gameeventactorproperty.h>
 #include <dtCore/map.h>
 
-#include <QtGui/QPushButton>
-#include <QtGui/QHBoxLayout>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QHBoxLayout>
 
 namespace dtQt
 {

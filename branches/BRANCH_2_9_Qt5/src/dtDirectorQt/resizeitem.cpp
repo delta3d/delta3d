@@ -29,22 +29,23 @@
 
 #include <dtCore/datatype.h>
 
-#include <QtGui/QGraphicsScene>
-#include <QtGui/QGraphicsSceneMouseEvent>
+#include <QtWidgets/QGraphicsScene>
+#include <QtWidgets/QGraphicsSceneMouseEvent>
 #include <QtGui/QContextMenuEvent>
-#include <QtGui/QMenu>
+#include <QtWidgets/QMenu>
 
 
 namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
    ResizeItem::ResizeItem(GroupItem* nodeItem, QGraphicsItem* parent, EditorScene* scene, ResizeType type)
-      : QGraphicsPolygonItem(parent, scene)
+      : QGraphicsPolygonItem(parent)
       , mScene(scene)
       , mNodeItem(nodeItem)
       , mType(type)
    {
       setZValue(100.0f);
+	  scene->addItem(this);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

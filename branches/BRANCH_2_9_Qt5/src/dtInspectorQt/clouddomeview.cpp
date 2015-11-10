@@ -1,6 +1,6 @@
 #include <dtInspectorQt/clouddomeview.h>
 #include "ui_dtinspectorqt.h"
-#include <QtGui/QColorDialog>
+#include <QtWidgets/QColorDialog>
 
 //////////////////////////////////////////////////////////////////////////
 dtInspectorQt::CloudDomeView::CloudDomeView(Ui::InspectorWidget& ui)

@@ -1,8 +1,8 @@
 #ifndef DELTA_LAYERS_BROWSER
 #define DELTA_LAYERS_BROWSER
 
-#include <QtGui/QListWidget>
-#include <QtGui/QPushButton>
+#include <QtWidgets/QListWidget>
+#include <QtWidgets/QPushButton>
 
 class LayersBrowser : public QObject
 {

@@ -52,12 +52,12 @@
 
 #include <QtCore/QSettings>
 
-#include <QtGui/QMenuBar>
-#include <QtGui/QToolBar>
-#include <QtGui/QAction>
+#include <QtWidgets/QMenuBar>
+#include <QtWidgets/QToolBar>
+#include <QtWidgets/QAction>
 #include <QtGui/QKeyEvent>
-#include <QtGui/QFileDialog>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QMessageBox>
 
 #include <dtCore/project.h>
 #include <dtCore/datatype.h>
@@ -65,7 +65,6 @@
 #include <dtCore/resourceactorproperty.h>
 
 #include <osgDB/FileNameUtils>
-#include <phonon/mediaobject.h>//for sounds
 
 #include "ui_directoreditor.h"
 
@@ -121,9 +120,8 @@ namespace dtDirector
 
       RestoreWindow();
 
-      mClickSound = Phonon::createPlayer(Phonon::MusicCategory,
-                                         Phonon::MediaSource(":/sounds/click.wav"));
-      connect(mClickSound, SIGNAL(stateChanged(Phonon::State, Phonon::State)), this, SLOT(OnStateChanged(Phonon::State, Phonon::State)));
+	  mClickSound = new QSoundEffect;
+      mClickSound->setSource(QUrl(":/sounds/click.wav"));
 
       connect(mUI.menuRecent_Files, SIGNAL(triggered(QAction*)), this, SLOT(OnRecentFile(QAction*)));
 
@@ -2680,17 +2678,6 @@ namespace dtDirector
    void DirectorEditor::OnPlayClickSound()
    {
       mClickSound->play();
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   void DirectorEditor::OnStateChanged(Phonon::State newState, Phonon::State oldState)
-   {
-      //when the play is finished, the sound goes to paused.  Set it to "stop" to
-      //get it ready for next play.
-      if (mClickSound->state() == Phonon::PausedState)
-      {
-         mClickSound->stop();
-      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////

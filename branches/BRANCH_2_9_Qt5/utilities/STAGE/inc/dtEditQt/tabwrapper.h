@@ -30,7 +30,7 @@
 #define DELTA_TAB_WRAPPER
 
 #include <QtCore/QObject>
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 #include <QtCore/QString>
 
 namespace dtEditQt

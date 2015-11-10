@@ -52,17 +52,17 @@
 
 #include <QtCore/QStringList>
 
-#include <QtGui/QLabel>
-#include <QtGui/QGridLayout>
-#include <QtGui/QScrollArea>
-#include <QtGui/QScrollBar>
-#include <QtGui/QTreeWidget>
-#include <QtGui/QMainWindow>
-#include <QtGui/QHeaderView>
-#include <QtGui/QGroupBox>
-#include <QtGui/QTreeView>
-#include <QtGui/QAction>
-#include <QtGui/QHeaderView>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QScrollArea>
+#include <QtWidgets/QScrollBar>
+#include <QtWidgets/QTreeWidget>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QTreeView>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QHeaderView>
 
 #include <osg/Referenced>
 

@@ -31,7 +31,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QString>
-#include <QtGui/QTabWidget>
+#include <QtWidgets/QTabWidget>
 #include <vector>
 
 class QIcon;

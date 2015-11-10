@@ -1,4 +1,4 @@
-#include <QtGui/QApplication>
+#include <QtWidgets/QApplication>
 #include <dtInspectorQt/inspectorqt.h>
 #include <dtInspectorQt/inspectorwindow.h>
 #include <dtInspectorQt/iview.h>

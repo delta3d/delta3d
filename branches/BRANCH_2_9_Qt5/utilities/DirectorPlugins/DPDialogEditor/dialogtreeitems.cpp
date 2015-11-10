@@ -25,10 +25,10 @@
 #include <dialoglineregistry.h>
 #include <dialoglinetype.h>
 
-#include <QtGui/QMenu>
-#include <QtGui/QAction>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QAction>
 #include <QtGui/QDragMoveEvent>
-#include <QtGui/QLineEdit>
+#include <QtWidgets/QLineEdit>
 
 
 

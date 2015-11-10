@@ -3,7 +3,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 
 #include <BaseEvent.h>
 #include <export.h>

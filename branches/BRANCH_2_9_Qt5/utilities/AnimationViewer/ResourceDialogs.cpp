@@ -11,7 +11,7 @@
 #include <osgDB/ReadFile>
 // Qt
 #include <QtCore/QString>
-#include <QtGui/QFileDialog>
+#include <QtWidgets/QFileDialog>
 #include <QtGui/QIcon>
 #include <dtCore/project.h>
 

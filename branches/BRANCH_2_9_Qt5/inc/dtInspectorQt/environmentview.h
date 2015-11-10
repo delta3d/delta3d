@@ -23,7 +23,7 @@
 
 #include <dtInspectorQt/iview.h>
 #include <QtCore/QObject>
-#include <QtGui/QDateTimeEdit>
+#include <QtWidgets/QDateTimeEdit>
 #include <dtCore/observerptr.h>
 #include <dtCore/environment.h>
 

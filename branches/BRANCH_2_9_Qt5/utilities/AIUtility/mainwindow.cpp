@@ -36,12 +36,12 @@
 #include <dtQt/dialoglistselection.h>
 
 #include <QtGui/QCloseEvent>
-#include <QtGui/QApplication>
-#include <QtGui/QDialog>
-#include <QtGui/QGridLayout>
-#include <QtGui/QMessageBox>
-#include <QtGui/QUndoStack>
-#include <QtGui/QDoubleSpinBox>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QUndoStack>
+#include <QtWidgets/QDoubleSpinBox>
 #include <QtCore/QSettings>
 #include <dtCore/transform.h>
 #include <dtCore/map.h>

@@ -7,7 +7,7 @@
 
 #include <dtEditQt/plugininterface.h>
 
-#include <QtGui/QDockWidget>
+#include <QtWidgets/QDockWidget>
 
 //forward declarations
 class Ui_MapHierarcyEditor;

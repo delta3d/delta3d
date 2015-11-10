@@ -1,9 +1,9 @@
 #ifndef DELTA_SHOOTER_TAB
 #define DELTA_SHOOTER_TAB
 
-#include <QtGui/QComboBox>
-#include <QtGui/QDoubleSpinBox>
-#include <QtGui/QSlider>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QDoubleSpinBox>
+#include <QtWidgets/QSlider>
 
 class ShooterTab : public QObject
 {

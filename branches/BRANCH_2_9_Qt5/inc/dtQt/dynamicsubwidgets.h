@@ -31,15 +31,15 @@
 
 #include <dtQt/export.h>
 #include <dtQt/dynamicabstractcontrol.h>
-#include <QtGui/QComboBox>
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
 #include <QtCore/QObject>
 #include <QtGui/QPalette>
-#include <QtGui/QPushButton>
-#include <QtGui/QToolButton>
-#include <QtGui/QSpinBox>
-#include <QtGui/QWidget>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QToolButton>
+#include <QtWidgets/QSpinBox>
+#include <QtWidgets/QWidget>
 #include <vector>
 
 /*

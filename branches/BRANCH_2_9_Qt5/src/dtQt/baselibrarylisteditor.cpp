@@ -23,17 +23,17 @@
  * William E. Johnson II
  */
 #include <prefix/dtqtprefix.h>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QGridLayout>
-#include <QtGui/QPushButton>
-#include <QtGui/QMessageBox>
-#include <QtGui/QFileDialog>
-#include <QtGui/QListWidgetItem>
-#include <QtGui/QListWidget>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QListWidgetItem>
+#include <QtWidgets/QListWidget>
 #include <QtCore/QStringList>
-#include <QtGui/QMainWindow>
-#include <QtGui/QGroupBox>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QGroupBox>
 
 #include <dtQt/baselibrarylisteditor.h>
 #include <dtUtil/log.h>

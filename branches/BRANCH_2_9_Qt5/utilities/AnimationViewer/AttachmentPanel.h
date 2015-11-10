@@ -6,7 +6,7 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include "ui_AttachmentPanel.h"
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 #include <osg/Node>
 #include <dtAnim/boneinterface.h>
 #include <dtAnim/chardrawable.h>

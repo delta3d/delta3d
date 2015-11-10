@@ -5,8 +5,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
-#include <QtGui/QItemDelegate>
-#include <QtGui/QWidget>
+#include <QtWidgets/QItemDelegate>
+#include <QtWidgets/QWidget>
 #include <dtCore/observerptr.h>
 #include <dtAnim/basemodeldata.h>
 #include <dtAnim/basemodelwrapper.h>

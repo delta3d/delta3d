@@ -27,7 +27,7 @@
  * Matthew W. Campbell
  */
 #include <prefix/stageprefix.h>
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 #include <QtOpenGL/QGLWidget>
 #include <osg/Texture>
 #include <osgDB/DatabasePager>

@@ -25,7 +25,7 @@
 #ifndef WAYPOINTBROWSERTREEITEM_H_
 #define WAYPOINTBROWSERTREEITEM_H_
 
-#include <QtGui/QTreeWidgetItem>
+#include <QtWidgets/QTreeWidgetItem>
 #include <dtAI/waypointinterface.h>
 
 class WaypointBrowserTreeItem: public QTreeWidgetItem

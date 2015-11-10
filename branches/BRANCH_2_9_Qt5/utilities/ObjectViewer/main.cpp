@@ -1,4 +1,4 @@
-#include <QtGui/QApplication>
+#include <QtWidgets/QApplication>
 #include <QtCore/QFileInfo>
 #include <dtQt/qtguiwindowsystemwrapper.h>
 #include <dtQt/deltastepper.h>

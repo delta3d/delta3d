@@ -45,15 +45,15 @@
 #include <QtCore/QSize>
 
 #include <QtGui/QColor>
-#include <QtGui/QFocusFrame>
-#include <QtGui/QGridLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QLabel>
+#include <QtWidgets/QFocusFrame>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QLabel>
 #include <QtGui/QPalette>
-#include <QtGui/QPushButton>
-#include <QtGui/QWidget>
-#include <QtGui/QMenu>
-#include <QtGui/QAction>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QAction>
 
 
 namespace dtQt

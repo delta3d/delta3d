@@ -25,7 +25,7 @@
 #include <dtDirector/node.h>
 #include <dtDirectorQt/nodeitem.h>
 
-#include <QtGui/QGraphicsPolygonItem>
+#include <QtWidgets/QGraphicsPolygonItem>
 
 
 namespace dtDirector

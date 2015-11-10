@@ -3,8 +3,8 @@
 #include <dialogtreeitems.h>
 #include <dialoglineregistry.h>
 
-#include <QtGui/QComboBox>
-#include <QtGui/QTreeWidgetItem>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QTreeWidgetItem>
 
 #include <dtDirector/node.h>
 

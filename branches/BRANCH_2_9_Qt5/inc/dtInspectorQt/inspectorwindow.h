@@ -3,8 +3,8 @@
 
 #include <dtInspectorQt/export.h>
 #include <dtInspectorQt/iview.h>
-#include <QtGui/QMainWindow>
-#include <QtGui/QTreeWidgetItem>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QTreeWidgetItem>
 #include <QtCore/QList>
 
 namespace dtCore

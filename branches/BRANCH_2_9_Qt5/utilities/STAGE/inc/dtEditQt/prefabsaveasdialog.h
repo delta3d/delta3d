@@ -31,7 +31,7 @@
 #ifndef DELTA_PREFAB_SAVE_DIALOG
 #define DELTA_PREFAB_SAVE_DIALOG
 
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 
 class QLineEdit;
 class QTextEdit;

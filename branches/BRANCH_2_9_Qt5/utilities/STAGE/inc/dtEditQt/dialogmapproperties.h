@@ -30,8 +30,8 @@
 #ifndef DELTA_DIALOG_MAP_PROPERTIES
 #define DELTA_DIALOG_MAP_PROPERTIES
 
-#include <QtGui/QDialog>
-#include <QtGui/QCheckBox>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QCheckBox>
 
 class QLineEdit;
 class QTextEdit;

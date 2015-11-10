@@ -26,9 +26,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "ui_propertycontrolarray.h"
 #include <dtQt/propertycontrolarray.h>
-#include <QtGui/QLabel>
-#include <QtGui/QListWidgetItem>
-#include <QtGui/QSizePolicy>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QListWidgetItem>
+#include <QtWidgets/QSizePolicy>
 #include <sstream>
 
 // TEMP:

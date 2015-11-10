@@ -11,8 +11,8 @@
 #include <dtEditQt/pluginmanager.h>
 #include <dtEditQt/viewportmanager.h>
 #include <dtUtil/fileutils.h>
-#include <QtGui/QFileDialog>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QMessageBox>
 
 const std::string MassImporterPlugin::PLUGIN_NAME = "Mass Importer";
 

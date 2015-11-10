@@ -30,8 +30,8 @@
 #define DELTA_STAGE_ACTORSEACHTAB__H_
 
 #include <QtCore/QObject>
-#include <QtGui/QDockWidget>
-#include <QtGui/QMainWindow>
+#include <QtWidgets/QDockWidget>
+#include <QtWidgets/QMainWindow>
 #include <dtQt/actortreepanel.h>
 
 class QWidget;

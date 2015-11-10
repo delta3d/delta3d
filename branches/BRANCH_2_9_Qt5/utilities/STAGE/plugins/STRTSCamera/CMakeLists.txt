@@ -5,11 +5,12 @@ file(GLOB LIB_PUBLIC_HEADERS "*.h")
 file(GLOB LIB_C_SOURCES "*.cpp")
 
 INCLUDE_DIRECTORIES(  ${CMAKE_SOURCE_DIR}/utilities/STAGE/inc
+            ${DT_QT_INCLUDE_DIRS}
             ${QT_INCLUDE_DIR}
             ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
 )
 
-qt4_wrap_cpp(MOC_SOURCES ${LIB_PUBLIC_HEADERS})
+qt5_wrap_cpp(MOC_SOURCES ${LIB_PUBLIC_HEADERS})
 
 SET(LIB_SOURCES
    ${LIB_C_SOURCES}
@@ -28,6 +29,7 @@ SET(LIB_DEPS
                        ${QT_QTCORE_LIBRARY}
                        ${QT_QTGUI_LIBRARY}
                        ${QT_QTOPENGL_LIBRARY}
+                       ${DT_QT_LIBRARIES}
                       )
 
 

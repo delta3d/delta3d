@@ -26,7 +26,7 @@
 #define DELTA_DIALOG_LIST_SELECTION
 
 #include <dtQt/export.h>
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 
 class QStringList;
 class QListWidget;

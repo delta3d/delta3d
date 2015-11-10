@@ -42,7 +42,8 @@ namespace dtEditQt
    class TaskUIPlugin : public QObject, public dtEditQt::GroupUIPlugin
    {
       Q_OBJECT;
-      Q_INTERFACES(dtEditQt::GroupUIPlugin);
+	  Q_PLUGIN_METADATA(IID "dtEditQt.TaskUIPlugin" FILE "TaskUIPlugin.json")
+	  Q_INTERFACES(dtEditQt::GroupUIPlugin);
 
    public:
       TaskUIPlugin();

@@ -27,9 +27,9 @@
 #include <osgViewer/GraphicsWindow>
 #include <osgViewer/CompositeViewer>
 
-#include <QtGui/QFileDialog>
+#include <QtWidgets/QFileDialog>
 #include <QtCore/QtDebug>
-#include <QtGui/QAction>
+#include <QtWidgets/QAction>
 
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>

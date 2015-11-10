@@ -22,11 +22,12 @@
 #ifndef DIRECTORQT_NODE_ITEM
 #define DIRECTORQT_NODE_ITEM
 
-#include <QtGui/QGraphicsPolygonItem>
-#include <QtGui/QGraphicsTextItem>
-#include <QtGui/QGraphicsPixmapItem>
-#include <QtGui/QWidget>
-#include <QtGui/QGraphicsSceneContextMenuEvent>
+#include <QtWidgets/QGraphicsPolygonItem>
+#include <QtWidgets/QGraphicsTextItem>
+#include <QtWidgets/QGraphicsPixmapItem>
+#include <QtWidgets/QGraphicsScene>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QGraphicsSceneContextMenuEvent>
 #include <QtGui/QPen>
 
 #include <dtDirector/node.h>
@@ -62,7 +63,13 @@ namespace dtDirector
    {
    public:
       GraphicsTextItem(QGraphicsItem* parent, QGraphicsScene* scene)
-         : QGraphicsTextItem(parent, scene) {}
+         : QGraphicsTextItem(parent)
+	  {
+		  if (scene != nullptr)
+		  {
+			  scene->addItem(this);
+		  }
+	  }
    protected:
       void contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
       {

@@ -29,8 +29,8 @@
 #ifndef STAGE_RESOURCE_LIST_WIDGET_ITEM_H__
 #define STAGE_RESOURCE_LIST_WIDGET_ITEM_H__
 
-#include <QtGui/QListWidget>
-#include <QtGui/QListWidgetItem>
+#include <QtWidgets/QListWidget>
+#include <QtWidgets/QListWidgetItem>
 #include <QtGui/QIcon>
 
 #include <dtCore/project.h>

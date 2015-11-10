@@ -27,9 +27,9 @@
 #include <dtQt/export.h>
 #include <dtCore/observerptr.h>
 #include <dtCore/refptr.h>
-#include <QtGui/qwidget.h>
-#include <QtGui/qtreewidget.h>
-#include <QtGui/qstyleditemdelegate.h>
+#include <QtWidgets/qwidget.h>
+#include <QtWidgets/qtreewidget.h>
+#include <QtWidgets/qstyleditemdelegate.h>
 #include <osg/Node>
 
 

@@ -29,10 +29,10 @@
 
 #include <dtCore/refptr.h>
 
-#include <QtGui/QMainWindow>
-#include <QtGui/QTreeWidget>
-#include <QtGui/QTabWidget>
-#include <QtWebKit/QWebView>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QTreeWidget>
+#include <QtWidgets/QTabWidget>
+#include <QtWebKitWidgets/QWebView>
 
 class QAction;
 

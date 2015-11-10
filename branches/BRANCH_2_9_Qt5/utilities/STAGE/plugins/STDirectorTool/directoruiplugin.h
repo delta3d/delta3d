@@ -47,6 +47,7 @@ namespace dtEditQt
    class DirectorUIPlugin : public dtEditQt::ResourceUIPlugin
    {
       Q_OBJECT;
+	  Q_PLUGIN_METADATA(IID "dtEditQt.DirectorUIPlugin" FILE "DirectorUIPlugin.json")
       Q_INTERFACES(dtEditQt::ResourceUIPlugin);
 
    public:

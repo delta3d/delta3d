@@ -29,7 +29,7 @@
 #include <prefix/dtqtprefix.h>
 #include <dtQt/dynamicgroupcontrol.h>
 #include <dtQt/propertyeditormodel.h>
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 
 namespace dtQt
 {

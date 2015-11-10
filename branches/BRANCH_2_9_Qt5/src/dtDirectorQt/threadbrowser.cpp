@@ -30,11 +30,11 @@
 
 #include <dtUtil/stringutils.h>
 
-#include <QtGui/QWidget>
-#include <QtGui/QGroupBox>
-#include <QtGui/QGridLayout>
-#include <QtGui/QListWidget>
-#include <QtGui/QGraphicsItem>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QListWidget>
+#include <QtWidgets/QGraphicsItem>
 
 #include <vector>
 

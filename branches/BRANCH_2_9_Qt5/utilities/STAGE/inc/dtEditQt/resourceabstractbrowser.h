@@ -31,9 +31,9 @@
 #define DELTA_RESOURCE_ABSTRACT_BROWSER
 
 #include <QtCore/QString>
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 
-#include <QtGui/QPushButton>
+#include <QtWidgets/QPushButton>
 
 #include <dtCore/datatype.h>
 #include <dtEditQt/resourceimportdialog.h>

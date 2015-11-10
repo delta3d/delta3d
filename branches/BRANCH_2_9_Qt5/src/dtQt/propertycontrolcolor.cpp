@@ -27,7 +27,7 @@
 #include "ui_propertycontrolcolor.h"
 #include <dtQt/propertycontrolcolor.h>
 #include <dtCore/colorrgbaactorproperty.h>
-#include <QtGui/QColorDialog.h>
+#include <QtWidgets/QColorDialog>
 
 
 

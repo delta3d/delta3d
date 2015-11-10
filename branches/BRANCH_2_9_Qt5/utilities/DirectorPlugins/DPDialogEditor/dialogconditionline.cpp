@@ -1,6 +1,6 @@
 #include <dialogconditionline.h>
 
-#include <QtGui/QLineEdit>
+#include <QtWidgets/QLineEdit>
 
 #include <dtDirector/node.h>
 #include <dtDirector/outputlink.h>

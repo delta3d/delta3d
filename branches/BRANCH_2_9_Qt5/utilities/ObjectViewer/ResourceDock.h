@@ -21,10 +21,10 @@
 #ifndef DELTA_RESOURCE_DOCK
 #define DELTA_RESOURCE_DOCK
 
-#include <QtGui/QWidget>
-#include <QtGui/QTreeWidget>
-#include <QtGui/QDockWidget>
-#include <QtGui/QMainWindow>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QTreeWidget>
+#include <QtWidgets/QDockWidget>
+#include <QtWidgets/QMainWindow>
 #include <QtCore/QObject>
 
 #include <dtCore/infinitelight.h>

@@ -42,9 +42,9 @@
 #include <dtDirectorNodes/referencescriptaction.h>
 
 #include <QtCore/QMimeData>
-#include <QtGui/QGraphicsSceneMouseEvent>
-#include <QtGui/QInputDialog>
-#include <QtGui/QMenu>
+#include <QtWidgets/QGraphicsSceneMouseEvent>
+#include <QtWidgets/QInputDialog>
+#include <QtWidgets/QMenu>
 #include <QtGui/QDrag>
 #include <QtCore/QMimeData>
 #include <QtGui/QPainter>
@@ -142,7 +142,8 @@ namespace dtDirector
       // This simulates the translation of the view by moving all children
       // nodes with it.  When the user translates the view, this item is
       // actually being translated instead.
-      mTranslationItem = new QGraphicsRectItem(NULL, this);
+      mTranslationItem = new QGraphicsRectItem(NULL);
+	  addItem(mTranslationItem);
 
       mGraph = graph;
 
@@ -1664,19 +1665,20 @@ namespace dtDirector
       painter->scale(scale, scale);
       item->paint(painter, options);
 
-      int count = item->children().count();
-      for (int index = 0; index < count; ++index)
-      {
-         QGraphicsItem* child = item->children()[index];
-         if (child)
-         {
-            painter->translate(child->pos());
+	  QList<QGraphicsItem*> children = item->childItems();
+      std::for_each(children.begin(), children.end(),
+		  [&](QGraphicsItem* child)
+		  {
+			 if (child != nullptr)
+			 {
+				painter->translate(child->pos());
 
-            PaintItemChildren(painter, child, options);
+				PaintItemChildren(painter, child, options);
 
-            painter->translate(-child->pos());
-         }
-      }
+				painter->translate(-child->pos());
+			 }
+		  }
+	  );
 
       // Undo the previous scale amount.
       scale = 1.0f / scale;

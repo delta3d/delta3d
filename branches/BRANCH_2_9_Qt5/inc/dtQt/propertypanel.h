@@ -30,7 +30,7 @@
 #include <dtQt/export.h>
 #include <dtQt/basepropertycontrolfactory.h>
 #include <dtCore/refptr.h>
-#include <QtGui/qwidget.h>
+#include <QtWidgets/qwidget.h>
 
 
 

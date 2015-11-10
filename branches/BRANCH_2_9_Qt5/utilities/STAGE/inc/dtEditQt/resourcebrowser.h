@@ -29,9 +29,9 @@
 #ifndef DELTA_RESOURCE_BROWSER
 #define DELTA_RESOURCE_BROWSER
 
-#include <QtGui/QWidget>
-#include <QtGui/QDockWidget>
-#include <QtGui/QMainWindow>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QDockWidget>
+#include <QtWidgets/QMainWindow>
 #include <QtCore/QObject>
 
 namespace dtEditQt

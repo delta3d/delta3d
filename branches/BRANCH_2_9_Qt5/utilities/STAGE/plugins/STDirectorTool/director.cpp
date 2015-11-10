@@ -35,9 +35,9 @@
 #include <dtEditQt/pluginmanager.h>
 #include <dtEditQt/groupuiregistry.h>
 
-#include <QtGui/QAction>
-#include <QtGui/QMenu>
-#include <QtGui/QToolBar>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QToolBar>
 
 const std::string DirectorToolPlugin::PLUGIN_NAME = "Director Tool";
 

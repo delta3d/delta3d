@@ -21,7 +21,7 @@
 #ifndef GEOMETRY_TREE
 #define GEOMETRY_TREE
 
-#include <QtGui/QTreeWidget>
+#include <QtWidgets/QTreeWidget>
 
 ///////////////////////////////////////////////////////////////////////////////
 

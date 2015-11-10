@@ -3,7 +3,7 @@
 
 #include "export.h"
 
-#include <QtGui/QPushButton>
+#include <QtWidgets/QPushButton>
 
 class STAGE_MAP_HIERARCHY_EDITOR_EXPORT MultiClickButton : public QPushButton
 {

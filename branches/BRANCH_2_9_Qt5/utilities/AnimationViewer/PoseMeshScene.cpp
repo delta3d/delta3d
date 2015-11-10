@@ -1,8 +1,8 @@
 #include "PoseMeshScene.h"
 #include "PoseMeshItem.h"
 #include <QtCore/QRectF>
-#include <QtGui/QGraphicsRectItem>
-#include <QtGui/QGraphicsSceneMouseEvent>
+#include <QtWidgets/QGraphicsRectItem>
+#include <QtWidgets/QGraphicsSceneMouseEvent>
 
 #include <dtAnim/chardrawable.h>
 

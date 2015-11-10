@@ -22,7 +22,7 @@
 #include "App.h"
 #include <dtQt/qtguiwindowsystemwrapper.h>
 #include <dtQt/deltastepper.h>
-#include <QtGui/QApplication>
+#include <QtWidgets/QApplication>
 #include <dtCore/system.h>
 
 int main(int argc, char **argv)

@@ -27,7 +27,7 @@
 #define DTQT_BASE_LIBRARY_EDITOR
 
 #include <dtQt/export.h>
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 #include <vector>
 
 class QListWidget;

@@ -4,9 +4,9 @@
 #include "export.h"
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/plugininterface.h>
-#include <QtGui/QComboBox>
-#include <QtGui/QDockWidget>
-#include <QtGui/QLineEdit>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QDockWidget>
+#include <QtWidgets/QLineEdit>
 
 /**
    The mass importer is a STAGE plugin that can be used to import multiple meshes

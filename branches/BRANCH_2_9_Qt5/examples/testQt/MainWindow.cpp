@@ -21,8 +21,8 @@
  */
 #include "MainWindow.h"
 #include <dtUtil/datapathutils.h>
-#include <QtGui/QFileDialog>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QMessageBox>
 
 ////////////////////////////////////////////////////////////////////////////////
 MainWindow::MainWindow(QMainWindow* parent)

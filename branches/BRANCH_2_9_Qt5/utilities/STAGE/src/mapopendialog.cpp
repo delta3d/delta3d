@@ -29,14 +29,14 @@
 #include <prefix/stageprefix.h>
 #include <dtEditQt/mapopendialog.h>
 
-#include <QtGui/QGroupBox>
-#include <QtGui/QLineEdit>
-#include <QtGui/QTextEdit>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QPushButton>
-#include <QtGui/QLabel>
-#include <QtGui/QTreeWidget>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QTextEdit>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QTreeWidget>
 
 #include <dtCore/map.h>
 #include <dtCore/mapheaderdata.h>

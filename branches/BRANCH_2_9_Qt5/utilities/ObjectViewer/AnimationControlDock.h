@@ -20,7 +20,7 @@
 #define DELTA_ANIMATION_CONTROL_DOCK_H
 
 #include "ui_AnimationControlPanel.h"
-#include <QtGui/QDockWidget>
+#include <QtWidgets/QDockWidget>
 // DELTA3D
 #include <dtAnim/animclippath.h>
 #include <dtCore/observerptr.h>

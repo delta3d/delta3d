@@ -1,11 +1,11 @@
 #ifndef DELTA_PROGRAM_TAB
 #define DELTA_PROGRAM_TAB
 
-#include <QtGui/QDoubleSpinBox>
-#include <QtGui/QSlider>
-#include <QtGui/QListWidget>
-#include <QtGui/QStackedWidget>
-#include <QtGui/QPushButton>
+#include <QtWidgets/QDoubleSpinBox>
+#include <QtWidgets/QSlider>
+#include <QtWidgets/QListWidget>
+#include <QtWidgets/QStackedWidget>
+#include <QtWidgets/QPushButton>
 
 class ProgramTab : public QObject
 {

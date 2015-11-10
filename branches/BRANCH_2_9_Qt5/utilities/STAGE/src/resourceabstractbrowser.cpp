@@ -27,15 +27,15 @@
  * Teague Coonan
  */
 #include <prefix/stageprefix.h>
-#include <QtGui/QGridLayout>
-#include <QtGui/QGroupBox>
-#include <QtGui/QHeaderView>
-#include <QtGui/QHBoxLayout>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QHBoxLayout>
 #include <QtCore/QList>
-#include <QtGui/QMenu>
-#include <QtGui/QMessageBox>
-#include <QtGui/QAction>
-#include <QtGui/QTreeWidgetItem>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QTreeWidgetItem>
 #include <QtGui/QContextMenuEvent>
 #include <QtGui/QPixmap>
 #include <QtGui/QIcon>
@@ -221,13 +221,13 @@ namespace dtEditQt
                // enterKeySelected();
                break;
             default:
-               return mTree->eventFilter(obj, e);
+				return mTree->HandleEvent(obj, e);
             }
          }
          else
          {
             // pass the event on to the parent class
-            return mTree->eventFilter(obj, e);
+			 return mTree->HandleEvent(obj, e);
          }
       }
       return false;

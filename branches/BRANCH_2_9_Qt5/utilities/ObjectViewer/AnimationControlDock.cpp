@@ -21,7 +21,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "AnimationControlDock.h"
 // QT
-#include <QtGui/QTableWidgetItem>
+#include <QtWidgets/QTableWidgetItem>
 
 
 

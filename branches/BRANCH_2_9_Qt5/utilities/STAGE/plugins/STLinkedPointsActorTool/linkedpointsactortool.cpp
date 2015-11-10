@@ -21,10 +21,10 @@
 
 #include <dtUtil/fileutils.h>
 
-#include <QtGui/QFileDialog>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QMessageBox>
 #include <QtGui/QMouseEvent>
-#include <QtGui/QToolBar>
+#include <QtWidgets/QToolBar>
 #include <QtGui/QWheelEvent>
 
 const std::string LinkedPointsActorToolPlugin::PLUGIN_NAME = "Linked Points Actor Tool";

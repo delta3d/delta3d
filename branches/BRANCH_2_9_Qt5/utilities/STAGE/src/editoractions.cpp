@@ -86,12 +86,12 @@
 
 #include <QtCore/QFileInfo>
 #include <QtCore/QTimer>
-#include <QtGui/QAction>
-#include <QtGui/QActionGroup>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QActionGroup>
 #include <QtGui/QIcon>
-#include <QtGui/QMainWindow>
-#include <QtGui/QMessageBox>
-#include <QtGui/QTextEdit>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QTextEdit>
 
 #include <sstream>
 

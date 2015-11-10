@@ -35,8 +35,8 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/utilities/Di
                     ${DELTA3D_SOURCE_DIR}/ui/dtDirectorQt # for director editor ui*.h files
 )
 
-qt4_wrap_cpp(MOC_SOURCES ${LIB_PUBLIC_HEADERS})
-QT4_WRAP_UI(UI_SOURCES dialogeditor.ui)
+qt5_wrap_cpp(MOC_SOURCES ${LIB_PUBLIC_HEADERS})
+QT5_WRAP_UI(UI_SOURCES dialogeditor.ui)
 
 SOURCE_GROUP("Generated Files" REGULAR_EXPRESSION qrc_.*cxx|moc_.*cxx)
 

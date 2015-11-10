@@ -44,9 +44,9 @@ SET(PROG_SOURCES
 )
 
 
-QT4_ADD_RESOURCES(RCC_SOURCES ${APP_NAME}Resources.qrc)
-qt4_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
-qt4_wrap_ui(UI_SOURCES mainwindow.ui waypointbrowser.ui)
+QT5_ADD_RESOURCES(RCC_SOURCES ${APP_NAME}Resources.qrc)
+qt5_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
+qt5_wrap_ui(UI_SOURCES mainwindow.ui waypointbrowser.ui)
 
 
 SOURCE_GROUP("Generated Files" REGULAR_EXPRESSION qrc_.*cxx|moc_.*cxx)

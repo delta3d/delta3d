@@ -26,9 +26,9 @@
 
 #include <dtDirector/director.h>
 
-#include <QtGui/QGraphicsScene>
-#include <QtGui/QMenu>
-#include <QtGui/QGraphicsSceneContextMenuEvent>
+#include <QtWidgets/QGraphicsScene>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QGraphicsSceneContextMenuEvent>
 
 #include <osg/Vec2>
 

@@ -30,8 +30,8 @@
 #define DELTA_ACTORTAB
 
 #include <QtCore/QObject>
-#include <QtGui/QDockWidget>
-#include <QtGui/QMainWindow>
+#include <QtWidgets/QDockWidget>
+#include <QtWidgets/QMainWindow>
 
 class QWidget;
 

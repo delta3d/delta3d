@@ -37,8 +37,8 @@
 #include "dtEditQt/editoractions.h"
 #include <dtEditQt/prefabbrowser.h>
 
-#include <QtGui/QWidget>
-#include <QtGui/QAction>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QAction>
 
 namespace dtEditQt
 {

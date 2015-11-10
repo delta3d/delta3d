@@ -28,10 +28,10 @@
  */
 
 #include <prefix/dtqtprefix.h>
-#include <QtGui/QWidget>
-#include <QtGui/QGridLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
 #include <QtGui/QDoubleValidator>
 #include <dtQt/dynamiccontainercontrol.h>
 #include <dtCore/actorproperty.h>
@@ -40,7 +40,7 @@
 #include <dtUtil/log.h>
 #include <dtQt/propertyeditormodel.h>
 #include <dtQt/propertyeditortreeview.h>
-#include <QtGui/QLabel>
+#include <QtWidgets/QLabel>
 
 namespace dtQt
 {

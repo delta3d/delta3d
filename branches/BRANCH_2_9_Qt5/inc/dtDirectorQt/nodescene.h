@@ -25,7 +25,7 @@
 #include <dtDirectorQt/export.h>
 #include <dtDirector/nodetype.h>
 
-#include <QtGui/QGraphicsScene>
+#include <QtWidgets/QGraphicsScene>
 
 namespace dtDirector
 {

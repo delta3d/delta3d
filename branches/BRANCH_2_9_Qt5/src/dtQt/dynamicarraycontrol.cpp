@@ -28,10 +28,10 @@
  */
 
 #include <prefix/dtqtprefix.h>
-#include <QtGui/QWidget>
-#include <QtGui/QGridLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
 #include <QtGui/QDoubleValidator>
 #include <dtQt/dynamicarraycontrol.h>
 #include <dtQt/propertyeditormodel.h>
@@ -43,8 +43,8 @@
 #include <dtCore/arrayactorpropertybase.h>
 #include <dtCore/namedarrayparameter.h>
 #include <dtUtil/log.h>
-#include <QtGui/QLabel>
-#include <QtGui/QPushButton>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QPushButton>
 
 namespace dtQt
 {

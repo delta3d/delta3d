@@ -30,9 +30,9 @@
 
 #include <dtDirector/valuenode.h>
 
-#include <QtGui/QGraphicsScene>
-#include <QtGui/QInputDialog>
-#include <QtGui/QMenu>
+#include <QtWidgets/QGraphicsScene>
+#include <QtWidgets/QInputDialog>
+#include <QtWidgets/QMenu>
 
 #include <dtCore/datatype.h>
 

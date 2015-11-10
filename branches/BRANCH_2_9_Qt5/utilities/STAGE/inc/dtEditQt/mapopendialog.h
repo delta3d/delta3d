@@ -30,8 +30,8 @@
 #ifndef DELTA_MAP_OPEN_DIALOG
 #define DELTA_MAP_OPEN_DIALOG
 
-#include <QtGui/QDialog>
-#include <QtGui/QTreeWidgetItem>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QTreeWidgetItem>
 
 #include <dtCore/project.h>
 

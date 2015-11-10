@@ -30,10 +30,10 @@
 #ifndef DELTA_RESOURCE_TREE_WIDGET
 #define DELTA_RESOURCE_TREE_WIDGET
 
-#include <QtGui/QListWidget>
+#include <QtWidgets/QListWidget>
 #include <QtCore/QList>
-#include <QtGui/QTreeWidget>
-#include <QtGui/QTreeWidgetItem>
+#include <QtWidgets/QTreeWidget>
+#include <QtWidgets/QTreeWidgetItem>
 #include <QtGui/QIcon>
 
 #include <dtCore/project.h>
@@ -52,6 +52,12 @@ namespace dtEditQt
    public:
       ResourceTree(QWidget* parent = 0): QTreeWidget(parent) {}
       virtual ~ResourceTree() {}
+
+	  /* Workaround to changes in accessibility to eventFilter (changes between Qt4 and Qt5).*/
+	  bool HandleEvent(QObject *obj, QEvent *ev)
+	  {
+		  return this->eventFilter(obj, ev);
+	  }
    };
 
    /**

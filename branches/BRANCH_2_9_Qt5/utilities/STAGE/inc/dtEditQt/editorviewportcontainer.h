@@ -29,7 +29,7 @@
 #ifndef DELTA_EDITOR_VIEWPORT_CONTAINER
 #define DELTA_EDITOR_VIEWPORT_CONTAINER
 
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 
 class QBoxLayout;
 class QFrame;

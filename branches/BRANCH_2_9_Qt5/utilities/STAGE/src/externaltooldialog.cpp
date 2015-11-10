@@ -2,8 +2,8 @@
 #include <dtEditQt/externaltooldialog.h>
 #include <dtEditQt/uiresources.h>
 #include <dtEditQt/externaltoolargeditor.h>
-#include <QtGui/QMessageBox>
-#include <QtGui/QFileDialog>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QFileDialog>
 #include <cassert>
 
 using namespace dtEditQt;

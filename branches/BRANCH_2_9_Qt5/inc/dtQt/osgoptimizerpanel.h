@@ -23,7 +23,7 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include <dtQt/export.h>
-#include <QtGui/qcheckbox.h>
+#include <QtWidgets/qcheckbox.h>
 #include <osgUtil/Optimizer>
 
 

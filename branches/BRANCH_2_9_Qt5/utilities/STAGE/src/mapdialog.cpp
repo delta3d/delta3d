@@ -28,17 +28,17 @@
  */
 #include <prefix/stageprefix.h>
 #include <dtEditQt/mapdialog.h>
-#include <QtGui/QGroupBox>
-#include <QtGui/QLineEdit>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QTextEdit>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QTextEdit>
 #include <QtGui/QValidator>
-#include <QtGui/QPushButton>
+#include <QtWidgets/QPushButton>
 #include <QtGui/QCloseEvent>
-#include <QtGui/QMessageBox>
-#include <QtGui/QGroupBox>
-#include <QtGui/QLabel>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QLabel>
 #include <dtCore/project.h>
 #include <dtCore/map.h>
 

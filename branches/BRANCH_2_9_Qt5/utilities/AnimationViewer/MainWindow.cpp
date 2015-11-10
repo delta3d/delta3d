@@ -25,39 +25,40 @@
 #include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
 
-#include <QtGui/QAction>
-#include <QtGui/QApplication>
-#include <QtGui/QMenuBar>
-#include <QtGui/QAction>
-#include <QtGui/QComboBox>
-#include <QtGui/QFileDialog>
-#include <QtGui/QTableWidget>
+#include <QtCore/QMimeData>
 #include <QtCore/QSettings>
-#include <QtGui/QStatusBar>
-#include <QtGui/QToolBar>
-#include <QtGui/QPushButton>
-#include <QtGui/QRadioButton>
-#include <QtGui/QDockWidget>
-#include <QtGui/QMessageBox>
-#include <QtGui/QDoubleSpinBox>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QMenuBar>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QTableWidget>
+#include <QtWidgets/QStatusBar>
+#include <QtWidgets/QToolBar>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QRadioButton>
+#include <QtWidgets/QDockWidget>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QDoubleSpinBox>
 #include <QtGui/QDragEnterEvent>
-#include <QtGui/QTabWidget>
-#include <QtGui/QListWidget>
-#include <QtGui/QLabel>
-#include <QtGui/QGraphicsScene>
-#include <QtGui/QGroupBox>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QProgressBar>
-#include <QtGui/QTreeWidgetItem>
-#include <QtGui/QItemDelegate>
-#include <QtGui/QTextEdit>
+#include <QtWidgets/QTabWidget>
+#include <QtWidgets/QListWidget>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QGraphicsScene>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QProgressBar>
+#include <QtWidgets/QTreeWidgetItem>
+#include <QtWidgets/QItemDelegate>
+#include <QtWidgets/QTextEdit>
 #include <QtCore/QUrl>
 #include <QtOpenGL/QGLWidget>
 
 #include <QtGui/QStandardItemModel>
 #include <QtGui/QStandardItem>
 
-#include <QtGui/QGraphicsEllipseItem>
+#include <QtWidgets/QGraphicsEllipseItem>
 #include <cassert>
 
 

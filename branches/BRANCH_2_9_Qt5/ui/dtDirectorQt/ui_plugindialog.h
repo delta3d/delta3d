@@ -10,16 +10,16 @@
 #define UI_PLUGINDIALOG_H
 
 #include <QtCore/QVariant>
-#include <QtGui/QAction>
-#include <QtGui/QApplication>
-#include <QtGui/QButtonGroup>
-#include <QtGui/QDialog>
-#include <QtGui/QDialogButtonBox>
-#include <QtGui/QHeaderView>
-#include <QtGui/QListWidget>
-#include <QtGui/QScrollArea>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QWidget>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QDialogButtonBox>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QListWidget>
+#include <QtWidgets/QScrollArea>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
 
@@ -85,7 +85,7 @@ public:
 
     void retranslateUi(QDialog *PluginDialog)
     {
-        PluginDialog->setWindowTitle(QApplication::translate("PluginDialog", "Manage Plugins", 0, QApplication::UnicodeUTF8));
+        PluginDialog->setWindowTitle(QApplication::translate("PluginDialog", "Manage Plugins", 0));
     } // retranslateUi
 
 };

@@ -11,7 +11,7 @@
 #include <dtUtil/macros.h> //for DTUNREFERENCED_PARAMETER
 #include <iostream>
 #include <QtCore/QDir>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QMessageBox>
 #include <sstream>
 
 using namespace dtUtil;

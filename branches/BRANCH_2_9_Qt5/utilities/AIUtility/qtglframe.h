@@ -1,7 +1,7 @@
 #ifndef AIUTILITY_QT_GL_FRAME
 #define AIUTILITY_QT_GL_FRAME
 
-#include <QtGui/QFrame>
+#include <QtWidgets/QFrame>
 
 class QtGLFrame : public QFrame
 {

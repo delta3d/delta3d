@@ -40,12 +40,13 @@ namespace dtDirector
        * @param[in]  scene   The scene.
        */
       GroupInnerRectItem(QGraphicsItem* parent = 0, QGraphicsScene* scene = 0)
-         : QGraphicsRectItem(parent, scene)
+         : QGraphicsRectItem(parent)
       {
          setFlag(QGraphicsItem::ItemIsMovable, false);
          setFlag(QGraphicsItem::ItemIsSelectable, false);
          setFlag(QGraphicsItem::ItemIgnoresParentOpacity, true);
-         setFlag(QGraphicsItem::ItemIsPanel, true);
+		 setFlag(QGraphicsItem::ItemIsPanel, true);
+		 scene->addItem(this);
       }
    };
 

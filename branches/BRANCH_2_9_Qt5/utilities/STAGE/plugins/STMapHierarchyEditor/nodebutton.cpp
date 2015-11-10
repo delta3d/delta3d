@@ -8,6 +8,7 @@
 #include <dtEditQt/editorevents.h>
 #include <dtUtil/log.h>
 
+#include <QtCore/QMimeData>
 #include <QtGui/QDragEnterEvent>
 
 NodeButton::NodeButton(dtCore::BaseActorObject* bao,

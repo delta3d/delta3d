@@ -1,6 +1,6 @@
 #include <dtInspectorQt/environmentview.h>
 #include "ui_dtinspectorqt.h"
-#include <QtGui/QColorDialog>
+#include <QtWidgets/QColorDialog>
 
 //////////////////////////////////////////////////////////////////////////
 dtInspectorQt::EnvironmentView::EnvironmentView(Ui::InspectorWidget& ui)

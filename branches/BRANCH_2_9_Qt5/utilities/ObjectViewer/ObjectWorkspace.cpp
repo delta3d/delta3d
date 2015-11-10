@@ -20,19 +20,20 @@
 #include <dtCore/shaderprogram.h>
 //#include <dtCore/shaderpropertycontainer.h>
 
-#include <QtGui/QMenuBar>
-#include <QtGui/QAction>
-#include <QtGui/QFileDialog>
-#include <QtGui/QTableWidget>
-#include <QtGui/QStatusBar>
-#include <QtGui/QToolBar>
-#include <QtGui/QDockWidget>
-#include <QtGui/QMessageBox>
-#include <QtGui/QHBoxLayout>
+#include <QtWidgets/QMenuBar>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QTableWidget>
+#include <QtWidgets/QStatusBar>
+#include <QtWidgets/QToolBar>
+#include <QtWidgets/QDockWidget>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QHBoxLayout>
 
 #include <QtCore/QSettings>
 #include <QtCore/QDir>
 #include <QtCore/QUrl>
+#include <QtCore/QMimeData>
 #include <QtGui/QDragEnterEvent>
 #include <QtOpenGL/QGLWidget>
 

@@ -29,13 +29,13 @@
 #include <prefix/stageprefix.h>
 #include "dtEditQt/projectbrowser.h"
 
-#include <QtGui/QGridLayout>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QPushButton>
-#include <QtGui/QGroupBox>
-#include <QtGui/QTreeView>
-#include <QtGui/QDirModel>
-#include <QtGui/QHeaderView>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QTreeView>
+#include <QtWidgets/QDirModel>
+#include <QtWidgets/QHeaderView>
 
 namespace dtEditQt
 {

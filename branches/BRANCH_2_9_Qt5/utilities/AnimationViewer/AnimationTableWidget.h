@@ -1,7 +1,7 @@
 #ifndef __ANIMATION_TABLE_WIDGET_H__
 #define __ANIMATION_TABLE_WIDGET_H__
 
-#include <QtGui/QTableWidget>
+#include <QtWidgets/QTableWidget>
 
 class QAction;
 

@@ -4,12 +4,12 @@
 #include "ui_PoseMeshProperties.h"
 
 #include <QtGui/QWheelEvent>
-#include <QtGui/QGraphicsScene>
-#include <QtGui/QAction>
-#include <QtGui/QMenu>
+#include <QtWidgets/QGraphicsScene>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QMenu>
 #include <QtGui/QCursor>
-#include <QtGui/QGraphicsItem>
-#include <QtGui/QPushButton>
+#include <QtWidgets/QGraphicsItem>
+#include <QtWidgets/QPushButton>
 
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/mswin.h>

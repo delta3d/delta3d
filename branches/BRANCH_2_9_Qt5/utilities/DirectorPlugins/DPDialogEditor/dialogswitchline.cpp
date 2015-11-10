@@ -1,6 +1,6 @@
 #include <dialogswitchline.h>
 
-#include <QtGui/QComboBox>
+#include <QtWidgets/QComboBox>
 
 #include <dtDirector/node.h>
 #include <dtDirector/outputlink.h>

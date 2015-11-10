@@ -30,7 +30,7 @@
 #ifndef DELTA_EDITOR_ABOUT_BOX
 #define DELTA_EDITOR_ABOUT_BOX
 
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 
 class QTextEdit;
 

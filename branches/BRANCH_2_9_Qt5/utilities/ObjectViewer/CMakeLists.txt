@@ -1,7 +1,12 @@
 
 SET(APP_NAME ObjectViewer)
 
+FIND_PACKAGE(Qt5PrintSupport)
+
+
 INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}
+					${DT_QT_INCLUDE_DIRS}
+					${Qt5PrintSupport_INCLUDE_DIR}
                     ${CAL3D_INCLUDE_DIR}#for dtAnim
                     ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
 )
@@ -35,9 +40,9 @@ SET(PROG_SOURCES ${SOURCE_PATH}/main.cpp
                  ${SOURCE_PATH}/ObjectViewer.rc)
 
 
-QT4_ADD_RESOURCES(RCC_SOURCES ObjectViewerResources.qrc)
-qt4_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
-qt4_wrap_ui(UI_SOURCES AnimationControlPanel.ui
+QT5_ADD_RESOURCES(RCC_SOURCES ObjectViewerResources.qrc)
+qt5_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
+qt5_wrap_ui(UI_SOURCES AnimationControlPanel.ui
       MotionModelToolbar.ui)
 
 SOURCE_GROUP("Generated Files" REGULAR_EXPRESSION qrc_.*cxx|moc_.*cxx)
@@ -54,6 +59,8 @@ SET(APP_DEPS
                        ${DTCORE_LIBRARY}
                        ${DTANIM_LIBRARY}
                        ${DTQT_LIBRARY}
+					   ${DT_QT_LIBRARIES}
+					   ${Qt5PrintSupport_LIBRARIES}
 )
 
 DELTA3D_ADD_PROGRAM(${APP_NAME} MACOSX_BUNDLE DT_OBJECT_VIEWER)

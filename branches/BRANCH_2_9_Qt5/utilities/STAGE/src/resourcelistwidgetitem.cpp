@@ -31,6 +31,7 @@
 
 #include <QtCore/QString>
 #include <QtCore/QList>
+#include <QtCore/QMimeData>
 #include <QtGui/QPixmap>
 #include <QtGui/QIcon>
 #include <QtGui/QDrag>

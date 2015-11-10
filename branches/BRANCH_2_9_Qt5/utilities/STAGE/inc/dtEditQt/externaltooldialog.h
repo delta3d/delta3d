@@ -1,7 +1,7 @@
 #ifndef externaltooldialog_h__
 #define externaltooldialog_h__
 
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 #include "ui_externaltooldialog.h"
 #include <dtEditQt/externaltool.h>
 #include <QtCore/QList>

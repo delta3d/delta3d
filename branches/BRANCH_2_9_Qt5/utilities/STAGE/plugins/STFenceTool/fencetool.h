@@ -4,11 +4,11 @@
 #include "export.h"
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/plugininterface.h>
-#include <QtGui/QWidget>
-#include <QtGui/QPushButton>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QPushButton>
 #include <dtActors/linkedpointsactorproxy.h>
 #include <dtActors/fenceactor.h>
-#include <QtGui/QAction>
+#include <QtWidgets/QAction>
 
 using namespace dtEditQt;
 

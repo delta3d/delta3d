@@ -23,10 +23,10 @@
 #define DIRECTOR_IMPORT_EDITOR
 
 
-#include <QtGui/QDialog>
-#include <QtGui/QListWidgetItem>
-#include <QtGui/QListWidget>
-#include <QtGui/QPushButton>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QListWidgetItem>
+#include <QtWidgets/QListWidget>
+#include <QtWidgets/QPushButton>
 
 namespace dtDirector
 {

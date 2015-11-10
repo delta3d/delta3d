@@ -1,6 +1,6 @@
 #include <dtInspectorQt/lightview.h>
 #include "ui_dtinspectorqt.h"
-#include <QtGui/QColorDialog>
+#include <QtWidgets/QColorDialog>
 
 //////////////////////////////////////////////////////////////////////////
 dtInspectorQt::LightView::LightView(Ui::InspectorWidget& ui)

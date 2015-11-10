@@ -2,13 +2,13 @@
 #define DELTA_PARTICLES_TAB
 
 #include <texturepreview.h>
-#include <QtGui/QComboBox>
-#include <QtGui/QDoubleSpinBox>
-#include <QtGui/QSlider>
-#include <QtGui/QLineEdit>
-#include <QtGui/QLabel>
-#include <QtGui/QPushButton>
-#include <QtGui/QCheckBox>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QDoubleSpinBox>
+#include <QtWidgets/QSlider>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QCheckBox>
 
 class ParticlesTab : public QObject
 {

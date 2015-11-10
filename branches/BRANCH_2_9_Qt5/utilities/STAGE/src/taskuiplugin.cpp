@@ -43,7 +43,7 @@
 
 #include <QtCore/QString>
 
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 
 namespace dtEditQt
 {
@@ -91,6 +91,6 @@ namespace dtEditQt
 }
 //This export line had to be done this way because the first name is used in a function name in the macro, but I have to
 //put the call outside a namespace, so the second parameter has to have the namespace of the actual class.  God help us.
-Q_EXPORT_PLUGIN2(TaskUIPlugin, dtEditQt::TaskUIPlugin);
+//Q_PLUGIN_METADATA(TaskUIPlugin, dtEditQt::TaskUIPlugin);
 //The plugin is all static, so just export and import it all at the same time.
-Q_IMPORT_PLUGIN(TaskUIPlugin);
+//Q_IMPORT_PLUGIN(TaskUIPlugin);

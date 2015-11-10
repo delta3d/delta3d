@@ -1,9 +1,9 @@
 #include <dialoglogline.h>
 
-#include <QtGui/QLineEdit>
-#include <QtGui/QGridLayout>
-#include <QtGui/QSpacerItem>
-#include <QtGui/QLabel>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QLabel>
 
 #include <dtDirector/node.h>
 

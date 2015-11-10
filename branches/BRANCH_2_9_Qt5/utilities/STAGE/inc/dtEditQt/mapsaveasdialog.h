@@ -30,7 +30,7 @@
 #ifndef DELTA_MAP_SAVE_AS_DIALOG
 #define DELTA_MAP_SAVE_AS_DIALOG
 
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 
 class QLineEdit;
 class QTextEdit;

@@ -3,8 +3,8 @@
 #include <QtCore/QDebug>
 #include <QtCore/QString>
 #include <QtGui/QColor>
-#include <QtGui/QDialog>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QMessageBox>
 
 #include "Viewer.h"
 #include "NewCharacterDialog.h"

@@ -29,19 +29,19 @@
 
 #include <prefix/stageprefix.h>
 #include <QtCore/QDir>
-#include <QtGui/QHeaderView>
+#include <QtWidgets/QHeaderView>
 
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QGridLayout>
-#include <QtGui/QSplitter>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QSplitter>
 #include <QtCore/QString>
 
-#include <QtGui/QGroupBox>
+#include <QtWidgets/QGroupBox>
 
-#include <QtGui/QPushButton>
-#include <QtGui/QCheckBox>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QCheckBox>
 
-#include <QtGui/QAction>
+#include <QtWidgets/QAction>
 #include <QtGui/QContextMenuEvent>
 
 #include <dtEditQt/resourcetreewidget.h>
@@ -123,13 +123,13 @@ namespace dtEditQt
                }
                break;
             default:
-               return mTree->eventFilter(obj, e);
+				return mTree->HandleEvent(obj, e);
             }
          }
          else
          {
             // pass the event on to the parent class
-            return mTree->eventFilter(obj, e);
+			 return mTree->HandleEvent(obj, e);
          }
       }
       return false;

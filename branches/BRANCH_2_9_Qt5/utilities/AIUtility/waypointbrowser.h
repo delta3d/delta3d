@@ -24,7 +24,7 @@
 #ifndef WAYPOINTBROWSER_H_
 #define WAYPOINTBROWSER_H_
 
-#include <QtGui/QDockWidget>
+#include <QtWidgets/QDockWidget>
 #include <dtCore/transform.h>
 #include <dtCore/objecttype.h>
 #include <dtUtil/utiltree.h>

@@ -5,7 +5,7 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include <dtQt/export.h>
-#include <QtGui/qtreewidget.h>
+#include <QtWidgets/qtreewidget.h>
 #include <dtGame/gameactorproxy.h>
 #include <dtQt/typedefs.h>
 

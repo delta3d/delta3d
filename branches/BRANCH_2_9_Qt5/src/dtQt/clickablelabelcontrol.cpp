@@ -4,7 +4,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include <dtQt/clickablelabelcontrol.h>
 #include <QtCore/QEvent>
-#include <QtGui/QHBoxLayout>
+#include <QtWidgets/QHBoxLayout>
 
 
 

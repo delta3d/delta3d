@@ -20,9 +20,9 @@
 
 #include "ShaderTree.h"
 
-#include <QtGui/QAction>
+#include <QtWidgets/QAction>
 #include <QtGui/QContextMenuEvent>
-#include <QtGui/QMenu>
+#include <QtWidgets/QMenu>
 
 ////////////////////////////////////////////////////////////////////////////////
 ShaderTree::ShaderTree(QWidget* parent)

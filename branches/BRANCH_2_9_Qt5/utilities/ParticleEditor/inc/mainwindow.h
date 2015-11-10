@@ -10,7 +10,7 @@
 #include <programtab.h>
 #include "ui_particleeditor.h"
 
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 
 namespace psEditor
 {

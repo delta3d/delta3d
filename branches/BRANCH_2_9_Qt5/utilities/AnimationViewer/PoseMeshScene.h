@@ -1,7 +1,7 @@
 #ifndef __POSEMESH_SCENE_H__
 #define __POSEMESH_SCENE_H__
 
-#include <QtGui/QGraphicsScene>
+#include <QtWidgets/QGraphicsScene>
 #include <QtCore/QTimer>
 #include <QtCore/QRectF>
 

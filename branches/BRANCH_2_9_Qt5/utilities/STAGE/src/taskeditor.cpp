@@ -46,18 +46,18 @@
 #include <QtCore/QString>
 #include <QtCore/QVariant>
 
-#include <QtGui/QCheckBox>
-#include <QtGui/QComboBox>
-#include <QtGui/QGridLayout>
-#include <QtGui/QGroupBox>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QHeaderView>
-#include <QtGui/QLabel>
-#include <QtGui/QListWidget>
-#include <QtGui/QPushButton>
-#include <QtGui/QScrollArea>
-#include <QtGui/QTableWidget>
-#include <QtGui/QVBoxLayout>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QListWidget>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QScrollArea>
+#include <QtWidgets/QTableWidget>
+#include <QtWidgets/QVBoxLayout>
 
 namespace dtEditQt
 {
@@ -152,7 +152,7 @@ namespace dtEditQt
       mChildrenView->clear();
 
       mChildrenView->setColumnCount(2);
-      mChildrenView->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+      mChildrenView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
       mChildrenView->horizontalHeader()->setFixedHeight(20);
       mChildrenView->verticalHeader()->setHidden(true);
 
