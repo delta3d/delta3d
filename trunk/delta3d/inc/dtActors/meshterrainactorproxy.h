@@ -64,7 +64,7 @@ namespace dtActors
          dtCore::ActorProxyIcon* GetBillBoardIcon() override;
 
       protected:
-         ~MeshTerrainActor() override {}
+         virtual ~MeshTerrainActor() {}
    };
 }
 

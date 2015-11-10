@@ -45,7 +45,7 @@ namespace dtExample
          TestAppActorRegistry();
 
          /// Destructor
-         ~TestAppActorRegistry() override;
+         virtual ~TestAppActorRegistry();
 
          /// Registers all of the actor proxies to be exported
          void RegisterActorTypes();
