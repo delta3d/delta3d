@@ -72,7 +72,7 @@
    public: \
       CLS();\
    protected: \
-      ~CLS() override {} \
+      virtual ~CLS() {} \
    public: \
 
 #define DECLARE_PARAMETER_INLINE(Type, ParamName) \
