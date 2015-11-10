@@ -24,7 +24,7 @@
 
 #include <dtDirectorQt/export.h>
 
-#include <QtGui/QTabWidget>
+#include <QtWidgets/QTabWidget>
 
 class QPushButton;
 

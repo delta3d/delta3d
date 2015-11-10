@@ -29,21 +29,22 @@
 
 #include <dtCore/datatype.h>
 
-#include <QtGui/QGraphicsScene>
-#include <QtGui/QGraphicsSceneMouseEvent>
+#include <QtWidgets/QGraphicsScene>
+#include <QtWidgets/QGraphicsSceneMouseEvent>
 #include <QtGui/QContextMenuEvent>
-#include <QtGui/QMenu>
+#include <QtWidgets/QMenu>
 
 
 namespace dtDirector
 {
    //////////////////////////////////////////////////////////////////////////
    LockItem::LockItem(NodeItem* nodeItem, QGraphicsItem* parent, EditorScene* scene)
-      : QGraphicsPolygonItem(parent, scene)
+      : QGraphicsPolygonItem(parent)
       , mScene(scene)
       , mNodeItem(nodeItem)
       , mIsLocked(true)
    {
+	   scene->addItem(this);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

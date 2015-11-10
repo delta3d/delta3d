@@ -1,8 +1,8 @@
 #include <mainwindow.h>
 #include <QtCore/QSettings>
 #include <QtCore/QFileInfo>
-#include <QtGui/QFileDialog>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QMessageBox>
 #include <QtOpenGL/QGLWidget>
 #include <dtQt/osggraphicswindowqt.h>
 #include <dtCore/deltawin.h>

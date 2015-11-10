@@ -10,9 +10,9 @@ INCLUDE_DIRECTORIES(${SOURCE_PATH}/inc ${QT_INCLUDE_DIR}
                     ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
 )
 
-qt4_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
-QT4_ADD_RESOURCES(RCC_SOURCES particleeditor.qrc)
-QT4_WRAP_UI(UI_SOURCES particleeditor.ui)
+qt5_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
+QT5_ADD_RESOURCES(RCC_SOURCES particleeditor.qrc)
+QT5_WRAP_UI(UI_SOURCES particleeditor.ui)
 
 SOURCE_GROUP("Generated Files" REGULAR_EXPRESSION qrc_.*cxx|moc_.*cxx)
 

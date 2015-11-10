@@ -29,13 +29,13 @@
  */
 #include <prefix/stageprefix.h>
 #include <QtCore/QStringList>
-#include <QtGui/QGridLayout>
-#include <QtGui/QGroupBox>
-#include <QtGui/QHeaderView>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QHeaderView>
 #include <QtGui/QKeyEvent>
-#include <QtGui/QPushButton>
-#include <QtGui/QTreeWidgetItem>
-#include <QtGui/QApplication>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QTreeWidgetItem>
+#include <QtWidgets/QApplication>
 #include <QtGui/QClipboard>
 #include <dtEditQt/actorresultstable.h>
 #include <dtEditQt/editoractions.h>
@@ -75,7 +75,7 @@ namespace dtEditQt
       QStringList headerLabels;
       headerLabels << "Name" << "Category" << "Type";
       mResultsTree->setHeaderLabels(headerLabels);
-      mResultsTree->header()->setClickable(true);
+      mResultsTree->header()->setSectionsClickable(true);
 
       // Select button - this button was removed and now selection happens everytime an
       // object is clicked or the selection changes.  Why else would the user select an object anyway?

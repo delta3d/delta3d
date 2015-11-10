@@ -4,7 +4,7 @@
 #include "export.h"
 #include "ui_topbottomconnectornogap.h"
 
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 
 /**
  Connects from the top and bottom and left in the map editor tree.

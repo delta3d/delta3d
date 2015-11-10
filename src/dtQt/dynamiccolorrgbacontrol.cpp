@@ -40,19 +40,19 @@
 #include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
 
-#include <QtGui/QColorDialog>
+#include <QtWidgets/QColorDialog>
 #include <QtGui/QColor>
-#include <QtGui/QGridLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
 #include <QtGui/QPainter>
 #include <QtGui/QPaintDevice>
 #include <QtGui/QPaintEngine>
-#include <QtGui/QPushButton>
+#include <QtWidgets/QPushButton>
 #include <QtCore/QSize>
-#include <QtGui/QStyleOptionViewItem>
-#include <QtGui/QWidget>
+#include <QtWidgets/QStyleOptionViewItem>
+#include <QtWidgets/QWidget>
 
 namespace dtQt
 {

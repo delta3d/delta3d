@@ -28,8 +28,8 @@
 #include <dtDirectorQt/nodescene.h>
 #include <dtDirectorQt/directoreditor.h>
 
-#include <QtGui/QGraphicsView>
-#include <QtGui/QLayout>
+#include <QtWidgets/QGraphicsView>
+#include <QtWidgets/QLayout>
 
 
 namespace dtDirector

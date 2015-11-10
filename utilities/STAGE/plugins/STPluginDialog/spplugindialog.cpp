@@ -1,6 +1,6 @@
 #include "spplugindialog.h"
 #include <dtEditQt/pluginmanager.h>
-#include <QtGui/QMenu>
+#include <QtWidgets/QMenu>
 #include <iostream>
 
 const std::string PluginManagerPlugin::PLUGIN_NAME = "Plugin Manager";

@@ -17,13 +17,13 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
 */
-#include <QtGui/QGridLayout>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QCheckBox>
-#include <QtGui/QPushButton>
-#include <QtGui/QLabel>
-#include <QtGui/QGroupBox>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QGroupBox>
 
 #include "aiutilitypreferencesdialog.h"
 

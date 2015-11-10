@@ -33,9 +33,9 @@
 #include <dtQt/dynamicabstractcontrol.h>
 #include <dtQt/propertyeditormodel.h>
 #include <QtCore/QAbstractItemModel>
-#include <QtGui/QAbstractItemDelegate>
+#include <QtWidgets/QAbstractItemDelegate>
 
-#include <QtGui/QTreeView>
+#include <QtWidgets/QTreeView>
 #include <QtGui/QColor>
 
 class QWidget;

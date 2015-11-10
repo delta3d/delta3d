@@ -30,28 +30,28 @@
 #include <prefix/stageprefix.h>
 #include <dtEditQt/texturebrowser.h>
 
-#include <QtGui/QHeaderView>
+#include <QtWidgets/QHeaderView>
 
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QGridLayout>
-#include <QtGui/QSplitter>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QSplitter>
 #include <QtCore/QString>
 #include <QtCore/QDir>
 
-#include <QtGui/QGroupBox>
+#include <QtWidgets/QGroupBox>
 
-#include <QtGui/QPushButton>
-#include <QtGui/QCheckBox>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QCheckBox>
 
-#include <QtGui/QAction>
+#include <QtWidgets/QAction>
 #include <QtGui/QContextMenuEvent>
 #include <QtGui/QIcon>
 
 #include <QtGui/QPixmap>
-#include <QtGui/QScrollArea>
-#include <QtGui/QLabel>
+#include <QtWidgets/QScrollArea>
+#include <QtWidgets/QLabel>
 #include <QtGui/QIcon>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QMessageBox>
 #include <QtGui/QImageReader>
 
 #include <dtEditQt/resourcetreewidget.h>
@@ -125,7 +125,7 @@ namespace dtEditQt
 
       mPreview = new QLabel(mPixmapWrapper);
       mPreview->setPixmap(QPixmap());
-      mPreview->setShown(true);
+      mPreview->setVisible(true);
 
       mScrollArea->setWidget(mPixmapWrapper);
 
@@ -163,13 +163,13 @@ namespace dtEditQt
                }
                break;
             default:
-               return mTree->eventFilter(obj,e);
+				return mTree->HandleEvent(obj, e);
             }
          }
          else
          {
             // pass the event on to the parent class
-            return mTree->eventFilter(obj, e);
+			 return mTree->HandleEvent(obj, e);
          }
       }
       return false;
@@ -209,7 +209,7 @@ namespace dtEditQt
             file.replace("\\","/");
             file.replace("//","/");
 
-            mScrollArea->setShown(true);
+            mScrollArea->setVisible(true);
             //Load the new file.
             delete mPreview;
             QPixmap image;
@@ -231,7 +231,7 @@ namespace dtEditQt
 
             mPreview = new QLabel(mPixmapWrapper);
             mPreview->setPixmap(image);
-            mPreview->setShown(true);
+            mPreview->setVisible(true);
 
             mPixmapWrapper->setMinimumSize(mPreview->sizeHint());
             mPixmapWrapper->setMaximumSize(mPreview->sizeHint());

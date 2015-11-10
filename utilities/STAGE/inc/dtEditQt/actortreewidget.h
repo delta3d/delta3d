@@ -30,10 +30,10 @@
 #ifndef DELTA_ACTOR_TREE_WIDGET
 #define DELTA_ACTOR_TREE_WIDGET
 
-#include <QtGui/QListWidget>
+#include <QtWidgets/QListWidget>
 #include <QtCore/QList>
-#include <QtGui/QTreeWidget>
-#include <QtGui/QTreeWidgetItem>
+#include <QtWidgets/QTreeWidget>
+#include <QtWidgets/QTreeWidgetItem>
 #include <QtGui/QIcon>
 
 #include <dtCore/project.h>

@@ -35,7 +35,7 @@
 #include <dtUtil/log.h>
 
 #include <QtCore/QString>
-#include <QtGui/QGridLayout>
+#include <QtWidgets/QGridLayout>
 
 namespace dtQt
 {

@@ -28,7 +28,7 @@
  */
 #include <prefix/stageprefix.h>
 #include <dtActors/volumeeditactor.h>
-#include <QtGui/QAction>
+#include <QtWidgets/QAction>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/editorevents.h>

@@ -1,6 +1,6 @@
 #include "PoseMeshItem.h"
-#include <QtGui/QGraphicsScene>
-#include <QtGui/QGraphicsSceneEvent>
+#include <QtWidgets/QGraphicsScene>
+#include <QtWidgets/QGraphicsSceneEvent>
 #include <QtCore/QMimeData>
 #include <QtGui/QDrag>
 #include <QtGui/QPainter>
@@ -8,9 +8,9 @@
 #include <QtGui/QFont>
 #include <QtGui/QImage>
 #include <QtGui/QPainter>
-#include <QtGui/QStyleOption>
+#include <QtWidgets/QStyleOption>
 #include <QtGui/QCursor>
-#include <QtGui/QMenu>
+#include <QtWidgets/QMenu>
 
 #include <QtGui/QMouseEvent>
 #include <QtGui/QHoverEvent>
@@ -96,7 +96,7 @@ PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh& poseMesh,
    // Make sure this gets drawn on top of the background
    setZValue(1);
 
-   setAcceptsHoverEvents(true);
+   setAcceptHoverEvents(true);
    setToolTip(poseMesh.GetName().c_str());
 
    mSampleCollection.mInitialized = false;

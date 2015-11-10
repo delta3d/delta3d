@@ -29,7 +29,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include <dtQt/export.h>
 #include <dtQt/basepropertycontrol.h>
-#include <QtGui/QCheckBox.h>
+#include <QtWidgets/QCheckBox>
 
 
 

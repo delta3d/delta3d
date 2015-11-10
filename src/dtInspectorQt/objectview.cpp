@@ -1,6 +1,6 @@
 #include <dtInspectorQt/objectview.h>
 #include "ui_dtinspectorqt.h"
-#include <QtGui/QFileDialog>
+#include <QtWidgets/QFileDialog>
 
 //////////////////////////////////////////////////////////////////////////
 dtInspectorQt::ObjectView::ObjectView(Ui::InspectorWidget& ui)

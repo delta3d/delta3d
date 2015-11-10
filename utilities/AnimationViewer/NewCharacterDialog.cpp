@@ -3,7 +3,7 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include "NewCharacterDialog.h"
-#include <QtGui/QPushButton>
+#include <QtWidgets/QPushButton>
 
 
 

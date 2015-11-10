@@ -27,7 +27,7 @@
 
 #include <dtDirector/director.h>
 
-#include <QtGui/QGraphicsRectItem>
+#include <QtWidgets/QGraphicsRectItem>
 
 
 namespace dtDirector

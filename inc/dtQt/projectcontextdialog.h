@@ -24,7 +24,7 @@
 #define DELTA_PROJECT_CONTEXT_DIALOG
 
 #include <dtQt/export.h>
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 
 ///////////////////////////////////////////////////////////////////////////////
 

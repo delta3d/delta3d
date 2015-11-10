@@ -22,7 +22,7 @@
 #include <prefix/dtdirectorqtprefix.h>
 #include <dtDirectorQt/plugindialog.h>
 #include <dtDirectorQt/pluginmanager.h>
-#include <QtGui/QMenu>
+#include <QtWidgets/QMenu>
 #include <iostream>
 
 namespace dtDirector

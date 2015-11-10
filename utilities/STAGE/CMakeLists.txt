@@ -27,15 +27,15 @@ INCLUDE_DIRECTORIES(${SOURCE_PATH}/inc ${QT_INCLUDE_DIR}
                     ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
  )
 
-qt4_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
+qt5_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
 
-QT4_ADD_RESOURCES(RCC_SOURCES
+QT5_ADD_RESOURCES(RCC_SOURCES
                   stage.qrc
                   style.qrc
                   docs/help/help.qrc
 )
 
-QT4_WRAP_UI(UI_SOURCES externaltooldialog.ui externaltoolargeditor.ui positiondialog.ui)
+QT5_WRAP_UI(UI_SOURCES externaltooldialog.ui externaltoolargeditor.ui positiondialog.ui)
 
 SOURCE_GROUP("Generated Files" REGULAR_EXPRESSION qrc_.*cxx|moc_.*cxx)
 
@@ -59,6 +59,7 @@ SET(APP_DEPS
                       ${DTPHYSICS_LIBRARY}
                       ${DTQT_LIBRARY}
                       ${DTUTIL_LIBRARY}
+					  ${DT_QT_LIBRARIES}
 )
 SET(PROG_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/STAGE.plist.in)
 

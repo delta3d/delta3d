@@ -25,14 +25,14 @@
 #include "ObjectViewerData.h"
 #include "TextEdit.h"
 
-#include <QtGui/QAction>
-#include <QtGui/QTabWidget>
-#include <QtGui/QColorDialog>
 #include <QtGui/QContextMenuEvent>
-#include <QtGui/QMenu>
-#include <QtGui/QFileDialog>
-#include <QtGui/QMessageBox>
-#include <QtGui/QApplication>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QTabWidget>
+#include <QtWidgets/QColorDialog>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QApplication>
 
 #include <QtCore/QDir>
 

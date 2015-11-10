@@ -4,10 +4,10 @@
 #include "export.h"
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/plugininterface.h>
-#include <QtGui/QDockWidget>
-#include <QtGui/QTreeWidget>
-#include <QtGui/QPushButton>
-#include <QtGui/QTextEdit>
+#include <QtWidgets/QDockWidget>
+#include <QtWidgets/QTreeWidget>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QTextEdit>
 
 using namespace dtEditQt;
 

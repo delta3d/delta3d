@@ -27,9 +27,9 @@
 #include <dtDirector/node.h>
 #include <dtDirector/director.h>
 
-#include <QtGui/QMainWindow>
+#include <QtWidgets/QMainWindow>
 
-#include <phonon/phonon>
+#include <QtMultimedia/QSoundEffect>
 
 class QAction;
 class QMenuBar;
@@ -39,12 +39,6 @@ class QToolBar;
 namespace Ui
 {
    class DirectorEditor;
-}
-
-namespace Phonon
-{
-   class MediaObject;
-   enum State;
 }
 /// @endcond
 
@@ -623,11 +617,6 @@ namespace dtDirector
        */
       void RefreshNodeScenes();
 
-   private slots:
-
-      ///Used for managing the sound states
-      void OnStateChanged(Phonon::State newState, Phonon::State oldState);
-
    private:
       /**
        * Creates the node scenes
@@ -681,7 +670,7 @@ namespace dtDirector
       std::vector<TabStateData>mTabStates;
       int                      mSavedTabIndex;
 
-      Phonon::MediaObject*     mClickSound;
+	  QSoundEffect* mClickSound;
 
       static std::map<std::string, CustomEditorTool*> mCustomTools;
       static std::vector<DirectorEditor*> mEditorsOpen;

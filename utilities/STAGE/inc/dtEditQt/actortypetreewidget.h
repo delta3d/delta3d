@@ -29,8 +29,8 @@
 #ifndef DELTA_ACTORTYPETREEWIDGET
 #define DELTA_ACTORTYPETREEWIDGET
 
-#include <QtGui/QTreeWidgetItem>
-#include <QtGui/QTreeWidget>
+#include <QtWidgets/QTreeWidgetItem>
+#include <QtWidgets/QTreeWidget>
 #include <dtCore/actortype.h>
 
 namespace dtEditQt

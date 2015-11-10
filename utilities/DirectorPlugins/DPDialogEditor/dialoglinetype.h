@@ -10,8 +10,8 @@
 
 #include <QtCore/QString>
 
-#include <QtGui/QLayout>
-#include <QtGui/QWidget>
+#include <QtWidgets/QLayout>
+#include <QtWidgets/QWidget>
 
 namespace dtDirector
 {

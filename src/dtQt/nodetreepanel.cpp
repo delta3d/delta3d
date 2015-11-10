@@ -23,7 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "ui_nodetreepanel.h"
 #include <QtCore/QString.h>
-#include <QtGui/qtreewidget.h>
+#include <QtWidgets/qtreewidget.h>
 #include <dtQt/nodetreepanel.h>
 #include <osg/Group>
 #include <osg/NodeVisitor>

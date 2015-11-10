@@ -34,7 +34,7 @@
 #include <dtCore/actorproxy.h>
 #include <dtCore/actorproperty.h>
 #include <dtQt/typedefs.h>
-#include <QtGui/QAbstractItemDelegate>
+#include <QtWidgets/QAbstractItemDelegate>
 
 #include <dtCore/refptr.h>
 #include <dtUtil/objectfactory.h>

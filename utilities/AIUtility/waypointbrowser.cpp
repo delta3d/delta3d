@@ -33,7 +33,7 @@
 #include <dtUtil/log.h>
 
 #include <QtGui/QDoubleValidator>
-#include <QtGui/QScrollBar>
+#include <QtWidgets/QScrollBar>
 #include <QtCore/QSettings>
 
 #include <sstream>

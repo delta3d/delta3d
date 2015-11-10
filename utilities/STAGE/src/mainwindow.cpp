@@ -32,17 +32,17 @@
 #include <dtUtil/warningdisable.h>
 DT_DISABLE_WARNING_ALL_START
 #include <QtCore/QFile>
-#include <QtGui/QApplication>
+#include <QtWidgets/QApplication>
 #include <QtGui/QIcon>
-#include <QtGui/QMenu>
-#include <QtGui/QMenuBar>
-#include <QtGui/QToolBar>
-#include <QtGui/QDockWidget>
-#include <QtGui/QSplitter>
-#include <QtGui/QStatusBar>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QMenuBar>
+#include <QtWidgets/QToolBar>
+#include <QtWidgets/QDockWidget>
+#include <QtWidgets/QSplitter>
+#include <QtWidgets/QStatusBar>
+#include <QtWidgets/QMessageBox>
 #include <QtGui/QCloseEvent>
-#include <QtGui/QActionGroup>
+#include <QtWidgets/QActionGroup>
 #include <QtCore/QTimer>
 DT_DISABLE_WARNING_END
 

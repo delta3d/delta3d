@@ -27,16 +27,16 @@
  * Curtiss Murphy
  */
 #include <prefix/stageprefix.h>
-#include <QtGui/QComboBox>
-#include <QtGui/QDirModel>
-#include <QtGui/QGridLayout>
-#include <QtGui/QGroupBox>
-#include <QtGui/QHeaderView>
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
-#include <QtGui/QPushButton>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QDirModel>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QPushButton>
 #include <QtCore/QStringList>
-#include <QtGui/QTreeView>
+#include <QtWidgets/QTreeView>
 #include <dtCore/actorproxy.h>
 #include <dtCore/actortype.h>
 #include <dtCore/actorfactory.h>

@@ -31,7 +31,7 @@
 #define DELTA_TASK_EDITOR
 
 #include <QtCore/QObject>
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 #include <dtEditQt/groupuiplugin.h>
 #include <dtCore/refptr.h>
 #include <set>

@@ -32,7 +32,7 @@
 
 #include <dtCore/refptr.h>
 #include <dtCore/gameevent.h>
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 
 class QLineEdit;
 class QCloseEvent;

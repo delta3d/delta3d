@@ -26,7 +26,7 @@
 #include <dtDirectorQt/nodeitem.h>
 #include <dtDirectorQt/valueitem.h>
 
-#include <QtGui/QGraphicsPolygonItem>
+#include <QtWidgets/QGraphicsPolygonItem>
 #include <QtGui/QPen>
 
 namespace dtDirector

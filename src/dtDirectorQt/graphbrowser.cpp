@@ -22,10 +22,10 @@
 #include <dtDirectorQt/graphbrowser.h>
 #include <dtDirectorQt/directoreditor.h>
 
-#include <QtGui/QWidget>
-#include <QtGui/QGroupBox>
-#include <QtGui/QGridLayout>
-#include <QtGui/QTreeWidget>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QTreeWidget>
 
 namespace dtDirector
 {

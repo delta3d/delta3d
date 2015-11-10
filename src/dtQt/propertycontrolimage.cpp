@@ -29,7 +29,7 @@
 #include <dtCore/resourceactorproperty.h>
 #include <dtCore/resourcedescriptor.h>
 #include <dtCore/project.h>
-#include <QtGui/QFileDialog.h>
+#include <QtWidgets/QFileDialog>
 
 
 

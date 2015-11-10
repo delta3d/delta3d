@@ -29,7 +29,7 @@
 
 #include <dtCore/refptr.h>
 
-#include <QtGui/QGraphicsScene>
+#include <QtWidgets/QGraphicsScene>
 
 #include <vector>
 

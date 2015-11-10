@@ -4,6 +4,7 @@ SET(APP_NAME AnimationViewer)
 INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}
                                             ${CAL3D_INCLUDE_DIR} # for dtAnim
                                             ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
+											${DT_QT_INCLUDE_DIRS}
                                            )
 
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/utilities/${APP_NAME})
@@ -36,9 +37,9 @@ SET(PROG_SOURCES ${SOURCE_PATH}/AnimationTableWidget.cpp
                  ${SOURCE_PATH}/AnimationViewer.rc )
 
 
-QT4_ADD_RESOURCES(RCC_SOURCES AnimationViewerResources.qrc)
-qt4_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
-qt4_wrap_ui(UI_SOURCES AnimationSliderPanel.ui
+QT5_ADD_RESOURCES(RCC_SOURCES AnimationViewerResources.qrc)
+qt5_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
+qt5_wrap_ui(UI_SOURCES AnimationSliderPanel.ui
                        AttachmentPanel.ui
                        NewCharacterDialog.ui
                        PoseMeshProperties.ui
@@ -60,6 +61,7 @@ SET(APP_DEPS
                        ${DTANIM_LIBRARY}
                        ${DTABC_LIBRARY}
                        ${DTQT_LIBRARY}
+					   ${DT_QT_LIBRARIES}
 )
 
 DELTA3D_ADD_PROGRAM(${APP_NAME} MACOSX_BUNDLE DT_ANIMATION_VIEWER)

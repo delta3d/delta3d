@@ -1,6 +1,6 @@
 #include <dialogdelayline.h>
 
-#include <QtGui/QDoubleSpinBox>
+#include <QtWidgets/QDoubleSpinBox>
 
 #include <dtDirector/node.h>
 

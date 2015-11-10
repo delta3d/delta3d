@@ -35,9 +35,9 @@
 #include <dtDirector/nodemanager.h>
 #include <dtDirectorNodes/externalvaluenode.h>
 
-#include <QtGui/QGraphicsScene>
-#include <QtGui/QGraphicsColorizeEffect>
-#include <QtGui/QMenu>
+#include <QtWidgets/QGraphicsScene>
+#include <QtWidgets/QGraphicsColorizeEffect>
+#include <QtWidgets/QMenu>
 
 #include <dtCore/datatype.h>
 
@@ -95,7 +95,8 @@ namespace dtDirector
    {
       while ((int)linkConnectors.size() < count)
       {
-         QGraphicsPathItem* item = new QGraphicsPathItem(scene->GetTranslationItem(), scene);
+         QGraphicsPathItem* item = new QGraphicsPathItem(scene->GetTranslationItem());
+		 scene->addItem(item);
          item->setZValue(20.0f);
          linkConnectors.push_back(item);
       }
@@ -143,7 +144,8 @@ namespace dtDirector
    {
       while ((int)linkConnectors.size() < count)
       {
-         QGraphicsPathItem* item = new QGraphicsPathItem(scene->GetTranslationItem(), scene);
+         QGraphicsPathItem* item = new QGraphicsPathItem(scene->GetTranslationItem());
+		 scene->addItem(item);
          item->setZValue(20.0f);
          linkConnectors.push_back(item);
       }
@@ -171,7 +173,7 @@ namespace dtDirector
 
    //////////////////////////////////////////////////////////////////////////
    NodeItem::NodeItem(Node* node, bool readOnly, bool imported, QGraphicsItem* parent, EditorScene* scene)
-       : QGraphicsPolygonItem(parent, scene)
+       : QGraphicsPolygonItem(parent)
        , mScene(scene)
        , mLoading(true)
        , mIsReadOnly(readOnly)
@@ -199,6 +201,7 @@ namespace dtDirector
 #if(QT_VERSION >= 0x00040600)
       setFlag(QGraphicsItem::ItemSendsGeometryChanges, !imported && !readOnly);
 #endif
+	  scene->addItem(this);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -351,7 +354,8 @@ namespace dtDirector
    {
       if (!mTitle)
       {
-         mTitleBG = new QGraphicsRectItem(this, scene());
+         mTitleBG = new QGraphicsRectItem(this);
+		 scene()->addItem(mTitleBG);
          mTitle = new GraphicsTextItem(mTitleBG, scene());
 
          if (mIsReadOnly)
@@ -380,7 +384,8 @@ namespace dtDirector
       {
          if (!mLatentIcon)
          {
-            mLatentIcon = new QGraphicsPixmapItem(mTitleBG, scene());
+            mLatentIcon = new QGraphicsPixmapItem(mTitleBG);
+			scene()->addItem(mLatentIcon);
             mLatentIcon->setPixmap(QPixmap(":icons/timer_icon.png"));
             mLatentIcon->setOpacity(0.25f);
             mLatentIcon->setScale(0.4f);
@@ -802,7 +807,8 @@ namespace dtDirector
    {
       QPen pen = QPen(LINE_COLOR, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-      if (!mTitleDivider) mTitleDivider = new QGraphicsRectItem(this, scene());
+      if (!mTitleDivider) mTitleDivider = new QGraphicsRectItem(this);
+	  scene()->addItem(mTitleDivider);
       mTitleDivider->setPos(1, mTitleHeight);
       mTitleDivider->setRect(0, 0, mNodeWidth - 2, 0);
       mTitleDivider->setPen(pen);
@@ -814,7 +820,8 @@ namespace dtDirector
          float y = mTitleHeight + 1;
          float height = mLinkHeight - 2;
 
-         if (!mLinkDivider) mLinkDivider = new QGraphicsRectItem(this, scene());
+         if (!mLinkDivider) mLinkDivider = new QGraphicsRectItem(this);
+		 scene()->addItem(mLinkDivider);
          mLinkDivider->setPos(x, y);
          mLinkDivider->setRect(0, 0, 0, height);
          mLinkDivider->setPen(pen);
@@ -829,7 +836,8 @@ namespace dtDirector
       if (!mValues.empty() &&
          (!mInputs.empty() || !mOutputs.empty()))
       {
-         if (!mValueDivider) mValueDivider = new QGraphicsRectItem(this, scene());
+         if (!mValueDivider) mValueDivider = new QGraphicsRectItem(this);
+		 scene()->addItem(mValueDivider);
          mValueDivider->setPos(1, mTitleHeight + mLinkHeight);
          mValueDivider->setRect(1, 0, mNodeWidth - 2, 0);
          mValueDivider->setPen(pen);

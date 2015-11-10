@@ -32,7 +32,7 @@
 #include <dtQt/dynamicabstractcontrol.h>
 #include <dtQt/dynamicsubwidgets.h>
 #include <dtCore/typetoactorproperty.h>
-#include <QtGui/QGridLayout>
+#include <QtWidgets/QGridLayout>
 
 class QWidget;
 

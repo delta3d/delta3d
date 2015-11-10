@@ -5,7 +5,7 @@
 #ifndef DELTA_PSEDITOR_TEXTURE_PREVIEW
 #define DELTA_PSEDITOR_TEXTURE_PREVIEW
 
-#include <QtGui/QLabel>
+#include <QtWidgets/QLabel>
 #include <QtGui/QPaintEvent>
 
 #include <osg/Image>

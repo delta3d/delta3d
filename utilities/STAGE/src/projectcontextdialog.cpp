@@ -29,16 +29,16 @@
 #include <prefix/stageprefix.h>
 #include "dtEditQt/projectcontextdialog.h"
 
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QPushButton>
-#include <QtGui/QGroupBox>
-#include <QtGui/QGridLayout>
-#include <QtGui/QLineEdit>
-#include <QtGui/QFileDialog>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QMessageBox>
 #include <QtGui/QCloseEvent>
-#include <QtGui/QLabel>
+#include <QtWidgets/QLabel>
 
 #include "dtEditQt/editordata.h"
 #include "dtEditQt/editorevents.h"

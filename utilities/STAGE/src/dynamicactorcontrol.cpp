@@ -35,8 +35,8 @@
 #include <dtCore/map.h>
 #include <dtCore/exceptionenum.h>
 #include <dtCore/datatype.h>
-#include <QtGui/QPushButton>
-#include <QtGui/QHBoxLayout>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QHBoxLayout>
 
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>

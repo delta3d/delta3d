@@ -31,7 +31,7 @@
 #include <dtQt/export.h>
 #include <dtCore/objecttype.h>
 // QT
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 
 
 

@@ -27,7 +27,7 @@
  * Matthew W. Campbell
  */
 #include <prefix/stageprefix.h>
-#include <QtGui/QAction>
+#include <QtWidgets/QAction>
 
 #include <osg/PolygonMode>
 #include <osg/PolygonOffset>

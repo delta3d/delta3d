@@ -29,7 +29,7 @@
 #ifndef DELTA_VIEWPORT_CONTAINER
 #define DELTA_VIEWPORT_CONTAINER
 
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 #include "dtEditQt/viewport.h"
 
 class QAction;

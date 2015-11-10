@@ -16,11 +16,12 @@ SET(LIB_PUBLIC_HEADERS
 
 INCLUDE_DIRECTORIES(  ${CMAKE_SOURCE_DIR}/utilities/STAGE/inc
             ${QT_INCLUDE_DIR}
+            ${DT_QT_INCLUDE_DIRS}
             ${DELTA3D_SOURCE_DIR}/ui/dtDirectorQt # for ui*.h files
 )
 
-qt4_wrap_cpp(MOC_SOURCES ${LIB_PUBLIC_HEADERS})
-QT4_ADD_RESOURCES(RCC_SOURCES tool.qrc)
+qt5_wrap_cpp(MOC_SOURCES ${LIB_PUBLIC_HEADERS})
+QT5_ADD_RESOURCES(RCC_SOURCES tool.qrc)
 
 #put the binary into a "STAGE plugins" folder
 
@@ -41,6 +42,7 @@ SET(LIB_DEPS
                        ${QT_QTCORE_LIBRARY}
                        ${QT_QTGUI_LIBRARY}
                        ${QT_QTOPENGL_LIBRARY}
+                       ${DT_QT_LIBRARIES}
                       )
 
 SETUP_PLUGIN_WITH_OUTPUT_DIRS(${LIB_NAME} DT_DIRECTOR_TOOL_PLUGIN stplugins)

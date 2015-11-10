@@ -10,7 +10,7 @@
 #include <dtUtil/nodecollector.h>
 #include <dtUtil/stringutils.h>
 
-#include <QtGui/QFileDialog>
+#include <QtWidgets/QFileDialog>
 
 #include <osg/Node>
 #include <osg/Geode>

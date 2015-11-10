@@ -1,7 +1,7 @@
 #ifndef UNDOCOMMANDS_h__
 #define UNDOCOMMANDS_h__
 
-#include <QtGui/QUndoCommand>
+#include <QtWidgets/QUndoCommand>
 #include <dtAI/aiplugininterface.h>
 
 namespace dtAI

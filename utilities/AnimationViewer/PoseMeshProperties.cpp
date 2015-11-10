@@ -3,7 +3,7 @@
 #include <dtAnim/posemesh.h>
 #include <dtAnim/basemodelwrapper.h>
 #include <dtUtil/macros.h>
-#include <QtGui/QTreeWidgetItem>
+#include <QtWidgets/QTreeWidgetItem>
 #include <QtCore/QString>
 #include <assert.h>
 

@@ -39,7 +39,7 @@
 #include <dtPhysics/palphysicsworld.h>
 #include <dtPhysics/physicscompiler.h>
 // QT
-#include <QtGui/QDockWidget>
+#include <QtWidgets/QDockWidget>
 
 
 

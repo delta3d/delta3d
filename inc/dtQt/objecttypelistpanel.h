@@ -32,7 +32,7 @@
 #include <dtCore/objecttype.h>
 #include <dtUtil/functor.h>
 // QT
-#include <QtGui/QListWidgetItem>
+#include <QtWidgets/QListWidgetItem>
 
 
 

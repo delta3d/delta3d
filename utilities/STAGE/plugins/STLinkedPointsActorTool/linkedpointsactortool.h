@@ -4,9 +4,9 @@
 #include "export.h"
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/plugininterface.h>
-#include <QtGui/QPushButton>
-#include <QtGui/QCheckBox>
-#include <QtGui/QDockWidget>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QDockWidget>
 #include <dtActors/linkedpointsactorproxy.h>
 #include <dtCore/actorproperty.h>
 #include "toolobjectmotionmodel.h"

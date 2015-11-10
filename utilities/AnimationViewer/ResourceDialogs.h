@@ -6,7 +6,7 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include "ui_ResourceAddDialog.h"
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 #include <dtCore/observerptr.h>
 #include <dtAnim/basemodelwrapper.h>
 

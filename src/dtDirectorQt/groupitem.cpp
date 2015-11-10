@@ -30,9 +30,9 @@
 #include <dtDirector/director.h>
 #include <dtDirector/groupnode.h>
 
-#include <QtGui/QGraphicsScene>
-#include <QtGui/QMenu>
-#include <QtGui/QGraphicsSceneContextMenuEvent>
+#include <QtWidgets/QGraphicsScene>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QGraphicsSceneContextMenuEvent>
 
 #include <dtUtil/mathdefines.h>
 
@@ -217,7 +217,8 @@ namespace dtDirector
    {
       // Update the internal grouped-items-vector and the items' group-information.
       mGroupedItems.clear();
-      QList<QGraphicsItem*> items = mScene->items(scenePos().x(), scenePos().y(), GetNodeWidth(), GetNodeHeight(), Qt::ContainsItemShape);
+	  QRect rect(scenePos().x(), scenePos().y(), GetNodeWidth(), GetNodeHeight());
+      QList<QGraphicsItem*> items = mScene->items(rect, Qt::ContainsItemShape);
       for (int i = 0; i < items.size(); i++)
       {
          NodeItem* item = dynamic_cast<NodeItem*>(items[i]);

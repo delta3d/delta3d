@@ -1,8 +1,8 @@
 #ifndef __POSE_MESH_VIEW_H__
 #define __POSE_MESH_VIEW_H__
 
-#include <QtGui/QGraphicsView>
-#include <QtGui/QDialog>
+#include <QtWidgets/QGraphicsView>
+#include <QtWidgets/QDialog>
 #include <QtCore/QTimer>
 #include "PoseMeshScene.h"
 

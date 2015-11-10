@@ -1,5 +1,5 @@
 #include <layersbrowser.h>
-#include <QtGui/QInputDialog>
+#include <QtWidgets/QInputDialog>
 
 ///////////////////////////////////////////////////////////////////////////////
 LayersBrowser::LayersBrowser()

@@ -1,7 +1,7 @@
 #ifndef externaltoolargeditor_h__
 #define externaltoolargeditor_h__
 
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 #include "ui_externaltoolargeditor.h"
 
 namespace dtEditQt

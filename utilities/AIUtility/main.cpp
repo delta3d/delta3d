@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include <QtGui/QApplication>
+#include <QtWidgets/QApplication>
 
 #include "mainwindow.h"
 #include "aiutilityapp.h"

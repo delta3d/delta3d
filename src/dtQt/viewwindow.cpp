@@ -77,7 +77,7 @@ public:
       KeyMap::iterator itr = mKeyMap.find(event->key());
       if (itr == mKeyMap.end())
       {
-         return int(*(event->text().toAscii().data()));
+         return int(*(event->text().toLatin1().data()));
       }
       else
       {

@@ -36,17 +36,18 @@
 
 #include <dtCore/datatype.h>
 
-#include <QtGui/QGraphicsScene>
-#include <QtGui/QGraphicsSceneMouseEvent>
+#include <QtWidgets/QGraphicsScene>
+#include <QtWidgets/QGraphicsSceneMouseEvent>
 #include <QtGui/QContextMenuEvent>
-#include <QtGui/QMenu>
+#include <QtWidgets/QMenu>
 
 
 namespace dtDirector
 {
    const unsigned int LinkItem::LINE_WIDTH = 2;
 
-   LinkItem::LinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene, const std::string& comment): QGraphicsPolygonItem(parent, scene)
+   LinkItem::LinkItem(NodeItem* nodeItem, int linkIndex, QGraphicsItem* parent, EditorScene* scene, const std::string& comment)
+	  : QGraphicsPolygonItem(parent)
       , mDrawing(NULL)
       , mHighlight(NULL)
       , mScene(scene)
@@ -75,6 +76,8 @@ namespace dtDirector
       {
          connect(this, SIGNAL(LinkConnected()), mScene->GetEditor(), SLOT(OnPlayClickSound()));
       }
+
+	  scene->addItem(this);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -179,11 +182,13 @@ namespace dtDirector
       // Begin drawing a link.
       if (mHighlight) delete mHighlight;
 
-      mHighlight = new QGraphicsPathItem(NULL, mScene);
+      mHighlight = new QGraphicsPathItem(nullptr);
+	  mScene->addItem(mHighlight);
       mHighlight->setZValue(40.0f);
       mHighlight->setPen(QPen(Qt::yellow, LINE_WIDTH + 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
-      mDrawing = new QGraphicsPathItem(mHighlight, mScene);
+      mDrawing = new QGraphicsPathItem(mHighlight);
+	  mScene->addItem(mDrawing);
       mDrawing->setPen(QPen(Qt::black, LINE_WIDTH, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin));
    }
 
@@ -446,7 +451,7 @@ namespace dtDirector
       QPointF mousePos = mouseEvent->scenePos();
 
       // Find and highlight any output links being hovered over.
-      QList<QGraphicsItem*> hoverList = mScene->items(mousePos.x(), mousePos.y(), 1, 1);
+      QList<QGraphicsItem*> hoverList = mScene->items(mousePos);
       if (!hoverList.empty())
       {
          int count = (int)hoverList.size();
@@ -541,7 +546,7 @@ namespace dtDirector
             NodeItem* targetNode = NULL;
 
             // Find and highlight any output links being hovered over.
-            QList<QGraphicsItem*> hoverList = mScene->items(mouseEvent->scenePos().x(), mouseEvent->scenePos().y(), 1, 1);
+            QList<QGraphicsItem*> hoverList = mScene->items(mouseEvent->scenePos());
             if (!hoverList.empty())
             {
                int count = (int)hoverList.size();
@@ -962,7 +967,7 @@ namespace dtDirector
       QPointF mousePos = mouseEvent->scenePos();
 
       // Find and highlight any output links being hovered over.
-      QList<QGraphicsItem*> hoverList = mScene->items(mousePos.x(), mousePos.y(), 1, 1);
+      QList<QGraphicsItem*> hoverList = mScene->items(mousePos);
       if (!hoverList.empty())
       {
          int count = (int)hoverList.size();
@@ -1057,7 +1062,7 @@ namespace dtDirector
             NodeItem* targetNode = NULL;
 
             // Find and highlight any output links being hovered over.
-            QList<QGraphicsItem*> hoverList = mScene->items(mouseEvent->scenePos().x(), mouseEvent->scenePos().y(), 1, 1);
+            QList<QGraphicsItem*> hoverList = mScene->items(mouseEvent->scenePos());
             if (!hoverList.empty())
             {
                int count = (int)hoverList.size();
@@ -1606,7 +1611,7 @@ namespace dtDirector
       ValueLink* input = mNodeItem->GetValues()[mLinkIndex].link;
 
       // Find and highlight any output links being hovered over.
-      QList<QGraphicsItem*> hoverList = mScene->items(mousePos.x(), mousePos.y(), 1, 1);
+      QList<QGraphicsItem*> hoverList = mScene->items(mousePos);
       if (!hoverList.empty())
       {
          int count = (int)hoverList.size();
@@ -1855,7 +1860,7 @@ namespace dtDirector
             bool connectingTwoValueLinks = false;
 
             // Find and highlight any output links being hovered over.
-            QList<QGraphicsItem*> hoverList = mScene->items(mouseEvent->scenePos().x(), mouseEvent->scenePos().y(), 1, 1);
+            QList<QGraphicsItem*> hoverList = mScene->items(mouseEvent->scenePos());
             if (!hoverList.empty())
             {
                int count = (int)hoverList.size();
@@ -2130,7 +2135,7 @@ namespace dtDirector
       QPointF mousePos = mouseEvent->scenePos();
 
       // Find and highlight any output links being hovered over.
-      QList<QGraphicsItem*> hoverList = mScene->items(mousePos.x(), mousePos.y(), 1, 1);
+      QList<QGraphicsItem*> hoverList = mScene->items(mousePos);
       if (!hoverList.empty())
       {
          int count = (int)hoverList.size();
@@ -2222,7 +2227,7 @@ namespace dtDirector
       start.setY(start.y() - LINK_LENGTH);
 
       // Find and highlight any value links being hovered over.
-      QList<QGraphicsItem*> hoverList = mScene->items(mouseEvent->scenePos().x(), mouseEvent->scenePos().y(), 1, 1);
+      QList<QGraphicsItem*> hoverList = mScene->items(mouseEvent->scenePos());
       if (!hoverList.empty())
       {
          int count = (int)hoverList.size();

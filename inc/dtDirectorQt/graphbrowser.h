@@ -27,8 +27,8 @@
 #include <dtDirector/director.h>
 #include <dtDirector/directorgraph.h>
 
-#include <QtGui/QDockWidget>
-#include <QtGui/QTreeWidgetItem>
+#include <QtWidgets/QDockWidget>
+#include <QtWidgets/QTreeWidgetItem>
 
 class QGroupBox;
 class QTreeWidget;

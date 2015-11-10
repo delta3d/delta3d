@@ -32,18 +32,18 @@
 #include <dtQt/dynamicabstractcontrol.h>
 
 #include <QtGui/QPainter>
-#include <QtGui/QFrame>
+#include <QtWidgets/QFrame>
 #include <QtGui/QKeyEvent>
-#include <QtGui/QApplication>
-#include <QtGui/QSpinBox>
-#include <QtGui/QToolButton>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QMessageBox>
-#include <QtGui/QLabel>
-#include <QtGui/QComboBox>
-#include <QtGui/QPushButton>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QSpinBox>
+#include <QtWidgets/QToolButton>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QPushButton>
 
-#include <QtGui/QTileRules>
+#include <QtWidgets/QTileRules>
 #include <QtCore/QDebug>
 #include <limits.h>
 

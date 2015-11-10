@@ -1,6 +1,6 @@
 #include <mainwindow.h>
 #include <dtCore/system.h>
-#include <QtGui/QApplication>
+#include <QtWidgets/QApplication>
 #include <dtQt/deltastepper.h>
 #include <dtQt/qtguiwindowsystemwrapper.h>
 

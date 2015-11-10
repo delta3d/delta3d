@@ -1,8 +1,8 @@
 SET(TARGET_SRC App.cpp main.cpp MainWindow.cpp readme.txt )
 SET(TARGET_H App.h MainWindow.h)
 
-QT4_WRAP_CPP(MOC_SOURCES ${TARGET_H})
-QT4_WRAP_UI(UI_SOURCES MainWindow.ui)
+QT5_WRAP_CPP(MOC_SOURCES ${TARGET_H})
+QT5_WRAP_UI(UI_SOURCES MainWindow.ui)
 
 SET(TARGET_SRC ${TARGET_SRC} ${MOC_SOURCES} ${UI_SOURCES})
 

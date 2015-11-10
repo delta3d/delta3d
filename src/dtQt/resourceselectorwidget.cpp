@@ -31,7 +31,7 @@
 
 #include <dtCore/project.h>
 
-#include <QtGui/QMenu>
+#include <QtWidgets/QMenu>
 
 namespace dtQt
 {

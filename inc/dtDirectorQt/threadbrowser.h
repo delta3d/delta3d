@@ -27,8 +27,8 @@
 #include <dtDirector/director.h>
 #include <dtDirector/directorgraph.h>
 
-#include <QtGui/QDockWidget>
-#include <QtGui/QListWidgetItem>
+#include <QtWidgets/QDockWidget>
+#include <QtWidgets/QListWidgetItem>
 
 #include <stack>
 

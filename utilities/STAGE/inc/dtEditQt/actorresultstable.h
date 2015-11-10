@@ -30,10 +30,10 @@
 #ifndef DELTA_ACTORRESULTSTABLE
 #define DELTA_ACTORRESULTSTABLE
 
-#include <QtGui/QWidget>
-#include <QtGui/QTreeWidget>
-#include <QtGui/QTreeWidgetItem>
-#include <QtGui/QMenu>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QTreeWidget>
+#include <QtWidgets/QTreeWidgetItem>
+#include <QtWidgets/QMenu>
 #include <vector>
 #include <dtCore/actorproxy.h>
 #include <dtCore/actorproperty.h>

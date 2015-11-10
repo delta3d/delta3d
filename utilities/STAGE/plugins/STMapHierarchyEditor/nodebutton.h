@@ -4,7 +4,7 @@
 #include "export.h"
 #include "ui_nodebutton.h"
 
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 
 namespace dtCore
 {

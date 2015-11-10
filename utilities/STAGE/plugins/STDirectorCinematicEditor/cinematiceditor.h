@@ -38,7 +38,7 @@
 
 #include <dtAnim/animationchannel.h>
 
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 
 #include <QtCore/QTimer>
 

@@ -30,7 +30,7 @@
 #ifndef DELTA_ACTORGLOBALBROWSER
 #define DELTA_ACTORGLOBALBROWSER
 
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 #include <vector>
 #include <dtCore/actorproxy.h>
 #include <dtCore/actorproperty.h>

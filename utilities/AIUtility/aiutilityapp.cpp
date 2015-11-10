@@ -42,7 +42,7 @@
 #include <dtAI/waypointpair.h>
 #include <dtAI/waypointgraph.h>
 
-#include <QtGui/QUndoCommand>
+#include <QtWidgets/QUndoCommand>
 
 #include "aicomponent.h"
 #include "aiutilityinputcomponent.h"

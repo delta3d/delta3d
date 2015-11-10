@@ -29,7 +29,7 @@
 
 #include <dtCore/uniqueid.h>
 
-#include <QtGui/QMainWindow>
+#include <QtWidgets/QMainWindow>
 
 #include "ui_dialogeditor.h"
 

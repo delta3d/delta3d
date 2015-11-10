@@ -26,7 +26,7 @@
 
 #include <dtDirectorQt/export.h>
 
-#include <QtGui/QGraphicsView>
+#include <QtWidgets/QGraphicsView>
 
 #include <QtCore/QTimer>
 

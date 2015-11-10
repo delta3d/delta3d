@@ -24,11 +24,11 @@
 
 #include <export.h>
 
-#include <QtGui/QTreeWidget>
-#include <QtGui/QListWidget>
-#include <QtGui/QTreeWidgetItem>
-#include <QtGui/QListWidgetItem>
-#include <QtGui/QItemDelegate>
+#include <QtWidgets/QTreeWidget>
+#include <QtWidgets/QListWidget>
+#include <QtWidgets/QTreeWidgetItem>
+#include <QtWidgets/QListWidgetItem>
+#include <QtWidgets/QItemDelegate>
 
 #include <dtCore/uniqueid.h>
 

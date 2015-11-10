@@ -4,12 +4,12 @@
 
 #include <dtDirector/node.h>
 
-#include <QtGui/QGroupBox>
-#include <QtGui/QGridLayout>
-#include <QtGui/QSpacerItem>
-#include <QtGui/QCheckBox>
-#include <QtGui/QLineEdit>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QMessageBox>
 
 
 ///////////////////////////////////////////////////////////////////////////////

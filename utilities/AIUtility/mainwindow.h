@@ -25,7 +25,7 @@
 #ifndef AIUTILITY_MAIN_WINDOW
 #define AIUTILITY_MAIN_WINDOW
 
-#include <QtGui/QMainWindow>
+#include <QtWidgets/QMainWindow>
 #include <dtAI/primitives.h>
 #include <dtCore/transform.h>
 

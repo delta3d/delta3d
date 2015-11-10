@@ -2,7 +2,9 @@
 
 #include "nodebutton.h"
 
-#include <QtGui/QApplication>
+#include <QtCore/QMimeData>
+#include <QtWidgets/QApplication>
+#include <QtGui/QDrag>
 #include <QtGui/QMouseEvent>
 
 #include <dtQt/typedefs.h>

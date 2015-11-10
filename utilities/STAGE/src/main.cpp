@@ -25,9 +25,9 @@
  * circumstances in which the U. S. Government may have rights in the software.
  */
 #include <prefix/stageprefix.h>
-#include <QtGui/QApplication>
-#include <QtGui/QMessageBox>
-#include <QtGui/QSplashScreen>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QSplashScreen>
 #include <QtGui/QPixmap>
 #include <sstream>
 #include <dtCore/system.h>
@@ -43,7 +43,6 @@
 #include <dtQt/deltastepper.h>
 #include <dtEditQt/stageapplication.h>
 #include <dtEditQt/stageglwidgetfactory.h>
-#include <QtGui/QPlastiqueStyle>
 #include <QtCore/QTextStream>
 
 #include <iostream>

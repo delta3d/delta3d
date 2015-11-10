@@ -30,7 +30,7 @@
 #ifndef DELTA_ACTORSEARCHER
 #define DELTA_ACTORSEARCHER
 
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 #include <vector>
 #include <dtCore/refptr.h>
 #include <dtCore/actorproxy.h>

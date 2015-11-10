@@ -33,8 +33,8 @@
 #include <dtEditQt/export.h>
 
 DT_DISABLE_WARNING_ALL_START
-#include <QtGui/QMainWindow>
-#include <QtGui/QDockWidget>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QDockWidget>
 #include <QtCore/QMap>
 DT_DISABLE_WARNING_END
 

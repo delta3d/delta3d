@@ -39,10 +39,10 @@
 
 #include <dtUtil/log.h>
 
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
-#include <QtGui/QWidget>
-#include <QtGui/QGridLayout>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QGridLayout>
 
 namespace dtQt
 {

@@ -32,19 +32,19 @@
 #include <dtEditQt/prefabsaveasdialog.h>
 #include <dtEditQt/uiresources.h>
 
-#include <QtGui/QFileDialog>
-#include <QtGui/QGroupBox>
-#include <QtGui/QLineEdit>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QTextEdit>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QTextEdit>
 #include <QtGui/QValidator>
-#include <QtGui/QPushButton>
+#include <QtWidgets/QPushButton>
 #include <QtGui/QCloseEvent>
-#include <QtGui/QMessageBox>
-#include <QtGui/QGroupBox>
-#include <QtGui/QLabel>
-#include <QtGui/QToolButton>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QToolButton>
 
 #include <dtCore/project.h>
 #include <dtCore/map.h>

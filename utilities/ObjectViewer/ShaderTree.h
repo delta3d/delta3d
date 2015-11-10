@@ -21,7 +21,7 @@
 #ifndef SHADER_TREE
 #define SHADER_TREE
 
-#include <QtGui/QTreeWidget>
+#include <QtWidgets/QTreeWidget>
 
 ///////////////////////////////////////////////////////////////////////////////
 

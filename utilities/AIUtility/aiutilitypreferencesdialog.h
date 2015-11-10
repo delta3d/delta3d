@@ -21,7 +21,7 @@
 #ifndef AIUTILITY_PREFERENCES_DIALOG
 #define AIUTILITY_PREFERENCES_DIALOG
 
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 
 class QCheckBox;
 

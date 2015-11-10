@@ -58,16 +58,16 @@
 #include <dtUtil/utiltree.h>
 
 #include <QtCore/QStringList>
-#include <QtGui/QAction>
-#include <QtGui/QGridLayout>
-#include <QtGui/QGroupBox>
-#include <QtGui/QHeaderView>
-#include <QtGui/QLabel>
-#include <QtGui/QMainWindow>
-#include <QtGui/QScrollArea>
-#include <QtGui/QScrollBar>
-#include <QtGui/QTreeView>
-#include <QtGui/QTreeWidget>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QScrollArea>
+#include <QtWidgets/QScrollBar>
+#include <QtWidgets/QTreeView>
+#include <QtWidgets/QTreeWidget>
 
 #include <osg/Referenced>
 

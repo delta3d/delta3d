@@ -26,11 +26,11 @@
 #include <dialogrefline.h>
 #include <dialoglineregistry.h>
 
-#include <QtGui/QWidget>
-#include <QtGui/QLayout>
-#include <QtGui/QListWidget>
-#include <QtGui/QGroupBox>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QLayout>
+#include <QtWidgets/QListWidget>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QMessageBox>
 
 #include <QtCore/QSettings>
 

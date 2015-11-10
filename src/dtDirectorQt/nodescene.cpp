@@ -39,7 +39,7 @@
 #include <QtGui/QPainter>
 #include <QtGui/QImage>
 
-#include <QtGui/QGraphicsView>
+#include <QtWidgets/QGraphicsView>
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -58,7 +58,8 @@ namespace dtDirector
    {
       setBackgroundBrush(Qt::lightGray);
 
-      mpItem = new QGraphicsRectItem(NULL, this);
+      mpItem = new QGraphicsRectItem(NULL);
+	  addItem(mpItem);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -246,7 +247,8 @@ namespace dtDirector
 
       delete mpItem;
 
-      mpItem = new QGraphicsRectItem(NULL, this);
+      mpItem = new QGraphicsRectItem(NULL);
+	  addItem(mpItem);
 
       mHeight = 0;
    }
@@ -367,19 +369,21 @@ namespace dtDirector
       painter->scale(scale, scale);
       item->paint(painter, options);
 
-      int count = item->children().count();
-      for (int index = 0; index < count; ++index)
-      {
-         QGraphicsItem* child = item->children()[index];
-         if (child)
-         {
-            painter->translate(child->pos());
+	  QGraphicsItem* curItem = nullptr;
+	  QList<QGraphicsItem*> children = item->childItems();
+	  std::for_each(children.begin(), children.end(),
+		  [&](QGraphicsItem* child)
+		  {
+			 if (child != nullptr)
+			 {
+				painter->translate(child->pos());
 
-            PaintItemChildren(painter, child, options);
+				PaintItemChildren(painter, child, options);
 
-            painter->translate(-child->pos());
-         }
-      }
+				painter->translate(-child->pos());
+			 }
+		  }
+	  );
 
       // Undo the previous scale amount.
       scale = 1.0f / scale;

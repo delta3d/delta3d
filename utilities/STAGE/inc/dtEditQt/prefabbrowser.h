@@ -30,9 +30,9 @@
 #ifndef DELTA_PREFAB_BROWSER
 #define DELTA_PREFAB_BROWSER
 
-#include <QtGui/QMenu>
-#include <QtGui/QShortcut>
-#include <QtGui/QWidget>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QShortcut>
+#include <QtWidgets/QWidget>
 #include <vector>
 
 #include <dtEditQt/actortypetreewidget.h>

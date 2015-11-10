@@ -29,7 +29,7 @@
 #include <dtDirector/director.h>
 #include <dtDirectorQt/directoreditor.h>
 
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 
 #include <vector>
 

@@ -25,7 +25,7 @@
 #include <dtQt/export.h>
 #include <dtCore/observerptr.h>
 #include <dtCore/refptr.h>
-#include <QtGui/qwidget.h>
+#include <QtWidgets/qwidget.h>
 #include <osg/Node>
 #include <osg/Texture>
 #include <osgDB/Options>

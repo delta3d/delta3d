@@ -21,21 +21,21 @@
 
 #include <prefix/dtqtprefix.h>
 #include <dtQt/docbrowser.h>
-#include <QtGui/QToolBar>
-#include <QtGui/QAction>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QSplitter>
-#include <QtGui/QPushButton>
-#include <QtGui/QScrollBar>
-#include <QtGui/QLabel>
-#include <QtGui/QTextEdit>
-#include <QtGui/QTabWidget>
+#include <QtWidgets/QToolBar>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QSplitter>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QScrollBar>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QTextEdit>
+#include <QtWidgets/QTabWidget>
 #include <QtCore/QTextStream>
 #include <QtCore/QFile>
 #include <QtGui/QIcon>
 #include <QtGui/QMouseEvent>
-#include <QtGui/QApplication>
+#include <QtWidgets/QApplication>
 
 const QString USING_HELP_TAG = "Using Help!";
 

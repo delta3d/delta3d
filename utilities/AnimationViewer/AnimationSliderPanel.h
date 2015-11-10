@@ -6,7 +6,7 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include "ui_AnimationSliderPanel.h"
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 #include <dtAnim/animationupdaterinterface.h>
 #include <dtCore/refptr.h>
 

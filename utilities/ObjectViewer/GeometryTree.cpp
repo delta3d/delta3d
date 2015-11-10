@@ -23,7 +23,7 @@
 #include "ObjectViewerData.h"
 
 #include <QtGui/QContextMenuEvent>
-#include <QtGui/QMenu>
+#include <QtWidgets/QMenu>
 
 
 ////////////////////////////////////////////////////////////////////////////////

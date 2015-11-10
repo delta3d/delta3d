@@ -57,6 +57,7 @@
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/nodemask.h>
 
+#include <QtCore/QMimeData>
 #include <QtGui/QDrag>
 #include <QtGui/QDragMoveEvent>
 #include <QtGui/QDragEnterEvent>

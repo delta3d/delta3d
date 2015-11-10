@@ -22,7 +22,7 @@
 #ifndef MainWindow_h__
 #define MainWindow_h__
 
-#include <QtGui/QMainWindow>
+#include <QtWidgets/QMainWindow>
 #include "ui_MainWindow.h"
 #include <dtCore/refptr.h>
 

@@ -30,7 +30,7 @@
 #ifndef DELTA_PROJECT_BROWSER
 #define DELTA_PROJECT_BROWSER
 
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 
 class QGroupBox;
 class QPushButton;

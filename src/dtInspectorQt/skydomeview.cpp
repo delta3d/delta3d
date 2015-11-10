@@ -1,6 +1,6 @@
 #include <dtInspectorQt/skydomeview.h>
 #include "ui_dtinspectorqt.h"
-#include <QtGui/QColorDialog>
+#include <QtWidgets/QColorDialog>
 
 //////////////////////////////////////////////////////////////////////////
 dtInspectorQt::SkyDomeView::SkyDomeView(Ui::InspectorWidget& ui)

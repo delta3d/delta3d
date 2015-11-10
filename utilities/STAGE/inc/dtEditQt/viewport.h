@@ -32,7 +32,7 @@
 #define DELTA_STAGE_VIEWPORT
 
 #include <QtOpenGL/QGLWidget>
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 #include <QtGui/QCursor>
 
 #include <map>

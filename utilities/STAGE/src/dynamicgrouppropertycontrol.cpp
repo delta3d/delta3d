@@ -44,10 +44,10 @@
 
 #include <dtUtil/log.h>
 
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QMessageBox>
-#include <QtGui/QPushButton>
-#include <QtGui/QWidget>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QWidget>
 
 namespace dtEditQt
 {

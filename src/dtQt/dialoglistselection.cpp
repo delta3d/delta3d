@@ -26,12 +26,12 @@
 #include <dtQt/dialoglistselection.h>
 
 #include <QtCore/QStringList>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QPushButton>
-#include <QtGui/QGroupBox>
-#include <QtGui/QListWidget>
-#include <QtGui/QListWidgetItem>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QListWidget>
+#include <QtWidgets/QListWidgetItem>
 
 namespace dtQt
 {

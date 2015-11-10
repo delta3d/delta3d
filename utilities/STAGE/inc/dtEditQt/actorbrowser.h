@@ -30,7 +30,7 @@
 #ifndef DELTA_ACTOR_BROWSER
 #define DELTA_ACTOR_BROWSER
 
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 #include <vector>
 
 #include <dtCore/refptr.h>

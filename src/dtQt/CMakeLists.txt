@@ -72,10 +72,11 @@ viewwindow.cpp
 )
 
 INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}
+					${DT_QT_INCLUDE_DIRS}
                     ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
                    )
 				   
-qt4_wrap_ui(UI_SOURCES actortreepanel.ui
+qt5_wrap_ui(UI_SOURCES actortreepanel.ui
                        basedialog.ui
                        basepropertycontrol.ui
                        nodetreepanel.ui
@@ -97,9 +98,9 @@ qt4_wrap_ui(UI_SOURCES actortreepanel.ui
                        propertycontrolvec4.ui
                        propertypanel.ui)
                        
-QT4_WRAP_CPP(MOC_SOURCES ${LIB_PUBLIC_HEADERS})
+QT5_WRAP_CPP(MOC_SOURCES ${LIB_PUBLIC_HEADERS})
 
-QT4_ADD_RESOURCES(RCC_SOURCES
+QT5_ADD_RESOURCES(RCC_SOURCES
                   dtqt.qrc
 )
 
@@ -123,6 +124,7 @@ set(LIB_EXTERNAL_DEPS
 set(LIB_DEPS
   ${DTCORE_LIBRARY}
   ${DTGAME_LIBRARY}
+  ${DT_QT_LIBRARIES}
 )
 
 DELTA3D_ADD_LIBRARY(${LIB_NAME} DT_QT_LIBRARY)

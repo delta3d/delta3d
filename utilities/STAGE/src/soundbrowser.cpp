@@ -21,19 +21,19 @@
  */
 #include <prefix/stageprefix.h>
 #include <QtCore/QDir>
-#include <QtGui/QHeaderView>
+#include <QtWidgets/QHeaderView>
 
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QGridLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QGridLayout>
 #include <QtCore/QString>
 
-#include <QtGui/QGroupBox>
+#include <QtWidgets/QGroupBox>
 
-#include <QtGui/QPushButton>
+#include <QtWidgets/QPushButton>
 #include <QtGui/QPixmap>
 #include <QtGui/QIcon>
 
-#include <QtGui/QAction>
+#include <QtWidgets/QAction>
 #include <QtGui/QContextMenuEvent>
 
 #include "dtEditQt/soundbrowser.h"
@@ -161,7 +161,7 @@ namespace dtEditQt
                   ALenum format;
                   ALsizei size;
                   ALfloat freq;
-                  ALvoid* soundData = alutLoadMemoryFromFile(file.toAscii(), &format, &size, &freq);
+                  ALvoid* soundData = alutLoadMemoryFromFile(file.toLatin1(), &format, &size, &freq);
                   if (soundData == NULL)
                   {
                      return false;
@@ -245,13 +245,13 @@ namespace dtEditQt
                stopSound();
                break;
             default:
-               return mTree->eventFilter(obj, e);
+				return mTree->HandleEvent(obj, e);
             }
          }
          else
          {
             // pass the event on to the parent class
-            return mTree->eventFilter(obj, e);
+			 return mTree->HandleEvent(obj, e);
          }
       }
       return false;

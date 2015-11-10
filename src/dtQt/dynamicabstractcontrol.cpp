@@ -58,9 +58,9 @@
 #include <QtGui/QColor>
 #include <QtGui/QPainter>
 #include <QtGui/QPalette>
-#include <QtGui/QStyleOptionViewItem>
-#include <QtGui/QWidget>
-#include <QtGui/QGridLayout>
+#include <QtWidgets/QStyleOptionViewItem>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QGridLayout>
 
 namespace dtQt
 {

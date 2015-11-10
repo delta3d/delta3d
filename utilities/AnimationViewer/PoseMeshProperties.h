@@ -1,7 +1,7 @@
 #ifndef __POSEMESH_PROPERTIES_H__
 #define __POSEMESH_PROPERTIES_H__
 
-#include <QtGui/QTreeWidget>
+#include <QtWidgets/QTreeWidget>
 
 ///////////////////////////////////////////////////////////////////////////////
 

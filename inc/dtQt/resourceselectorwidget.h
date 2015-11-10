@@ -34,7 +34,7 @@
 #include <dtCore/resourcetreenode.h>
 #include <dtUtil/utiltree.h>
 
-#include <QtGui/QToolButton>
+#include <QtWidgets/QToolButton>
 
 namespace dtCore
 {

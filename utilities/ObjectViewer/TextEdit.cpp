@@ -43,28 +43,28 @@
 
 #include "TextEdit.h"
 
-#include <QtGui/QAction>
-#include <QtGui/QApplication>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QApplication>
 #include <QtGui/QClipboard>
-#include <QtGui/QColorDialog>
-#include <QtGui/QComboBox>
-#include <QtGui/QFontComboBox>
+#include <QtWidgets/QColorDialog>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QFontComboBox>
 #include <QtCore/QFile>
-#include <QtGui/QFileDialog>
+#include <QtWidgets/QFileDialog>
 #include <QtCore/QFileInfo>
 #include <QtGui/QFontDatabase>
-#include <QtGui/QMenu>
-#include <QtGui/QMenuBar>
-#include <QtGui/QPrintDialog>
-#include <QtGui/QPrinter>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QMenuBar>
+#include <QtPrintSupport/QPrintDialog>
+#include <QtPrintSupport/QPrinter>
 #include <QtCore/QTextCodec>
-#include <QtGui/QTextEdit>
-#include <QtGui/QToolBar>
+#include <QtWidgets/QTextEdit>
+#include <QtWidgets/QToolBar>
 #include <QtGui/QTextCursor>
 #include <QtGui/QTextList>
 #include <QtCore/QtDebug>
 #include <QtGui/QCloseEvent>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QMessageBox>
 
 #ifdef Q_WS_MAC
 const QString rsrcPath = ":/images/mac";

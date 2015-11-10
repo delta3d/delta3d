@@ -33,16 +33,16 @@
 #include <dtCore/actorfactory.h>
 #include <dtUtil/log.h>
 
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QGridLayout>
-#include <QtGui/QPushButton>
-#include <QtGui/QMessageBox>
-#include <QtGui/QFileDialog>
-#include <QtGui/QListWidgetItem>
-#include <QtGui/QListWidget>
-#include <QtGui/QMainWindow>
-#include <QtGui/QGroupBox>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QListWidgetItem>
+#include <QtWidgets/QListWidget>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QGroupBox>
 
 #include <osgDB/FileNameUtils>
 

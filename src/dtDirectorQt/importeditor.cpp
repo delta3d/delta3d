@@ -31,13 +31,13 @@
 #include <dtDirector/director.h>
 #include <dtDirector/directorgraph.h>
 
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QGridLayout>
-#include <QtGui/QMessageBox>
-#include <QtGui/QFileDialog>
-#include <QtGui/QMainWindow>
-#include <QtGui/QGroupBox>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QGroupBox>
 
 #include <osgDB/FileNameUtils>
 

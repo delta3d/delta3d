@@ -27,21 +27,21 @@
  * William E. Johnson II, Curtiss Murphy
  */
 #include <prefix/stageprefix.h>
-#include <QtGui/QFormLayout>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QCheckBox>
-#include <QtGui/QSpinBox>
-#include <QtGui/QColorDialog>
-#include <QtGui/QLabel>
-#include <QtGui/QPushButton>
+#include <QtWidgets/QFormLayout>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QSpinBox>
+#include <QtWidgets/QColorDialog>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QPushButton>
 #include <QtCore/QTimer>
 #include <QtGui/QIcon>
 #include <QtGui/QPixmap>
 #include <QtGui/QColor>
 #include <QtGui/QPalette>
-#include <QtGui/QGroupBox>
-#include <QtGui/QLineEdit>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QLineEdit>
 
 #include <dtEditQt/preferencesdialog.h>
 #include <dtEditQt/editordata.h>

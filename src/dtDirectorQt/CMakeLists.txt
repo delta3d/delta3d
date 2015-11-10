@@ -1,12 +1,14 @@
 SET(LIB_NAME     dtDirectorQt)
 
+FIND_PACKAGE(Qt5Multimedia)
+
 SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
 SET(UI_PATH ${DELTA3D_SOURCE_DIR}/ui/${LIB_NAME})
 
 # Define Qt macro to put ui_*.h files into a set place
-MACRO (QT4_WRAP_UI_COPY outfiles)
-  QT4_EXTRACT_OPTIONS(ui_files ui_options ${ARGN})
+MACRO (QT5_WRAP_UI_COPY outfiles)
+  QT5_EXTRACT_OPTIONS(ui_files ui_options ${ARGN})
 
   FOREACH (it ${ui_files})
     GET_FILENAME_COMPONENT(outfile ${it} NAME_WE)
@@ -19,7 +21,7 @@ MACRO (QT4_WRAP_UI_COPY outfiles)
     SET(${outfiles} ${${outfiles}} ${outfile})
   ENDFOREACH (it)
 
-ENDMACRO (QT4_WRAP_UI_COPY)
+ENDMACRO (QT5_WRAP_UI_COPY)
 
 SET(LIB_PUBLIC_HEADERS ${HEADER_PATH}/actionitem.h
     ${HEADER_PATH}/clipboard.h
@@ -103,13 +105,13 @@ SET(LIB_SOURCES ${SOURCE_PATH}/actionitem.cpp
     ${SOURCE_PATH}/valueitem.cpp
 )
 
-qt4_wrap_ui(UI_SOURCES
+qt5_wrap_ui(UI_SOURCES
     ${UI_PATH}/directoreditor.ui
 	${UI_PATH}/plugindialog.ui
 )
 
-QT4_WRAP_CPP(MOC_SOURCES ${LIB_PUBLIC_HEADERS})
-QT4_ADD_RESOURCES(RCC_SOURCES
+QT5_WRAP_CPP(MOC_SOURCES ${LIB_PUBLIC_HEADERS})
+QT5_ADD_RESOURCES(RCC_SOURCES
 	directorqt.qrc
 	docs/help.qrc
 )
@@ -125,6 +127,7 @@ SOURCE_GROUP("UI Files" FILES ${UI_SOURCES})
 INCLUDE_DIRECTORIES(
                     ${QT_INCLUDE_DIR}
                     ${UI_PATH}
+					${Qt5Multimedia_INCLUDE_DIRS}
                    )
 
 ADD_PRECOMPILED_HEADER(${LIB_NAME} prefix/dtdirectorqtprefix.h prefix/dtdirectorqtprefix.cpp LIB_SOURCES)
@@ -137,16 +140,14 @@ set(LIB_SOURCES
 )
 
 SET(LIB_EXTERNAL_DEPS
-  QT_QTCORE_LIBRARY
-  QT_QTGUI_LIBRARY
-  QT_QTOPENGL_LIBRARY
-  QT_PHONON_LIBRARY
+  ${DT_QT_LIBRARIES}
  )
 
 SET(LIB_DEPS
      ${DTDIRECTOR_LIBRARY}
      dtDirectorNodes # need a macro for this.
      ${DTQT_LIBRARY}
+	 ${Qt5Multimedia_LIBRARIES}
    )
 
 DELTA3D_ADD_LIBRARY(${LIB_NAME} DIRECTOR_QT_LIBRARY)

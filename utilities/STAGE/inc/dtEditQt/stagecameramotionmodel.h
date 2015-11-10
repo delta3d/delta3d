@@ -31,7 +31,7 @@
 #include <dtEditQt/stagecamera.h>
 #include <dtEditQt/export.h>
 
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 #include <QtGui/QMouseEvent>
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -27,23 +27,23 @@
  * Matthew W. Campbell
  */
 #include <prefix/stageprefix.h>
-#include <QtGui/QAction>
+#include <QtWidgets/QAction>
 #include <QtGui/QIcon>
-#include <QtGui/QToolButton>
-#include <QtGui/QLabel>
-#include <QtGui/QMenu>
+#include <QtWidgets/QToolButton>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QMenu>
 #include <QtGui/QContextMenuEvent>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QFrame>
-#include <QtGui/QLineEdit>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QFrame>
+#include <QtWidgets/QLineEdit>
 #include <QtGui/QDoubleValidator>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/viewportcontainer.h>
 #include <dtEditQt/viewportmanager.h>
 #include <dtEditQt/editorviewport.h>
 #include <dtEditQt/uiresources.h>
-#include <QtGui/QSlider>
+#include <QtWidgets/QSlider>
 #include <dtUtil/mathdefines.h>
 
 namespace dtEditQt

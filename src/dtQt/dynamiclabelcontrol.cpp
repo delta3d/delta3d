@@ -36,10 +36,10 @@
 
 #include <QtCore/QString>
 
-#include <QtGui/QGridLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
-#include <QtGui/QWidget>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QWidget>
 
 namespace dtQt
 {

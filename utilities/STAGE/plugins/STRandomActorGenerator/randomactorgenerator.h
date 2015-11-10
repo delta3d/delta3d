@@ -10,7 +10,7 @@
 
 #include <osg/Vec3>
 
-#include <QtGui/QDockWidget>
+#include <QtWidgets/QDockWidget>
 
 //forward declarations
 class Ui_RandomActorGenerator;

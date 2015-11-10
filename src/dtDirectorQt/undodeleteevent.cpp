@@ -29,7 +29,7 @@
 #include <dtDirector/directorgraph.h>
 #include <dtDirector/nodemanager.h>
 
-#include <QtGui/QGraphicsRectItem>
+#include <QtWidgets/QGraphicsRectItem>
 
 
 namespace dtDirector

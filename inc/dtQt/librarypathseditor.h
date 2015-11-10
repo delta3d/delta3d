@@ -27,7 +27,7 @@
 #define DELTA_LIBRARY_PATHS_EDITOR
 
 #include <dtQt/export.h>
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 #include <vector>
 
 class QListWidget;

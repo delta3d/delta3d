@@ -105,7 +105,7 @@ namespace dtEditQt
        */
       void viewOSGContents();
 
-   protected:
+   public:
       /**
        * Added an event filter to capture keyboard events sent to the tree widget
        * so we can trap the enter key and play sounds. All other events are
@@ -116,6 +116,7 @@ namespace dtEditQt
        */
       bool eventFilter(QObject* target, QEvent* e);
 
+   protected:
       dtCore::RefPtr<dtCore::BaseActorObject> CreateActor(const dtCore::ResourceDescriptor& rd);
 
    private:

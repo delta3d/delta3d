@@ -43,10 +43,10 @@
 #include <dtCore/resourcedescriptor.h>
 #include <dtCore/map.h>
 
-#include <QtGui/QMessageBox>
-#include <QtGui/QGridLayout>
-#include <QtGui/QMenu>
-#include <QtGui/QAction>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QAction>
 
 #include <dtUtil/log.h>
 

@@ -30,7 +30,7 @@
 #ifndef DELTA_PREFERENCES_DIALOG
 #define DELTA_PREFERENCES_DIALOG
 
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 
 class QCheckBox;
 class QPushButton;

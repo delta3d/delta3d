@@ -27,15 +27,15 @@
  * Teague Coonan
  */
 #include <prefix/stageprefix.h>
-#include <QtGui/QFileDialog>
+#include <QtWidgets/QFileDialog>
 #include <QtCore/QFileInfo>
-#include <QtGui/QPushButton>
-#include <QtGui/QLineEdit>
-#include <QtGui/QLabel>
-#include <QtGui/QGroupBox>
-#include <QtGui/QGridLayout>
-#include <QtGui/QBoxLayout>
-#include <QtGui/QComboBox>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QBoxLayout>
+#include <QtWidgets/QComboBox>
 
 #include <map>
 
@@ -266,7 +266,7 @@ namespace dtEditQt
          }
       }
 
-      fd->setFilters(mFilterList);
+      fd->setNameFilters(mFilterList);
       fd->setReadOnly(true);
 
       // put the user in the last known directory if it exists

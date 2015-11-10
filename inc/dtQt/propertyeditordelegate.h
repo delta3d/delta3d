@@ -31,7 +31,7 @@
 #define DELTA_PROPERTYEDITORDELEGATE
 
 #include <dtQt/export.h>
-#include <QtGui/QItemDelegate>
+#include <QtWidgets/QItemDelegate>
 #include <dtQt/dynamicabstractcontrol.h>
 
 namespace dtQt

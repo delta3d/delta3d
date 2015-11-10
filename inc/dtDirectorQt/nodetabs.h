@@ -27,7 +27,7 @@
 #include <dtDirector/nodetype.h>
 #include <dtDirector/director.h>
 
-#include <QtGui/QToolBox>
+#include <QtWidgets/QToolBox>
 
 namespace dtDirector
 {

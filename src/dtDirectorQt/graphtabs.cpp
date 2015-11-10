@@ -26,8 +26,8 @@
 #include <dtDirector/director.h>
 
 #include <QtGui/QMouseEvent>
-#include <QtGui/QPushButton>
-#include <QtGui/QTabBar>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QTabBar>
 
 namespace dtDirector
 {

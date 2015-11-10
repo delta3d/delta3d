@@ -40,8 +40,8 @@
 #include <dtUtil/threadpool.h>
 // QT
 #include <QtCore/QSettings>
-#include <QtGui/QFileDialog>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QMessageBox>
 #include <QtGui/QMouseEvent>
 
 using namespace dtPhysics;

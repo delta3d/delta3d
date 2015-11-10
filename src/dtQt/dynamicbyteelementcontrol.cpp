@@ -29,13 +29,13 @@
 
 #include <prefix/dtqtprefix.h>
 
-#include <QtGui/QWidget>
-#include <QtGui/QGridLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
 #include <QtGui/QDoubleValidator>
-#include <QtGui/QLabel>
-#include <QtGui/QPushButton>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QPushButton>
 
 #include <dtQt/dynamicbyteelementcontrol.h>
 #include <dtQt/dynamicbitmaskcontrol.h>

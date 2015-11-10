@@ -24,7 +24,7 @@
 #include <dtDirectorQt/groupitem.h>
 
 #include <QtGui/QMouseEvent>
-#include <QtGui/QGraphicsRectItem>
+#include <QtWidgets/QGraphicsRectItem>
 
 namespace dtDirector
 {

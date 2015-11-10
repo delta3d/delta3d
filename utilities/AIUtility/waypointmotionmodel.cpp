@@ -4,7 +4,7 @@
 #include <dtAI/aidebugdrawable.h>
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
-#include <QtGui/QUndoCommand>
+#include <QtWidgets/QUndoCommand>
 
 ////////////////////////////////////////////////////////////////////////////////
 WaypointMotionModel::WaypointMotionModel(dtCore::View* view)

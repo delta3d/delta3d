@@ -37,11 +37,11 @@
 
 #include <dtUtil/log.h>
 
-#include <QtGui/QComboBox>
-#include <QtGui/QGridLayout>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QGridLayout>
 #include <QtGui/QIntValidator>
-#include <QtGui/QLabel>
-#include <QtGui/QWidget>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QWidget>
 
 namespace dtQt
 {

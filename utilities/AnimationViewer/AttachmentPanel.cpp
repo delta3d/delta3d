@@ -3,8 +3,8 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include "AttachmentPanel.h"
-#include <QtGui/QFileDialog>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QFileDialog>
+#include <QtWidgets/QMessageBox>
 #include <osgAnimation/Bone>
 #include <dtAnim/basemodelwrapper.h>
 #include <dtAnim/boneinterface.h>

@@ -27,7 +27,7 @@
  * Teague Coonan
  */
 #include <prefix/stageprefix.h>
-#include <QtGui/QAction>
+#include <QtWidgets/QAction>
 #include <QtCore/QString>
 
 #include <dtEditQt/resourcebrowser.h>

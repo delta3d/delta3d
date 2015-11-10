@@ -21,7 +21,7 @@
 
 #include "ui_MotionModelToolbar.h"
 #include <dtUtil/enumeration.h>
-#include <QtGui/QToolBar>
+#include <QtWidgets/QToolBar>
 
 
 

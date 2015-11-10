@@ -44,7 +44,7 @@
 #ifndef TEXTEDIT_H
 #define TEXTEDIT_H
 
-#include <QtGui/QMainWindow>
+#include <QtWidgets/QMainWindow>
 #include <QtCore/QMap>
 #include <QtCore/QPointer>
 
