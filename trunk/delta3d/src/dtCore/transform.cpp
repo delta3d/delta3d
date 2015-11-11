@@ -16,6 +16,12 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   Transform::Transform(const osg::Matrix& initialMatrix)
+   : mTransform(initialMatrix)
+   {
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    Transform::Transform(const Transform& that)
    {
       mTransform = that.mTransform;
