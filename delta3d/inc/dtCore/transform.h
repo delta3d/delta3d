@@ -44,6 +44,7 @@ namespace dtCore
 
       Transform(vec_value_type tx = 0.0f, vec_value_type ty = 0.0f, vec_value_type tz = 0.0f,
             vec_value_type h = 0.0f, vec_value_type p = 0.0f, vec_value_type r = 0.0f);
+      Transform(const osg::Matrix& initialMatrix);
       Transform(const Transform& that);
       ~Transform();
 
