@@ -27,9 +27,7 @@
  */
 #define PROPERTY_MODIFIERS_GETTER
 
-#define DT_DECLARE_ACCESSOR_INLINE(PropertyType, PropertyName) \
-   private:\
-      dtUtil::TypeTraits<PropertyType>::value_type  m ## PropertyName; \
+#define __DT_DECLARE_ACCESSOR_INLINE_FUNCS__(PropertyType, PropertyName) \
    public: \
       \
       PROPERTY_MODIFIERS_SETTER void Set ## PropertyName(dtUtil::TypeTraits<PropertyType>::param_type value)\
@@ -42,6 +40,16 @@
       return m ## PropertyName;\
    };\
       \
+
+#define DT_DECLARE_ACCESSOR_INLINE_WITH_DEFAULT(PropertyType, PropertyName, DefaultVal) \
+   private:\
+      dtUtil::TypeTraits<PropertyType>::value_type  m ## PropertyName = DefaultVal; \
+   __DT_DECLARE_ACCESSOR_INLINE_FUNCS__(PropertyType, PropertyName)
+
+#define DT_DECLARE_ACCESSOR_INLINE(PropertyType, PropertyName) \
+   private:\
+      dtUtil::TypeTraits<PropertyType>::value_type  m ## PropertyName; \
+   __DT_DECLARE_ACCESSOR_INLINE_FUNCS__(PropertyType, PropertyName)
 
 #define DT_DECLARE_ACCESSOR_GET_SET(PropertyType, PropertyName) \
       \
