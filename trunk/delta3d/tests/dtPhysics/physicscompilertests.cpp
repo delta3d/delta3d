@@ -77,7 +77,6 @@ namespace dtPhysics
    class PhysicsCompilerTests : public CPPUNIT_NS::TestFixture
    {
       CPPUNIT_TEST_SUITE(PhysicsCompilerTests);
-      CPPUNIT_TEST(TestGeodeCounter);
       CPPUNIT_TEST(TestNodeDescriptionCollector);
       CPPUNIT_TEST(TestNodeDescriptionFilter);
       CPPUNIT_TEST(TestGetNodeDescriptions);
@@ -120,7 +119,6 @@ namespace dtPhysics
 
       void OnGeometryCompiled(PhysicsCompileResult& result);
 
-      void TestGeodeCounter();
       void TestNodeDescriptionCollector();
       void TestNodeDescriptionFilter();
       void TestGetNodeDescriptions();
@@ -132,6 +130,7 @@ namespace dtPhysics
       void TestCompileAllMaterials();
       void TestCompileAllMaterialsByActors();
       void TestCompileMaxVertsPerMesh();
+      void TestCompilePerGeode();
       void TestCompileMaxEdgeLength();
       void TestCompileNoDefaultMaterial();
       void TestMaterialAssignment();
@@ -206,6 +205,7 @@ namespace dtPhysics
       mGM->DeleteAllActors(true);
       mGM->UnloadActorRegistry(DTPHYSICS_REGISTRY);
       mGM = NULL;
+      dtPhysics::PhysicsWorld::Shutdown();
       
       VertexData::ClearAllCachedData();
    }
@@ -345,38 +345,6 @@ namespace dtPhysics
    {
       mCompileResult = &result;
       ++mCompileCount;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void PhysicsCompilerTests::TestGeodeCounter()
-   {
-      // Test default search.
-      NodeDescriptionSearchFunc nodeDescSearchFunc(this, &PhysicsCompilerTests::GetNodeDescription);
-
-      GeodeCounter visitor(nodeDescSearchFunc);
-
-      mTestNode->accept(visitor);
-
-      CPPUNIT_ASSERT(visitor.mGeodeCount == 4);
-
-
-      // Test finding explicit descriptions.
-      visitor.mExportSpecificMaterial = true;
-
-      visitor.mSpecificDescription = DESCRIPTION_A; // For nodes Q1 & Q3
-      visitor.mGeodeCount = 0;
-      mTestNode->accept(visitor);
-      CPPUNIT_ASSERT(visitor.mGeodeCount == 2);
-      
-      visitor.mSpecificDescription = DESCRIPTION_B; // Q2
-      visitor.mGeodeCount = 0;
-      mTestNode->accept(visitor);
-      CPPUNIT_ASSERT(visitor.mGeodeCount == 1);
-
-      visitor.mSpecificDescription = DESCRIPTION_C; // Q4
-      visitor.mGeodeCount = 0;
-      mTestNode->accept(visitor);
-      CPPUNIT_ASSERT(visitor.mGeodeCount == 1);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -532,8 +500,6 @@ namespace dtPhysics
    {
       // Setup actors only first to ensure the world search methods
       // are not affected by their presence.
-      SetupTestActors();
-
       try
       {
          CPPUNIT_ASSERT( ! mCompiler->IsMaterialSearchByActor());
@@ -548,6 +514,7 @@ namespace dtPhysics
 
          // Enable search-by-physics-world by creating the world instance.
          SetupTestPhysicsWorld();
+         SetupTestActors();
          
          CPPUNIT_ASSERT(INDEX_A == mCompiler->GetMaterialIndexByPhysicsWorld(NAME_A));
          CPPUNIT_ASSERT(INDEX_B == mCompiler->GetMaterialIndexByPhysicsWorld(NAME_B));
@@ -729,10 +696,10 @@ namespace dtPhysics
          CPPUNIT_ASSERT(NAME_DEFAULT == mCompiler->GetDefaultMaterialName());
 
          // Test that all geometry can be combined to one mesh.
-         CPPUNIT_ASSERT(1 == mCompiler->CompilePhysicsForNode(*mTestNode, options, data));
-         CPPUNIT_ASSERT(1 == mCompileCount); // Number of time callback called
-         CPPUNIT_ASSERT(1 == data.size()); // one default material
-         CPPUNIT_ASSERT(1 == data[NAME_DEFAULT].size());
+         CPPUNIT_ASSERT_EQUAL(1, mCompiler->CompilePhysicsForNode(*mTestNode, options, data));
+         CPPUNIT_ASSERT_EQUAL(1, mCompileCount); // Number of time callback called
+         CPPUNIT_ASSERT_EQUAL(size_t(1), data.size()); // one default material
+         CPPUNIT_ASSERT_EQUAL(size_t(1), data[NAME_DEFAULT].size());
          mCompileCount = 0;
          data.clear();
 
@@ -742,10 +709,10 @@ namespace dtPhysics
 
          // Split should not go below geode level.
          // Result should be 3 for the 3 geodes versus 12 as math would suggest.
-         CPPUNIT_ASSERT(3 == mCompiler->CompilePhysicsForNode(*mTestNode, options, data));
-         CPPUNIT_ASSERT(3 == mCompileCount); // Number of time callback called
-         CPPUNIT_ASSERT(1 == data.size()); // one default material
-         CPPUNIT_ASSERT(3 == data[NAME_DEFAULT].size());
+         CPPUNIT_ASSERT_EQUAL(3, mCompiler->CompilePhysicsForNode(*mTestNode, options, data));
+         CPPUNIT_ASSERT_EQUAL(3, mCompileCount); // Number of time callback called
+         CPPUNIT_ASSERT_EQUAL(size_t(1), data.size()); // one default material
+         CPPUNIT_ASSERT_EQUAL(size_t(3), data[NAME_DEFAULT].size());
          mCompileCount = 0;
          data.clear();
 
@@ -754,10 +721,10 @@ namespace dtPhysics
          // the resulting parts have more verts than a single geode.
          options.mMaxVertsPerMesh = 120; // One part may have 120 verts while the other has 60
 
-         CPPUNIT_ASSERT(2 == mCompiler->CompilePhysicsForNode(*mTestNode, options, data));
-         CPPUNIT_ASSERT(2 == mCompileCount); // Number of time callback called
-         CPPUNIT_ASSERT(1 == data.size()); // one default material
-         CPPUNIT_ASSERT(2 == data[NAME_DEFAULT].size());
+         CPPUNIT_ASSERT_EQUAL(2, mCompiler->CompilePhysicsForNode(*mTestNode, options, data));
+         CPPUNIT_ASSERT_EQUAL(2, mCompileCount); // Number of time callback called
+         CPPUNIT_ASSERT_EQUAL(size_t(1), data.size()); // one default material
+         CPPUNIT_ASSERT_EQUAL(size_t(2), data[NAME_DEFAULT].size());
          mCompileCount = 0;
          data.clear();
 
@@ -765,12 +732,12 @@ namespace dtPhysics
          // Test a limit larger than a geode but less than 2 combined.
          options.mMaxVertsPerMesh = 90; // One part may have 120 verts while the other has 60
 
-         CPPUNIT_ASSERT(3 == mCompiler->CompilePhysicsForNode(*mTestNode, options, data));
-         CPPUNIT_ASSERT(3 == mCompileCount); // Number of time callback called
-         CPPUNIT_ASSERT(1 == data.size()); // one default material
-         CPPUNIT_ASSERT(3 == data[NAME_DEFAULT].size());
+         CPPUNIT_ASSERT_EQUAL(2, mCompiler->CompilePhysicsForNode(*mTestNode, options, data));
+         CPPUNIT_ASSERT_EQUAL(2, mCompileCount); // Number of time callback called
+         CPPUNIT_ASSERT_EQUAL(size_t(1), data.size()); // one default material
+         CPPUNIT_ASSERT_EQUAL(size_t(2), data[NAME_DEFAULT].size());
       }
-      catch (dtUtil::Exception& ex)
+      catch (const dtUtil::Exception& ex)
       {
          CPPUNIT_FAIL(ex.ToString());
       }
@@ -780,6 +747,35 @@ namespace dtPhysics
    void PhysicsCompilerTests::TestCompileMaxEdgeLength()
    {
       // TODO:
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void PhysicsCompilerTests::TestCompilePerGeode()
+   {
+      SetupTestPhysicsWorld();
+
+      VertexDataTable data;
+      PhysicsCompileOptions options;
+
+      try
+      {
+         // Change the model.
+         mTestNode = LoadTestModel(MODEL_HIGH_RES.Get());
+         options.mSplitUpGeodes = true;
+
+         CPPUNIT_ASSERT(NAME_DEFAULT == mCompiler->GetDefaultMaterialName());
+
+         // We should get three even without a max number of verts.
+         CPPUNIT_ASSERT_EQUAL(3, mCompiler->CompilePhysicsForNode(*mTestNode, options, data));
+         CPPUNIT_ASSERT_EQUAL(3, mCompileCount); // Number of time callback called
+         CPPUNIT_ASSERT_EQUAL(size_t(1), data.size()); // one default material
+         CPPUNIT_ASSERT_EQUAL(size_t(1), data[NAME_DEFAULT].size());
+      }
+      catch (const dtUtil::Exception& ex)
+      {
+         CPPUNIT_FAIL(ex.ToString());
+      }
+
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -1157,7 +1153,7 @@ namespace dtPhysics
          // Transfer the items from the 3 separate buckets to a single
          // vector for the sake of the following tests.
          VertexDataTable::iterator curIter = data.begin();
-         VertexDataArray vertArray;
+         TriangleRecorder::VertexDataArray vertArray;
          vertArray.push_back(curIter->second.front()); ++curIter;
          vertArray.push_back(curIter->second.front()); ++curIter;
          vertArray.push_back(curIter->second.front());

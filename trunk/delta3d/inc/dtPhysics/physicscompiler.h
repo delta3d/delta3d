@@ -32,6 +32,7 @@
 #include <dtPhysics/geometry.h>
 #include <dtPhysics/physicsobject.h>
 #include <dtPhysics/physicsmaterials.h>
+#include <dtPhysics/trianglerecorder.h>
 #include <osg/NodeVisitor>
 
 
@@ -74,9 +75,8 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    // TYPE DEFINITIONS
    /////////////////////////////////////////////////////////////////////////////
-   typedef std::vector<dtCore::RefPtr<dtPhysics::VertexData> > VertexDataArray;
    typedef std::string VertexDataTableKey;
-   typedef std::map<VertexDataTableKey, VertexDataArray> VertexDataTable;
+   typedef std::map<VertexDataTableKey, TriangleRecorder::VertexDataArray> VertexDataTable;
 
    typedef dtUtil::Functor<std::string, TYPELIST_1(const osg::Node&)> NodeDescriptionSearchFunc;
    typedef dtUtil::Functor<std::string, TYPELIST_1(const std::string&)> FilterStringFunc;
@@ -98,6 +98,7 @@ namespace dtPhysics
       unsigned int mMaxVertsPerMesh;
       float mMaxEdgeLength;
       bool mAllowDefaultMaterial;
+      bool mSplitUpGeodes;
    };
 
 
@@ -123,42 +124,6 @@ namespace dtPhysics
       dtPhysics::Real mCollisionMargin;
       dtPhysics::VectorType mDimensions;
    };
-
-
-
-   ////////////////////////////////////////////////////////////////////////////////
-   // CLASSS CODE
-   ////////////////////////////////////////////////////////////////////////////////
-   class DT_PHYSICS_EXPORT GeodeCounter : public osg::NodeVisitor
-   {
-   public:
-      typedef osg::NodeVisitor BaseClass;
-
-      GeodeCounter(NodeDescriptionSearchFunc func);
-
-      virtual ~GeodeCounter();
-   
-      bool IsValid(const osg::Node& node) const;
-
-      virtual void apply(osg::Node& node);
-
-      /**
-      * Visits the specified geode.
-      *
-      * @param node the geode to visit
-      */
-      virtual void apply(osg::Geode& node);
-
-      unsigned mNodeCounter;
-      unsigned mGeodeCount;
-      unsigned mDrawableCounter;
-      bool mExportSpecificMaterial;
-      bool mSkipSpecificMaterial;
-      std::string mSpecificDescription;
-
-      NodeDescriptionSearchFunc mNodeDescSearchFunc;
-   };
-
 
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -252,7 +217,7 @@ namespace dtPhysics
       std::string GetMaterialNameForGeometry(const VertexData& geometry) const;
 
       /**
-       * Convenience method for acquiriing the material object associated with
+       * Convenience method for acquiring the material object associated with
        * the specified geometry data.
        * @param geometry Geometric data that may have material data.
        * @return Index of the physics material associated with the geometry data.
@@ -330,7 +295,7 @@ namespace dtPhysics
        * @return Number of objects created.
        */
       int CreatePhysicsObjectsForGeometry(const PhysicsObjectOptions& options,
-         VertexDataArray& vertData, PhysicsObjectArray& outObjects) const;
+         TriangleRecorder::VertexDataArray& vertData, PhysicsObjectArray& outObjects) const;
       
       /**
        * Method for creating geometry using options.

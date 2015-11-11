@@ -137,11 +137,12 @@ namespace dtPhysics
          TriangleRecorder tr;
          tr.Record(*nodeToParse);
 
-         if (tr.mData->mVertices.empty() || tr.mData->mIndices.empty())
+         // Using the last one is fine because we aren't splitting the data.
+         if (tr.mData.back()->mVertices.empty() || tr.mData.back()->mIndices.empty())
          {
             throw dtUtil::Exception("Unable to build Vertex data object, no vertex data was found when traversing the osg Node.", __FILE__, __LINE__);
          }
-         dataOut->Swap(*tr.mData);
+         dataOut->Swap(*tr.mData.back());
          if (polytope)
          {
             dataOut->ConvertToPolytope();

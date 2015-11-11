@@ -26,10 +26,6 @@ namespace dtPhysics
    template<class T>
    TriangleRecorderVisitor<T>::TriangleRecorderVisitor(TriangleRecorder::MaterialLookupFunc func)
       : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ACTIVE_CHILDREN)
-      , mSplit(-1)
-      , mSplitCount(1)
-      , mNumGeodes(0)
-      , mGeodeExportCounter(0)
       , mExportSpecificMaterial(false)
       , mSkipSpecificMaterial(false)
       , mMaterialLookup(func)
@@ -112,6 +108,7 @@ namespace dtPhysics
    {
       // Obtain the description for the current node.
       CheckDesc(node);
+
       std::string desc = mCurrentDescription;
 
       // Find a description that might be contained in ancestors.
@@ -131,22 +128,8 @@ namespace dtPhysics
          return;
       }
 
-      if(mSplit != -1)
-      {
-         ++mGeodeExportCounter;
-         int divCount = mNumGeodes / mSplitCount;
-         if (divCount == 0) divCount = 1;
-         if(((mGeodeExportCounter - 1) / divCount) != mSplit)
-         {
-            //skip this one since we are breaking it up into multiple parts
-            return;
-            //std::cout << "Skipping tile number: " << mGeodeExportCounter << std::endl;
-         }
-         else
-         {
-            //std::cout << "Exporting tile number: " << mGeodeExportCounter << std::endl;
-         }
-      }
+      if (!mFunctor(node))
+         return;
 
       //for some reason if we do this on the whole scene it crashes, so we are doing it per geode
       //Simplify(&node);

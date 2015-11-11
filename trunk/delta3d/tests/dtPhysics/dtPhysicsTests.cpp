@@ -997,8 +997,8 @@ namespace dtPhysics
 
    void dtPhysicsTests::testPhysicsObjectMaterialActor(const std::string& engine)
    {
-      ChangeEngine(engine);
       mGM->DeleteAllActors(true);
+      ChangeEngine(engine);
 
       dtCore::RefPtr<PhysicsObject> po = PhysicsObject::CreateNew("jojo");
       dtCore::RefPtr<dtPhysics::MaterialActor> mat;
