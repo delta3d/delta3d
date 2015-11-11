@@ -130,6 +130,14 @@ namespace dtPhysics
        */
       bool CreateFromGeometry(Geometry& geometry);
 
+      /**
+       * Initializes this PhysicsObject with an already created vector of geometry objects..
+       * If you want some help creating the geometry, in the right position using the origin offset,
+       * see GetOriginOffsetInWorldSpace
+       * @see GetOriginOffsetInWorldSpace
+       */
+      bool CreateFromGeometry(std::vector<GeometryPtr> geometry);
+
       /// Creates this physics object giving it a pre-set and configured body.
       void CreateWithBody(GenericBodyWrapper& body);
 

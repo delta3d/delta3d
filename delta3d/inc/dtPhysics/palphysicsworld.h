@@ -167,6 +167,11 @@ namespace dtPhysics
        */
       static bool IsInitialized();
 
+      /**
+       * Deletes and cleans up the physics engine
+       */
+      static void Shutdown();
+
       /// Do a closest hit ray cast and call the given callback if it hits something.
       void TraceRay(RayCast& ray, dtPhysics::RayCast::RayCastCallback callback);
       /// Do a closest hit ray cast return true if it there is a hit.  The report will be filled in with closest hit.

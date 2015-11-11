@@ -234,8 +234,8 @@ namespace {
 
          std::vector<Vec3s> pointList;
          std::vector<Vec4I> triList;
-         pointList.reserve(tr.mData->mVertices.size());
-         size_t numTriangles = tr.mData->mIndices.size() / 3;
+         pointList.reserve(tr.mData.back()->mVertices.size());
+         size_t numTriangles = tr.mData.back()->mIndices.size() / 3;
          size_t numTrisPerSplit = (numTriangles / splits) + (numTriangles / splits != 0 ? 1 : 0);
          triList.reserve(numTrisPerSplit);
 
@@ -243,16 +243,16 @@ namespace {
          {
             openvdb::GridPtrVecPtr grids(new openvdb::GridPtrVec);
 
-            for (unsigned i = 0; i < tr.mData->mVertices.size(); ++i)
+            for (unsigned i = 0; i < tr.mData.back()->mVertices.size(); ++i)
             {
-               const osg::Vec3& point = tr.mData->mVertices[i];
+               const osg::Vec3& point = tr.mData.back()->mVertices[i];
                Vec3s pointvdb(point.x(), point.y(), point.z());
                pointList.push_back(pointvdb);
             }
 
-            for (unsigned i = split * numTrisPerSplit * 3; i < tr.mData->mIndices.size() && i < (split + 1) * numTrisPerSplit * 3; i+=3)
+            for (unsigned i = split * numTrisPerSplit * 3; i < tr.mData.back()->mIndices.size() && i < (split + 1) * numTrisPerSplit * 3; i+=3)
             {
-               Vec4I tri(tr.mData->mIndices[i], tr.mData->mIndices[i+1], tr.mData->mIndices[i+2], util::INVALID_IDX);
+               Vec4I tri(tr.mData.back()->mIndices[i], tr.mData.back()->mIndices[i+1], tr.mData.back()->mIndices[i+2], util::INVALID_IDX);
                triList.push_back(tri);
             }
 

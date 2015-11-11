@@ -91,6 +91,11 @@ namespace dtPhysics
 #endif
       }
 
+      ~PhysicsWorldImpl()
+      {
+         Shutdown();
+      }
+
       /**
        * Cleans up the pal physics stuff.
        */
@@ -509,6 +514,12 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////////////////////////////////////////
+   void PhysicsWorld::Shutdown()
+   {
+      TheWorld = nullptr;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void PhysicsWorld::TraceRay(RayCast& ray, RayCast::RayCastCallback callback)
    {
       RayCast::Report report;
@@ -564,7 +575,8 @@ namespace dtPhysics
    {
       //to make sure it's NOT ode so the ode hack won't prevent proper shutdown.
       mImpl->mEngineName.clear();
-      //mImpl->Shutdown();
+      delete mImpl;
+      mImpl = nullptr;
    }
 
    //////////////////////////////////////////////////////////////////////////
