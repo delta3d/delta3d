@@ -40,7 +40,7 @@ namespace dtPhysics
    {
    public:
 
-      enum class Mode
+      enum Mode
       {
          COMBINED, // Combine all geometries into one triangle data mesh
          PER_GEODE // Separate vertex data object per geode.
@@ -83,8 +83,8 @@ namespace dtPhysics
       DT_DECLARE_ACCESSOR_INLINE(std::string, PhysicsNodeNamePattern);
       DT_DECLARE_ACCESSOR(float, MaxEdgeLength);
       DT_DECLARE_ACCESSOR(Mode, Mode);
-      DT_DECLARE_ACCESSOR_INLINE_WITH_DEFAULT(size_t, MaxSizePerBuffer, 0);
-      DT_DECLARE_ACCESSOR_INLINE_WITH_DEFAULT(size_t, GeodeCount, 0);
+      DT_DECLARE_ACCESSOR(size_t, MaxSizePerBuffer);
+      DT_DECLARE_ACCESSOR(size_t, GeodeCount);
 
       /**
        * Called once for each visited triangle.
