@@ -9,13 +9,14 @@
 
 namespace dtPhysics
 {
-
    //////////////////////////////////////////////////////
    TriangleRecorder::TriangleRecorder()
    : mData()
    , mCurrentMaterial(0)
    , mMaxEdgeLength(20.0)
    , mMode(TriangleRecorder::Mode::COMBINED)
+   , mMaxSizePerBuffer(0)
+   , mGeodeCount(0)
    , mSplitCount(0)
    , mReuseCount(0)
    , mMatrixIsIdentity(true)
@@ -149,6 +150,8 @@ namespace dtPhysics
    DT_IMPLEMENT_ACCESSOR(TriangleRecorder, std::string, CurrentMaterialName);
    DT_IMPLEMENT_ACCESSOR(TriangleRecorder, float, MaxEdgeLength);
    DT_IMPLEMENT_ACCESSOR(TriangleRecorder, TriangleRecorder::Mode, Mode);
+   DT_IMPLEMENT_ACCESSOR(TriangleRecorder, size_t, MaxSizePerBuffer);
+   DT_IMPLEMENT_ACCESSOR(TriangleRecorder, size_t, GeodeCount);
 
    //////////////////////////////////////////////////////
    bool TriangleRecorder::operator()(osg::Geode& geode)

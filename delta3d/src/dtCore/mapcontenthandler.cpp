@@ -80,7 +80,7 @@ namespace  dtCore
       , mActorDepth(-1)
       , mEnvActorId(false)
       , mParentId(false)
-      , mPropSerializer(new ActorPropertySerializer(this))
+      , mPropSerializer(nullptr)
       , mBaseActorObject(NULL)
       , mIgnoreActorDepth(-1)
       , mGroupIndex(-1)
@@ -92,6 +92,7 @@ namespace  dtCore
       , mPresetCameraView()
       , mCurrentHierNode(NULL)
    {
+      mPropSerializer = new ActorPropertySerializer(this);
    }
 
    /////////////////////////////////////////////////////////////////
@@ -116,7 +117,7 @@ namespace  dtCore
    , mActorDepth(-1)
    , mEnvActorId(false)
    , mParentId(false)
-   , mPropSerializer(new ActorPropertySerializer(this))
+   , mPropSerializer(nullptr)
    , mBaseActorObject(NULL)
    , mIgnoreActorDepth(-1)
    , mGroupIndex(-1)
@@ -127,7 +128,9 @@ namespace  dtCore
    , mPresetCameraIndex()
    , mPresetCameraView()
    , mCurrentHierNode(NULL)
-   {}
+   {
+      mPropSerializer = new ActorPropertySerializer(this);
+   }
 
    //////////////////////////////////////////////////////////////////////////
    MapContentHandler& MapContentHandler::operator=(const MapContentHandler&) { return *this;}
@@ -1154,7 +1157,7 @@ namespace  dtCore
 
                }
             }
-            catch (const dtUtil::Exception& ex)
+            catch (const dtUtil::Exception&)
             {
                // if dtActors isn't available, the application just may not be using it, so ignore.
             }
