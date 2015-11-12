@@ -14,7 +14,7 @@ namespace dtPhysics
    : mData()
    , mCurrentMaterial(0)
    , mMaxEdgeLength(20.0)
-   , mMode(TriangleRecorder::Mode::COMBINED)
+   , mMode(TriangleRecorder::COMBINED)
    , mMaxSizePerBuffer(0)
    , mGeodeCount(0)
    , mSplitCount(0)
