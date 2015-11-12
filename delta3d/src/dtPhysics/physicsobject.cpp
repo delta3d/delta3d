@@ -672,27 +672,36 @@ namespace dtPhysics
          return false;
       }
 
+      bool materialWasSet = false;
       // Attempt to assign a material from the arbitrary triangle data that may have been loaded.
       const dtPhysics::VertexData* vertData = geometry[0]->GetVertexData();
-      if (vertData != NULL && vertData->GetMaterialCount() > 0)
+      if (GetMaterialId().IsNull() && vertData != nullptr && vertData->GetMaterialCount() > 0)
       {
          // For now one material can be applied per object.
          std::string matName = vertData->GetMaterialName(vertData->GetFirstMaterialIndex());
 
-         // Try to set the physics material by name.
-         if ( ! matName.empty() && ! SetMaterialByName(matName))
+         if (! matName.empty())
          {
-            LOG_ERROR("Could not assign a physics material by name \"" + matName
-               + "\" for object \"" + GetName() + "\"");
+            // Try to set the physics material by name.
+            materialWasSet = SetMaterialByName(matName);
+            if (!materialWasSet)
+            {
+               LOG_ERROR("Could not assign a physics material by name \"" + matName
+                     + "\" for object \"" + GetName() + "\" the property configured");
+            }
          }
       }
 
       // Set the default material if nothing is set.
-      if (GetMaterial() == NULL)
+      if (!materialWasSet)
       {
-         SetMaterial(PhysicsWorld::GetInstance().GetMaterials().GetMaterial(PhysicsMaterials::DEFAULT_MATERIAL_NAME));
+         // If the id is not found or is empty, it will just assign the default material.
+         SetMaterialById(GetMaterialId());
       }
+
+      SetSkinThickness(mDataMembers->mSkinThickness);
       SetNotifyCollisions(GetNotifyCollisions());
+      SetCollisionResponseEnabled(mDataMembers->mCollisionResponseEnabled);
 
       CreateWithBody(*mDataMembers->mGenericBody);
 
@@ -765,6 +774,7 @@ namespace dtPhysics
 
       if (!materialWasSet)
       {
+         // If the id is not found or is empty, it will just assign the default material.
          SetMaterialById(GetMaterialId());
       }
 

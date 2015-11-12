@@ -162,9 +162,11 @@ namespace dtPhysics
             return false;
       }
       ++mGeodeCount;
-      bool split = (mMode == TriangleRecorder::PER_GEODE && geode.getNumDrawables() > 0U) ||
-            (mMaxSizePerBuffer > 0 && mData.back()->mVertices.size() >= mMaxSizePerBuffer);
-      if (split && mGeodeCount > 1) // Don't split on the first one.
+      size_t currentVertCount = mData.back()->mIndices.size();
+      bool split = (mMode == TriangleRecorder::PER_GEODE && geode.getNumDrawables() > 0U && mGeodeCount > 1) ||
+            (mMaxSizePerBuffer > 0 && currentVertCount >= mMaxSizePerBuffer);
+
+      if (split) // Don't split on the first one.
       {
          mData.push_back(new VertexData);
       }
