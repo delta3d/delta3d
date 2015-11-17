@@ -677,42 +677,75 @@ namespace dtEditQt
       slotRestartAutosave();
    }
 
+   struct ResetOrigin
+   {
+      ResetOrigin(const dtCore::ActorRefPtrVector& list)
+      : mActorList(list)
+      , mOrigin()
+      , mOriginSet(false)
+      {
+         for (auto i = mActorList.begin(), iend = mActorList.end(); i != iend; ++i)
+         {
+            dtCore::ActorPtr actor = *i;
+
+            if (!actor.valid()) continue;
+
+            // If this is the first actor, store the translation as the origin.
+            dtCore::TransformableActorProxy* tActor = dynamic_cast<dtCore::TransformableActorProxy*>(actor.get());
+            if (tActor != NULL)
+            {
+               if (!mOriginSet)
+               {
+                  mOrigin = tActor->GetTranslation();
+                  mOriginSet = true;
+               }
+
+               tActor->SetTranslation(tActor->GetTranslation() - mOrigin);
+            }
+         }
+
+      }
+
+      ~ResetOrigin()
+      {
+         if (mOriginSet)
+         {
+            for (auto i = mActorList.begin(), iend = mActorList.end(); i != iend; ++i)
+            {
+               dtCore::ActorPtr actor = *i;
+
+               if (!actor.valid()) continue;
+
+               // If this is the first actor, store the translation as the origin.
+               dtCore::TransformableActorProxy* tActor = dynamic_cast<dtCore::TransformableActorProxy*>(actor.get());
+               if (tActor != nullptr)
+               {
+                  tActor->SetTranslation(tActor->GetTranslation() + mOrigin);
+               }
+            }
+         }
+
+      }
+      const dtCore::ActorRefPtrVector& mActorList;
+      osg::Vec3 mOrigin;
+      bool mOriginSet;
+
+   };
+
+
    ////////////////////////////////////////////////////////////////////////////////
    bool EditorActions::SaveNewPrefab(std::string category, std::string prefabName,
                                      std::string iconFile, std::string prefabDescrip)
    {
-      std::string fullPath = EditorActions::PREFAB_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR
-         + category + "/" + prefabName;
-      std::string fullPathSaving = fullPath + ".saving";
 
-      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      fileUtils.PushDirectory(dtCore::Project::GetInstance().GetContext());
       try
       {
-         // If the prefab directory does not exist, create it first.
-         if (!fileUtils.DirExists(EditorActions::PREFAB_DIRECTORY))
-         {
-            fileUtils.MakeDirectory(EditorActions::PREFAB_DIRECTORY);
-         }
-
-         //If the category subdirectory is empty, just store prefabs in the root prefab directory
-         if (category != "")
-         {
-            // If the category subdirectory doesn't exist, it also needs to be created
-            if (!fileUtils.DirExists(fullPath.substr(0, fullPath.find_last_of("\\/"))))
-            {
-               fileUtils.MakeDirectory(fullPath.substr(0, fullPath.find_last_of("\\/")));
-            }
-         }
-
          ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
          ViewportOverlay::ActorProxyList& selection = overlay->getCurrentActorSelection();
 
-         dtCore::RefPtr<dtCore::MapWriter> writer = new dtCore::MapWriter;
-         writer->SavePrefab(selection, fullPathSaving, prefabDescrip, iconFile);
+         ResetOrigin resetOrigin(selection);
 
-         //if it's successful, move it to the final file name
-         fileUtils.FileMove(fullPathSaving, fullPath + ".dtprefab", true);
+         dtCore::Project::GetInstance().SavePrefab(prefabName, category, selection, prefabDescrip, iconFile);
 
          emit PrefabExported();
       }
@@ -725,7 +758,6 @@ namespace dtEditQt
 
          return false;
       }
-      fileUtils.PopDirectory();
 
       return true;
    }
@@ -934,15 +966,15 @@ namespace dtEditQt
 
       for (; itor != itorEnd; ++itor)
       {
-         dtCore::BaseActorObject* proxy = const_cast<dtCore::BaseActorObject*>(itor->get());
-         dtCore::RefPtr<dtCore::BaseActorObject> copy = proxy->Clone();
+         dtCore::BaseActorObject* actor = const_cast<dtCore::BaseActorObject*>(itor->get());
+         dtCore::RefPtr<dtCore::BaseActorObject> copy = actor->Clone();
          if (!copy.valid())
          {
-            LOG_ERROR("Error duplicating proxy: " + proxy->GetName());
+            LOG_ERROR("Error duplicating proxy: " + actor->GetName());
             continue;
          }
 
-         // Store the original location of the proxy so we can position after
+         // Store the original location of the actor so we can position after
          // it has been added to the scene.
          osg::Vec3 oldPosition;
          dtCore::TransformableActorProxy* tProxy =
@@ -958,7 +990,7 @@ namespace dtEditQt
          EditorEvents::GetInstance().emitActorProxyCreated(copy, false);
 
          // Preserve the group data for new proxies.
-         int groupIndex = currMap->FindGroupForActor(proxy);
+         int groupIndex = currMap->FindGroupForActor(*actor);
          if (groupIndex > -1)
          {
             // If we already have this group index mapped, then we have
@@ -966,13 +998,13 @@ namespace dtEditQt
             if (groupMap.find(groupIndex) != groupMap.end())
             {
                int newGroup = groupMap[groupIndex];
-               currMap->AddActorToGroup(newGroup, copy.get());
+               currMap->AddActorToGroup(newGroup, *copy);
             }
             else
             {
                // Create a new group and map it.
                int newGroup = currMap->GetGroupCount();
-               currMap->AddActorToGroup(newGroup, copy.get());
+               currMap->AddActorToGroup(newGroup, *copy);
                groupMap[groupIndex] = newGroup;
             }
          }
@@ -1021,18 +1053,18 @@ namespace dtEditQt
       while (selection.size())
       {
          // First check if this actor is in any groups.
-         dtCore::BaseActorObject* proxy =
+         dtCore::BaseActorObject* actor =
             const_cast<dtCore::BaseActorObject*>(selection.back().get());
 
          //don't allow the main Volume Brush to be deleted:
-         if (proxy->GetDrawable() ==
+         if (actor->GetDrawable() ==
                EditorData::GetInstance().getMainWindow()->GetVolumeEditActor())
          {
             selection.pop_back();
             continue;
          }
 
-         int groupIndex = currMap->FindGroupForActor(proxy);
+         int groupIndex = currMap->FindGroupForActor(*actor);
          if (groupIndex > -1)
          {
             // If this actor is in a group, we must delete the
@@ -1041,14 +1073,14 @@ namespace dtEditQt
             int actorCount = currMap->GetGroupActorCount(groupIndex);
             for (int actorIndex = 0; actorIndex < actorCount; actorIndex++)
             {
-               proxy = currMap->GetActorFromGroup(groupIndex, 0);
-               deleteProxy(proxy, currMap);
+               actor = currMap->GetActorFromGroup(groupIndex, 0);
+               deleteProxy(actor, currMap);
 
                // Now remove this actor from the selection list.
                for (int selectionIndex = 0;
                     selectionIndex < (int)selection.size(); selectionIndex++)
                {
-                  if (selection[selectionIndex].get() == proxy)
+                  if (selection[selectionIndex].get() == actor)
                   {
                      selection.erase(selection.begin() + selectionIndex);
                      break;
@@ -1060,7 +1092,7 @@ namespace dtEditQt
          else
          {
             selection.pop_back();
-            deleteProxy(proxy, currMap);
+            deleteProxy(actor, currMap);
          }
       }
 
@@ -1598,9 +1630,9 @@ namespace dtEditQt
          EditorData::GetInstance().getUndoManager().beginMultipleUndo();
          for (int index = 0; index < (int)selection.size(); index++)
          {
-            dtCore::BaseActorObject* proxy = selection[index].get();
-            map->AddActorToGroup(groupIndex, proxy);
-            EditorData::GetInstance().getUndoManager().groupActor(proxy);
+            dtCore::BaseActorObject* actor = selection[index].get();
+            map->AddActorToGroup(groupIndex, *actor);
+            EditorData::GetInstance().getUndoManager().groupActor(actor);
          }
          EditorData::GetInstance().getUndoManager().endMultipleUndo();
          EditorData::GetInstance().getUndoManager().endMultipleUndo();
@@ -1618,16 +1650,17 @@ namespace dtEditQt
       ViewportOverlay::ActorProxyList selection = overlay->getCurrentActorSelection();
 
       // Remove all the selected actions from their current groups.
-      dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
-      if (map)
+      dtCore::MapPtr map = EditorData::GetInstance().getCurrentMap();
+      if (map.valid())
       {
          EditorData::GetInstance().getUndoManager().beginMultipleUndo();
          while (selection.size())
          {
             // First check if this actor is in any groups.
-            dtCore::BaseActorObject* proxy = const_cast<dtCore::BaseActorObject*>(selection.back().get());
+            dtCore::BaseActorObject* actor = const_cast<dtCore::BaseActorObject*>(selection.back().get());
+            if (actor == nullptr) continue;
 
-            int groupIndex = map->FindGroupForActor(proxy);
+            int groupIndex = map->FindGroupForActor(*actor);
             if (groupIndex > -1)
             {
                // If this actor is in a group, we must delete the
@@ -1636,15 +1669,15 @@ namespace dtEditQt
                int actorCount = map->GetGroupActorCount(groupIndex);
                for (int actorIndex = 0; actorIndex < actorCount; actorIndex++)
                {
-                  proxy = map->GetActorFromGroup(groupIndex, 0);
+                  actor = map->GetActorFromGroup(groupIndex, 0);
 
-                  map->RemoveActorFromGroups(proxy);
-                  EditorData::GetInstance().getUndoManager().unGroupActor(proxy);
+                  map->RemoveActorFromGroups(*actor);
+                  EditorData::GetInstance().getUndoManager().unGroupActor(actor);
 
                   // Now remove this actor from the selection list.
                   for (int selectionIndex = 0; selectionIndex < (int)selection.size(); selectionIndex++)
                   {
-                     if (selection[selectionIndex].get() == proxy)
+                     if (selection[selectionIndex].get() == actor)
                      {
                         selection.erase(selection.begin() + selectionIndex);
                         break;
@@ -1656,8 +1689,8 @@ namespace dtEditQt
             else
             {
                selection.pop_back();
-               map->RemoveActorFromGroups(proxy);
-               EditorData::GetInstance().getUndoManager().unGroupActor(proxy);
+               map->RemoveActorFromGroups(*actor);
+               EditorData::GetInstance().getUndoManager().unGroupActor(actor);
             }
          }
          EditorData::GetInstance().getUndoManager().endMultipleUndo();

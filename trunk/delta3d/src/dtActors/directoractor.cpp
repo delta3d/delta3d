@@ -79,7 +79,7 @@ namespace dtActors
       dtGame::GameManager* gm = GetGameManager();
 
       // Find the map that this actor belongs to.
-      dtCore::Map* map = dtCore::Project::GetInstance().GetMapForActorProxy(GetId());
+      dtCore::Map* map = dtCore::Project::GetInstance().GetMapForActor(GetId());
 
       int count = (int)mResourceList.size();
       for (int index = 0; index < count; index++)

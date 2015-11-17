@@ -190,7 +190,7 @@ namespace dtEditQt
       {
          fileUtils.MakeDirectory(newCatFullPath);
       }
-      catch (dtUtil::Exception e)
+      catch (const dtUtil::Exception& e)
       {
          QString reason("Unable to create category.\n This reason was given:\n\n");
          reason += e.ToString().c_str();
@@ -200,7 +200,7 @@ namespace dtEditQt
          return;
       }
 
-      refreshPrefabs();      
+      refreshPrefabs();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -358,7 +358,9 @@ namespace dtEditQt
                if (actor->IsSystemComponent()) continue;
 
                EditorActions::GetInstance().AddActorToMap(*actor, *currMap, true);
-               currMap->AddActorToGroup(groupIndex, actor);
+               currMap->AddActorToGroup(groupIndex, *actor);
+
+               currMap->CorrectLibraryList(false);
 
                // Notify the creation of the proxies.
                EditorEvents::GetInstance().emitActorProxyCreated(actor, false);
@@ -368,15 +370,19 @@ namespace dtEditQt
 
                if (tProxy)
                {
-                  if (proxyIndex == 0)
+                  auto gap = dynamic_cast<dtGame::GameActorProxy*>(tProxy);
+                  if (gap == nullptr || gap->GetParentActor() == nullptr)
                   {
-                     ViewportManager::GetInstance().placeProxyInFrontOfCamera(actor);
+                     if (proxyIndex == 0)
+                     {
+                        ViewportManager::GetInstance().placeProxyInFrontOfCamera(actor);
 
-                     offset = tProxy->GetTranslation();
-                  }
-                  else
-                  {
-                     tProxy->SetTranslation(tProxy->GetTranslation() + offset);
+                        offset = tProxy->GetTranslation();
+                     }
+                     else
+                     {
+                        tProxy->SetTranslation(tProxy->GetTranslation() + offset);
+                     }
                   }
                }
             }
@@ -421,6 +427,7 @@ namespace dtEditQt
             if (mapPtr.valid())
             {
                EditorActions::GetInstance().AddActorToMap(*proxy, *mapPtr, true);
+               mapPtr->CorrectLibraryList(false);
             }
 
             // Set the prefab resource of the actor to the current prefab.
@@ -486,7 +493,7 @@ namespace dtEditQt
          {
             dtUtil::FileUtils::GetInstance().DirDelete(selItem->getCategoryFullName().toStdString(), true);
          }
-         catch (dtUtil::Exception e)
+         catch (const dtUtil::Exception& e)
          {
             QString reason("Error deleting category.\n This reason was given:\n\n");
             reason += e.ToString().c_str();
@@ -517,14 +524,14 @@ namespace dtEditQt
          std::string prefabFullPath = dtEditQt::EditorData::GetInstance().getCurrentProjectContext();        
          dtCore::ResourceDescriptor& resDes = selItem->getResourceDescriptor();
          QString prefabName = resDes.GetResourceIdentifier().c_str();
-         prefabName = prefabName.replace(QRegExp("::"), QString("/"));
+         prefabName = prefabName.replace(QRegExp(":"), QString("/"));
          prefabFullPath += "/" + prefabName.toStdString();
 
          try
          {
             dtUtil::FileUtils::GetInstance().FileDelete(prefabFullPath);
          }
-         catch (dtUtil::Exception e)
+         catch (const dtUtil::Exception& e)
          {
             QString reason("Error deleting Prefab.\n This reason was given:\n\n");
             reason += e.ToString().c_str();
@@ -658,6 +665,8 @@ namespace dtEditQt
          mListWidget->addItem(aWidget);
       }
 
+      dtCore::RefPtr<dtCore::MapParser> parser = new dtCore::MapParser;
+
       for (size_t i = 0; i < dirFiles.size(); ++i)
       {
          nextFile = dirFiles[i];
@@ -695,28 +704,34 @@ namespace dtEditQt
                continue;
             }
 
-            dtCore::RefPtr<dtCore::MapParser> parser = new dtCore::MapParser;            
-            std::string iconFileName = parser->GetPrefabIconFileName(nextFileFullPath);            
-
-            nextIconFullPath = "";
-            if (iconFileName != "")
+            try
             {
-               nextIconFullPath = iconDir + "/" + iconFileName;
+               std::string iconFileName = parser->ParseMapHeaderData(nextFileFullPath, true)->GetIconFile();
 
-               if (! dtUtil::FileUtils::GetInstance().FileExists(nextIconFullPath))
+               nextIconFullPath = "";
+               if (iconFileName != "")
                {
-                  nextIconFullPath = "";
-               }
-            }   
+                  nextIconFullPath = iconDir + "/" + iconFileName;
 
-            if(nextIconFullPath == "")
+                  if (! dtUtil::FileUtils::GetInstance().FileExists(nextIconFullPath))
+                  {
+                     nextIconFullPath = "";
+                  }
+               }
+
+               if(nextIconFullPath == "")
+               {
+                  nextIconFullPath = UIResources::ICON_NO_ICON.c_str();
+               }
+            }
+            catch (const dtUtil::Exception& ex)
             {
                nextIconFullPath = UIResources::ICON_NO_ICON.c_str();
-            }            
+            }
          }
 
-         nextFile = nextFile.substr(0, nextFile.rfind(".dtprefab")); //truncate dtprefab extension         
-         //nextFile = nextFile.substr(0, 16);  //truncate to 16 characters         
+         nextFile = nextFile.substr(0, nextFile.rfind(".dtprefab")); //truncate dtprefab extension
+         //nextFile = nextFile.substr(0, 16);  //truncate to 16 characters
 
          //folders go to the front of the list
          if (isFolder)
@@ -725,18 +740,18 @@ namespace dtEditQt
             ResourceListWidgetItem* aWidget = new ResourceListWidgetItem(
                   dtCore::ResourceDescriptor(),
                   QIcon(nextIconFullPath.c_str()), nextFile.c_str());
-            aWidget->setCategoryFullName(nextFileFullPath.c_str());            
+            aWidget->setCategoryFullName(nextFileFullPath.c_str());
 
             //want "Up a folder" to be first on all but the top level
-            if(dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir))            
+            if(dtUtil::FileUtils::GetInstance().IsSameFile(mCurrentDir, mTopPrefabDir))
             {
-               mListWidget->insertItem(0 + numCategories, aWidget);               
+               mListWidget->insertItem(0 + numCategories, aWidget);
             }
             else
             {
                mListWidget->insertItem(1 + numCategories, aWidget);
             }
-            ++numCategories;            
+            ++numCategories;
          }
          else 
          {
@@ -767,7 +782,7 @@ namespace dtEditQt
          relPath.replace(QRegExp("//"), QString("/"));
       }
 
-      relPath = relPath.replace(QRegExp("[\\\\/]"),QString("::"));
+      relPath = relPath.replace(QRegExp("[\\\\/]"),QString(":"));
 
       dtCore::ResourceDescriptor resDesc(relPath.toStdString(), relPath.toStdString());
 

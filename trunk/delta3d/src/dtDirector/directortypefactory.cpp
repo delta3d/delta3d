@@ -162,7 +162,7 @@ namespace dtDirector
 
                if (parser.valid())
                {
-                  scriptType = parser->ParseScriptType(fileName);
+                  scriptType = parser->ParseDirectorHeaderData(fileName)->GetScriptType();
                   newDirector = CreateDirector(scriptType);
                   if (!newDirector.valid())
                   {

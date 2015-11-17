@@ -81,7 +81,9 @@ namespace dtCore
       }
 
       std::string extension = osgDB::getFileExtension(srcPath);
-      std::string resourceFileName = newName + '.' + extension;
+      std::string resourceFileName = newName;
+      if (osgDB::getFileExtension(newName) != extension)
+         resourceFileName.append(".").append(extension);
 
       fileUtils.FileCopy(srcPath, destCategoryPath + dtUtil::FileUtils::PATH_SEPARATOR + resourceFileName, true);
       return resourceFileName;
@@ -705,7 +707,7 @@ namespace dtCore
       //get the handler for the file or directory to copy in.
       const ResourceTypeHandler* rth = GetHandlerForFile(type, pathToFile);
 
-      if (rth == NULL)
+      if (rth == nullptr)
          throw dtCore::ProjectResourceErrorException(
                 std::string("Could not find data type to match ") + pathToFile + ".", __FILE__, __LINE__);
 
@@ -713,7 +715,7 @@ namespace dtCore
 
       ResourceDescriptor result = rth->CreateResourceDescriptor(category, resourceFileName);
 
-      if (categoryInTree != NULL)
+      if (categoryInTree != nullptr)
       {
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,

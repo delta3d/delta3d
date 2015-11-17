@@ -76,6 +76,8 @@
 #include <dtCore/stringactorproperty.h>
 #include <dtCore/vectoractorproperties.h>
 #include <dtCore/bitmaskactorproperty.h>
+#include <dtCore/actorcomponentcontainer.h>
+#include <dtCore/mapxml.h>
 
 #include <dtUtil/datapathutils.h>
 #include <dtUtil/exception.h>
@@ -118,6 +120,8 @@ class MapTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestMapSaveAndLoadActorGroups);
    CPPUNIT_TEST(TestMapAddLibrariesOnSave);
    CPPUNIT_TEST(TestMapCorrectLibraryListSetsModified);
+   CPPUNIT_TEST(TestPrefabLoadHeader);
+   CPPUNIT_TEST(TestPrefabCorrectLibraryList);
    CPPUNIT_TEST(TestShouldSaveProperty);
    CPPUNIT_TEST(TestLibraryMethods);
    CPPUNIT_TEST(TestWildCard);
@@ -147,6 +151,8 @@ public:
    void TestMapSaveAndLoadActorGroups();
    void TestMapAddLibrariesOnSave();
    void TestMapCorrectLibraryListSetsModified();
+   void TestPrefabLoadHeader();
+   void TestPrefabCorrectLibraryList();
    void TestShouldSaveProperty();
    void TestIsMapFileValid();
    void TestLoadMapIntoScene();
@@ -164,6 +170,7 @@ public:
    static const std::string TEST_PROJECT_DIR_2;
 
 private:
+   static const std::string mDTActorsLibraryName;
    static const std::string mExampleLibraryName;
    static const std::string mExampleGameLibraryName;
 
@@ -177,8 +184,8 @@ private:
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(MapTests);
 
+const std::string MapTests::mDTActorsLibraryName="dtActors";
 const std::string MapTests::mExampleLibraryName="testActorLibrary";
-// TODO: this test uses a library that links to dtGame.  Is that okay?
 const std::string MapTests::mExampleGameLibraryName="testGameActorLibrary";
 
 const std::string MapTests::TEST_PROJECT_DIR="WorkingMapProject";
@@ -507,6 +514,7 @@ void MapTests::TestMapAddLibrariesOnSave()
       CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
    }
 }
+
 ///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::TestMapCorrectLibraryListSetsModified()
 {
@@ -540,6 +548,119 @@ void MapTests::TestMapCorrectLibraryListSetsModified()
       map.CorrectLibraryList(false);
 
       CPPUNIT_ASSERT_MESSAGE("Correcting the list where nothing changes should not result in the map being modified.", !map.IsModified());
+
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+void MapTests::TestPrefabLoadHeader()
+{
+   try
+   {
+      dtCore::ActorFactory::GetInstance().LoadActorRegistry(mExampleLibraryName);
+      dtCore::RefPtr<const dtCore::ActorType> example1Type = dtCore::ActorFactory::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
+      CPPUNIT_ASSERT_MESSAGE("The example 1 actor type is null", example1Type.valid());
+      int numberedName = 0;
+
+      dtCore::ActorRefPtrVector actors, actorsResult;
+      dtCore::RefPtr<dtCore::BaseActorObject> actor1 = dtCore::ActorFactory::GetInstance().CreateActor(*example1Type);
+      CPPUNIT_ASSERT_MESSAGE("actor1 is null", actor1.valid());
+      actor1->SetName(dtUtil::ToString(numberedName++));
+      actors.push_back(actor1);
+
+      std::string description("jibbly"), iconfile("T-Money");
+      dtCore::ResourceDescriptor rd = dtCore::Project::GetInstance().SavePrefab("ExampleTest.dtprefab", "General:Test", actors, description, iconfile);
+
+      dtCore::MapPtr header = dtCore::Project::GetInstance().GetPrefabHeader(rd);
+      CPPUNIT_ASSERT(header.valid());
+      CPPUNIT_ASSERT_EQUAL(description, header->GetDescription());
+      CPPUNIT_ASSERT_EQUAL(iconfile, header->GetIconFile());
+
+      CPPUNIT_ASSERT(header->GetAllLibraries().empty());
+      CPPUNIT_ASSERT(header->GetAllProxies().empty());
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+void MapTests::TestPrefabCorrectLibraryList()
+{
+   try
+   {
+      dtCore::ActorFactory::GetInstance().LoadActorRegistry(mExampleLibraryName);
+      dtCore::ActorFactory::GetInstance().LoadActorRegistry(mDTActorsLibraryName);
+      dtCore::ActorFactory::GetInstance().LoadActorRegistry(mExampleGameLibraryName);
+      dtCore::RefPtr<const dtCore::ActorType> example1Type = dtCore::ActorFactory::GetInstance().FindActorType("dtcore.examples", "Test All Properties");
+      CPPUNIT_ASSERT_MESSAGE("The example 1 actor type is null", example1Type.valid());
+
+      dtCore::RefPtr<const dtCore::ActorType> example2Type = dtCore::ActorFactory::GetInstance().FindActorType("ExampleActors", "Test1Actor");
+      CPPUNIT_ASSERT_MESSAGE("The example 2 actor type is null", example2Type.valid());
+
+      dtCore::RefPtr<const dtCore::ActorType> exampleACType = dtCore::ActorFactory::GetInstance().FindActorType("ActorComponents","DeadReckoningActComp");
+      CPPUNIT_ASSERT_MESSAGE("The example actor component type is null", exampleACType.valid());
+
+      int numberedName = 0;
+      dtCore::ActorRefPtrVector actors, actorsResult;
+      dtCore::RefPtr<dtCore::BaseActorObject> actor1 = dtCore::ActorFactory::GetInstance().CreateActor(*example1Type);
+      CPPUNIT_ASSERT_MESSAGE("actor1 is null", actor1.valid());
+      actor1->SetName(dtUtil::ToString(numberedName++));
+      actors.push_back(actor1);
+      dtCore::RefPtr<dtCore::BaseActorObject> actor2 = dtCore::ActorFactory::GetInstance().CreateActor(*example2Type);
+      CPPUNIT_ASSERT_MESSAGE("actor2 is null", actor2.valid());
+      actor2->SetName(dtUtil::ToString(numberedName++));
+      actors.push_back(actor2);
+      dtCore::RefPtr<dtCore::BaseActorObject> actorComponent = dtCore::ActorFactory::GetInstance().CreateActor(*exampleACType);
+      CPPUNIT_ASSERT_MESSAGE("actorComponent is null", actorComponent.valid());
+
+      auto acc = dynamic_cast<dtCore::ActorComponentContainer*>(actor2.get());
+      CPPUNIT_ASSERT(acc != nullptr);
+      actorComponent->SetName(dtUtil::ToString(numberedName++));
+      acc->AddComponent(*actorComponent);
+
+      std::string description("jibbly"), iconfile("T-Money");
+      dtCore::ResourceDescriptor rd = dtCore::Project::GetInstance().SavePrefab("ExampleTest.dtprefab", "General:Test", actors, description, iconfile);
+
+      dtCore::MapPtr prefabMap = dtCore::Project::GetInstance().LoadPrefab(rd, actorsResult);
+      CPPUNIT_ASSERT(prefabMap.valid());
+      CPPUNIT_ASSERT(prefabMap->HasLibrary(mExampleLibraryName));
+      CPPUNIT_ASSERT(prefabMap->HasLibrary(mDTActorsLibraryName));
+      CPPUNIT_ASSERT(prefabMap->HasLibrary(mExampleGameLibraryName));
+      CPPUNIT_ASSERT_EQUAL(description, prefabMap->GetDescription());
+      CPPUNIT_ASSERT_EQUAL(iconfile, prefabMap->GetIconFile());
+
+      CPPUNIT_ASSERT_EQUAL(actors.size(), prefabMap->GetAllProxies().size());
+      CPPUNIT_ASSERT_EQUAL(actors.size(), actorsResult.size());
+
+      dtCore::ActorRefPtrVector searchResult;
+      for (auto i = actors.begin(), iend = actors.end(); i != iend; ++i)
+      {
+         prefabMap->FindProxies(searchResult, (*i)->GetName());
+         CPPUNIT_ASSERT(!searchResult.empty());
+         CPPUNIT_ASSERT_EQUAL(searchResult[0]->GetActorType(), (*i)->GetActorType());
+         CPPUNIT_ASSERT(searchResult[0]->GetId() != (*i)->GetId());
+         auto acc = dynamic_cast<dtCore::ActorComponentContainer*>(searchResult[0].get());
+         auto accOrig = dynamic_cast<dtCore::ActorComponentContainer*>(i->get());
+         if (acc != nullptr)
+         {
+            CPPUNIT_ASSERT(accOrig != nullptr);
+            dtCore::ActorPtrVector comps, compsOrig;
+            acc->GetAllComponents(comps);
+            accOrig->GetAllComponents(compsOrig);
+            CPPUNIT_ASSERT_EQUAL(comps.size(), compsOrig.size());
+            // TODO go through all the components and check parent actors.
+         }
+         else
+         {
+            CPPUNIT_ASSERT(accOrig == nullptr);
+         }
+      }
 
    }
    catch (const dtUtil::Exception& e)
@@ -611,7 +732,7 @@ void MapTests::TestMapProxySearch()
       {
          dtCore::RefPtr<dtCore::BaseActorObject> proxyPTR = map.GetProxyById(proxies[x]->GetId());
 
-         CPPUNIT_ASSERT_MESSAGE("Proxy should be found in the map by the project.", &map == dtCore::Project::GetInstance().GetMapForActorProxy(*proxyPTR));
+         CPPUNIT_ASSERT_MESSAGE("Proxy should be found in the map by the project.", &map == dtCore::Project::GetInstance().GetMapForActor(*proxyPTR));
 
          CPPUNIT_ASSERT_MESSAGE((std::string("Proxy not found with id: ") + proxies[x]->GetId().ToString()).c_str()
                , proxyPTR != NULL);
@@ -814,7 +935,7 @@ void MapTests::TestMapLibraryHandling()
       const std::string mapFileName("neatomap");
 
       dtCore::Map* map = &project.CreateMap(mapName, mapFileName);
-      const std::string fileNameToTest = mapFileName + dtCore::Map::MAP_FILE_EXTENSION;
+      const std::string fileNameToTest = mapFileName + "." + dtCore::Map::MAP_FILE_EXTENSION;
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("A newly created Map doesn't have the expected generated filename.",
             fileNameToTest, map->GetFileName());
@@ -2038,17 +2159,22 @@ void MapTests::TestParsingMapHeaderData()
    map.SetComment(comment);
    map.SetCopyright(copyright);
 
+   map.AddLibrary("Shouldn't load", "1.0");
+   createActors(map); // Add actors to make sure they don't load.
+
+   map.GetEventManager().AddEvent(*new dtCore::GameEvent("Shouldn't load", "Shouldn't be read in a header read."));
+
    //save/close Map
    dtCore::Project::GetInstance().SaveMap(mapName);
    dtCore::Project::GetInstance().CloseAllMaps(true);
 
    //Parse Map file's header data
    dtCore::RefPtr<dtCore::MapParser> parser = new dtCore::MapParser();
-   dtCore::MapHeaderData header;
 
+   dtCore::MapPtr mapHeader;
    try
    {
-      header = parser->ParseMapHeaderData(TESTS_DIR + "/data/ProjectContext/maps/" + mapFileName);
+      mapHeader = parser->ParseMapHeaderData(TESTS_DIR + "/data/ProjectContext/maps/" + mapFileName);
    }
    catch (const dtCore::MapParsingException& e)
    {
@@ -2059,10 +2185,15 @@ void MapTests::TestParsingMapHeaderData()
       CPPUNIT_FAIL(dtUtil::XMLStringConverter(e.getMessage()).ToString());
    }
 
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("Map header description didn't get parsed correctly", description, header.mDescription);
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("Map header author didn't get parsed correctly", author, header.mAuthor);
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("Map header comment didn't get parsed correctly", comment, header.mComment);
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("Map header copyright didn't get parsed correctly", copyright, header.mCopyright);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Map header description didn't get parsed correctly", description, mapHeader->GetDescription());
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Map header author didn't get parsed correctly", author, mapHeader->GetAuthor());
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Map header comment didn't get parsed correctly", comment, mapHeader->GetComment());
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Map header copyright didn't get parsed correctly", copyright, mapHeader->GetCopyright());
+
+   CPPUNIT_ASSERT(mapHeader->GetAllProxies().empty());
+   CPPUNIT_ASSERT(mapHeader->GetAllLibraries().empty());
+   CPPUNIT_ASSERT(nullptr == mapHeader->GetEnvironmentActor());
+   CPPUNIT_ASSERT_EQUAL(0U, mapHeader->GetEventManager().GetNumEvents());
 
    //delete the temp map file
    dtCore::Project::GetInstance().DeleteMap(mapName, true);

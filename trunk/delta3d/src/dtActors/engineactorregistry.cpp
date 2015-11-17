@@ -55,7 +55,6 @@
 #include <dtActors/distancesensoractor.h>
 #include <dtActors/waypointvolumeactor.h>
 #include <dtActors/labelactorproxy.h>
-#include <dtActors/prefabactorproxy.h>
 #include <dtActors/volumeeditactor.h>
 #include <dtActors/linkedpointsactorproxy.h>
 #include <dtActors/fenceactor.h>
@@ -66,6 +65,7 @@
 #include <dtActors/positiondataactor.h>
 #include <dtActors/dynamicparticlesactorcomponent.h>
 #include <dtActors/beziercontrolleractorcomponent.h>
+#include <dtActors/prefabactor.h>
 
 
 #include <dtGame/defaultnetworkpublishingcomponent.h>
@@ -213,7 +213,7 @@ namespace dtActors
       mActorFactory->RegisterType<PlayerStartActorProxy>(PLAYER_START_ACTOR_TYPE.get());
       mActorFactory->RegisterType<WaypointVolumeActorProxy>(WAYPOINT_VOLUME_ACTOR_TYPE.get());
       mActorFactory->RegisterType<LabelActorProxy>(LABEL_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<PrefabActorProxy>(PREFAB_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<PrefabActor>(PREFAB_ACTOR_TYPE.get());
       mActorFactory->RegisterType<VolumeEditActorProxy>(VOLUME_EDIT_ACTOR_TYPE.get());
       mActorFactory->RegisterType<LinkedPointsActorProxy>(LINKED_POINTS_ACTOR_TYPE.get());
       mActorFactory->RegisterType<BackdropActorProxy>(BACKDROP_ACTOR_TYPE.get());

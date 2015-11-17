@@ -365,28 +365,28 @@ namespace dtEditQt
       dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
       QList<QTreeWidgetItem*> list = mResultsTree->selectedItems();
       QListIterator<QTreeWidgetItem*> iter(list);
-      std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > proxyVector;
+      dtCore::ActorRefPtrVector actors;
 
       // move the objects to a vector for the message
       while (iter.hasNext())
       {
          ActorResultsTreeItem* item = static_cast<ActorResultsTreeItem*>(iter.next());
-         dtCore::RefPtr<dtCore::BaseActorObject> proxyPtr = item->GetActor();
-         proxyVector.push_back(proxyPtr);
+         dtCore::ActorPtr actor = item->GetActor();
+         actors.push_back(actor);
 
          // Also select all other proxies that belong to its group.
          if (map)
          {
-            int groupIndex = map->FindGroupForActor(proxyPtr.get());
+            int groupIndex = map->FindGroupForActor(*actor);
             if (groupIndex > -1)
             {
                int actorCount = map->GetGroupActorCount(groupIndex);
                for (int actorIndex = 0; actorIndex < actorCount; actorIndex++)
                {
-                  dtCore::RefPtr<dtCore::BaseActorObject> proxy = map->GetActorFromGroup(groupIndex, actorIndex);
-                  if (proxy != proxyPtr)
+                  dtCore::ActorPtr curActor = map->GetActorFromGroup(groupIndex, actorIndex);
+                  if (curActor != actor)
                   {
-                     proxyVector.push_back(proxy);
+                     actors.push_back(curActor);
                   }
                }
             }
@@ -395,7 +395,7 @@ namespace dtEditQt
 
       // tell the world to select these items - handle several recursive cases
       mResultsTree->blockSignals(true);
-      EditorEvents::GetInstance().emitActorsSelected(proxyVector);
+      EditorEvents::GetInstance().emitActorsSelected(actors);
       mResultsTree->blockSignals(false);
    }
 

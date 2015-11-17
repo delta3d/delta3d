@@ -846,6 +846,7 @@ namespace dtDirector
       // Switch to enable/disable this director
       DT_DECLARE_ACCESSOR_INLINE(bool, Active)
    };
+   typedef dtCore::RefPtr<Director> DirectorPtr;
 }
 
 #endif // DIRECTOR_DIRECTOR

@@ -55,24 +55,32 @@ namespace dtCore
          return false;
       }
 
+      if (value.empty())
+      {
+         SetValue(nullptr);
+         return true;
+      }
+
       dtCore::UniqueId id = dtCore::UniqueId(value);
-      GameEvent *event = NULL;
+      GameEvent *event = nullptr;
 
       if (mProxy && Project::GetInstance().IsContextValid())
       {
-         Map* map = Project::GetInstance().GetMapForActorProxy(*mProxy);
+         Map* map = Project::GetInstance().GetMapForActor(*mProxy);
          if (map)
          {
             event = map->GetEventManager().FindEvent(id);
          }
       }
-      else
+
+      if (event == nullptr)
       {
          event = Project::GetInstance().GetGameEvent(id);
       }
 
-      SetValue(event);
-      return (event != NULL) ? true : false;
+      if (event != nullptr) SetValue(event);
+
+      return event != nullptr;
    }
 
    ////////////////////////////////////////////////////////////////////////////

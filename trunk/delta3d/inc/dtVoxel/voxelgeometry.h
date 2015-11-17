@@ -80,6 +80,7 @@ namespace dtVoxel
          }
          else // debug draw
          {
+            return;
             dtCore::Transform xform;
             dtCore::Camera::GetInstance(0)->GetTransform(xform);
             osg::Vec3d cameraPos = xform.GetTranslation();
@@ -148,7 +149,7 @@ namespace dtVoxel
                            triangle.vertices[vertIdx].x = cube_vertices[3 * faces[3*triIdx + vertIdx] + 0];
                            triangle.vertices[vertIdx].y = cube_vertices[3 * faces[3*triIdx + vertIdx] + 1];
                            triangle.vertices[vertIdx].z = cube_vertices[3 * faces[3*triIdx + vertIdx] + 2];
-                           //std::cout << "[" << tri.vertices[j].x << " " << tri.vertices[j].y << " " << tri.vertices[j].z << "]";
+                           //std::cout << "[" << triangle.vertices[j].x << " " << triangle.vertices[j].y << " " << triangle.vertices[j].z << "]";
                         }
                         //std::cout << std::endl;
                         callback.ProcessTriangle(triangle, partId,  baseTriIdx + triIdx);

@@ -96,7 +96,6 @@ SET(LIB_SOURCES
                 makeskydome.cpp
                 map.cpp
                 mapcontenthandler.cpp
-                mapheaderhandler.cpp
                 mapxml.cpp
                 mapxmlconstants.cpp
                 model.cpp
@@ -136,7 +135,6 @@ SET(LIB_SOURCES
                 particleutil.cpp
                 pointaxis.cpp
                 positionallight.cpp
-                prefabiconhandler.cpp
                 prefabactorregistry.cpp
                 prefabactortype.cpp
                 project.cpp
