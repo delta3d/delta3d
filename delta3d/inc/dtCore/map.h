@@ -32,6 +32,7 @@
 #include <dtCore/actorproxy.h>
 #include <dtCore/export.h>
 #include <dtCore/gameeventmanager.h>
+#include <dtUtil/getsetmacros.h>
 
 namespace dtCore 
 {
@@ -49,6 +50,7 @@ namespace dtCore
    {
       public:
          static const std::string MAP_FILE_EXTENSION;
+         static const std::string PREFAB_FILE_EXTENSION;
 
          enum PlaceableFilter 
          {
@@ -219,6 +221,11 @@ namespace dtCore
           * @param newCreateDateTime the new create date time value.
           */
          void SetCreateDateTime(const std::string& newCreateDateTime);
+
+         /**
+          * This icon is used for prefabs.
+          */
+         DT_DECLARE_ACCESSOR(std::string, IconFile)
 
          /**
           * Searches all open maps to find the proxy with the given unique id.
@@ -461,7 +468,7 @@ namespace dtCore
          *
          * @param[in]  actor       The actor to add to the group.
          */
-         void AddActorToGroup(int groupIndex, dtCore::BaseActorObject* actor);
+         void AddActorToGroup(int groupIndex, dtCore::BaseActorObject& actor);
 
          /**
          * Removes an actor from any groups they are currently in.
@@ -470,7 +477,7 @@ namespace dtCore
          *
          * @return     True if the actor belonged to any groups.
          */
-         bool RemoveActorFromGroups(dtCore::BaseActorObject* actor);
+         bool RemoveActorFromGroups(dtCore::BaseActorObject& actor);
 
          /**
          * Retrieves a group that belongs to the given actor.
@@ -479,7 +486,7 @@ namespace dtCore
          *
          * @return     The group in which this actor belongs to.
          */
-         int FindGroupForActor(dtCore::BaseActorObject* actor);
+         int FindGroupForActor(dtCore::BaseActorObject& actor);
 
          /**
          * Retrieves an actor from a group.
@@ -507,6 +514,11 @@ namespace dtCore
          * @param[in]  presetData  The preset camera data.
          */
          void SetPresetCameraData(int index, PresetCameraData presetData);
+
+         /**
+          * Resets the UUID on every actor in the map, including subcomponents
+          */
+         void ResetUUIDs();
 
          dtCore::ActorHierarchyNode* GetDrawableActorHierarchy() { return mDrawableActorHierarchy; }
 
@@ -623,6 +635,8 @@ namespace dtCore
          Map(const Map&);
          Map& operator=(const Map&);
    };
+
+   typedef RefPtr<Map> MapPtr;
 }
 
 #endif

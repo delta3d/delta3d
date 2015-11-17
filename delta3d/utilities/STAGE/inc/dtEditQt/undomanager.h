@@ -134,14 +134,14 @@ namespace dtEditQt
        * @param proxy The proxy that was changed.
        * @param property The property of the proxy that was modified.
        */
-      void onActorPropertyChanged(dtCore::ActorPtr proxy,
+      void onActorPropertyChanged(dtCore::ActorPtr actor,
          ActorPropertyRefPtr property);
 
       /**
        * An actor property is about to change.  We create the change event object, but
        * don't add it to the undo list until we get the actual changed event.
        */
-      void actorPropertyAboutToChange(dtCore::ActorPtr proxy,
+      void actorPropertyAboutToChange(dtCore::ActorPtr actor,
          ActorPropertyRefPtr property, std::string oldValue, std::string newValue);
 
       /**
@@ -152,7 +152,7 @@ namespace dtEditQt
       /**
        * When an actor is destroyed, we add a destroy event to the undo list.
        */
-      void onActorProxyDestroyed(dtCore::ActorPtr proxy);
+      void onActorProxyDestroyed(dtCore::ActorPtr actor);
 
       /**
        * When the name changes, trap this event.

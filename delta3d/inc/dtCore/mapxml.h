@@ -25,12 +25,11 @@
 #include <dtCore/export.h>
 #include <dtCore/basexml.h>
 #include <dtCore/baseactorobject.h>
-#include <dtCore/mapheaderdata.h>
 #include <dtUtil/tree.h>
+#include <dtCore/map.h>
 
 namespace dtCore
 {
-   class Map;
    class MapContentHandler;
    class ActorPropertySerializer;
    class ActorHierarchyNode;
@@ -40,7 +39,9 @@ namespace dtCore
 
    /**
     * @class MapParser
-    * @brief front end class for converting an XML map into a map instance.
+    * @brief class for converting an XML map into a map instance.
+    * @note nothing in this class is considered part of the public api.  All of this data can be read from project.h.
+    * As such, functions could change, be added or removed, or this entire class could be removed with no warning.
     */
    class DT_CORE_EXPORT MapParser: public BaseXMLParser
    {
@@ -59,42 +60,19 @@ namespace dtCore
           * @return A pointer to the loaded map.
           * @throws MapLoadParseError if a fatal error occurs in the parsing.
           */
-         bool Parse(const std::string& path, Map** map);
-         bool Parse(std::istream& stream, Map** map);
-
-         /**
-         * Parses a prefab resource and places it in the given map
-         * at a given location.
-         *
-         * @param[in]  path       The prefab filepath.
-         * @param[in]  proxyList  The list of proxies loaded from the prefab.
-         * @param[in]  map        The map we are loading the prefab for.
-         */
-         bool ParsePrefab(const std::string& path, dtCore::ActorRefPtrVector& actorList, dtCore::Map* map = NULL);
-
-         /**
-         * Parses only the header of a prefab's xml file and extracts the icon
-         * file name.  Returns "" if no icon element is found in the header.
-         */
-         const std::string GetPrefabIconFileName(const std::string& path);
-
-         /**
-          * Reads the assigned name from the map path given.
-          * @param path the file path to the map.
-          * @return the name of the map from the file.
-          * @throws MapLoadParseError if any errors occurs in the parsing.
-          */
-         const std::string ParseMapName(const std::string& path);
-         const std::string ParseMapName(std::istream& stream);
+         bool Parse(const std::string& path, Map** map, bool prefab = false);
+         bool Parse(std::istream& stream, Map** map, bool prefab = false);
 
          /**
           * Reads the supplied filename as a Map xml file and extracts the Map
           * file's header data. Will not create a Map nor anything contained in the Map.
           * @param mapFilename The Map file to parse
+          * @param prefab      if this map refers to a prefab.
           * @return The parsed MapHeaderData
           * @throws dtCore::XMLLoadParsingException if file can't be found, or any parsing errors
           */
-         dtCore::MapHeaderData ParseMapHeaderData(const std::string& mapFilename) const;
+         MapPtr ParseMapHeaderData(const std::string& mapFileName, bool prefab = false) const;
+         MapPtr ParseMapHeaderData(std::istream& stream, bool prefab = false) const;
 
          /**
           * This method exists to allow actors being parsed to access their map.  It's to help
@@ -121,6 +99,7 @@ namespace dtCore
 
       dtCore::RefPtr<MapContentHandler> mMapHandler;
    };
+   typedef RefPtr<MapParser> MapParserPtr;
 
 
    /**
@@ -144,23 +123,18 @@ namespace dtCore
        *  but it does not include any directories needed or the extension.
        * @throws MapSaveException if any errors occur saving the file.
        */
-      void Save(Map& map, const std::string& filePath);
+      void Save(Map& map, const std::string& filePath, bool prefab = false);
 
       /**
        * Saves the map to an XML file.
        * The create time will be set on the map if this is the first time it has been saved.
        * @param map the map to save.
        * @param stream the stream to write into.
+       * @param prefab Same the map as a prefab.  This is called this way from the SavePrefab function.
        * @throws MapSaveException if any errors occur saving the file.
        */
-      void Save(Map& map, std::ostream& stream);
+      void Save(Map& map, std::ostream& stream, bool prefab = false);
 
-      /**
-       * Saves a number of given actor proxies into a prefab resource.
-       */
-      void SavePrefab(std::vector<dtCore::RefPtr<BaseActorObject> > actorList,
-                      const std::string& filePath, const std::string& description,
-                      const std::string& iconFile = std::string());
 
    protected:
       virtual ~MapWriter(); ///Protected destructor so that this could be subclassed.
@@ -185,6 +159,7 @@ namespace dtCore
 
       ActorPropertySerializer* mPropSerializer;
    };
+   typedef RefPtr<MapWriter> MapWriterPtr;
 }
 
 #endif

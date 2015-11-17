@@ -345,7 +345,7 @@ namespace dtEditQt
          // Determine if this new selection is part of a group.
          toSelect.push_back(newSelection);
 
-         int groupIndex = currMap->FindGroupForActor(newSelection);
+         int groupIndex = currMap->FindGroupForActor(*newSelection);
 
          if (groupIndex > -1)
          {

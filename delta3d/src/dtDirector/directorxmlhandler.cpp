@@ -95,7 +95,7 @@ namespace dtDirector
       : dtCore::BaseXMLHandler()
       , mDirector(NULL)
       , mMap(NULL)
-      , mFoundScriptType(false)
+      , mHasParsedHeader(false)
       , mHasImportedScripts(false)
       , mSchemaVersion(1.0f)
       , mNode(NULL)
@@ -460,9 +460,9 @@ namespace dtDirector
          // If we find any header actor properties, we have gone passed the point
          // where we should have found a script type.  If we are searching for a
          // script type, we can stop now and assume it is the default type.
-         if (!mFoundScriptType && topEl == dtCore::MapXMLConstants::ACTOR_PROPERTY_ELEMENT)
+         if (!mHasParsedHeader && topEl == dtCore::MapXMLConstants::ACTOR_PROPERTY_ELEMENT)
          {
-            mFoundScriptType = true;
+            mHasParsedHeader = true;
             mScriptType = "Scenario";
          }
 
@@ -482,7 +482,6 @@ namespace dtDirector
             else if (topEl == dtCore::MapXMLConstants::DIRECTOR_SCRIPT_TYPE)
             {
                mScriptType = dtUtil::XMLStringConverter(chars).ToString();
-               mFoundScriptType = true;
 
                // Check if the loaded script matches our current script type
                if (mDirector && mDirector->GetScriptType() != mScriptType)
@@ -958,7 +957,7 @@ namespace dtDirector
       dtCore::BaseXMLHandler::Reset();
 
       mScriptType = "";
-      mFoundScriptType = false;
+      mHasParsedHeader = false;
       mHasImportedScripts = false;
 
       mSchemaVersion = 1.0f;
@@ -1050,6 +1049,7 @@ namespace dtDirector
          if (XMLString::compareString(localname, dtCore::MapXMLConstants::HEADER_ELEMENT) == 0)
          {
             mInHeaders = false;
+            mHasParsedHeader = true;
          }
       }
    }

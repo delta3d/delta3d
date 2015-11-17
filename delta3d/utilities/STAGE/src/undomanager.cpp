@@ -197,7 +197,7 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void UndoManager::onActorProxyDestroyed(dtCore::RefPtr<dtCore::BaseActorObject> proxy)
+   void UndoManager::onActorProxyDestroyed(dtCore::ActorPtr actor)
    {
       if (!mRecursePrevent)
       {
@@ -211,19 +211,19 @@ namespace dtEditQt
 
          // First test if this actor is in a group.
          bool isGroupped = false;
-         dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
-         if (map)
+         dtCore::MapPtr map = EditorData::GetInstance().getCurrentMap();
+         if (map.valid())
          {
-            if (map->FindGroupForActor(proxy.get()) > -1)
+            if (map->FindGroupForActor(*actor) > -1)
             {
                isGroupped = true;
                //beginMultipleUndo();
-               unGroupActor(proxy);
-               map->RemoveActorFromGroups(proxy.get());
+               unGroupActor(actor);
+               map->RemoveActorFromGroups(*actor);
             }
          }
 
-         ChangeEvent* undoEvent = createFullUndoEvent(proxy.get());
+         ChangeEvent* undoEvent = createFullUndoEvent(actor.get());
          undoEvent->mType = ChangeEvent::PROXY_DELETED;
 
          // add it to our main undo stack
@@ -394,7 +394,7 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void UndoManager::handleUndoRedoCreateObject(ChangeEvent* event, dtCore::BaseActorObject* proxy, bool isUndo)
+   void UndoManager::handleUndoRedoCreateObject(ChangeEvent* event, dtCore::BaseActorObject* actor, bool isUndo)
    {
       // NOTE - The undo/redo methods do both the undo and the redo.  If you are modifying
       // these methods, be VERY careful
@@ -419,11 +419,11 @@ namespace dtEditQt
       dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
       if (map)
       {
-         if (map->FindGroupForActor(proxy) > -1)
+         if (map->FindGroupForActor(*actor) > -1)
          {
             //beginMultipleUndo();
-            unGroupActor(proxy);
-            map->RemoveActorFromGroups(proxy);
+            unGroupActor(actor);
+            map->RemoveActorFromGroups(*actor);
          }
       }
 
@@ -432,7 +432,7 @@ namespace dtEditQt
       EditorData::GetInstance().getMainWindow()->startWaitCursor();
       dtCore::RefPtr<dtCore::Map> currMap = EditorData::GetInstance().getCurrentMap();
 
-      EditorActions::GetInstance().deleteProxy(proxy, currMap);
+      EditorActions::GetInstance().deleteProxy(actor, currMap);
 
       //We are deleting an object, so clear the current selection for safety.
       dtCore::ActorRefPtrVector emptySelection;
@@ -443,7 +443,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void UndoManager::handleUndoRedoCreateGroup(ChangeEvent* event, dtCore::BaseActorObject* proxy, bool createGroup, bool isUndo)
+   void UndoManager::handleUndoRedoCreateGroup(ChangeEvent* event, dtCore::BaseActorObject* actor, bool createGroup, bool isUndo)
    {
       if (isUndo)
       {
@@ -456,13 +456,13 @@ namespace dtEditQt
          mUndoStack.push(event);
       }
 
-      dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
-      if (map)
+      dtCore::MapPtr map = EditorData::GetInstance().getCurrentMap();
+      if (map.valid())
       {
          // Undo'ing the creation of a group is the same as removing the actor from the group.
          if (createGroup == isUndo)
          {
-            map->RemoveActorFromGroups(proxy);
+            map->RemoveActorFromGroups(*actor);
          }
          // Redo'ing the creation of a group is the same as putting the actor into a group.
          else
@@ -488,8 +488,8 @@ namespace dtEditQt
                toSelect.push_back(selection[index]);
             }
 
-            map->AddActorToGroup(mGroupIndex, proxy);
-            toSelect.push_back(proxy);
+            map->AddActorToGroup(mGroupIndex, *actor);
+            toSelect.push_back(actor);
 
             EditorEvents::GetInstance().emitActorsSelected(toSelect);
          }

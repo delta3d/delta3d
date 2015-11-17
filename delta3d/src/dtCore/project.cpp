@@ -116,6 +116,8 @@ namespace dtCore
       // Internal context remove that doesn't refresh
       void InternalRemoveContext(Project::ContextSlot slot);
 
+      std::string InternalSaveMapOrPrefab(Map& map, const std::string& categoryPath, Project::ContextSlot slot, bool prefab);
+
       //internal handling for saving a map.
       void InternalSaveMap(Map& map, Project::ContextSlot slot);
       //internal handling for deleting a map.
@@ -124,7 +126,7 @@ namespace dtCore
       //internal handling for loading a map.
       Map& InternalLoadMap(const MapFileData& fileData, bool backup, bool clearModified);
 
-      void InternalLoadPrefab(const std::string& fullPath, dtCore::ActorRefPtrVector& actorsOut);
+      MapPtr InternalLoadPrefab(const std::string& fullPath, dtCore::ActorRefPtrVector& actorsOut);
 
       //internal handling of closing a sincle map.
       void InternalCloseMap(Map& map, bool unloadLibraries);
@@ -625,7 +627,7 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   MapHeaderData Project::GetMapHeader(const std::string& mapName)
+   MapPtr Project::GetMapHeader(const std::string& mapName)
    {
       if (!IsContextValid())
       {
@@ -640,7 +642,7 @@ namespace dtCore
 
       ProjectImpl::MapListType::iterator iter = mImpl->mMapList.find(mapName);
 
-      MapHeaderData headerData;
+      MapPtr headerOnly;
 
       if (iter != mImpl->mMapList.end())
       {
@@ -651,21 +653,38 @@ namespace dtCore
          std::string& fileName = mImpl->mMapList[mapName].mFileName;
          std::string fullPath = mImpl->GetMapsDirectory(mImpl->mContexts[slotID], false).fileName + dtUtil::FileUtils::PATH_SEPARATOR + fileName;
 
-         headerData = parser->ParseMapHeaderData(fullPath);
+         headerOnly = parser->ParseMapHeaderData(fullPath);
       }
       else
       {
          throw dtUtil::FileNotFoundException("No such map exists: " + mapName, __FILE__, __LINE__);
       }
 
-      return headerData;
+      return headerOnly;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   MapPtr Project::GetPrefabHeader(const dtCore::ResourceDescriptor& prefabResource)
+   {
+      if (!IsContextValid())
+      {
+         throw dtCore::ProjectInvalidContextException(
+            std::string("There is no current project context.  Unable to get map headers."), __FILE__, __LINE__);
+      }
+      MapPtr result;
+
+      const std::string fullPath = GetResourcePath(prefabResource);
+      dtCore::RefPtr<MapParser> parser = new MapParser();
+      result = parser->ParseMapHeaderData(fullPath, true);
+
+      return result;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void ProjectImpl::ListMapsForContextDir(Project::ContextSlot slot)
    {
       dtUtil::FileExtensionList extensions; ///list of acceptable file extensions
-      extensions.push_back(dtCore::Map::MAP_FILE_EXTENSION);
+      extensions.push_back("." + dtCore::Map::MAP_FILE_EXTENSION);
       extensions.push_back(".xml");
       extensions.push_back(""); // allow for folder recursion.
 
@@ -717,7 +736,8 @@ namespace dtCore
          {
             try
             {
-               std::string mapName = parser->ParseMapName(fullPath);
+               MapPtr headerOnly = parser->ParseMapHeaderData(fullPath);
+               std::string mapName = headerOnly->GetName();
 
                MapFileData fileData;
                fileData.mOrigName = mapName;
@@ -776,8 +796,11 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void ProjectImpl::InternalLoadPrefab(const std::string& fullPath, dtCore::ActorRefPtrVector& actorsOut)
+   MapPtr ProjectImpl::InternalLoadPrefab(const std::string& fullPath, dtCore::ActorRefPtrVector& actorsOut)
    {
+      // This really should be impossible because the code shouldn't call this unless it already validated the path.
+      if (fullPath.empty()) return MapPtr(nullptr);
+
       //create the parser after setting the context.
       //because the parser looks for map.xsd in the constructor.
       //that way users can put map.xsd in the project and not need
@@ -787,19 +810,21 @@ namespace dtCore
          mParser = new MapParser();
       }
 
+      MapPtr mapToUse;
       try
       {
-         dtCore::RefPtr<Map> mapToUse;
-         if (mOpenMaps.empty())
-         {
-            mapToUse = new Map("blah", "blah");
-         }
-
-         if (!mParser->ParsePrefab(fullPath, actorsOut, mapToUse))
+         Map* mapRawPointer = nullptr;
+         mParser->Parse(fullPath,&mapRawPointer, true);
+         mapToUse = mapRawPointer;
+         if (!mapToUse.valid())
          {
             throw dtCore::MapParsingException(
                "Prefab loading didn't throw an exception, but the result is NULL", __FILE__, __LINE__);
          }
+         mapToUse->GetAllProxies(actorsOut);
+         std::string filename = osgDB::getSimpleFileName(fullPath);
+         mapToUse->SetName(filename);
+         mapToUse->SetFileName(filename);
       }
       catch (const dtUtil::Exception& e)
       {
@@ -810,7 +835,7 @@ namespace dtCore
       }
 
       mParser = NULL; //done using this MapParser, delete it
-
+      return mapToUse;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -1057,7 +1082,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Project::LoadPrefab(const dtCore::ResourceDescriptor& rd, dtCore::ActorRefPtrVector& actorsOut)
+   MapPtr Project::LoadPrefab(const dtCore::ResourceDescriptor& rd, dtCore::ActorRefPtrVector& actorsOut)
    {
       if (!IsContextValid())
       {
@@ -1067,9 +1092,57 @@ namespace dtCore
 
       std::string fullPath = GetResourcePath(rd);
 
-      mImpl->InternalLoadPrefab(fullPath, actorsOut);
+      return mImpl->InternalLoadPrefab(fullPath, actorsOut);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
+   ResourceDescriptor Project::SavePrefab(const std::string& name, const std::string& category, const ActorRefPtrVector& actorList,
+         const std::string& description,
+         const std::string& iconFile, ContextSlot slot)
+   {
+      if (slot == DEFAULT_SLOT_VALUE)
+      {
+         slot = 0U;
+      }
+
+      if (!IsContextValid(slot))
+      {
+         throw dtCore::ProjectInvalidContextException(
+         std::string("The context is not valid."), __FILE__, __LINE__);
+      }
+
+      std::string fileName = name, curExt;
+      curExt = osgDB::getLowerCaseFileExtension(fileName);
+      if (curExt != Map::PREFAB_FILE_EXTENSION)
+      {
+         fileName.append(".").append(Map::PREFAB_FILE_EXTENSION);
+      }
+
+      dtCore::MapPtr tempMap = new dtCore::Map(fileName, name);
+      tempMap->SetDescription(description);
+      tempMap->SetIconFile(iconFile);
+      std::for_each(actorList.begin(), actorList.end(), [&tempMap](const ActorPtr& actor)
+            {
+         tempMap->AddProxy(*actor, false);
+            });
+
+      // Save the temp file in the project context slot root.
+      std::string savedPath = mImpl->InternalSaveMapOrPrefab(*tempMap, mImpl->mContexts[slot], slot, true);
+      std::string removedSavingExtension = osgDB::getNameLessExtension(savedPath);
+      dtUtil::FileUtils::GetInstance().FileMove(savedPath, removedSavingExtension, true);
+      // then add it as a resource.
+      ResourceDescriptor result = AddResource(name, removedSavingExtension, category, dtCore::DataType::PREFAB, slot);
+      try
+      {
+         dtUtil::FileUtils::GetInstance().FileDelete(removedSavingExtension);
+      }
+      catch(const dtUtil::Exception& ex)
+      {
+         // If there is an error deleting the temp file, then it didn't really fail, it just didn't clean up after itself, like the plumber...
+         ex.LogException(dtUtil::Log::LOG_ERROR, mImpl->mLogger->GetName());
+      }
+      return result;
+   }
 
    /////////////////////////////////////////////////////////////////////////////
    Map& Project::LoadMapIntoScene(const std::string& name, dtCore::Scene& scene, bool addBillBoards)
@@ -1504,7 +1577,7 @@ namespace dtCore
             i != mImpl->mMapList.end(); ++i )
          {
             const std::string& mapFileNameRef = i->second.mFileName;
-            if (newFileName == mapFileNameRef.substr(0, mapFileNameRef.size() - Map::MAP_FILE_EXTENSION.size())
+            if (newFileName == mapFileNameRef.substr(0, mapFileNameRef.size() - (Map::MAP_FILE_EXTENSION.size() + 1))
                && i->second.mSlotId == slot)
             {
                throw dtCore::ProjectException( std::string("Map named ")
@@ -1606,6 +1679,24 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   std::string ProjectImpl::InternalSaveMapOrPrefab(Map& map, const std::string& categoryPath, Project::ContextSlot slot, bool prefab)
+   {
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      std::string fullPath = categoryPath + dtUtil::FileUtils::PATH_SEPARATOR + map.GetFileName();
+      std::string fullPathSaving = fullPath + ".saving";
+
+      //make sure the category directory exists.
+      std::string folderPath = osgDB::getFilePath(fullPath);
+      fileUtils.MakeDirectoryEX(folderPath);
+
+      //save the file to a separate name first so that
+      //it won't blast the old one unless it is successful.
+      dtCore::RefPtr<MapWriter> writer = new MapWriter();
+      writer->Save(map, fullPathSaving, prefab);
+      return fullPathSaving;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void ProjectImpl::InternalSaveMap(Map& map, Project::ContextSlot slot)
    {
       bool isNew = map.GetSavedName().empty();
@@ -1619,20 +1710,12 @@ namespace dtCore
          }
       }
 
+      std::string mapDir = GetMapsDirectory(mContexts[slot], true).fileName;
+
+      std::string finalPath = mapDir + dtUtil::FileUtils::PATH_SEPARATOR + map.GetFileName();
+
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      std::string fullPath = GetMapsDirectory(mContexts[slot], true).fileName + dtUtil::FileUtils::PATH_SEPARATOR + map.GetFileName();
-      std::string fullPathSaving = fullPath + ".saving";
-
-      //make sure the category directory exists.
-      std::string folderPath = osgDB::getFilePath(fullPath);
-      fileUtils.MakeDirectoryEX(folderPath);
-
-      //save the file to a separate name first so that
-      //it won't blast the old one unless it is successful.
-      dtCore::RefPtr<MapWriter> writer = new MapWriter();
-      writer->Save(map, fullPathSaving);
-      //if it's successful, move it to the final file name
-      fileUtils.FileMove(fullPathSaving, fullPath, true);
+      fileUtils.FileMove(InternalSaveMapOrPrefab(map, mapDir, slot, false), finalPath, true);
 
       //Update the internal lists to make sure that
       //map is keyed properly by name.

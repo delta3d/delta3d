@@ -208,7 +208,7 @@ namespace dtGame
       virtual void OnTickLocal(const TickMessage& /*tickMessage*/) {};
       virtual void OnTickRemote(const TickMessage& /*tickMessage*/) {};
 
-      virtual bool IsPlaceable() const { return false; }
+      virtual bool IsPlaceable() const final { return false; }
 
    private: 
 

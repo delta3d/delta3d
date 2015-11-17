@@ -55,8 +55,6 @@ DT_DISABLE_WARNING_END
 #include <dtCore/actorfactory.h>
 #include <dtCore/mapxmlconstants.h>
 #include <dtCore/mapcontenthandler.h>
-#include <dtCore/mapheaderhandler.h>
-#include <dtCore/prefabiconhandler.h>
 #include <dtCore/project.h>
 #include <dtCore/transformableactorproxy.h>
 
@@ -95,7 +93,7 @@ namespace dtCore
       public:
          MapStream(): mMapPtr(NULL){};
 
-         bool ParseMap(std::istream& str)
+         bool ParseMap(std::istream& str, bool prefab)
          {
             dtCore::RefPtr<MapParser> parser = Project::GetInstance().GetCurrentMapParser();
 
@@ -104,14 +102,15 @@ namespace dtCore
                parser = new MapParser();
             }
 
-            parser->Parse(str, &mMapPtr);
+            parser->Parse(str, &mMapPtr, prefab);
             mMap = mMapPtr;
 
 
             return mMap.valid();
          }
 
-         std::string ParseMapName(std::istream& str)
+
+         bool ParseMapHeader(std::istream& str, bool prefab)
          {
             std::string mapName;
 
@@ -122,16 +121,10 @@ namespace dtCore
                parser = new MapParser();
             }
 
-            mapName = parser->ParseMapName(str);
-            if(!mapName.empty())
-            {
-               //only the name will be valid
-               mMap = new Map(mapName, mapName);
+            mMap = parser->ParseMapHeaderData(str, prefab);
+            mMapPtr = mMap.get();
 
-               mMapPtr = mMap.get();
-            }
-
-            return mapName;
+            return mMap.valid();
          }
 
          virtual const char* libraryName() const {return "dtCore";};
@@ -147,7 +140,8 @@ namespace dtCore
       MapReaderWriter()
          : mShouldIgnoreExtension(false)
       {
-         supportsExtension("dtmap","Delta3D map file format");
+         supportsExtension(Map::MAP_FILE_EXTENSION,"delta3d map file format");
+         supportsExtension(Map::PREFAB_FILE_EXTENSION,"delta3d prefab file format");
       }
 
       void SetShouldIgnoreExtension(bool b)
@@ -179,15 +173,17 @@ namespace dtCore
                dtCore::RefPtr<MapStream> ms = new MapStream();
                bool result = false;
 
+               bool headerOnly = options != nullptr && !options->getPluginStringData("DELTA3D_HEADER").empty();
+               bool prefab = options != nullptr && !options->getPluginStringData("DELTA3D_PREFAB").empty();
+
                //using this option will keep the parser from parsing the whole map
-               if(options != NULL && !(options->getPluginStringData("DELTA3D_PARSEMAPNAME")).empty())
+               if (headerOnly)
                {
-                  std::string name = ms->ParseMapName(fileStream);
-                  result = !name.empty();
+                  result = ms->ParseMapHeader(fileStream, prefab);
                }
                else
                {
-                  result = ms->ParseMap(fileStream);
+                  result = ms->ParseMap(fileStream, prefab);
                }
 
                if(result)
@@ -210,15 +206,18 @@ namespace dtCore
          dtCore::RefPtr<MapStream> ms = new MapStream();
 
          bool result = false;
+
+         bool headerOnly = !options->getPluginStringData("DELTA3D_HEADER").empty();
+         bool prefab = !options->getPluginStringData("DELTA3D_PREFAB").empty();
+
          //using this option will keep the parser from parsing the whole map
-         if (options != NULL && !(options->getPluginStringData("DELTA3D_PARSEMAPNAME").empty()))
+         if (headerOnly)
          {
-            std::string name = ms->ParseMapName(fin);
-            result = !name.empty();
+            result = ms->ParseMapHeader(fin, prefab);
          }
          else
          {
-            result = ms->ParseMap(fin);
+            result = ms->ParseMap(fin, prefab);
          }
 
          if (result)
@@ -234,8 +233,6 @@ namespace dtCore
 
    REGISTER_OSGPLUGIN(dtmap, MapReaderWriter)
 
-
-   static const std::string logName("mapxml.cpp");
 
    /////////////////////////////////////////////////////////////////////////////
    MapParser::MapParser()
@@ -274,7 +271,7 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool MapParser::Parse(const std::string& path, Map** map)
+   bool MapParser::Parse(const std::string& path, Map** map, bool prefab)
    {
       bool result = false;
       dtCore::RefPtr<MapReaderWriter::MapStream> mapStreamObject;
@@ -283,16 +280,16 @@ namespace dtCore
       //temporarily here to support non .dtmap extensions
       bool isBackupExt = false;
       std::string fileExt = osgDB::getLowerCaseFileExtension(path);
-      if(fileExt == "backup")
+      if (fileExt == "backup")
       {
          fileExt = osgDB::getLowerCaseFileExtension(osgDB::getNameLessExtension(path));
-         if(fileExt == "xml" || fileExt == "dtmap")
+         if(fileExt == "xml" || fileExt == Map::MAP_FILE_EXTENSION)
          {
             isBackupExt = true;
          }
       }
 
-      if(isBackupExt || fileExt == "xml")
+      if(!prefab && (isBackupExt || fileExt == "xml"))
       {
          std::string filename = dtUtil::FindFileInPathList(path);
          if(!filename.empty())
@@ -311,7 +308,16 @@ namespace dtCore
       }
       else
       {
-         dtCore::RefPtr<osg::Object> obj = dtUtil::FileUtils::GetInstance().ReadObject(path);
+         osgDB::Registry* reg = osgDB::Registry::instance();
+         //setting this option will keep the map reader writer from having to parse the whole map
+         osg::ref_ptr<osgDB::ReaderWriter::Options> options = reg->getOptions() ?
+            static_cast<osgDB::ReaderWriter::Options*>(reg->getOptions()->clone(osg::CopyOp::SHALLOW_COPY)) :
+         new osgDB::ReaderWriter::Options;
+
+         if (prefab)
+            options->setPluginStringData("DELTA3D_PREFAB", "1");
+
+         dtCore::RefPtr<osg::Object> obj = dtUtil::FileUtils::GetInstance().ReadObject(path, options);
          if(obj.valid())
          {
             mapStreamObject = dynamic_cast<MapReaderWriter::MapStream*>(obj.get());
@@ -331,9 +337,12 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool MapParser::Parse(std::istream& stream, Map** map)
+   bool MapParser::Parse(std::istream& stream, Map** map, bool prefab)
    {
-      mMapHandler->SetMapMode();
+      if (!prefab)
+         mMapHandler->SetMapMode();
+      else
+         mMapHandler->SetPrefabMode();
 
       if (BaseXMLParser::Parse(stream))
       {
@@ -352,42 +361,20 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool MapParser::ParsePrefab(const std::string& path, dtCore::ActorRefPtrVector& actorList, dtCore::Map* map)
-   {
-      mMapHandler->SetPrefabMode(actorList, map);
-      std::ifstream mapfstream(path.c_str());
-      if (BaseXMLParser::Parse(mapfstream))
-      {
-         dtCore::RefPtr<Map> mapRef = mMapHandler->GetMap();
-         mMapHandler->ClearMap();
-         return true;
-      }
-
-      return false;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   const std::string MapParser::GetPrefabIconFileName(const std::string& path)
-   {
-      dtCore::RefPtr<PrefabIconHandler> handler = new PrefabIconHandler();
-      if (!ParseFileByToken(path, handler))
-      {
-         //error
-         throw dtCore::MapParsingException( "Could not parse the Prefab's icon name.", __FILE__, __LINE__);
-      }
-
-      return handler->GetIconName();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   const std::string MapParser::ParseMapName(std::istream& stream)
+   MapPtr MapParser::ParseMapHeaderData(std::istream& stream, bool prefab) const
    {
       bool parserNeedsReset = false;
       XMLPScanToken token;
 
+      if (!prefab)
+         mMapHandler->SetMapMode();
+      else
+         mMapHandler->SetPrefabMode();
+
       mXercesParser->setContentHandler(mMapHandler.get());
       mXercesParser->setErrorHandler(mMapHandler.get());
 
+      MapPtr result;
 
       try
       {
@@ -398,7 +385,7 @@ namespace dtCore
             parserNeedsReset = true;
 
             bool cont = mXercesParser->parseNext(token);
-            while (cont && !mMapHandler->HasFoundMapName())
+            while (cont && !mMapHandler->HasParsedHeader())
             {
                cont = mXercesParser->parseNext(token);
             }
@@ -407,12 +394,11 @@ namespace dtCore
             //reSet the parser and close the file handles.
             mXercesParser->parseReset(token);
 
-            if (mMapHandler->HasFoundMapName())
+            if (mMapHandler->HasParsedHeader())
             {
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Parsing complete.");
-               std::string name = mMapHandler->GetMap()->GetName();
+               result = mMapHandler->GetMap();
                mMapHandler->ClearMap();
-               return name;
             }
             else
             {
@@ -453,10 +439,11 @@ namespace dtCore
          //this will already by logged by the content handler
          throw dtCore::MapParsingException( "Error while parsing map file. See log for more information.", __FILE__, __LINE__);
       }
+      return result;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const std::string MapParser::ParseMapName(const std::string& path)
+   MapPtr MapParser::ParseMapHeaderData(const std::string& path, bool prefab) const
    {
       osgDB::Registry* reg = osgDB::Registry::instance();
       dtCore::RefPtr<MapReaderWriter::MapStream> mapStreamObject;
@@ -466,7 +453,9 @@ namespace dtCore
          static_cast<osgDB::ReaderWriter::Options*>(reg->getOptions()->clone(osg::CopyOp::SHALLOW_COPY)) :
       new osgDB::ReaderWriter::Options;
 
-      options->setPluginStringData("DELTA3D_PARSEMAPNAME", "1");
+      options->setPluginStringData("DELTA3D_HEADER", "1");
+      if (prefab)
+         options->setPluginStringData("DELTA3D_PREFAB", "1");
 
       //if the map is an .xml file we must load it manually
       //this is a temporary workaround and should be deprecated
@@ -495,36 +484,18 @@ namespace dtCore
          }
       }
 
+      MapPtr result;
       if(mapStreamObject.valid() && mapStreamObject->mMap.valid())
       {
-         std::string mapName = mapStreamObject->mMap->GetName();
-         return mapName;
+         result = mapStreamObject->mMap;
       }
       else
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! Unable to parse map name.");
          throw dtCore::MapParsingException( "Error while parsing map file. See log for more information.", __FILE__, __LINE__);
       }
+      return result;
 
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   dtCore::MapHeaderData MapParser::ParseMapHeaderData(const std::string& mapFilename) const
-   {
-      dtCore::RefPtr<MapHeaderHandler> handler = new MapHeaderHandler();
-      try
-      {
-         if (!ParseFileByToken(mapFilename, handler))
-         {
-            throw dtCore::MapParsingException( "Could not parse the Map's header data.", __FILE__, __LINE__);
-         }
-      }
-      catch (dtCore::XMLLoadParsingException& ex)
-      {
-         throw dtCore::MapParsingException( "Could not parse the Map's header data with dtCore::XMLLoadParsingException: " + ex.ToString(), __FILE__, __LINE__);
-      }
-
-      return handler->GetHeaderData();
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -586,18 +557,18 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void MapWriter::Save(Map& map, const std::string& filePath)
+   void MapWriter::Save(Map& map, const std::string& filePath, bool prefab)
    {
       std::ofstream stream(filePath.c_str(), std::ios_base::trunc|std::ios_base::binary);
       if (!stream.is_open())
       {
          throw dtCore::MapSaveException( std::string("Unable to open map file \"") + filePath + "\" for writing.", __FILE__, __LINE__);
       }
-      Save(map, stream);
+      Save(map, stream, prefab);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void MapWriter::Save(Map& map, std::ostream& stream)
+   void MapWriter::Save(Map& map, std::ostream& stream, bool prefab)
    {
       map.CorrectLibraryList(false);
       mFormatTarget.SetOutputStream(&stream);
@@ -611,7 +582,11 @@ namespace dtCore
          const std::string& utcTime = dtUtil::DateTime::ToString(dtUtil::DateTime(dtUtil::DateTime::TimeOrigin::LOCAL_TIME),
             dtUtil::DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT);
 
-         BeginElement(MapXMLConstants::MAP_ELEMENT, MapXMLConstants::MAP_NAMESPACE);
+         if (prefab)
+            BeginElement(MapXMLConstants::PREFAB_ELEMENT, MapXMLConstants::PREFAB_NAMESPACE);
+         else
+            BeginElement(MapXMLConstants::MAP_ELEMENT, MapXMLConstants::MAP_NAMESPACE);
+
          BeginElement(MapXMLConstants::HEADER_ELEMENT);
          BeginElement(MapXMLConstants::NAME_ELEMENT);
          AddCharacters(map.GetName());
@@ -619,15 +594,18 @@ namespace dtCore
          BeginElement(MapXMLConstants::DESCRIPTION_ELEMENT);
          AddCharacters(map.GetDescription());
          EndElement(); // End Description Element.
-         BeginElement(MapXMLConstants::AUTHOR_ELEMENT);
-         AddCharacters(map.GetAuthor());
-         EndElement(); // End Author Element.
-         BeginElement(MapXMLConstants::COMMENT_ELEMENT);
-         AddCharacters(map.GetComment());
-         EndElement(); // End Comment Element.
-         BeginElement(MapXMLConstants::COPYRIGHT_ELEMENT);
-         AddCharacters(map.GetCopyright());
-         EndElement(); // End Copyright Element.
+         if (!prefab)
+         {
+            BeginElement(MapXMLConstants::AUTHOR_ELEMENT);
+            AddCharacters(map.GetAuthor());
+            EndElement(); // End Author Element.
+            BeginElement(MapXMLConstants::COMMENT_ELEMENT);
+            AddCharacters(map.GetComment());
+            EndElement(); // End Comment Element.
+            BeginElement(MapXMLConstants::COPYRIGHT_ELEMENT);
+            AddCharacters(map.GetCopyright());
+            EndElement(); // End Copyright Element.
+         }
          BeginElement(MapXMLConstants::CREATE_TIMESTAMP_ELEMENT);
          if (map.GetCreateDateTime().length() == 0)
          {
@@ -644,6 +622,12 @@ namespace dtCore
          BeginElement(MapXMLConstants::SCHEMA_VERSION_ELEMENT);
          AddCharacters(std::string(MapXMLConstants::SCHEMA_VERSION));
          EndElement(); // End Scema Version Element.
+         if (prefab)
+         {
+            BeginElement(MapXMLConstants::ICON_ELEMENT);
+            AddCharacters(map.GetIconFile());
+            EndElement(); //End Icon Element
+         }
          EndElement(); // End Header Element.
 
          BeginElement(MapXMLConstants::LIBRARIES_ELEMENT);
@@ -661,31 +645,34 @@ namespace dtCore
          }
          EndElement(); // End Libraries Element.
 
-         std::vector<GameEvent* > events;
-         map.GetEventManager().GetAllEvents(events);
-         if (!events.empty())
+         if (!prefab)
          {
-            BeginElement(MapXMLConstants::EVENTS_ELEMENT);
-            for (std::vector<GameEvent* >::const_iterator i = events.begin(); i != events.end(); ++i)
+            std::vector<GameEvent* > events;
+            map.GetEventManager().GetAllEvents(events);
+            if (!events.empty())
             {
-               BeginElement(MapXMLConstants::EVENT_ELEMENT);
-               BeginElement(MapXMLConstants::EVENT_ID_ELEMENT);
-               AddCharacters((*i)->GetUniqueId().ToString());
-               EndElement(); // End ID Element.
-               BeginElement(MapXMLConstants::EVENT_NAME_ELEMENT);
-               AddCharacters((*i)->GetName());
-               EndElement(); // End Event Name Element.
-               BeginElement(MapXMLConstants::EVENT_DESCRIPTION_ELEMENT);
-               AddCharacters((*i)->GetDescription());
-               EndElement(); // End Event Description Element.
-               EndElement(); // End Event Element.
+               BeginElement(MapXMLConstants::EVENTS_ELEMENT);
+               for (std::vector<GameEvent* >::const_iterator i = events.begin(); i != events.end(); ++i)
+               {
+                  BeginElement(MapXMLConstants::EVENT_ELEMENT);
+                  BeginElement(MapXMLConstants::EVENT_ID_ELEMENT);
+                  AddCharacters((*i)->GetUniqueId().ToString());
+                  EndElement(); // End ID Element.
+                  BeginElement(MapXMLConstants::EVENT_NAME_ELEMENT);
+                  AddCharacters((*i)->GetName());
+                  EndElement(); // End Event Name Element.
+                  BeginElement(MapXMLConstants::EVENT_DESCRIPTION_ELEMENT);
+                  AddCharacters((*i)->GetDescription());
+                  EndElement(); // End Event Description Element.
+                  EndElement(); // End Event Element.
+               }
+               EndElement(); // End Events Element.
             }
-            EndElement(); // End Events Element.
          }
 
          BeginElement(MapXMLConstants::ACTORS_ELEMENT);
 
-         if (map.GetEnvironmentActor() != NULL)
+         if (!prefab && map.GetEnvironmentActor() != NULL)
          {
             BaseActorObject& proxy = *map.GetEnvironmentActor();
             BeginElement(MapXMLConstants::ACTOR_ENVIRONMENT_ACTOR_ELEMENT);
@@ -750,29 +737,32 @@ namespace dtCore
          }
          EndElement(); // End Actors Element
 
-         BeginElement(MapXMLConstants::ACTOR_GROUPS_ELEMENT);
+         if (!prefab)
          {
-            int groupCount = map.GetGroupCount();
-            for (int groupIndex = 0; groupIndex < groupCount; groupIndex++)
+            BeginElement(MapXMLConstants::ACTOR_GROUPS_ELEMENT);
             {
-               BeginElement(MapXMLConstants::ACTOR_GROUP_ELEMENT);
-
-               int actorCount = map.GetGroupActorCount(groupIndex);
-               for (int actorIndex = 0; actorIndex < actorCount; actorIndex++)
+               int groupCount = map.GetGroupCount();
+               for (int groupIndex = 0; groupIndex < groupCount; groupIndex++)
                {
-                  dtCore::BaseActorObject* actor = map.GetActorFromGroup(groupIndex, actorIndex);
-                  if (actor != NULL)
-                  {
-                     BeginElement(MapXMLConstants::ACTOR_GROUP_ACTOR_ELEMENT);
-                     AddCharacters(actor->GetId().ToString());
-                     EndElement(); // End Groups Actor Size Element.
-                  }
-               }
+                  BeginElement(MapXMLConstants::ACTOR_GROUP_ELEMENT);
 
-               EndElement(); // End Group Element.
+                  int actorCount = map.GetGroupActorCount(groupIndex);
+                  for (int actorIndex = 0; actorIndex < actorCount; actorIndex++)
+                  {
+                     dtCore::BaseActorObject* actor = map.GetActorFromGroup(groupIndex, actorIndex);
+                     if (actor != NULL)
+                     {
+                        BeginElement(MapXMLConstants::ACTOR_GROUP_ACTOR_ELEMENT);
+                        AddCharacters(actor->GetId().ToString());
+                        EndElement(); // End Groups Actor Size Element.
+                     }
+                  }
+
+                  EndElement(); // End Group Element.
+               }
             }
+            EndElement(); // End Groups Element.
          }
-         EndElement(); // End Groups Element.
 
          /*dtCore::ActorComponentContainer* hier
             = dynamic_cast<dtCore::ActorComponentContainer*>(map.GetDrawableActorHierarchy());
@@ -793,141 +783,144 @@ namespace dtCore
             EndElement(); //End Drawable Hierarchy Element
          }*/
 
-         BeginElement(MapXMLConstants::PRESET_CAMERAS_ELEMENT);
+         if (!prefab)
          {
-            char numberConversionBuffer[80];
-
-            for (int presetIndex = 0; presetIndex < 10; presetIndex++)
+            BeginElement(MapXMLConstants::PRESET_CAMERAS_ELEMENT);
             {
-               // Skip elements that are invalid.
-               Map::PresetCameraData data = map.GetPresetCameraData(presetIndex);
-               if (!data.isValid)
+               char numberConversionBuffer[80];
+
+               for (int presetIndex = 0; presetIndex < 10; presetIndex++)
                {
-                  continue;
+                  // Skip elements that are invalid.
+                  Map::PresetCameraData data = map.GetPresetCameraData(presetIndex);
+                  if (!data.isValid)
+                  {
+                     continue;
+                  }
+
+                  BeginElement(MapXMLConstants::PRESET_CAMERA_ELEMENT);
+                  {
+                     BeginElement(MapXMLConstants::PRESET_CAMERA_INDEX_ELEMENT);
+                     snprintf(numberConversionBuffer, 80, "%d", presetIndex);
+                     AddCharacters(numberConversionBuffer);
+                     EndElement(); // End Preset Camera Index Element.
+
+                     BeginElement(MapXMLConstants::PRESET_CAMERA_PERSPECTIVE_VIEW_ELEMENT);
+                     {
+                        BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_X_ELEMENT);
+                        snprintf(numberConversionBuffer, 80, "%f", data.persPosition.x());
+                        AddCharacters(numberConversionBuffer);
+                        EndElement(); // End Preset Camera Position X Element.
+
+                        BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_Y_ELEMENT);
+                        snprintf(numberConversionBuffer, 80, "%f", data.persPosition.y());
+                        AddCharacters(numberConversionBuffer);
+                        EndElement(); // End Preset Camera Position Y Element.
+
+                        BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_Z_ELEMENT);
+                        snprintf(numberConversionBuffer, 80, "%f", data.persPosition.z());
+                        AddCharacters(numberConversionBuffer);
+                        EndElement(); // End Preset Camera Position Z Element.
+
+                        BeginElement(MapXMLConstants::PRESET_CAMERA_ROTATION_X_ELEMENT);
+                        snprintf(numberConversionBuffer, 80, "%f", data.persRotation.x());
+                        AddCharacters(numberConversionBuffer);
+                        EndElement(); // End Preset Camera Rotation X Element.
+
+                        BeginElement(MapXMLConstants::PRESET_CAMERA_ROTATION_Y_ELEMENT);
+                        snprintf(numberConversionBuffer, 80, "%f", data.persRotation.y());
+                        AddCharacters(numberConversionBuffer);
+                        EndElement(); // End Preset Camera Rotation Y Element.
+
+                        BeginElement(MapXMLConstants::PRESET_CAMERA_ROTATION_Z_ELEMENT);
+                        snprintf(numberConversionBuffer, 80, "%f", data.persRotation.z());
+                        AddCharacters(numberConversionBuffer);
+                        EndElement(); // End Preset Camera Rotation Z Element.
+
+                        BeginElement(MapXMLConstants::PRESET_CAMERA_ROTATION_W_ELEMENT);
+                        snprintf(numberConversionBuffer, 80, "%f", data.persRotation.w());
+                        AddCharacters(numberConversionBuffer);
+                        EndElement(); // End Preset Camera Rotation W Element.
+                     }
+                     EndElement(); // End Preset Camera Perspective View Element.
+
+                     BeginElement(MapXMLConstants::PRESET_CAMERA_TOP_VIEW_ELEMENT);
+                     {
+                        BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_X_ELEMENT);
+                        snprintf(numberConversionBuffer, 80, "%f", data.topPosition.x());
+                        AddCharacters(numberConversionBuffer);
+                        EndElement(); // End Preset Camera Position X Element.
+
+                        BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_Y_ELEMENT);
+                        snprintf(numberConversionBuffer, 80, "%f", data.topPosition.y());
+                        AddCharacters(numberConversionBuffer);
+                        EndElement(); // End Preset Camera Position Y Element.
+
+                        BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_Z_ELEMENT);
+                        snprintf(numberConversionBuffer, 80, "%f", data.topPosition.z());
+                        AddCharacters(numberConversionBuffer);
+                        EndElement(); // End Preset Camera Position Z Element.
+
+                        BeginElement(MapXMLConstants::PRESET_CAMERA_ZOOM_ELEMENT);
+                        snprintf(numberConversionBuffer, 80, "%f", data.topZoom);
+                        AddCharacters(numberConversionBuffer);
+                        EndElement(); // End Preset Camera Zoom Element.
+                     }
+                     EndElement(); // End Preset Camera Top View Element;
+
+                     BeginElement(MapXMLConstants::PRESET_CAMERA_SIDE_VIEW_ELEMENT);
+                     {
+                        BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_X_ELEMENT);
+                        snprintf(numberConversionBuffer, 80, "%f", data.sidePosition.x());
+                        AddCharacters(numberConversionBuffer);
+                        EndElement(); // End Preset Camera Position X Element.
+
+                        BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_Y_ELEMENT);
+                        snprintf(numberConversionBuffer, 80, "%f", data.sidePosition.y());
+                        AddCharacters(numberConversionBuffer);
+                        EndElement(); // End Preset Camera Position Y Element.
+
+                        BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_Z_ELEMENT);
+                        snprintf(numberConversionBuffer, 80, "%f", data.sidePosition.z());
+                        AddCharacters(numberConversionBuffer);
+                        EndElement(); // End Preset Camera Position Z Element.
+
+                        BeginElement(MapXMLConstants::PRESET_CAMERA_ZOOM_ELEMENT);
+                        snprintf(numberConversionBuffer, 80, "%f", data.sideZoom);
+                        AddCharacters(numberConversionBuffer);
+                        EndElement(); // End Preset Camera Zoom Element.
+                     }
+                     EndElement(); // End Preset Camera Side View Element;
+
+                     BeginElement(MapXMLConstants::PRESET_CAMERA_FRONT_VIEW_ELEMENT);
+                     {
+                        BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_X_ELEMENT);
+                        snprintf(numberConversionBuffer, 80, "%f", data.frontPosition.x());
+                        AddCharacters(numberConversionBuffer);
+                        EndElement(); // End Preset Camera Position X Element.
+
+                        BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_Y_ELEMENT);
+                        snprintf(numberConversionBuffer, 80, "%f", data.frontPosition.y());
+                        AddCharacters(numberConversionBuffer);
+                        EndElement(); // End Preset Camera Position Y Element.
+
+                        BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_Z_ELEMENT);
+                        snprintf(numberConversionBuffer, 80, "%f", data.frontPosition.z());
+                        AddCharacters(numberConversionBuffer);
+                        EndElement(); // End Preset Camera Position Z Element.
+
+                        BeginElement(MapXMLConstants::PRESET_CAMERA_ZOOM_ELEMENT);
+                        snprintf(numberConversionBuffer, 80, "%f", data.frontZoom);
+                        AddCharacters(numberConversionBuffer);
+                        EndElement(); // End Preset Camera Zoom Element.
+                     }
+                     EndElement(); // End Preset Camera Front View Element;
+                  }
+                  EndElement(); // End Preset Camera Element.
                }
-
-               BeginElement(MapXMLConstants::PRESET_CAMERA_ELEMENT);
-               {
-                  BeginElement(MapXMLConstants::PRESET_CAMERA_INDEX_ELEMENT);
-                  snprintf(numberConversionBuffer, 80, "%d", presetIndex);
-                  AddCharacters(numberConversionBuffer);
-                  EndElement(); // End Preset Camera Index Element.
-
-                  BeginElement(MapXMLConstants::PRESET_CAMERA_PERSPECTIVE_VIEW_ELEMENT);
-                  {
-                     BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_X_ELEMENT);
-                     snprintf(numberConversionBuffer, 80, "%f", data.persPosition.x());
-                     AddCharacters(numberConversionBuffer);
-                     EndElement(); // End Preset Camera Position X Element.
-
-                     BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_Y_ELEMENT);
-                     snprintf(numberConversionBuffer, 80, "%f", data.persPosition.y());
-                     AddCharacters(numberConversionBuffer);
-                     EndElement(); // End Preset Camera Position Y Element.
-
-                     BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_Z_ELEMENT);
-                     snprintf(numberConversionBuffer, 80, "%f", data.persPosition.z());
-                     AddCharacters(numberConversionBuffer);
-                     EndElement(); // End Preset Camera Position Z Element.
-
-                     BeginElement(MapXMLConstants::PRESET_CAMERA_ROTATION_X_ELEMENT);
-                     snprintf(numberConversionBuffer, 80, "%f", data.persRotation.x());
-                     AddCharacters(numberConversionBuffer);
-                     EndElement(); // End Preset Camera Rotation X Element.
-
-                     BeginElement(MapXMLConstants::PRESET_CAMERA_ROTATION_Y_ELEMENT);
-                     snprintf(numberConversionBuffer, 80, "%f", data.persRotation.y());
-                     AddCharacters(numberConversionBuffer);
-                     EndElement(); // End Preset Camera Rotation Y Element.
-
-                     BeginElement(MapXMLConstants::PRESET_CAMERA_ROTATION_Z_ELEMENT);
-                     snprintf(numberConversionBuffer, 80, "%f", data.persRotation.z());
-                     AddCharacters(numberConversionBuffer);
-                     EndElement(); // End Preset Camera Rotation Z Element.
-
-                     BeginElement(MapXMLConstants::PRESET_CAMERA_ROTATION_W_ELEMENT);
-                     snprintf(numberConversionBuffer, 80, "%f", data.persRotation.w());
-                     AddCharacters(numberConversionBuffer);
-                     EndElement(); // End Preset Camera Rotation W Element.
-                  }
-                  EndElement(); // End Preset Camera Perspective View Element.
-
-                  BeginElement(MapXMLConstants::PRESET_CAMERA_TOP_VIEW_ELEMENT);
-                  {
-                     BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_X_ELEMENT);
-                     snprintf(numberConversionBuffer, 80, "%f", data.topPosition.x());
-                     AddCharacters(numberConversionBuffer);
-                     EndElement(); // End Preset Camera Position X Element.
-
-                     BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_Y_ELEMENT);
-                     snprintf(numberConversionBuffer, 80, "%f", data.topPosition.y());
-                     AddCharacters(numberConversionBuffer);
-                     EndElement(); // End Preset Camera Position Y Element.
-
-                     BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_Z_ELEMENT);
-                     snprintf(numberConversionBuffer, 80, "%f", data.topPosition.z());
-                     AddCharacters(numberConversionBuffer);
-                     EndElement(); // End Preset Camera Position Z Element.
-
-                     BeginElement(MapXMLConstants::PRESET_CAMERA_ZOOM_ELEMENT);
-                     snprintf(numberConversionBuffer, 80, "%f", data.topZoom);
-                     AddCharacters(numberConversionBuffer);
-                     EndElement(); // End Preset Camera Zoom Element.
-                  }
-                  EndElement(); // End Preset Camera Top View Element;
-
-                  BeginElement(MapXMLConstants::PRESET_CAMERA_SIDE_VIEW_ELEMENT);
-                  {
-                     BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_X_ELEMENT);
-                     snprintf(numberConversionBuffer, 80, "%f", data.sidePosition.x());
-                     AddCharacters(numberConversionBuffer);
-                     EndElement(); // End Preset Camera Position X Element.
-
-                     BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_Y_ELEMENT);
-                     snprintf(numberConversionBuffer, 80, "%f", data.sidePosition.y());
-                     AddCharacters(numberConversionBuffer);
-                     EndElement(); // End Preset Camera Position Y Element.
-
-                     BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_Z_ELEMENT);
-                     snprintf(numberConversionBuffer, 80, "%f", data.sidePosition.z());
-                     AddCharacters(numberConversionBuffer);
-                     EndElement(); // End Preset Camera Position Z Element.
-
-                     BeginElement(MapXMLConstants::PRESET_CAMERA_ZOOM_ELEMENT);
-                     snprintf(numberConversionBuffer, 80, "%f", data.sideZoom);
-                     AddCharacters(numberConversionBuffer);
-                     EndElement(); // End Preset Camera Zoom Element.
-                  }
-                  EndElement(); // End Preset Camera Side View Element;
-
-                  BeginElement(MapXMLConstants::PRESET_CAMERA_FRONT_VIEW_ELEMENT);
-                  {
-                     BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_X_ELEMENT);
-                     snprintf(numberConversionBuffer, 80, "%f", data.frontPosition.x());
-                     AddCharacters(numberConversionBuffer);
-                     EndElement(); // End Preset Camera Position X Element.
-
-                     BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_Y_ELEMENT);
-                     snprintf(numberConversionBuffer, 80, "%f", data.frontPosition.y());
-                     AddCharacters(numberConversionBuffer);
-                     EndElement(); // End Preset Camera Position Y Element.
-
-                     BeginElement(MapXMLConstants::PRESET_CAMERA_POSITION_Z_ELEMENT);
-                     snprintf(numberConversionBuffer, 80, "%f", data.frontPosition.z());
-                     AddCharacters(numberConversionBuffer);
-                     EndElement(); // End Preset Camera Position Z Element.
-
-                     BeginElement(MapXMLConstants::PRESET_CAMERA_ZOOM_ELEMENT);
-                     snprintf(numberConversionBuffer, 80, "%f", data.frontZoom);
-                     AddCharacters(numberConversionBuffer);
-                     EndElement(); // End Preset Camera Zoom Element.
-                  }
-                  EndElement(); // End Preset Camera Front View Element;
-               }
-               EndElement(); // End Preset Camera Element.
             }
+            EndElement(); // End Preset Camera Element.
          }
-         EndElement(); // End Preset Camera Element.
 
          EndElement(); // End Map Element.
 
@@ -982,136 +975,6 @@ namespace dtCore
       EndElement(); //end HIERARCHY_ELEMENT_NODE
    }*/
 
-   /////////////////////////////////////////////////////////////////////////////
-   void MapWriter::SavePrefab(const std::vector<dtCore::RefPtr<BaseActorObject> > actorList,
-                              const std::string& filePath, const std::string& description,
-                              const std::string& iconFile /* = "" */)
-   {
-      std::ofstream stream(filePath.c_str(), std::ios_base::trunc|std::ios_base::binary);
-      if (!stream.is_open())
-      {
-         throw dtCore::MapSaveException( std::string("Unable to open map file \"") + filePath + "\" for writing.", __FILE__, __LINE__);
-      }
-
-      mFormatTarget.SetOutputStream(&stream);
-
-      try
-      {
-         WriteHeader();
-
-         //const std::string& utcTime = dtUtil::DateTime::ToString(dtUtil::DateTime(dtUtil::DateTime::TimeOrigin::LOCAL_TIME),
-            //dtUtil::DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT);
-
-         BeginElement(MapXMLConstants::PREFAB_ELEMENT, MapXMLConstants::PREFAB_NAMESPACE);
-
-         BeginElement(MapXMLConstants::HEADER_ELEMENT);
-
-         BeginElement(MapXMLConstants::DESCRIPTION_ELEMENT);
-         AddCharacters(description);
-         EndElement(); // End Description Element.
-         BeginElement(MapXMLConstants::EDITOR_VERSION_ELEMENT);
-         AddCharacters(std::string(MapXMLConstants::EDITOR_VERSION));
-         EndElement(); // End Editor Version Element.
-         BeginElement(MapXMLConstants::SCHEMA_VERSION_ELEMENT);
-         AddCharacters(std::string(MapXMLConstants::SCHEMA_VERSION));
-         EndElement(); // End Schema Version Element.
-         BeginElement(MapXMLConstants::ICON_ELEMENT);
-         AddCharacters(iconFile);
-         EndElement(); //End Icon Element
-
-         EndElement(); // End Header Element.
-
-         BeginElement(MapXMLConstants::LIBRARIES_ELEMENT);
-         for (int actorIndex = 0; actorIndex < (int)actorList.size(); actorIndex++)
-         {
-            BaseActorObject* actor = actorList[actorIndex].get();
-
-            // We can't do anything without a actor.
-            if (actor == NULL)
-            {
-               continue;
-            }
-
-            const dtCore::ActorType& type = actor->GetActorType();
-            dtCore::ActorPluginRegistry* registry = dtCore::ActorFactory::GetInstance().GetRegistryForType(type);
-            if (registry != NULL)
-            {
-               BeginElement(MapXMLConstants::LIBRARY_ELEMENT);
-               BeginElement(MapXMLConstants::LIBRARY_NAME_ELEMENT);
-               AddCharacters(dtCore::ActorFactory::GetInstance().GetLibraryNameForRegistry(*registry));
-               EndElement(); // End Library Name Element.
-               BeginElement(MapXMLConstants::LIBRARY_VERSION_ELEMENT);
-               AddCharacters("");
-               EndElement(); // End Library Version Element.
-               EndElement(); // End Library Element.
-            }
-         }
-         EndElement(); // End Libraries Element.
-
-         osg::Vec3 origin;
-         bool originSet = false;
-         BeginElement(MapXMLConstants::ACTORS_ELEMENT);
-         for (int actorIndex = 0; actorIndex < (int)actorList.size(); actorIndex++)
-         {
-            BaseActorObject* actor = actorList[actorIndex].get();
-
-            if (actor == NULL)
-            {
-               continue;
-            }
-
-            // Ghost actors should not be saved.
-            if (actor->IsGhost())
-               continue;
-
-            // If this is the first actor, store the translation as the origin.
-            dtCore::TransformableActorProxy* tActor = dynamic_cast<dtCore::TransformableActorProxy*>(actor);
-            if (tActor != NULL)
-            {
-               if (!originSet)
-               {
-                  origin = tActor->GetTranslation();
-                  originSet = true;
-               }
-
-               tActor->SetTranslation(tActor->GetTranslation() - origin);
-            }
-
-            // Initialize the serializer to write out prefab properties
-            mPropSerializer->Reset();
-
-            WriteActor(*actor, false);
-
-            // Now undo the translation.
-            if (tActor && originSet)
-            {
-               tActor->SetTranslation(tActor->GetTranslation() + origin);
-            }
-         }
-         EndElement(); // End Actors Element
-
-         EndElement(); // End Prefab Element.
-
-         // Close the file.
-         mFormatTarget.SetOutputStream(NULL);
-      }
-      catch (dtUtil::Exception& ex)
-      {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-            "Caught Exception \"%s\" while attempting to save prefab \"%s\".",
-            ex.What().c_str(), filePath.c_str());
-         mFormatTarget.SetOutputStream(NULL);
-         throw;
-      }
-      catch (...)
-      {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-            "Unknown exception while attempting to save prefab \"%s\".",
-            filePath.c_str());
-         mFormatTarget.SetOutputStream(NULL);
-         throw dtCore::MapSaveException( std::string("Unknown exception saving map \"") + filePath + ("\"."), __FILE__, __LINE__);
-      }
-   }
 
    /////////////////////////////////////////////////////////////////////////////
    int MapWriter::WriteActor(dtCore::BaseActorObject& actor, bool allowReadOnlyProps)

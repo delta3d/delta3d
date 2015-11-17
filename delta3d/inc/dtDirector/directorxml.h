@@ -29,8 +29,8 @@
 #include <dtDirector/export.h>
 
 #include <dtCore/basexml.h>
-#include <dtDirector/directorheaderdata.h>
 #include <dtDirector/directorxmlhandler.h>
+#include <dtDirector/director.h>
 
 namespace dtCore
 {
@@ -40,8 +40,6 @@ namespace dtCore
 
 namespace dtDirector
 {
-   class Director;
-
    /**
     * @class DirectorParser
     *
@@ -68,24 +66,13 @@ namespace dtDirector
       bool Parse(Director* director, dtCore::Map* map, const std::string& filePath);
 
       /**
-       * Parses the script type from the Director script file.
-       *
-       * @param[in]  filePath  The path to the director script file.
-       *
-       * @return     The script type.
-       *
-       * @throws dtUtil::Exception if a fatal error occurs in the parsing.
-       */
-      const std::string& ParseScriptType(const std::string& filePath);
-
-      /**
        * Reads the supplied filename as a Director xml file and extracts the Director
        * file's header data. Will not create a Director nor anything contained in the Director.
        * @param mapFilename The Director file to parse
-       * @return The parsed DirectorHeaderData
+       * @return The parsed Director with only the header filled out.
        * @throws dtCore::XMLLoadParsingException if file can't be found, or any parsing errors
        */
-      dtDirector::DirectorHeaderData ParseDirectorHeaderData(const std::string& directorFilename) const;
+      DirectorPtr ParseDirectorHeaderData(const std::string& directorFilename) const;
 
       /**
        * Retrieves all missing node types.
