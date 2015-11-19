@@ -170,6 +170,7 @@ namespace dtQt
          : mFilterOutDOFs(false)
          , mFilterOutGeodes(false)
          , mFilterOutGroups(false)
+         , mFilterOutOccluders(false)
          , mFilterOutTransforms(false)
       {}
 
@@ -196,6 +197,11 @@ namespace dtQt
          {
             answer = ! mFilterOutDOFs;
          }
+         else if (nodeType.compare("OccluderNode") == 0
+            || nodeType.compare("OcclusionQueryNode") == 0)
+         {
+            answer = ! mFilterOutOccluders;
+         }
 
          return answer;
       }
@@ -205,12 +211,14 @@ namespace dtQt
          return mFilterOutDOFs
             || mFilterOutGeodes
             || mFilterOutGroups
+            || mFilterOutOccluders
             || mFilterOutTransforms;
       }
 
       bool mFilterOutDOFs;
       bool mFilterOutGeodes;
       bool mFilterOutGroups;
+      bool mFilterOutOccluders;
       bool mFilterOutTransforms;
 
    protected:
@@ -418,6 +426,8 @@ namespace dtQt
          this, SLOT(OnNodeFilterClicked()));
       connect(mUI->mButtonFilterGroups, SIGNAL(clicked()),
          this, SLOT(OnNodeFilterClicked()));
+      connect(mUI->mButtonFilterOccluders, SIGNAL(clicked()),
+         this, SLOT(OnNodeFilterClicked()));
       connect(mUI->mButtonFilterTransforms, SIGNAL(clicked()),
          this, SLOT(OnNodeFilterClicked()));
 
@@ -440,6 +450,7 @@ namespace dtQt
          filter->mFilterOutDOFs = mUI->mButtonFilterDOFs->isChecked();
          filter->mFilterOutGeodes = mUI->mButtonFilterGeodes->isChecked();
          filter->mFilterOutGroups = mUI->mButtonFilterGroups->isChecked();
+         filter->mFilterOutOccluders = mUI->mButtonFilterOccluders->isChecked();
          filter->mFilterOutTransforms = mUI->mButtonFilterTransforms->isChecked();
          if ( ! filter->IsEnabled())
          {

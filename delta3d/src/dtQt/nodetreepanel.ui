@@ -113,6 +113,26 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="mButtonFilterOccluders">
+       <property name="toolTip">
+        <string>Filter out occluders</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="dtqt.qrc">
+         <normaloff>:/dtQt/icons/nodes/occluder.png</normaloff>:/dtQt/icons/nodes/occluder.png</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="mButtonFilterGeodes">
        <property name="toolTip">
         <string>Filter out geodes</string>
