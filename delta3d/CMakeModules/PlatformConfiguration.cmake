@@ -1,3 +1,5 @@
+include(UtilityMacros)
+
 IF(APPLE)
    OPTION(BUILD_FOR_IOS OFF)
 
