@@ -153,7 +153,7 @@ namespace dtGame
       virtual dtCore::RefPtr<dtGame::GameActorProxy> CloneGameActor();
 
       /// Overridden to copy properties from actor components.
-      void CopyPropertiesFrom(const PropertyContainer& copyFrom) override;
+      void CopyPropertiesFrom(const PropertyContainer& copyFrom, bool copyMetaData = true) override;
 
       /// Overridden to call BuildInvokables
       void Init(const dtCore::ActorType& actorType) override;

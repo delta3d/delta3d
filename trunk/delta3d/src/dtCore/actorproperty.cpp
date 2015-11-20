@@ -111,8 +111,20 @@ namespace dtCore
    }
 
    ////////////////////////////////////////
+   void ActorProperty::CopyMetadata(const ActorProperty& otherProp)
+   {
+      mReadOnly = otherProp.mReadOnly;
+      mMultipleEdit = otherProp.mMultipleEdit;
+      mSendInPartialUpdate = otherProp.mSendInPartialUpdate;
+      mSendInFullUpdate = otherProp.mSendInFullUpdate;
+      mAdvanced = otherProp.mAdvanced;
+      mIgnoreWhenSaving = otherProp.mIgnoreWhenSaving;
+      mAlwaysSave = otherProp.mAlwaysSave;
+   }
+
+   ////////////////////////////////////////
    ActorProperty::ActorProperty(const ActorProperty& toCopy):
-      AbstractParameter(GetDataType(), GetName()) { }
+      ActorProperty(toCopy.GetDataType(), toCopy.GetName(), toCopy.GetLabel(), toCopy.GetDescription(), toCopy.GetGroupName(), toCopy.IsReadOnly()) {  }
 
    ////////////////////////////////////////
    ActorProperty& ActorProperty::operator=(const ActorProperty&) { return *this; }
