@@ -160,9 +160,9 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void GameActorProxy::CopyPropertiesFrom(const PropertyContainer& copyFrom)
+   void GameActorProxy::CopyPropertiesFrom(const PropertyContainer& copyFrom, bool copyMetadata)
    {
-      BaseClass::CopyPropertiesFrom(copyFrom);
+      BaseClass::CopyPropertiesFrom(copyFrom, copyMetadata);
 
       ActorComponentVectorConst comps;
       const dtGame::ActorComponentContainer* acc = dynamic_cast<const dtGame::ActorComponentContainer*>(&copyFrom);

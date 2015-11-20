@@ -187,8 +187,10 @@ namespace dtCore
 
       /**
        * Copies the property values from the passed in property container to it's own properties
+       * @param copyMetadata copies the metadata from the properties.  If the objects are the same type, you probably want to do this
+       *                     if not, you probably don't.
        */
-      virtual void CopyPropertiesFrom(const PropertyContainer& copyFrom);
+      virtual void CopyPropertiesFrom(const PropertyContainer& copyFrom, bool copyMetadata = true);
 
       /**
        * @return the number of properties in this container.
