@@ -123,8 +123,14 @@ namespace dtCore
    }
 
    ////////////////////////////////////////
+   // C++ 11 version.  This avoids warnings uninitialized variable warnings on clang and in eclipse, but won't build in VS 2010
+//   ActorProperty::ActorProperty(const ActorProperty& toCopy):
+//      ActorProperty(toCopy.GetDataType(), toCopy.GetName(), toCopy.GetLabel(), toCopy.GetDescription(), toCopy.GetGroupName(), toCopy.IsReadOnly()) {  }
+
+   ////////////////////////////////////////
+   // This one works in VS 2010, remove once it is no longer supported.
    ActorProperty::ActorProperty(const ActorProperty& toCopy):
-      ActorProperty(toCopy.GetDataType(), toCopy.GetName(), toCopy.GetLabel(), toCopy.GetDescription(), toCopy.GetGroupName(), toCopy.IsReadOnly()) {  }
+      AbstractParameter(GetDataType(), GetName()) { }
 
    ////////////////////////////////////////
    ActorProperty& ActorProperty::operator=(const ActorProperty&) { return *this; }
