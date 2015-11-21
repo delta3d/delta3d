@@ -39,7 +39,6 @@
 #include <QtWidgets/QTreeWidget>
 
 #include <dtCore/map.h>
-#include <dtCore/mapheaderdata.h>
 
 namespace dtEditQt
 {
@@ -112,15 +111,15 @@ namespace dtEditQt
          try
          {
             // Find the description of this map.
-            dtCore::MapHeaderData header = dtCore::Project::GetInstance().GetMapHeader(mapItem->text(0).toStdString());
+            dtCore::MapPtr header = dtCore::Project::GetInstance().GetMapHeader(mapItem->text(0).toStdString());
 
-            if (header.mDescription.empty())
+            if (header->GetDescription().empty())
             {
                mDescription->setText("<No Description>");
             }
             else
             {
-               mDescription->setText(header.mDescription.c_str());
+               mDescription->setText(header->GetDescription().c_str());
             }
          }
          catch(const dtUtil::Exception& ex)

@@ -50,7 +50,7 @@ struct MapParams
    vec4 diffuse;
    vec4 normal;
    vec4 specular;
-   vec4 roughness;
+   vec4 reflectance;
    vec4 illum;
    vec4 irradiance;
    float refractionIndex;
@@ -121,14 +121,17 @@ void computeRefraction(inout FragParams fp, inout MapParams mp, inout EffectPara
 }
 
 
-void computeMultiMapColor(MapParams mp, inout FragParams fp, inout EffectParams ep)
+void computeMultiMapColor(inout MapParams mp, inout FragParams fp, inout EffectParams ep)
 {
    vec2 uv = gl_TexCoord[0].xy;
    
    vec4 diffuseColor = mp.diffuse;
    vec4 normalColor = mp.normal;
-   vec4 specColor = mp.specular;
    vec4 illumColor = mp.illum;
+   float smoothness = 1.0-mp.reflectance.g;
+   vec4 specColor = vec4(mix(vec3(1.0,1.0,1.0), diffuseColor.rgb, mp.reflectance.r).rgb, clamp(smoothness, 0.0, 1.0));
+
+   mp.specular = specColor;
       
    //fp.worldNormal = (2.0 * normalColor.rgb) - vec3(1.0, 1.0, 1.0);
    //fp.worldNormal = normalize(fp.tbn * fp.worldNormal);
@@ -141,7 +144,7 @@ void computeMultiMapColor(MapParams mp, inout FragParams fp, inout EffectParams 
    
    ep.colorContrib = diffuseColor * fp.color;
 
-   computeRefraction(fp, mp, ep);
+   //computeRefraction(fp, mp, ep);
 
    
    // Compute the Light & Spec Contribution
@@ -153,10 +156,9 @@ void computeMultiMapColor(MapParams mp, inout FragParams fp, inout EffectParams 
 
 
    // Compute the reflection contribution
-   //vec3 reflectVec = reflect(fp.viewDir, fp.worldNormal);
    vec3 reflectVec = reflect(fp.viewDir, fp.worldNormal.xyz);
    float reflectionAngle =  dot(reflectVec, fp.viewDir);
-   float reflectContrib = max(0.0,reflectionAngle);
+   float reflectContrib = max(0.0,reflectionAngle) * smoothness;
    
    vec3 minLightSpec = min(ep.lightContrib.rgb, specColor.rgb);
    
@@ -187,9 +189,6 @@ void computeMultiMapColorSimple(MapParams mp, inout FragParams fp, inout EffectP
    vec4 illumColor = mp.illum;
       
    fp.worldNormal = fp.normal;
-
-   // Normalize all incoming vectors 
-   vec3 viewDir = normalize(fp.viewDir);
    
    ep.colorContrib = diffuseColor * fp.color;
 
@@ -202,7 +201,6 @@ void computeMultiMapColorSimple(MapParams mp, inout FragParams fp, inout EffectP
 
 
    // Compute the reflection contribution
-   //vec3 reflectVec = reflect(fp.viewDir, fp.worldNormal);
    vec3 reflectVec = reflect(fp.viewDir, fp.worldNormal.xyz);
    float reflectionAngle =  dot(reflectVec, fp.viewDir);
    float reflectContrib = max(0.0,reflectionAngle);

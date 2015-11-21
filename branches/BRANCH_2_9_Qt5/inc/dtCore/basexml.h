@@ -102,11 +102,11 @@ namespace dtCore
        * Parses the given XML file token by token until the handler has the
        * information it wants or the end of the file has been reached.
        *
-       * @param[in]  filename  The full path filename to parse.
+       * @param[in]  stream  the stream to parse
        * @param[in]  handler   The XML handler that determines what information to parse.
        * @return true if the file was parsed successfully
        */
-      bool ParseFileByToken(const std::string& filename, BaseXMLHandler* handler) const;
+      bool ParseFileByToken(std::istream& stream, BaseXMLHandler* handler) const;
 
       virtual ~BaseXMLParser();
 

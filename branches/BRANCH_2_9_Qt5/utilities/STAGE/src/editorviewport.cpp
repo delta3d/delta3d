@@ -27,8 +27,8 @@
  * Jeffrey P Houde
  */
 
+#include <dtActors/prefabactor.h>
 #include <prefix/stageprefix.h>
-#include <dtActors/prefabactorproxy.h>
 
 #include <dtCore/deltadrawable.h>
 #include <dtCore/transform.h>
@@ -1194,33 +1194,32 @@ namespace dtEditQt
 
       if (mapPtr)
       {
-         dtCore::ActorRefPtrVector proxies;
+         dtCore::ActorRefPtrVector actors;
          EditorEvents::GetInstance().emitBeginChangeTransaction();
          dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
          fileUtils.PushDirectory(dtCore::Project::GetInstance().GetContext());
          try
          {
             int groupIndex = mapPtr->GetGroupCount();
-            std::string fullPath = dtCore::Project::GetInstance().GetResourcePath(descriptor);
 
-            dtCore::RefPtr<dtCore::MapParser> parser = new dtCore::MapParser;
-            parser->ParsePrefab(fullPath, proxies, mapPtr);
+            dtCore::Project::GetInstance().LoadPrefab(descriptor, actors);
 
-            for (int proxyIndex = 0; proxyIndex < (int)proxies.size(); proxyIndex++)
+            for (auto i = actors.begin(), iend = actors.end(); i != iend; ++i)
             {
-               dtCore::BaseActorObject* proxy = proxies[proxyIndex].get();
+               dtCore::BaseActorObject& curActor = **i;
 
-               EditorActions::GetInstance().AddActorToMap(*proxy, *mapPtr, true);
-               mapPtr->AddActorToGroup(groupIndex, proxy);
+               EditorActions::GetInstance().AddActorToMap(curActor, *mapPtr, true);
+               mapPtr->AddActorToGroup(groupIndex, curActor);
 
-               tProxy = dynamic_cast<dtCore::TransformableActorProxy*>(proxy);
+               // TODO Only translate it if it doesn't have parents.
+
+               tProxy = dynamic_cast<dtCore::TransformableActorProxy*>(&curActor);
                if (tProxy)
                {
                   tProxy->SetTranslation(tProxy->GetTranslation() + offset);
                }
-
                // Notify the creation of the proxies.
-               EditorEvents::GetInstance().emitActorProxyCreated(proxy, false);
+               EditorEvents::GetInstance().emitActorProxyCreated(&curActor, false);
             }
          }
          catch (const dtUtil::Exception& e)
@@ -1234,7 +1233,7 @@ namespace dtEditQt
 
          ViewportManager::GetInstance().getViewportOverlay()->clearCurrentSelection();
          ViewportManager::GetInstance().getViewportOverlay()->setMultiSelectMode(true);
-         EditorEvents::GetInstance().emitActorsSelected(proxies);
+         EditorEvents::GetInstance().emitActorsSelected(actors);
       }
 
       event->setDropAction(Qt::MoveAction);

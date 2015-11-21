@@ -40,7 +40,8 @@
 
 namespace dtCore
 {
-   const std::string Map::MAP_FILE_EXTENSION(".dtmap");
+   const std::string Map::MAP_FILE_EXTENSION("dtmap");
+   const std::string Map::PREFAB_FILE_EXTENSION("dtprefab");
 
    ////////////////////////////////////////////////////////////////////////////////
    Map::Map(const std::string& mFileName, const std::string& name)
@@ -120,14 +121,11 @@ namespace dtCore
       //then it should be ignored.
       mFileName = newFileName;
 
-      if (mFileName.empty())
-         return;
-
       //see if the file already has an extension. If it does, just use it. If
       //not, tack on the officially sanctioned extension.
-      if (osgDB::getFileExtension(mFileName).empty())
+      if (!mFileName.empty() && osgDB::getFileExtension(mFileName).empty())
       {
-         mFileName += MAP_FILE_EXTENSION;
+         mFileName += "." + MAP_FILE_EXTENSION;
       }
    }
 
@@ -516,15 +514,25 @@ namespace dtCore
       iend = mActorMap.end();
       for (; i != iend; ++i)
       {
-         const BaseActorObject& actor = *(i->second);
-         ActorPluginRegistry* apr = ActorFactory::GetInstance().GetRegistryForType(actor.GetActorType());
-         if (apr != NULL)
+         BaseActorObject& actor = *(i->second);
+         ActorPtrVector actors;
+         actors.push_back(&actor);
+         dtCore::ActorComponentContainer* acc = dynamic_cast<dtCore::ActorComponentContainer*>(&actor);
+         if (acc != nullptr)
          {
-            std::string libraryName = ActorFactory::GetInstance().GetLibraryNameForRegistry(*apr);
-            if (!libraryName.empty() && !HasLibrary(libraryName))
+            acc->GetAllComponents(actors);
+         }
+         for (auto j = actors.begin(), jend = actors.end(); j != jend; ++j)
+         {
+            ActorPluginRegistry* apr = ActorFactory::GetInstance().GetRegistryForType((*j)->GetActorType());
+            if (apr != nullptr)
             {
-               AddLibrary(libraryName, versionNumber);
-               SetModified(true);
+               std::string libraryName = ActorFactory::GetInstance().GetLibraryNameForRegistry(*apr);
+               if (!libraryName.empty() && !HasLibrary(libraryName))
+               {
+                  AddLibrary(libraryName, versionNumber);
+                  SetModified(true);
+               }
             }
          }
       }
@@ -550,12 +558,6 @@ namespace dtCore
    {
       mMissingLibraries.insert(mMissingLibraries.end(), libs.begin(), libs.end());
    }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   //osg::Matrix Map::GetPresetCameraMatrix()
-   //{
-   //   return osg::Matrix();
-   //}
 
    ////////////////////////////////////////////////////////////////////////////////
    bool Map::WildMatch(const std::string& sWild, const std::string& sString)
@@ -620,29 +622,23 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Map::AddActorToGroup(int groupIndex, dtCore::BaseActorObject* actor)
+   void Map::AddActorToGroup(int groupIndex, dtCore::BaseActorObject& actor)
    {
-      if (actor == NULL)
-      {
-         LOG_ERROR("Failed to add an actor to a group because the actor is NULL");
-         return;
-      }
-
       if (groupIndex >= 0 && groupIndex < (int)mActorGroups.size())
       {
-         mActorGroups[groupIndex].actorList.push_back(actor);
+         mActorGroups[groupIndex].actorList.push_back(&actor);
       }
       else
       {
          // If the group does not exist, create one.
          MapGroupData group;
-         group.actorList.push_back(actor);
+         group.actorList.push_back(&actor);
          mActorGroups.push_back(group);
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool Map::RemoveActorFromGroups(dtCore::BaseActorObject* actor)
+   bool Map::RemoveActorFromGroups(dtCore::BaseActorObject& actor)
    {
       // Iterate through each group.
       bool found = false;
@@ -653,7 +649,7 @@ namespace dtCore
          // Iterate through each actor in the group.
          for (int actorIndex = 0; actorIndex < (int)group.actorList.size(); actorIndex++)
          {
-            if (group.actorList[actorIndex] == actor)
+            if (group.actorList[actorIndex] == &actor)
             {
                group.actorList.erase(group.actorList.begin() + actorIndex);
                found = true;
@@ -679,7 +675,7 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   int Map::FindGroupForActor(dtCore::BaseActorObject* actor)
+   int Map::FindGroupForActor(dtCore::BaseActorObject& actor)
    {
       // Iterate through each group.
       for (int groupIndex = 0; groupIndex < (int)mActorGroups.size(); groupIndex++)
@@ -689,7 +685,7 @@ namespace dtCore
          // Iterate through each actor in the group.
          for (int actorIndex = 0; actorIndex < (int)group.actorList.size(); actorIndex++)
          {
-            if (group.actorList[actorIndex] == actor)
+            if (group.actorList[actorIndex] == &actor)
             {
                return groupIndex;
             }
@@ -734,6 +730,20 @@ namespace dtCore
 
       mPresetCameras[index] = presetData;
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Map::ResetUUIDs()
+   {
+      std::multimap<dtCore::UniqueId, dtCore::UniqueId> idChangeMap;
+      std::for_each(mActorMap.begin(), mActorMap.end(), [this, &idChangeMap](Map::ActorMap::value_type& value)
+            {
+               dtCore::UniqueId newId;
+               idChangeMap.insert(std::make_pair(value.first, newId));
+               value.second->SetId(newId);
+
+            });
+   }
+
 
    //////////////////////////////////////////////////////////////////////////
    const std::vector<std::string>& Map::GetMissingLibraries() const
@@ -982,4 +992,7 @@ namespace dtCore
 
       return numString;
    }
+
+   DT_IMPLEMENT_ACCESSOR(Map, std::string, IconFile)
+
 }

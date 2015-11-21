@@ -18,19 +18,21 @@
  *
  * Author: Jeff P. Houde
  */
+#include <dtActors/prefabactor.h>
 #include <prefix/dtdirectornodesprefix.h>
 #include <dtDirectorNodes/spawnprefabaction.h>
 
 #include <dtCore/actoridactorproperty.h>
 #include <dtCore/stringactorproperty.h>
 #include <dtCore/baseactorobject.h>
+#include <dtCore/project.h>
 
 #include <dtCore/resourceactorproperty.h>
 #include <dtCore/booleanactorproperty.h>
 #include <dtCore/vectoractorproperties.h>
 
 #include <dtDirector/director.h>
-#include <dtActors/prefabactorproxy.h>
+#include <algorithm>
 
 namespace dtDirector
 {
@@ -125,64 +127,60 @@ namespace dtDirector
 
       if (gm && !prefab.IsEmpty())
       {
-         dtCore::RefPtr<dtActors::PrefabActorProxy> prefabActor;
-         gm->CreateActor("dtActors", "Prefab", prefabActor);
-         if (prefabActor.valid())
+         try
          {
-            dtCore::Vec3ActorProperty* transProp =
-               dynamic_cast<dtCore::Vec3ActorProperty*>(prefabActor->GetProperty(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION));
-            dtCore::Vec3ActorProperty* rotProp =
-               dynamic_cast<dtCore::Vec3ActorProperty*>(prefabActor->GetProperty(dtCore::TransformableActorProxy::PROPERTY_ROTATION));
-
-            if (transProp)
-            {
-               transProp->SetValue(spawnLocation);
-            }
-            if (rotProp)
-            {
-               rotProp->SetValue(spawnRotation);
-            }
-
-            dtCore::ResourceActorProperty* resourceProp = NULL;
-            resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(prefabActor->GetProperty("PrefabResource"));
-            if (resourceProp)
-            {
-               resourceProp->SetValue(prefab);
-            }
-
             if (GetCreateAsPrefab())
             {
-               gm->AddActor(*prefabActor);
-               SetActorID(prefabActor->GetId(), "Out Actor");
+               dtCore::RefPtr<dtActors::PrefabActor> prefabActor;
+               gm->CreateActor("dtActors", "Prefab", prefabActor);
+               if (prefabActor.valid())
+               {
+                  dtCore::Vec3ActorProperty* transProp =
+                        dynamic_cast<dtCore::Vec3ActorProperty*>(prefabActor->GetProperty(dtCore::TransformableActorProxy::PROPERTY_TRANSLATION));
+                  dtCore::Vec3ActorProperty* rotProp =
+                        dynamic_cast<dtCore::Vec3ActorProperty*>(prefabActor->GetProperty(dtCore::TransformableActorProxy::PROPERTY_ROTATION));
+
+                  if (transProp)
+                  {
+                     transProp->SetValue(spawnLocation);
+                  }
+                  if (rotProp)
+                  {
+                     rotProp->SetValue(spawnRotation);
+                  }
+
+                  dtCore::ResourceActorProperty* resourceProp = NULL;
+                  resourceProp = dynamic_cast<dtCore::ResourceActorProperty*>(prefabActor->GetProperty("PrefabResource"));
+                  if (resourceProp)
+                  {
+                     resourceProp->SetValue(prefab);
+                  }
+
+                  gm->AddActor(*prefabActor);
+                  SetActorID(prefabActor->GetId(), "Out Actor");
+               }
             }
             else
             {
-               bool setResult = false;
-               dtCore::ActorRefPtrVector& actors = prefabActor->GetPrefabProxies();
-               dtCore::ActorRefPtrVector::iterator i, iend;
-               i = actors.begin();
-               iend = actors.end();
-               for (; i != iend; ++i)
-               {
-                  dtCore::RefPtr<dtCore::BaseActorObject> actor = *i;
-                  dtGame::GameActorProxy* gap = dynamic_cast<dtGame::GameActorProxy*>(actor.get());
-                  if (gap != NULL)
-                  {
-                     gm->AddActor(*gap, false, false);
-                  }
-                  else
-                  {
-                     gm->AddActor(*actor);
-                  }
+               dtCore::ActorRefPtrVector actorsOut;
+               dtCore::Project::GetInstance().LoadPrefab(prefab, actorsOut);
+               std::for_each(actorsOut.begin(), actorsOut.end(), [&](dtCore::RefPtr<dtCore::BaseActorObject>& actor)
+                     {
+                  bool setResult = false;
+                  gm->AddActor(*actor);
 
                   if (!setResult)
                   {
                      SetActorID(actor->GetId(), "Out Actor");
                      setResult = true;
                   }
-               }
+                     });
             }
             return ActionNode::Update(simDelta, delta, input, firstUpdate);
+         }
+         catch (const dtUtil::Exception& ex)
+         {
+            ex.LogException(dtUtil::Log::LOG_ERROR, "spawnprefabaction.cpp");
          }
       }
 

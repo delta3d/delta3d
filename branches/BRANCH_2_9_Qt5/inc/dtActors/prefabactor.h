@@ -23,7 +23,7 @@
 #define prefabactorproxy_h__
 
 #include <dtCore/plugin_export.h>
-#include <dtCore/transformableactorproxy.h>
+#include <dtGame/gameactorproxy.h>
 #include <dtABC/export.h>
 #include <dtCore/actorproperty.h>
 #include <dtCore/map.h>
@@ -33,50 +33,26 @@
 namespace dtActors
 {
    /////////////////////////////////////////////////////////////////////////////
-   // ACTOR CODE
-   /////////////////////////////////////////////////////////////////////////////
-   class DT_PLUGIN_EXPORT PrefabActor : public dtCore::Transformable
-   {
-   public:
-      typedef dtCore::Transformable BaseClass;
-
-      PrefabActor(const std::string& name = "PrefabActor");
-
-   protected:
-      virtual ~PrefabActor();
-
-   private:
-   };
-
-   /////////////////////////////////////////////////////////////////////////////
    // PROXY CODE
    /////////////////////////////////////////////////////////////////////////////
-   class DT_PLUGIN_EXPORT PrefabActorProxy : public dtCore::TransformableActorProxy
+   class DT_PLUGIN_EXPORT PrefabActor : public dtGame::GameActorProxy
    {
    public:
-      typedef dtCore::TransformableActorProxy BaseClass;
+      typedef dtGame::GameActorProxy BaseClass;
 
       static const dtUtil::RefString CLASS_NAME;
 
-      PrefabActorProxy();
+      PrefabActor();
 
-      virtual void CreateDrawable();
+      void CreateDrawable() override;
 
-      virtual void BuildPropertyMap();
+      void BuildPropertyMap() override;
 
-      void SetMap(dtCore::Map* map);
-
-      void SetPrefab(const std::string& fileName);
-
-      dtCore::ActorRefPtrVector& GetPrefabProxies();
+      DT_DECLARE_ACCESSOR(dtCore::ResourceDescriptor, PrefabResource);
 
    protected:
-      virtual ~PrefabActorProxy();
-
-   private:
-      dtCore::ActorRefPtrVector mActors;
-
-      dtCore::RefPtr<dtCore::Map> mMap;
+      void LoadPrefab(const dtCore::ResourceDescriptor& value);
+      virtual ~PrefabActor();
    };
 }
 #endif // prefabactorproxy_h__

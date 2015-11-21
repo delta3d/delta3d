@@ -107,6 +107,7 @@ namespace dtQt
       void UpdateColumns();
       void OnItemSelectionChanged();
       void OnNodeFilterClicked();
+      void OnNodeFilterNameChanged();
       
       void OnItemChanged(QTreeWidgetItem* item, int column);
 

@@ -203,17 +203,10 @@ include(ProgramInstall OPTIONAL)
 
 #This will automatically run the unit test executable upon successfull compile/link
 IF (AUTO_RUN_TESTS)
-  IF (MSVC)
-    ADD_CUSTOM_COMMAND(TARGET ${APP_NAME}
+   ADD_CUSTOM_COMMAND(TARGET ${APP_NAME}
                           POST_BUILD
-                          COMMAND $(TargetPath)
-                          COMMENT "Run the unit tests")  
-  ELSE (MSVC)
-     ADD_CUSTOM_COMMAND(TARGET ${APP_NAME}
-                          POST_BUILD
-                          COMMAND ${CMAKE_BINARY_DIR}/bin/allTests
+                          allTests
                           WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
                           COMMENT Run the unit tests)
-  ENDIF (MSVC)
 ENDIF (AUTO_RUN_TESTS)
 

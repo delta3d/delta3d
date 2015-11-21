@@ -35,13 +35,13 @@
 
 namespace dtPhysics
 {
-   template< class T >
+   template< class T>
    class TriangleRecorderVisitor : public osg::NodeVisitor
    {
    public:
 
-      int mSplit, mSplitCount, mNumGeodes, mGeodeExportCounter;
       bool mExportSpecificMaterial, mSkipSpecificMaterial;
+
       std::string mSpecificDescription;
       std::string mCurrentDescription;
       osg::TriangleFunctor<T> mFunctor;
@@ -64,18 +64,18 @@ namespace dtPhysics
 
       virtual std::string GetMaterialNameFiltered(const std::string& str);
 
-      virtual void apply(osg::Node& node);
+      void apply(osg::Node& node) override;
 
-      virtual void apply(osg::Group& gnode);
+      void apply(osg::Group& gnode) override;
 
       /**
       * Applies this visitor to a geode.
       *
       * @param node the geode to visit
       */
-      virtual void apply(osg::Geode& node);
+      void apply(osg::Geode& node) override;
 
-      virtual void apply(osg::Billboard& node);
+      void apply(osg::Billboard& node) override;
    };
 }
 

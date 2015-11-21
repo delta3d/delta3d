@@ -39,7 +39,6 @@
 #include <dtGame/invokable.h>
 #include <dtGame/messagefactory.h>
 #include <dtGame/messagetype.h>
-#include <dtGame/shaderactorcomponent.h>
 
 #include <dtCore/actortype.h>
 #include <dtCore/actorfactory.h>
@@ -98,8 +97,8 @@ namespace dtGame
    }
    
    GameActorProxy::GameActorIterator::GameActorIterator(GameActorIterator& iter)
-      : mActor(iter.mActor)
-      , mIter(iter.mIter)
+      : mIter(iter.mIter)
+      , mActor(iter.mActor)
    {}
    
    GameActorProxy::GameActorIterator::~GameActorIterator()
@@ -128,7 +127,7 @@ namespace dtGame
    /////////////////////////////////////////////////////////////////////////////
    GameActorProxy::GameActorProxy()
    : ActorTree()
-   , mParent(NULL)
+   , mParent(nullptr)
    , mOwnership(&GameActorProxy::Ownership::SERVER_LOCAL)
    , mLocalActorUpdatePolicy(&GameActorProxy::LocalActorUpdatePolicy::ACCEPT_ALL)
    , mLogger(dtUtil::Log::GetInstance("gameactor.cpp"))
@@ -161,14 +160,14 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void GameActorProxy::CopyPropertiesFrom(const PropertyContainer& copyFrom)
+   void GameActorProxy::CopyPropertiesFrom(const PropertyContainer& copyFrom, bool copyMetadata)
    {
-      BaseClass::CopyPropertiesFrom(copyFrom);
+      BaseClass::CopyPropertiesFrom(copyFrom, copyMetadata);
 
       ActorComponentVectorConst comps;
       const dtGame::ActorComponentContainer* acc = dynamic_cast<const dtGame::ActorComponentContainer*>(&copyFrom);
 
-      if (acc != NULL)
+      if (acc != nullptr)
       {
          ActorComponentVector existingComps;
          acc->GetAllComponents(comps);
@@ -218,15 +217,15 @@ namespace dtGame
       {
          error << "Clone of actor proxy: " << GetName() << " failed. Reason was: " << e.What();
          LOG_ERROR(error.str());
-         return NULL;
+         return nullptr;
       }
 
 
-      // If it's not a gameActor, this function essentially fails, so it will just return null and the object will be
+      // If it's not a gameActor, this function essentially fails, so it will just return nullptr and the object will be
       // deleted.
       GameActorProxy* gameActor = dynamic_cast<GameActorProxy*>(copy.get());
 
-      if (gameActor != NULL)
+      if (gameActor != nullptr)
       {
          gameActor->SetName(GetName());
 
@@ -236,7 +235,7 @@ namespace dtGame
          ActorComponentVector comps;
          GetAllComponents(comps);
 
-         ActorComponent* curComp = NULL;
+         ActorComponent* curComp = nullptr;
          ActorComponentVector::iterator curIter = comps.begin();
          ActorComponentVector::iterator endIter = comps.end();
          for (; curIter != endIter; ++curIter)
@@ -246,7 +245,7 @@ namespace dtGame
             if ( ! gameActor->HasComponent(&curComp->GetActorType()) && curComp->IsActorComponent())
             {
                dtCore::RefPtr<ActorComponent> newComp = dynamic_cast<ActorComponent*>(curComp->Clone().get());
-               if (newComp != NULL)
+               if (newComp != nullptr)
                {
                   gameActor->AddComponent(*newComp);
                   newComp->CopyPropertiesFrom(*curComp);
@@ -287,12 +286,12 @@ namespace dtGame
    {
       BaseClass::Init(actorType);
       GameActor* ga = GetDrawable<GameActor>();
-      mDrawableIsAGameActor = ga != NULL;
+      mDrawableIsAGameActor = ga != nullptr;
 
       BuildInvokables();
       BuildActorComponents();
 
-      if (ga != NULL)
+      if (ga != nullptr)
       {
          ga->BuildActorComponents();
       }
@@ -310,13 +309,13 @@ namespace dtGame
    /////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::SetParentActor(GameActorProxy* newParent)
    {
-      GameActorProxy* curParent = parent() != NULL ? parent()->value: NULL;
+      GameActorProxy* curParent = parent() != nullptr ? parent()->value: nullptr;
 
       // Remove from current parent.
-      if (curParent != newParent && curParent != NULL)
+      if (curParent != newParent && curParent != nullptr)
       {
          // Detach this actor's drawable from the parent drawable if one exists.
-         if (curParent->GetDrawable() != NULL)
+         if (curParent->GetDrawable() != nullptr)
          {
             DetachDrawableFromParent(*curParent);
          }
@@ -325,13 +324,13 @@ namespace dtGame
       }
 
       // Attach to the new parent.
-      if (newParent != NULL)
+      if (newParent != nullptr)
       {
          if (curParent != newParent)
-            newParent->insert_subtree(this, NULL);
+            newParent->insert_subtree(this, nullptr);
 
          // Attach this actor's drawable to the parent drawable if one exists.
-         if (newParent->GetDrawable() != NULL)
+         if (newParent->GetDrawable() != nullptr)
          {
             AttachDrawableToParent(*newParent);
          }
@@ -341,14 +340,14 @@ namespace dtGame
    /////////////////////////////////////////////////////////////////////////////
    GameActorProxy* GameActorProxy::GetParentActor() const
    {
-      return parent() != NULL ? parent()->value: NULL;
+      return parent() != nullptr ? parent()->value: nullptr;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    bool GameActorProxy::SetParentBaseActor(dtCore::BaseActorObject* parent)
    {
       GameActorProxy* newParent = dynamic_cast<GameActorProxy*>(parent);
-      if (newParent != NULL || parent == NULL)
+      if (newParent != nullptr || parent == nullptr)
       {
          SetParentActor(newParent);
          return true;
@@ -383,12 +382,12 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   unsigned GameActorProxy::DetachChildActors()
+   unsigned GameActorProxy::DetachChildActors(bool deleteFromGM)
    {
       unsigned count = 0;
 
-      dtCore::BaseActorObject* baseActor = NULL;
-      dtGame::GameActorProxy* actor = NULL;
+      dtGame::GameActorProxy* actor = nullptr;
+      dtGame::GameManager* gm = GetGameManager();
 
       // Use counter variable to make sure the following while loop
       // does not get stuck if something is wrong with the tree.
@@ -398,33 +397,15 @@ namespace dtGame
       // NOTE: Use a while loop here since the end iterator will
       // change when a child actor is removed. This loop will keep
       // going until all children are successfully removed.
-      while (first_child() != NULL && i < childCount)
+      while ( (actor = static_cast<dtGame::GameActorProxy*>(first_child())) != nullptr && i < childCount)
       {
-         baseActor = first_child();
-         actor = dynamic_cast<dtGame::GameActorProxy*>(baseActor);
-
-         if (actor != NULL)
+         actor->SetParentActor(nullptr);
+         if (deleteFromGM && gm != nullptr)
          {
-            actor->SetParentActor(NULL);
+            gm->DeleteActor(*actor);
+         }
 
-            ++count;
-         }
-         // Something is wrong...
-         else
-         {
-            if (baseActor != NULL)
-            {
-               LOG_ERROR("Actor \"" + GetName() + "\" (" + GetActorType().GetName()
-                  + ") could not remove child actor \""
-                  + baseActor->GetName() + "\" (" + baseActor->GetActorType().GetName()
-                  + ") because it could not be cast to a GameActor.");
-            }
-            else
-            {
-               LOG_ERROR("Actor \"" + GetName() + "\" (" + GetActorType().GetName()
-                  + ") could not remove child actor because it is a NULL reference.");
-            }
-         }
+         ++count;
 
          // Keep track of the number of loops completed.
          ++i;
@@ -433,31 +414,32 @@ namespace dtGame
       return count;
    }
 
+
    /////////////////////////////////////////////////////////////////////////////
    bool GameActorProxy::AttachDrawableToParent(dtGame::GameActorProxy& parent, int index)
    {
       bool success = false;
-      dtCore::DeltaDrawable* parentDrawable = NULL;
+      dtCore::DeltaDrawable* parentDrawable = nullptr;
 
       dtCore::DeltaDrawable* drawable = GetDrawable();
-      if (drawable != NULL)
+      if (drawable != nullptr)
       {
          dtGame::GameActorProxy* curParent = &parent;
 
-         while (parentDrawable == NULL && curParent != NULL)
+         while (parentDrawable == nullptr && curParent != nullptr)
          {
             parentDrawable = curParent->GetDrawable();
             curParent = curParent->GetParentActor();
          }
       }
 
-      if (drawable != NULL && parentDrawable != NULL)
+      if (drawable != nullptr && parentDrawable != nullptr)
       {
          drawable->Emancipate();
 
          // TODO This env interface really needs to go away.
          IEnvGameActor* ea = dynamic_cast<IEnvGameActor*>(parentDrawable);
-         if (ea != NULL)
+         if (ea != nullptr)
          {
             ea->AddActor(*drawable);
             success = true;
@@ -486,11 +468,11 @@ namespace dtGame
 
       dtCore::DeltaDrawable* drawable = GetDrawable();
 
-      if (drawable != NULL)
+      if (drawable != nullptr)
       {
          // TODO This env interface really needs to go away.
          IEnvGameActor* ea = dynamic_cast<IEnvGameActor*>(parent.GetDrawable());
-         if (ea != NULL)
+         if (ea != nullptr)
          {
             ea->RemoveActor(*drawable);
          }
@@ -512,7 +494,7 @@ namespace dtGame
       PropertyVector props;
       component.GetPropertyList(props);
 
-      dtCore::ActorProperty* curProp = NULL;
+      dtCore::ActorProperty* curProp = nullptr;
       PropertyVector::iterator i = props.begin();
       PropertyVector::iterator iend = props.end();
       for (; i != iend; ++i)
@@ -586,10 +568,10 @@ namespace dtGame
    /////////////////////////////////////////////////////////////////////////////
    GameActor& GameActorProxy::GetGameActor()
    {
-      GameActor* ga = NULL;
+      GameActor* ga = nullptr;
       if (mDrawableIsAGameActor)
          GetDrawable(ga);
-      if (ga == NULL)
+      if (ga == nullptr)
       {
          throw dtGame::InvalidActorStateException("The Drawable for " + GetName() + " is not of type GameActor, but the code called GetGameActor().", __FILE__, __LINE__);
       }
@@ -599,10 +581,10 @@ namespace dtGame
    /////////////////////////////////////////////////////////////////////////////
    const GameActor& GameActorProxy::GetGameActor() const
    {
-      const GameActor* ga = NULL;
+      const GameActor* ga = nullptr;
       if (mDrawableIsAGameActor)
          GetDrawable(ga);
-      if (ga == NULL)
+      if (ga == nullptr)
       {
          throw dtGame::InvalidActorStateException("The Drawable for " + GetName() + " is not of type GameActor, but the code called GetGameActor().", __FILE__, __LINE__);
       }
@@ -631,7 +613,7 @@ namespace dtGame
    /////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::NotifyFullActorUpdate()
    {
-      if (GetGameManager() == NULL || IsRemote())
+      if (GetGameManager() == nullptr || IsRemote())
       {
          return;
       }
@@ -649,7 +631,7 @@ namespace dtGame
    void GameActorProxy::NotifyPartialActorUpdate(const std::vector<dtUtil::RefString>& propNames,
          bool flagAsPartial /*=true*/)
    {
-      if (GetGameManager() == NULL || IsRemote())
+      if (GetGameManager() == nullptr || IsRemote())
       {
          return;
       }
@@ -728,7 +710,7 @@ namespace dtGame
 
       void operator() (dtCore::RefPtr<dtCore::ActorProperty>& prop)
       {
-         if (prop == NULL)
+         if (prop == nullptr)
          {
             return;
          }
@@ -753,7 +735,7 @@ namespace dtGame
          try
          {
             dtCore::NamedParameter* mp = mUpdateMsg.AddUpdateParameter(prop->GetName(), prop->GetDataType());
-            if (mp != NULL)
+            if (mp != nullptr)
             {
                mp->SetFromProperty(*prop);
             }
@@ -780,7 +762,7 @@ namespace dtGame
          update.SetPrototypeID(proto->GetId());
          update.SetPrototypeName(proto->GetName());
       }
-      if (GetParentActor() != NULL)
+      if (GetParentActor() != nullptr)
          update.SetParentID(GetParentActor()->GetId());
 
       update.SetSendingActorId(GetId());
@@ -873,7 +855,7 @@ namespace dtGame
          }
 
 
-         dtCore::ActorActorProperty* aap = NULL;
+         dtCore::ActorActorProperty* aap = nullptr;
 
          if (paramType == dtCore::DataType::ACTOR)
          {
@@ -881,10 +863,10 @@ namespace dtGame
          }
 
          // If the property is of type ACTOR AND it is an ActorActor property not an ActorID property, it's a special case.
-         if (aap != NULL)
+         if (aap != nullptr)
          {
             const ActorMessageParameter* amp = static_cast<const ActorMessageParameter*>(np.get());
-            if ( mGAP.GetGameManager() != NULL )
+            if ( mGAP.GetGameManager() != nullptr )
             {
                dtGame::GameActorProxy* valueProxy = mGAP.GetGameManager()->FindGameActorById(amp->GetValue());
                aap->SetValue(valueProxy);
@@ -963,13 +945,13 @@ namespace dtGame
          const dtCore::UniqueId& parentId = msg.GetParentID();
          if (parentId.IsNull())
          {
-            if (gap != NULL)
-               SetParentActor(NULL);
+            if (gap != nullptr)
+               SetParentActor(nullptr);
          }
-         else if (gap == NULL || gap->GetId() != parentId)
+         else if (gap == nullptr || gap->GetId() != parentId)
          {
             GameActorProxy* newParent = GetGameManager()->FindGameActorById(parentId);
-            if (newParent != NULL)
+            if (newParent != nullptr)
             {
                SetParentActor(newParent);
             }
@@ -1062,7 +1044,7 @@ namespace dtGame
    void GameActorProxy::BuildInvokables()
    {
       dtGame::GameActor* ga = GetDrawable<GameActor>();
-      if (ga != NULL)
+      if (ga != nullptr)
       {
 
          AddInvokable(*new Invokable(PROCESS_MSG_INVOKABLE,
@@ -1082,7 +1064,7 @@ namespace dtGame
 
       if (itor == mInvokables.end())
       {
-         return NULL;
+         return nullptr;
       }
       else
       {
@@ -1163,7 +1145,7 @@ namespace dtGame
    void GameActorProxy::RegisterForMessagesAboutSelf(const MessageType& type, const std::string& invokableName)
    {
       Invokable* invokable = GetInvokable(invokableName);
-      if (invokable != NULL)
+      if (invokable != nullptr)
       {
          mMessageHandlers.insert(std::make_pair(&type, invokable));
       }
@@ -1181,7 +1163,7 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::UnregisterForMessages(const MessageType& type, const std::string& invokableName)
    {
-      if ( GetGameManager() != NULL)
+      if ( GetGameManager() != nullptr)
       {
          GetGameManager()->UnregisterForMessages(type,*this, invokableName);
       }
@@ -1191,7 +1173,7 @@ namespace dtGame
    void GameActorProxy::UnregisterForMessagesAboutOtherActor(const MessageType& type,
          const dtCore::UniqueId& targetActorId, const std::string& invokableName)
    {
-      if (GetGameManager() != NULL)
+      if (GetGameManager() != nullptr)
       {
          GetGameManager()->UnregisterForMessagesAboutActor(type, targetActorId, *this, invokableName);
       }
@@ -1226,9 +1208,9 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::InvokeEnteredWorld()
    {
-      GameActor* ga = NULL;
+      GameActor* ga = nullptr;
       GetDrawable(ga);
-      if (ga != NULL)
+      if (ga != nullptr)
       {
          ga->OnEnteredWorld();
       }
@@ -1281,7 +1263,7 @@ namespace dtGame
          std::vector<ActorComponent*> components;
          GetAllComponents(components);
 
-         ActorComponent* comp = NULL;
+         ActorComponent* comp = nullptr;
          unsigned int size = components.size();
          for (unsigned int i = 0; i < size; i ++)
          {
@@ -1316,7 +1298,7 @@ namespace dtGame
       if (mDrawableIsAGameActor)
       {
          GameActor* ga = GetDrawable<GameActor>();
-         if (ga != NULL)
+         if (ga != nullptr)
             component.OnAddedToActor(*ga);
       }
 
@@ -1342,7 +1324,7 @@ namespace dtGame
       if (mDrawableIsAGameActor)
       {
          GameActor* ga = GetDrawable<GameActor>();
-         if (ga != NULL)
+         if (ga != nullptr)
             component.OnRemovedFromActor(*ga);
       }
 
@@ -1357,7 +1339,7 @@ namespace dtGame
       if (mDrawableIsAGameActor)
       {
          GameActor* ga = GetDrawable<GameActor>();
-         if (ga != NULL)
+         if (ga != nullptr)
             ga->OnTickLocal(tickMessage);
       }
    }
@@ -1368,7 +1350,7 @@ namespace dtGame
       if (mDrawableIsAGameActor)
       {
          GameActor* ga = GetDrawable<GameActor>();
-         if (ga != NULL)
+         if (ga != nullptr)
             ga->OnTickRemote(tickMessage);
       }
    }
@@ -1384,7 +1366,7 @@ namespace dtGame
       ActorComponentVector comps;
       GetAllComponents(comps);
 
-      ActorComponent* comp = NULL;
+      ActorComponent* comp = nullptr;
       ActorComponentVector::iterator curIter = comps.begin();
       ActorComponentVector::iterator endIter = comps.end();
       for (; curIter != endIter; ++curIter)
@@ -1400,7 +1382,7 @@ namespace dtGame
       ActorComponentVector comps;
       GetAllComponents(comps);
 
-      ActorComponent* comp = NULL;
+      ActorComponent* comp = nullptr;
       ActorComponentVector::iterator curIter = comps.begin();
       ActorComponentVector::iterator endIter = comps.end();
       for (; curIter != endIter; ++curIter)

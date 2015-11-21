@@ -43,7 +43,6 @@ DT_DISABLE_WARNING_END
 #include <dtCore/transform.h>
 
 #include <dtDirector/director.h>
-#include <dtDirector/directorheaderhandler.h>
 #include <dtDirector/directorxml.h>
 #include <dtDirector/node.h>
 #include <dtDirector/nodetype.h>
@@ -116,9 +115,10 @@ namespace dtDirector
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   const std::string& DirectorParser::ParseScriptType(const std::string& filePath)
+   DirectorPtr DirectorParser::ParseDirectorHeaderData(const std::string& directorFilename) const
    {
-      mDirectorHandler->SetDirector(NULL);
+      DirectorPtr result = new Director();
+      mDirectorHandler->SetDirector(result);
       mDirectorHandler->SetMap(NULL);
 
       bool parserNeedsReset = false;
@@ -130,10 +130,10 @@ namespace dtDirector
       try
       {
          std::ifstream fileStream;
-         fileStream.open(filePath.c_str());
+         fileStream.open(directorFilename.c_str());
          if(fileStream.fail())
          {
-            throw dtUtil::Exception("Failed to find Director script file \'" + filePath + "\'.", __FILE__, __LINE__);
+            throw dtUtil::Exception("Failed to find Director script file \'" + directorFilename + "\'.", __FILE__, __LINE__);
          }
 
          dtCore::InputSourcefStream xerStream(fileStream);
@@ -143,7 +143,7 @@ namespace dtDirector
             parserNeedsReset = true;
 
             bool cont = mXercesParser->parseNext(token);
-            while (cont && !mDirectorHandler->HasFoundScriptType())
+            while (cont && !mDirectorHandler->HasParsedHeader())
             {
                cont = mXercesParser->parseNext(token);
             }
@@ -153,10 +153,9 @@ namespace dtDirector
             //reset the parser and close the file handles.
             mXercesParser->parseReset(token);
 
-            if (mDirectorHandler->HasFoundScriptType())
+            if (mDirectorHandler->HasParsedHeader())
             {
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Parsing complete.");
-               return mDirectorHandler->GetScriptType();
             }
             else
             {
@@ -207,20 +206,7 @@ namespace dtDirector
          throw e;
       }
 
-      return mDirectorHandler->GetScriptType();
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   dtDirector::DirectorHeaderData DirectorParser::ParseDirectorHeaderData(const std::string& directorFilename) const
-   {
-      dtCore::RefPtr<DirectorHeaderHandler> handler = new DirectorHeaderHandler();
-      if (!ParseFileByToken(directorFilename, handler))
-      {
-         //error
-         throw dtCore::MapParsingException( "Could not parse the Director's header data.", __FILE__, __LINE__);
-      }
-
-      return handler->GetHeaderData();
+      return result;
    }
 
    /////////////////////////////////////////////////////////////////

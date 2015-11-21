@@ -215,7 +215,6 @@ namespace dtActors
       , mSegmentHeight(5.0f)
       , mSegmentWidth(1.0f)
       , mTopTextureRatio(0.2f)
-      , mCollisionWireframe(false)
    {
       mSegmentPointList.push_back(SegmentPointData(osg::Vec2(0.0f, 1.0f)));
       mSegmentPointList.push_back(SegmentPointData());
@@ -865,9 +864,9 @@ namespace dtActors
                            }
                         }
 
-                        float width = ((xMax - xMin) + mSegmentWidth) * mSegmentHeight * mFenceScale * 2.0f;
+                        //float width = ((xMax - xMin) + mSegmentWidth) * mSegmentHeight * mFenceScale * 2.0f;
                         float height = (yMax - yMin) * mSegmentHeight * mFenceScale;
-                        float length = vec.length();
+                        //float length = vec.length();
 
                         // Offset the height of the collision center based on the geometry.
                         osg::Vec3 offset;

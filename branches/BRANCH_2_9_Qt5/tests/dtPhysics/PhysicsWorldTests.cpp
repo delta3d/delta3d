@@ -144,6 +144,7 @@ namespace dtPhysics
       {
          try
          {
+            dtPhysics::PhysicsWorld::Shutdown();
             mPhysWorld = nullptr;
             mPhysWorld = new PhysicsWorld(mCurrentEngine);
 

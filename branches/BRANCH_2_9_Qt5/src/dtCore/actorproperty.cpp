@@ -111,6 +111,24 @@ namespace dtCore
    }
 
    ////////////////////////////////////////
+   void ActorProperty::CopyMetadata(const ActorProperty& otherProp)
+   {
+      mReadOnly = otherProp.mReadOnly;
+      mMultipleEdit = otherProp.mMultipleEdit;
+      mSendInPartialUpdate = otherProp.mSendInPartialUpdate;
+      mSendInFullUpdate = otherProp.mSendInFullUpdate;
+      mAdvanced = otherProp.mAdvanced;
+      mIgnoreWhenSaving = otherProp.mIgnoreWhenSaving;
+      mAlwaysSave = otherProp.mAlwaysSave;
+   }
+
+   ////////////////////////////////////////
+   // C++ 11 version.  This avoids warnings uninitialized variable warnings on clang and in eclipse, but won't build in VS 2010
+//   ActorProperty::ActorProperty(const ActorProperty& toCopy):
+//      ActorProperty(toCopy.GetDataType(), toCopy.GetName(), toCopy.GetLabel(), toCopy.GetDescription(), toCopy.GetGroupName(), toCopy.IsReadOnly()) {  }
+
+   ////////////////////////////////////////
+   // This one works in VS 2010, remove once it is no longer supported.
    ActorProperty::ActorProperty(const ActorProperty& toCopy):
       AbstractParameter(GetDataType(), GetName()) { }
 

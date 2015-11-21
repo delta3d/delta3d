@@ -275,7 +275,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void PropertyContainer::CopyPropertiesFrom(const PropertyContainer& copyFrom)
+   void PropertyContainer::CopyPropertiesFrom(const PropertyContainer& copyFrom, bool copyMetadata)
    {
       //Now copy all of the properties from this proxy to the clone.
       for (size_t i = 0; i < mProperties.size(); ++i)
@@ -285,6 +285,8 @@ namespace dtCore
          {
             mProperties[i]->CopyFrom(*prop);
          }
+         if (copyMetadata)
+            mProperties[i]->CopyMetadata(*prop);
       }
    }
 

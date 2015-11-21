@@ -416,8 +416,6 @@ namespace dtActors
       float mSegmentWidth;
 
       float mTopTextureRatio;
-
-      bool  mCollisionWireframe;
    };
 
    /////////////////////////////////////////////////////////////////////////////

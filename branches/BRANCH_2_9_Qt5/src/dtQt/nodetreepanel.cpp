@@ -27,6 +27,7 @@
 #include <dtQt/nodetreepanel.h>
 #include <osg/Group>
 #include <osg/NodeVisitor>
+#include <regex>
 
 
 
@@ -170,7 +171,9 @@ namespace dtQt
          : mFilterOutDOFs(false)
          , mFilterOutGeodes(false)
          , mFilterOutGroups(false)
+         , mFilterOutOccluders(false)
          , mFilterOutTransforms(false)
+         , mFilterNameInvalid(false)
       {}
 
       bool IsNodeAllowed(osg::Node& node) const
@@ -196,6 +199,30 @@ namespace dtQt
          {
             answer = ! mFilterOutDOFs;
          }
+         else if (nodeType.compare("OccluderNode") == 0
+            || nodeType.compare("OcclusionQueryNode") == 0)
+         {
+            answer = ! mFilterOutOccluders;
+         }
+
+         // If the node has not already been filtered out with answer == false...
+         if (answer && ! mFilterName.empty())
+         {
+            // ...attempt a match by name.
+            try
+            {
+               answer = std::regex_match(node.getName(), std::regex(mFilterName));
+            }
+            catch (...)
+            {
+               // Match filter is most likely malformed here.
+               // It needs to be nullified to suppress any more
+               // exception throwing.
+               mFilterName = "";
+               mFilterNameInvalid = true;
+               answer = true;
+            }
+         }
 
          return answer;
       }
@@ -205,16 +232,42 @@ namespace dtQt
          return mFilterOutDOFs
             || mFilterOutGeodes
             || mFilterOutGroups
-            || mFilterOutTransforms;
+            || mFilterOutOccluders
+            || mFilterOutTransforms
+            || ! mFilterName.empty();
+      }
+
+      void SetFilterName(const std::string& nameFilter)
+      {
+         mFilterName = nameFilter;
+
+         if ( ! mFilterName.empty())
+         {
+            mFilterName = ".*" + mFilterName + ".*";
+         }
+      }
+
+      const std::string GetFilterName() const
+      {
+         return mFilterName;
+      }
+
+      bool IsFilterNameInvalid() const
+      {
+         return mFilterNameInvalid;
       }
 
       bool mFilterOutDOFs;
       bool mFilterOutGeodes;
       bool mFilterOutGroups;
+      bool mFilterOutOccluders;
       bool mFilterOutTransforms;
 
    protected:
       virtual ~NodeFilter() {}
+
+      mutable std::string mFilterName;
+      mutable bool mFilterNameInvalid;
    };
 
 
@@ -418,8 +471,13 @@ namespace dtQt
          this, SLOT(OnNodeFilterClicked()));
       connect(mUI->mButtonFilterGroups, SIGNAL(clicked()),
          this, SLOT(OnNodeFilterClicked()));
+      connect(mUI->mButtonFilterOccluders, SIGNAL(clicked()),
+         this, SLOT(OnNodeFilterClicked()));
       connect(mUI->mButtonFilterTransforms, SIGNAL(clicked()),
          this, SLOT(OnNodeFilterClicked()));
+
+      connect(mUI->mTextFilterName, SIGNAL(editingFinished()),
+         this, SLOT(OnNodeFilterNameChanged()));
 
       // ITEMS
       connect(mUI->mTree, SIGNAL(itemSelectionChanged()),
@@ -440,7 +498,10 @@ namespace dtQt
          filter->mFilterOutDOFs = mUI->mButtonFilterDOFs->isChecked();
          filter->mFilterOutGeodes = mUI->mButtonFilterGeodes->isChecked();
          filter->mFilterOutGroups = mUI->mButtonFilterGroups->isChecked();
+         filter->mFilterOutOccluders = mUI->mButtonFilterOccluders->isChecked();
          filter->mFilterOutTransforms = mUI->mButtonFilterTransforms->isChecked();
+         filter->SetFilterName(mUI->mTextFilterName->text().toStdString());
+
          if ( ! filter->IsEnabled())
          {
             filter = nullptr;
@@ -452,6 +513,22 @@ namespace dtQt
 
          QString qstr = QString::number(builder.GetNodeCount());
          mUI->mNodeCount->setText(qstr);
+
+         // Update the color of the name filter to indicate
+         // the validity of the search string.
+         if (filter != nullptr && filter->IsFilterNameInvalid())
+         {
+            mUI->mTextFilterName->setStyleSheet("color: red");
+            mUI->mTextFilterName->setToolTip("Regex string malformed.");
+         }
+         else
+         {
+            mUI->mTextFilterName->setStyleSheet("color: black");
+            mUI->mTextFilterName->setToolTip("");
+         }
+
+         // Expand the tree to show all the results.
+         mUI->mTree->expandAll();
 
          UpdateColumns();
       }
@@ -497,6 +574,11 @@ namespace dtQt
    }
 
    void NodeTreePanel::OnNodeFilterClicked()
+   {
+      UpdateUI();
+   }
+
+   void NodeTreePanel::OnNodeFilterNameChanged()
    {
       UpdateUI();
    }

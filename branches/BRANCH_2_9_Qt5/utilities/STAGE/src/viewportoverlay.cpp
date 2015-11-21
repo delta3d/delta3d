@@ -174,7 +174,7 @@ namespace dtEditQt
             int groupIndex = -2;
             for (int index = 0; index < (int)mCurrentActorSelection.size(); index++)
             {
-               int testGroupIndex = map->FindGroupForActor(mCurrentActorSelection[index].get());
+               int testGroupIndex = map->FindGroupForActor(*mCurrentActorSelection[index].get());
 
                if (testGroupIndex != groupIndex)
                {
@@ -205,8 +205,8 @@ namespace dtEditQt
       {
          for (int index = 0; index < (int)mCurrentActorSelection.size(); index++)
          {
-            dtCore::BaseActorObject* proxy = mCurrentActorSelection[index].get();
-            if (map->FindGroupForActor(proxy) != -1)
+            dtCore::BaseActorObject* actor = mCurrentActorSelection[index].get();
+            if (map->FindGroupForActor(*actor) != -1)
             {
                canUngroup = true;
                break;

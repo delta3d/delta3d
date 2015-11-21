@@ -993,7 +993,7 @@ void LinkedPointsActorToolPlugin::UpdatePlacementGhost(Viewport* vp, osg::Vec2 m
 
                // Test for a lock with the next point.
                dot = vec * angle1;
-               if (abs(dot) >= 0.99f)
+               if (std::abs(dot) >= 0.99f)
                {
                   osg::Vec3 start = nextPos - (angle1 * len * 2);
                   osg::Vec3 end = nextPos + (angle1 * len * 2);
@@ -1002,7 +1002,7 @@ void LinkedPointsActorToolPlugin::UpdatePlacementGhost(Viewport* vp, osg::Vec2 m
                else
                {
                   dot = vec * angle2;
-                  if (abs(dot) >= 0.99f)
+                  if (std::abs(dot) >= 0.99f)
                   {
                      osg::Vec3 start = nextPos - (angle2 * len);
                      osg::Vec3 end = nextPos + (angle2 * len);

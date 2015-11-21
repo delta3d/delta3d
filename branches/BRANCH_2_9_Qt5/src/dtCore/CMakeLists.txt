@@ -96,7 +96,6 @@ SET(LIB_SOURCES
                 makeskydome.cpp
                 map.cpp
                 mapcontenthandler.cpp
-                mapheaderhandler.cpp
                 mapxml.cpp
                 mapxmlconstants.cpp
                 model.cpp
@@ -136,7 +135,6 @@ SET(LIB_SOURCES
                 particleutil.cpp
                 pointaxis.cpp
                 positionallight.cpp
-                prefabiconhandler.cpp
                 prefabactorregistry.cpp
                 prefabactortype.cpp
                 project.cpp
@@ -212,7 +210,6 @@ SET(LIB_EXTERNAL_DEPS
      XERCES_LIBRARY
      UUID_LIBRARY)
 
-INCLUDE_DIRECTORIES(${TBB_INCLUDE_DIR}) 
 
 SET(LIB_DEPS 
    ${DTUTIL_LIBRARY}
@@ -222,6 +219,7 @@ SET(LIB_DEPS
   )
 
 if (TBB_FOUND)
+   INCLUDE_DIRECTORIES(${TBB_INCLUDE_DIR}) 
    ADD_DEFINITIONS(-DUSE_TBB_MEMORY_POOL)
    set(LIB_DEPS 
       ${LIB_DEPS}

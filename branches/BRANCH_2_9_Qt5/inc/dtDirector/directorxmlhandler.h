@@ -122,7 +122,7 @@ namespace dtDirector
       /**
        * Returns whether or not the Director script type was parsed.
        */
-      bool HasFoundScriptType() const {return mFoundScriptType;}
+      bool HasParsedHeader() const {return mHasParsedHeader;}
       const std::string& GetScriptType() const {return mScriptType;}
 
    protected:
@@ -162,7 +162,7 @@ namespace dtDirector
       Director*   mDirector;
       dtCore::RefPtr<dtCore::Map> mMap;
       std::string mScriptType;
-      bool        mFoundScriptType;
+      bool        mHasParsedHeader;
       bool        mHasImportedScripts;
 
       float       mSchemaVersion;

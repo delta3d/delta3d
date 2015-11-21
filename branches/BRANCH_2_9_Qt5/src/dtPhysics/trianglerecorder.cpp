@@ -3,21 +3,25 @@
 
 #include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
+#include <dtUtil/stringutils.h>
 #include <sstream>
 #include <osg/io_utils>
 
 namespace dtPhysics
 {
-
    //////////////////////////////////////////////////////
    TriangleRecorder::TriangleRecorder()
-   : mData(new VertexData)
+   : mData()
    , mCurrentMaterial(0)
    , mMaxEdgeLength(20.0)
+   , mMode(TriangleRecorder::COMBINED)
+   , mMaxSizePerBuffer(0)
+   , mGeodeCount(0)
    , mSplitCount(0)
    , mReuseCount(0)
    , mMatrixIsIdentity(true)
    {
+      mData.push_back(new VertexData);
    }
 
    //////////////////////////////////////////////////////
@@ -34,6 +38,12 @@ namespace dtPhysics
       {
          mMaxEdgeLength = maxEdgeLength;
       }
+      visitor.mFunctor.SetMode(GetMode());
+      visitor.mFunctor.SetMaxEdgeLength(GetMaxEdgeLength());
+      visitor.mFunctor.SetCurrentMaterial(GetCurrentMaterial());
+      visitor.mFunctor.SetMaxSizePerBuffer(GetMaxSizePerBuffer());
+      visitor.mFunctor.SetPhysicsNodeNamePattern(GetPhysicsNodeNamePattern());
+
       // sorry about the const cast.  The node SHOULD be const since we aren't changing it
       // but accept doesn't work as const.
       const_cast<osg::Node&>(node).accept(visitor);
@@ -139,6 +149,29 @@ namespace dtPhysics
    DT_IMPLEMENT_ACCESSOR(TriangleRecorder, dtPhysics::MaterialIndex, CurrentMaterial);
    DT_IMPLEMENT_ACCESSOR(TriangleRecorder, std::string, CurrentMaterialName);
    DT_IMPLEMENT_ACCESSOR(TriangleRecorder, float, MaxEdgeLength);
+   DT_IMPLEMENT_ACCESSOR(TriangleRecorder, TriangleRecorder::Mode, Mode);
+   DT_IMPLEMENT_ACCESSOR(TriangleRecorder, size_t, MaxSizePerBuffer);
+   DT_IMPLEMENT_ACCESSOR(TriangleRecorder, size_t, GeodeCount);
+
+   //////////////////////////////////////////////////////
+   bool TriangleRecorder::operator()(osg::Geode& geode)
+   {
+      if (!mPhysicsNodeNamePattern.empty())
+      {
+         if (!dtUtil::Match(mPhysicsNodeNamePattern.c_str(), geode.getName().c_str()))
+            return false;
+      }
+      ++mGeodeCount;
+      size_t currentVertCount = mData.back()->mIndices.size();
+      bool split = (mMode == TriangleRecorder::PER_GEODE && geode.getNumDrawables() > 0U && mGeodeCount > 1) ||
+            (mMaxSizePerBuffer > 0 && currentVertCount >= mMaxSizePerBuffer);
+
+      if (split) // Don't split on the first one.
+      {
+         mData.push_back(new VertexData);
+      }
+      return true;
+   }
 
    //////////////////////////////////////////////////////
    void TriangleRecorder::operator()(const VectorType& v1,
@@ -194,11 +227,11 @@ namespace dtPhysics
                }
                else
                {
-                  index = mData->mVertices.size();
-                  mData->mVertices.push_back(t.mV[j]);
+                  index = mData.back()->mVertices.size();
+                  mData.back()->mVertices.push_back(t.mV[j]);
                   mVertIndexSet.insert(std::make_pair(t.mV[j], index));
                }
-               mData->mIndices.push_back(index);
+               mData.back()->mIndices.push_back(index);
                //std::cerr << mData->mVertices[index] << "\n";
             }
             //std::cerr << std::endl;
@@ -207,10 +240,10 @@ namespace dtPhysics
          // For now only one material can be applied to an object.
          // NOTE: This should be done per vertex when per-vertex
          // material support becomes available.
-         mData->mMaterialFlags.push_back(mCurrentMaterial);
+         mData.back()->mMaterialFlags.push_back(mCurrentMaterial);
 
          // Add a mapping of the material index to the material name
-         mData->SetMaterialName(mCurrentMaterial, mCurrentMaterialName);
+         mData.back()->SetMaterialName(mCurrentMaterial, mCurrentMaterialName);
       }
       else
       {

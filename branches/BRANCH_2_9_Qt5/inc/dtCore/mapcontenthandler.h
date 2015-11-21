@@ -95,7 +95,7 @@ namespace dtCore
          /**
           * @return true if the map parsing has come across the map name yet.
           */
-         bool HasFoundMapName() const { return mFoundMapName; };
+         bool HasParsedHeader() const { return mFinishedHeader; };
 
          /**
          * Initializes the content handler to load a map.
@@ -105,12 +105,7 @@ namespace dtCore
          /**
          * Initializes the content handler to load a prefab.
          */
-         void SetPrefabMode(dtCore::ActorRefPtrVector& proxyList, dtCore::Map* map = NULL);
-
-         /**
-         * Get prefab icon file name.  If there isn't one, returns ""
-         */
-         const std::string GetPrefabIconFileName();
+         void SetPrefabMode();
 
          /**
           * note: store a RefPtr to this map immediately because reparsing with this handler
@@ -188,11 +183,9 @@ namespace dtCore
 
          int mGroupIndex;
 
-         bool mFoundMapName;
+         bool mFinishedHeader;
 
          bool mLoadingPrefab;
-         std::string mPrefabIconFileName;
-         dtCore::ActorRefPtrVector* mPrefabProxyList;
 
          int                   mPresetCameraIndex;
          Map::PresetCameraData mPresetCameraData;

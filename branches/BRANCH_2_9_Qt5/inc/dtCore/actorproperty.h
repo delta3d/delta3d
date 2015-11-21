@@ -89,6 +89,12 @@ namespace dtCore
          virtual void CopyFrom(const ActorProperty& otherProp) = 0;
 
          /**
+          * Copies the metadata otherProp to this property.  This includes all the boolean flags, but not
+          * the actual value of the property.  One can override this if a subclass has additional metadata.
+          */
+         virtual void CopyMetadata(const ActorProperty& otherProp);
+
+         /**
           * Gets the label assigned to this property.
           */
          const std::string& GetLabel() const { return mLabel; }
