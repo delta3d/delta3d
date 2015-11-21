@@ -30,6 +30,7 @@
 #include <dtPhysics/geometry.h>
 #include <dtUtil/functor.h>
 #include <dtUtil/getsetmacros.h>
+#include <osg/Geode>
 #include <vector>
 
 namespace dtPhysics
@@ -37,54 +38,78 @@ namespace dtPhysics
 
    class DT_PHYSICS_EXPORT TriangleRecorder
    {
-      public:
+   public:
 
-         TriangleRecorder();
-         ~TriangleRecorder();
+      enum Mode
+      {
+         COMBINED, // Combine all geometries into one triangle data mesh
+         PER_GEODE // Separate vertex data object per geode.
+      };
 
-         typedef dtUtil::Functor<dtPhysics::MaterialIndex, TYPELIST_1(const std::string&)> MaterialLookupFunc;
-         typedef dtUtil::Functor<std::string, TYPELIST_1(const std::string&)> MaterialNameFilterFunc;
+      TriangleRecorder();
+      ~TriangleRecorder();
 
-         /**
-          * Records all the triangles in the buffors on this object for the given node.
-          * @param node The node to traverse.
-          * @param maxEdgeSize  The largest size of a triangle edge before the code will split the triangle in half recursively.
-          *                     Large triangles can give physics engine trouble.
-          * @param materialLookup A functor to use map the descriptions in the nodes to physics material id's.  It will store this
-          *                       data on the triangles.
-          */
-         void Record(const osg::Node& node, Real maxEdgeLength = -1, MaterialLookupFunc materialLookup = MaterialLookupFunc());
+      typedef dtUtil::Functor<dtPhysics::MaterialIndex, TYPELIST_1(const std::string&)> MaterialLookupFunc;
+      typedef dtUtil::Functor<std::string, TYPELIST_1(const std::string&)> MaterialNameFilterFunc;
 
-         typedef std::map<osg::Vec3, int> VertexMap;
+      /**
+       * Records all the triangles in the buffers on this object for the given node.
+       * @param node The node to traverse.
+       * @param maxEdgeSize  The largest size of a triangle edge before the code will split the triangle in half recursively.
+       *                     Large triangles can give physics engine trouble.
+       * @param materialLookup A functor to use map the descriptions in the nodes to physics material id's.  It will store this
+       *                       data on the triangles.
+       */
+      void Record(const osg::Node& node, Real maxEdgeLength = -1, MaterialLookupFunc materialLookup = MaterialLookupFunc());
 
-         VertexMap mVertIndexSet;
-         dtCore::RefPtr<VertexData> mData;
+      typedef std::map<osg::Vec3, int> VertexMap;
 
-         const MatrixType& GetMatrix() const;
-         void SetMatrix(const MatrixType& m);
+      VertexMap mVertIndexSet;
 
-         DT_DECLARE_ACCESSOR(dtPhysics::MaterialIndex, CurrentMaterial);
-         DT_DECLARE_ACCESSOR(std::string, CurrentMaterialName);
-         DT_DECLARE_ACCESSOR(float, MaxEdgeLength);
+      typedef std::vector<dtCore::RefPtr<dtPhysics::VertexData> > VertexDataArray;
 
-         /**
-          * Called once for each visited triangle.
-          *
-          * @param v1 the triangle's first vertex
-          * @param v2 the triangle's second vertex
-          * @param v3 the triangle's third vertex
-          * @param treatVertexDataAsTemporary whether or not to treat the vertex data
-          * as temporary
-          */
-         void operator()(const VectorType& v1,
-                  const VectorType& v2,
-                  const VectorType& v3,
-                  bool treatVertexDataAsTemporary);
-      private:
-         MatrixType mMatrix;
-         int mSplitCount;
-         int mReuseCount;
-         bool mMatrixIsIdentity;
+      VertexDataArray mData;
+
+      const MatrixType& GetMatrix() const;
+      void SetMatrix(const MatrixType& m);
+
+      DT_DECLARE_ACCESSOR(dtPhysics::MaterialIndex, CurrentMaterial);
+      DT_DECLARE_ACCESSOR(std::string, CurrentMaterialName);
+      /**
+       * If this is set, then only geodes that pass the pattern will work.
+       * It supports * and ? for matching.
+       * Empty string, the default, will accept any node.
+       */
+      DT_DECLARE_ACCESSOR_INLINE(std::string, PhysicsNodeNamePattern);
+      DT_DECLARE_ACCESSOR(float, MaxEdgeLength);
+      DT_DECLARE_ACCESSOR(Mode, Mode);
+      DT_DECLARE_ACCESSOR(size_t, MaxSizePerBuffer);
+      DT_DECLARE_ACCESSOR(size_t, GeodeCount);
+
+      /**
+       * Called once for each visited triangle.
+       *
+       * @param v1 the triangle's first vertex
+       * @param v2 the triangle's second vertex
+       * @param v3 the triangle's third vertex
+       * @param treatVertexDataAsTemporary whether or not to treat the vertex data
+       * as temporary
+       */
+      void operator()(const VectorType& v1,
+            const VectorType& v2,
+            const VectorType& v3,
+            bool treatVertexDataAsTemporary);
+
+      /**
+       * This is the split operator.
+       * @return true if the geode should be processed.
+       */
+      bool operator()(osg::Geode& g);
+   private:
+      MatrixType mMatrix;
+      int mSplitCount;
+      int mReuseCount;
+      bool mMatrixIsIdentity;
    };
 
 }

@@ -107,7 +107,6 @@ namespace dtQt
                newControl->SetTreeView(mPropertyTree);
                newControl->SetDynamicControlFactory(GetDynamicControlFactory());
 
-
                for (size_t linkIndex = 1, linkCount = propContainers.size(); linkIndex < linkCount; ++linkIndex)
                {
                   dtCore::RefPtr<dtCore::PropertyContainer> linkedCon = propContainers[linkIndex];
@@ -131,6 +130,7 @@ namespace dtQt
                   if (groupControl == nullptr)
                   {
                      groupControl = new DynamicGroupControl(groupName);
+                     //groupControl->SetTreeView(mPropertyTree);
                      groupControl->InitializeData(this, newModel, pc, nullptr);
                      addChildControlSorted(groupControl, newModel);
                   }

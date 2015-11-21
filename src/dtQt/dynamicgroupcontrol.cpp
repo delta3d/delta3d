@@ -208,6 +208,6 @@ namespace dtQt
    ////////////////////////////////////////////////////////////////////////////////
    bool DynamicGroupControl::isEditable()
    {
-      return false;
+      return GetArrayIndex() >= 0;
    }
 } // namespace dtQt

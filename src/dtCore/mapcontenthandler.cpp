@@ -80,18 +80,17 @@ namespace  dtCore
       , mActorDepth(-1)
       , mEnvActorId(false)
       , mParentId(false)
-      , mPropSerializer(new ActorPropertySerializer(this))
+      , mPropSerializer(nullptr)
       , mBaseActorObject(NULL)
       , mIgnoreActorDepth(-1)
       , mGroupIndex(-1)
-      , mFoundMapName()
+      , mFinishedHeader()
       , mLoadingPrefab()
-      , mPrefabIconFileName("")
-      , mPrefabProxyList(NULL)
       , mPresetCameraIndex()
       , mPresetCameraView()
       , mCurrentHierNode(NULL)
    {
+      mPropSerializer = new ActorPropertySerializer(this);
    }
 
    /////////////////////////////////////////////////////////////////
@@ -116,18 +115,18 @@ namespace  dtCore
    , mActorDepth(-1)
    , mEnvActorId(false)
    , mParentId(false)
-   , mPropSerializer(new ActorPropertySerializer(this))
+   , mPropSerializer(nullptr)
    , mBaseActorObject(NULL)
    , mIgnoreActorDepth(-1)
    , mGroupIndex(-1)
-   , mFoundMapName()
+   , mFinishedHeader()
    , mLoadingPrefab()
-   , mPrefabIconFileName("")
-   , mPrefabProxyList(NULL)
    , mPresetCameraIndex()
    , mPresetCameraView()
    , mCurrentHierNode(NULL)
-   {}
+   {
+      mPropSerializer = new ActorPropertySerializer(this);
+   }
 
    //////////////////////////////////////////////////////////////////////////
    MapContentHandler& MapContentHandler::operator=(const MapContentHandler&) { return *this;}
@@ -137,11 +136,8 @@ namespace  dtCore
    {
       BaseXMLHandler::startDocument();
 
-      if (!mLoadingPrefab)
-      {
-         mMap = new Map("","");
-         mPropSerializer->SetMap(mMap.get());
-      }
+      mMap = new Map("","");
+      mPropSerializer->SetMap(mMap.get());
    }
 
    /////////////////////////////////////////////////////////////////
@@ -393,21 +389,23 @@ namespace  dtCore
       {
          if (mInHeader)
          {
-            if (!mLoadingPrefab)
+            if (topEl == MapXMLConstants::DESCRIPTION_ELEMENT)
+            {
+               mMap->SetDescription(dtUtil::XMLStringConverter(chars).ToString());
+            }
+            else if (topEl == MapXMLConstants::CREATE_TIMESTAMP_ELEMENT)
+            {
+               mMap->SetCreateDateTime(dtUtil::XMLStringConverter(chars).ToString());
+            }
+            else if (topEl == MapXMLConstants::LAST_UPDATE_TIMESTAMP_ELEMENT)
+            {
+               //ignored for now
+            }
+            else if (!mLoadingPrefab)
             {
                if (topEl == MapXMLConstants::NAME_ELEMENT)
                {
                   mMap->SetName(dtUtil::XMLStringConverter(chars).ToString());
-                  //this flag is only used when the parser is just looking for the map name.
-                  mFoundMapName = true;
-               }
-               else if (topEl == MapXMLConstants::PREFAB_ACTOR_TYPE_ELEMENT)
-               {
-                  std::string actorTypeFullName = dtUtil::XMLStringConverter(chars).ToString();
-                  std::pair<std::string, std::string> typeCatPair = ActorType::ParseNameAndCategory(actorTypeFullName);
-
-                  MapContentHandler::FindActorType(typeCatPair.second, typeCatPair.first);
-                  //mMap->SetPrefabActorType();
                }
                else if (topEl == MapXMLConstants::DESCRIPTION_ELEMENT)
                {
@@ -425,14 +423,6 @@ namespace  dtCore
                {
                   mMap->SetCopyright(dtUtil::XMLStringConverter(chars).ToString());
                }
-               else if (topEl == MapXMLConstants::CREATE_TIMESTAMP_ELEMENT)
-               {
-                  mMap->SetCreateDateTime(dtUtil::XMLStringConverter(chars).ToString());
-               }
-               else if (topEl == MapXMLConstants::LAST_UPDATE_TIMESTAMP_ELEMENT)
-               {
-                  //ignored for now
-               }
                else if (topEl == MapXMLConstants::EDITOR_VERSION_ELEMENT)
                {
                   //ignored for now
@@ -444,7 +434,15 @@ namespace  dtCore
             }
             else if (topEl == MapXMLConstants::ICON_ELEMENT)
             {
-               mPrefabIconFileName = dtUtil::XMLStringConverter(chars).ToString();
+               mMap->SetIconFile(dtUtil::XMLStringConverter(chars).ToString());
+            }
+            else if (topEl == MapXMLConstants::PREFAB_ACTOR_TYPE_ELEMENT)
+            {
+               std::string actorTypeFullName = dtUtil::XMLStringConverter(chars).ToString();
+               std::pair<std::string, std::string> typeCatPair = ActorType::ParseNameAndCategory(actorTypeFullName);
+
+               MapContentHandler::FindActorType(typeCatPair.second, typeCatPair.first);
+               //mMap->SetPrefabActorType();
             }
          }
          else if (mInEvents)
@@ -505,7 +503,7 @@ namespace  dtCore
                mMap->GetProxyById(id, proxy);
                if (proxy)
                {
-                  mMap->AddActorToGroup(mGroupIndex, proxy);
+                  mMap->AddActorToGroup(mGroupIndex, *proxy);
                }
             }
          }
@@ -662,21 +660,6 @@ namespace  dtCore
                      compContainer->AddComponent(*mBaseActorObject);
                   }
 
-                  // When loading a prefab, all actors are put into a group.
-                  if (mLoadingPrefab)
-                  {
-                     //if (mGroupIndex == -1)
-                     //{
-                     //   mGroupIndex = mMap->GetGroupCount();
-                     //}
-
-                     //mMap->AddActorToGroup(mGroupIndex, mBaseActorObject.get());
-
-                     if (mPrefabProxyList)
-                     {
-                        mPrefabProxyList->push_back(mBaseActorObject);
-                     }
-                  }
                }
             }
          }
@@ -819,19 +802,11 @@ namespace  dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void MapContentHandler::SetPrefabMode(dtCore::ActorRefPtrVector& proxyList,
-      dtCore::Map* map)
+   void MapContentHandler::SetPrefabMode()
    {
       mLoadingPrefab = true;
-      mPrefabProxyList = &proxyList;
-      mMap = map;
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   const std::string MapContentHandler::GetPrefabIconFileName()
-   {
-      return mPrefabIconFileName;
-   }
 
    /////////////////////////////////////////////////////////////////
    void MapContentHandler::Reset()
@@ -866,7 +841,7 @@ namespace  dtCore
       mMissingLibraries.clear();
       mMissingActorTypes.clear();
 
-      mFoundMapName = false;
+      mFinishedHeader = false;
       mGameEvent = NULL;
       mPrevActorObject = NULL;
       mBaseActorObject = NULL;
@@ -895,6 +870,7 @@ namespace  dtCore
       if (XMLString::compareString(localname, MapXMLConstants::HEADER_ELEMENT) == 0)
       {
          mInHeader = false;
+         mFinishedHeader = true;
       }
    }
 
@@ -903,7 +879,7 @@ namespace  dtCore
    {
       if (mBaseActorObject != nullptr && !mIgnoreCurrentActor)
       {
-         if ( ! mLoadingPrefab && ! mBaseActorObject->IsActorComponent())
+         if (! mBaseActorObject->IsActorComponent())
          {
             // Determine if the actor has a parent.
             BaseActorObject* parent = NULL;
@@ -1083,7 +1059,7 @@ namespace  dtCore
          if (mMap.valid()) mMap->AddLibrary(mLibName, mLibVersion);
          ClearLibraryValues();
       }
-      catch (const dtCore::ProjectResourceErrorException &e)
+      catch (const dtCore::ProjectResourceErrorException& e)
       {
          mMissingLibraries.push_back(mLibName);
 
@@ -1154,7 +1130,7 @@ namespace  dtCore
 
                }
             }
-            catch (const dtUtil::Exception& ex)
+            catch (const dtUtil::Exception&)
             {
                // if dtActors isn't available, the application just may not be using it, so ignore.
             }

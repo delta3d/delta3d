@@ -139,10 +139,10 @@ void TaskActorTests::setUp()
 void TaskActorTests::tearDown()
 {
    // Clear all events
-   mNotifyCompletedEvent = NULL;
-   mNotifyFailedEvent = NULL;
+   mNotifyCompletedEvent = nullptr;
+   mNotifyFailedEvent = nullptr;
    mEventMgr->ClearAllEvents();
-   mEventMgr = NULL;
+   mEventMgr = nullptr;
    dtGame::BaseGMTestFixture::tearDown();
 }
 
@@ -154,7 +154,7 @@ int TaskActorTests::GetEventCount(const dtCore::GameEvent& gameEvent)
    typedef std::vector<dtCore::RefPtr<const dtGame::Message> > MessageList;
    const MessageList& messageList = mTestComp->GetReceivedProcessMessages();
 
-   const dtCore::GameEvent* curEvent = NULL;
+   const dtCore::GameEvent* curEvent = nullptr;
    MessageList::const_iterator curMessage = messageList.begin();
    MessageList::const_iterator endMessageList = messageList.end();
    for (; curMessage != endMessageList; ++curMessage)
@@ -175,7 +175,7 @@ int TaskActorTests::GetEventCount(const dtCore::GameEvent& gameEvent)
 ///////////////////////////////////////////////////////////////////////////////
 bool TaskActorTests::SetNotifyEventsOnTask(dtActors::TaskActorProxy& taskProxy)
 {
-   dtActors::TaskActor* task = NULL;
+   dtActors::TaskActor* task = nullptr;
    taskProxy.GetDrawable(task);
 
    task->SetNotifyCompletedEvent(mNotifyCompletedEvent.get());
@@ -197,20 +197,20 @@ void TaskActorTests::TestTaskActorDefaultValues()
       dtCore::RefPtr<dtActors::TaskActorProxy> proxy;
       mGM->CreateActor(*taskActorType, proxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",proxy.valid());
-      dtActors::TaskActor* task = NULL;
+      dtActors::TaskActor* task = nullptr;
       proxy->GetDrawable(task);
 
       // Make sure the correct properties exist on the proxy.
       CPPUNIT_ASSERT_MESSAGE("Task actor should have a description property.",
-         proxy->GetProperty("Description") != NULL);
+         proxy->GetProperty("Description") != nullptr);
       CPPUNIT_ASSERT_MESSAGE("Task actor should have a display name property.",
-         proxy->GetProperty("DisplayName") != NULL);
+         proxy->GetProperty("DisplayName") != nullptr);
       CPPUNIT_ASSERT_MESSAGE("Task actor should have a passing score property.",
-         proxy->GetProperty("PassingScore") != NULL);
+         proxy->GetProperty("PassingScore") != nullptr);
       CPPUNIT_ASSERT_MESSAGE("Task actor should have a score property.",
-         proxy->GetProperty("Score") != NULL);
+         proxy->GetProperty("Score") != nullptr);
       CPPUNIT_ASSERT_MESSAGE("Task actor should have a weight property.",
-         proxy->GetProperty("Weight") != NULL);
+         proxy->GetProperty("Weight") != nullptr);
 
       // Check the default values of a newly created base task actor.
       dtCore::StringActorProperty* descProp =
@@ -234,16 +234,16 @@ void TaskActorTests::TestTaskActorDefaultValues()
       // Test Notify Completed Event Property
       dtCore::GameEventActorProperty* eventProp = static_cast<dtCore::GameEventActorProperty*>
          (proxy->GetProperty(dtActors::TaskActorProxy::PROPERTY_EVENT_NOTIFY_COMPLETED));
-      CPPUNIT_ASSERT_MESSAGE("Task Notify Completed Event should be NULL",
-         eventProp->GetValue() == NULL);
+      CPPUNIT_ASSERT_MESSAGE("Task Notify Completed Event should be nullptr",
+         eventProp->GetValue() == nullptr);
       task->SetNotifyCompletedEvent(mNotifyCompletedEvent.get());
       CPPUNIT_ASSERT(eventProp->GetValue() == mNotifyCompletedEvent.get());
 
       // Test Notify Failed Event Property
       eventProp = static_cast<dtCore::GameEventActorProperty*>
          (proxy->GetProperty(dtActors::TaskActorProxy::PROPERTY_EVENT_NOTIFY_FAILED));
-      CPPUNIT_ASSERT_MESSAGE("Task Notify Failed Event should be NULL",
-         eventProp->GetValue() == NULL);
+      CPPUNIT_ASSERT_MESSAGE("Task Notify Failed Event should be nullptr",
+         eventProp->GetValue() == nullptr);
       task->SetNotifyFailedEvent(mNotifyFailedEvent.get());
       CPPUNIT_ASSERT(eventProp->GetValue() == mNotifyFailedEvent.get());
 
@@ -284,7 +284,7 @@ void TaskActorTests::TestTaskSubTasks()
       // Create a bunch of actors and add them as children.
       for (unsigned i = 0; i < 25; ++i)
       {
-         dtCore::RefPtr<dtActors::TaskActorProxy> childProxy = NULL;
+         dtCore::RefPtr<dtActors::TaskActorProxy> childProxy = nullptr;
 
          mGM->CreateActor(*taskActorType, childProxy);
          CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.", childProxy.valid());
@@ -301,7 +301,7 @@ void TaskActorTests::TestTaskSubTasks()
          children.size() == 25);
 
       dtCore::ArrayActorProperty<dtCore::UniqueId>* subTaskArray = dynamic_cast<dtCore::ArrayActorProperty<dtCore::UniqueId>*>(mParentProxy->GetProperty("SubTaskList"));
-      CPPUNIT_ASSERT(subTaskArray != NULL);
+      CPPUNIT_ASSERT(subTaskArray != nullptr);
 
       std::vector<dtCore::UniqueId> subTasks = subTaskArray->GetValue();
 
@@ -314,16 +314,16 @@ void TaskActorTests::TestTaskSubTasks()
 
       dtCore::ActorIDActorProperty* taskProp = dynamic_cast<dtCore::ActorIDActorProperty*>(subTaskArray->GetArrayProperty());
       CPPUNIT_ASSERT_MESSAGE("The properties in the subtasks array prop should all be of type ActorIDActorProperty.",
-         taskProp != NULL);
+         taskProp != nullptr);
 
       // Make sure the parent was set correctly and that we can find the task.
       for (unsigned i = 0; i < 25; ++i)
       {
          CPPUNIT_ASSERT_MESSAGE("Parent was not set correctly.",children[i]->GetParentTask() == mParentProxy.get());
          CPPUNIT_ASSERT_MESSAGE("Should have found the task by unique id.",
-            mParentProxy->FindSubTask(children[i]->GetId()) != NULL);
+            mParentProxy->FindSubTask(children[i]->GetId()) != nullptr);
          CPPUNIT_ASSERT_MESSAGE("Should have found the task by name.",
-            mParentProxy->FindSubTask(children[i]->GetName()) != NULL);
+            mParentProxy->FindSubTask(children[i]->GetName()) != nullptr);
 
          subTaskArray->SetIndex(i);
          CPPUNIT_ASSERT_MESSAGE("The SubTasks in the group property should have the same id's and be in the same order as the list on the proxy.",
@@ -333,8 +333,8 @@ void TaskActorTests::TestTaskSubTasks()
       for (unsigned i = 0; i < 25; i += 2)
       {
          mParentProxy->RemoveSubTask(*children[i]);
-         CPPUNIT_ASSERT_MESSAGE("Child's parent task should be NULL after removing it.",
-            children[i]->GetParentTask() == NULL);
+         CPPUNIT_ASSERT_MESSAGE("Child's parent task should be nullptr after removing it.",
+            children[i]->GetParentTask() == nullptr);
       }
 
       std::vector<const dtActors::TaskActorProxy* > children2;
@@ -343,8 +343,8 @@ void TaskActorTests::TestTaskSubTasks()
       for (unsigned i = 0; i < children2.size(); ++i)
       {
          mParentProxy->RemoveSubTask(children2[i]->GetName());
-         CPPUNIT_ASSERT_MESSAGE("Child's parent task should be NULL after removing it by name.",
-            children2[i]->GetParentTask() == NULL);
+         CPPUNIT_ASSERT_MESSAGE("Child's parent task should be nullptr after removing it by name.",
+            children2[i]->GetParentTask() == nullptr);
       }
 
       CPPUNIT_ASSERT_MESSAGE("There should be no more child tasks left.",
@@ -434,12 +434,12 @@ void TaskActorTests::TestTaskReparentOnAdd()
       mParentProxy->RemoveSubTask(*mChildProxy1);
       mChildProxy1->RemoveSubTask(*mChildProxy2);
       mChildProxy2->RemoveSubTask(*mChildProxy3);
-      CPPUNIT_ASSERT_MESSAGE("Child1 proxy's parent should be NULL",
-         mChildProxy1->GetParentTask() == NULL);
+      CPPUNIT_ASSERT_MESSAGE("Child1 proxy's parent should be nullptr",
+         mChildProxy1->GetParentTask() == nullptr);
       CPPUNIT_ASSERT_MESSAGE("Child2 proxy's should be parent of child 2.",
-         mChildProxy2->GetParentTask() == NULL);
+         mChildProxy2->GetParentTask() == nullptr);
       CPPUNIT_ASSERT_MESSAGE("Child3 proxy's should be parent of child 3.",
-         mChildProxy3->GetParentTask() == NULL);
+         mChildProxy3->GetParentTask() == nullptr);
    }
    catch (const dtUtil::Exception& e)
    {
@@ -454,7 +454,7 @@ void TaskActorTests::TestGroupPropertySubTasks()
    {
       CreateParentChildProxies();
       dtCore::ActorProperty* subTasksProp = mParentProxy->GetProperty("SubTaskList");
-      CPPUNIT_ASSERT(subTasksProp != NULL);
+      CPPUNIT_ASSERT(subTasksProp != nullptr);
       CPPUNIT_ASSERT(subTasksProp->GetDataType() == dtCore::DataType::ARRAY);
 
       std::vector<dtCore::UniqueId> subTasks;
@@ -494,10 +494,10 @@ void TaskActorTests::TestGroupPropertySubTasks()
 
       CPPUNIT_ASSERT_MESSAGE("Resetting the parent of a proxy should leave its parent pointer (mChildProxy1).",
          mChildProxy1->GetParentTask() == mParentProxy.get());
-      CPPUNIT_ASSERT_MESSAGE("Changing the list of child proxies should set the removed proxy's (mChildProxy2) parent to NULL.",
-         mChildProxy2->GetParentTask() == NULL);
-      CPPUNIT_ASSERT_MESSAGE("Changing the list of child proxies should set the removed proxy's (mChildProxy3) parent to NULL.",
-         mChildProxy3->GetParentTask() == NULL);
+      CPPUNIT_ASSERT_MESSAGE("Changing the list of child proxies should set the removed proxy's (mChildProxy2) parent to nullptr.",
+         mChildProxy2->GetParentTask() == nullptr);
+      CPPUNIT_ASSERT_MESSAGE("Changing the list of child proxies should set the removed proxy's (mChildProxy3) parent to nullptr.",
+         mChildProxy3->GetParentTask() == nullptr);
 
    }
    catch (const dtUtil::Exception& e)
@@ -531,17 +531,18 @@ void TaskActorTests::TestGameEventTaskActor()
       dtCore::GameEventActorProperty* prop = static_cast<dtCore::GameEventActorProperty*>
          (eventTaskProxy->GetProperty(dtActors::TaskActorGameEventProxy::PROPERTY_EVENT_COMPLETE.Get()));
       CPPUNIT_ASSERT_MESSAGE("Game event task actors should have a GameEvent property.",
-         prop != NULL);
+         prop != nullptr);
 
       prop->FromString(gameEvent->GetUniqueId().ToString());
       dtCore::GameEvent* resultEvent = prop->GetValue();
-      CPPUNIT_ASSERT_MESSAGE("Game event in property was not correct.",resultEvent == gameEvent);
+      CPPUNIT_ASSERT(resultEvent != nullptr);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Game event in property was not correct.", resultEvent->GetName(), gameEvent->GetName());
 
       // Set the fail game event property on the task.
       prop = static_cast<dtCore::GameEventActorProperty*>
          (eventTaskProxy->GetProperty(dtActors::TaskActorGameEventProxy::PROPERTY_EVENT_FAIL.Get()));
       CPPUNIT_ASSERT_MESSAGE("Game event task actors should have a FailGameEvent property.",
-         prop != NULL);
+         prop != nullptr);
 
       prop->FromString(failEvent->GetUniqueId().ToString());
       resultEvent = prop->GetValue();
@@ -551,7 +552,7 @@ void TaskActorTests::TestGameEventTaskActor()
       dtCore::IntActorProperty* minProp = static_cast<dtCore::IntActorProperty*>
          (eventTaskProxy->GetProperty(dtActors::TaskActorGameEventProxy::PROPERTY_MIN_OCCURANCES.Get()));
       CPPUNIT_ASSERT_MESSAGE("Game event task actor should have a MinOccurances property.",
-         minProp != NULL);
+         minProp != nullptr);
 
       minProp->SetValue(5);
       CPPUNIT_ASSERT_MESSAGE("Game event min occurances should have been 5.",minProp->GetValue() == 5);
@@ -566,8 +567,8 @@ void TaskActorTests::TestGameEventTaskActor()
       dtCore::System::GetInstance().Step();
 
       // Should be incomplete since the task should have only gotten the event once.
-      CPPUNIT_ASSERT_MESSAGE("Task should not yet be complete.",
-                             eventTaskProxy->GetProperty("Complete")->ToString() == "false");
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Task should not yet be complete.",
+                             eventTaskProxy->GetProperty("Complete")->ToString(), std::string("false"));
 
       double currSimTime;
       for (int i = 0; i < 4; ++i)
@@ -586,7 +587,7 @@ void TaskActorTests::TestGameEventTaskActor()
       CPPUNIT_ASSERT_MESSAGE("Task complete time stamp was not correct.",time->GetValue() == currSimTime);
 
       // Test failing by a fail event.
-      dtActors::TaskActorGameEvent* task = NULL;
+      dtActors::TaskActorGameEvent* task = nullptr;
       eventTaskProxy->GetDrawable(task);
       task->SetCompletedTimeStamp(-1);
       task->SetComplete(false);
@@ -666,8 +667,8 @@ void TaskActorTests::TestRollupTaskActor()
          mGM->SendMessage(*eventMsg);
          dtCore::System::GetInstance().Step();
 
-         CPPUNIT_ASSERT_MESSAGE("Rollup task score was not calculated correctly.  The score was: " +
-               dtUtil::ToString(prop->GetValue()),osg::equivalent(prop->GetValue(),(float(i)+1.0f) * 0.2f,0.001f));
+         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Rollup task score was not calculated correctly.  The score was: " +
+               dtUtil::ToString(prop->GetValue()),prop->GetValue(),(float(i)+1.0f) * 0.2f,0.001f);
       }
 
       CPPUNIT_ASSERT_MESSAGE("Rollup task should have been marked complete.",
@@ -1036,7 +1037,7 @@ void TaskActorTests::TestMutable()
       childActor2->SetFailed(false);
 
       // Fail the parent and child 2 should not be mutable anymore
-      dtActors::TaskActorOrdered* orderedTaskActor = NULL;
+      dtActors::TaskActorOrdered* orderedTaskActor = nullptr;
       orderedTaskProxy->GetDrawable(orderedTaskActor);
       orderedTaskActor->SetFailed(true);
       CPPUNIT_ASSERT_MESSAGE("2nd child task should NOT be mutable when ordered parent is failed.", !childProxy2->IsCurrentlyMutable());
@@ -1149,7 +1150,7 @@ void TaskActorTests::TestNestedMutable()
 
    dtActors::TaskActor* taskActorOne;
    subTaskOne->GetDrawable(taskActorOne);
-   CPPUNIT_ASSERT(taskActorOne != NULL);
+   CPPUNIT_ASSERT(taskActorOne != nullptr);
 
    dtActors::TaskActorGameEvent* eventSubActorOne;
    eventSubOne->GetDrawable(eventSubActorOne);

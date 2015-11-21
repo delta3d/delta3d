@@ -152,7 +152,6 @@ namespace dtQt
       // create the base model and root properties for our tree
       propertyModel = new PropertyEditorModel(this);
       mRootControl = new DynamicPropertyContainerControl();
-      mRootControl->SetTreeView(propertyTree);
       mRootControl->SetDynamicControlFactory(&GetDynamicControlFactory());
 
       connect(mRootControl, SIGNAL(PropertyAboutToChange(dtCore::PropertyContainer&, dtCore::ActorProperty&,
@@ -315,6 +314,7 @@ namespace dtQt
    void BasePropertyEditor::buildDynamicControls()
    {
       DynamicPropertyContainerControl* parent = GetRootControl();
+      parent->SetTreeView(GetPropertyEditorView());
       parent->InitWithPropertyContainers(mSelectedPC, &GetPropertyEditorModel());
    }
 
@@ -331,9 +331,9 @@ namespace dtQt
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   PropertyEditorTreeView& BasePropertyEditor::GetPropertyEditorView()
+   PropertyEditorTreeView* BasePropertyEditor::GetPropertyEditorView()
    {
-      return *propertyTree;
+      return propertyTree;
    }
 
    /////////////////////////////////////////////////////////////////////////////

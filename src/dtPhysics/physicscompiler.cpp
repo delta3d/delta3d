@@ -66,6 +66,7 @@ namespace dtPhysics
       : mMaxVertsPerMesh(DEFAULT_MAX_VERTS_PER_MESH)
       , mMaxEdgeLength(DEFAULT_MAX_EDGE_LENGTH)
       , mAllowDefaultMaterial(true)
+      , mSplitUpGeodes(false)
    {}
 
 
@@ -87,62 +88,6 @@ namespace dtPhysics
       , mCollisionMargin(DEFAULT_COLLISION_MARGIN)
       , mDimensions()
    {}
-
-
-
-   ////////////////////////////////////////////////////////////////////////////////
-   // CLASSS CODE
-   ////////////////////////////////////////////////////////////////////////////////
-   GeodeCounter::GeodeCounter(NodeDescriptionSearchFunc func)
-      : BaseClass(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
-      , mNodeCounter(0)
-      , mGeodeCount(0)
-      , mDrawableCounter(0)
-      , mExportSpecificMaterial(false)
-      , mSkipSpecificMaterial(false)
-      , mNodeDescSearchFunc(func)
-   {}
-
-   GeodeCounter::~GeodeCounter()
-   {}
-
-   void GeodeCounter::apply(osg::Node& node)
-   {
-      ++mNodeCounter;
-      traverse(node);
-   }
-
-   bool GeodeCounter::IsValid(const osg::Node& node) const
-   {
-      bool valid = true;
-
-      std::string desc = mNodeDescSearchFunc(node);
-
-      if (desc.empty())
-      {
-         desc = TriangleVisitor::CheckDescriptionInAncestors(node);
-      }
-
-      // Allow skipping one specific material or only exporting one material
-      if((mExportSpecificMaterial && (desc != mSpecificDescription))
-         || (mSkipSpecificMaterial && (desc == mSpecificDescription)))
-      {
-         valid = false;
-      }
-
-      return valid;
-   }
-
-   void GeodeCounter::apply(osg::Geode& node)
-   {
-      if (IsValid(node))
-      {
-         ++mGeodeCount;
-         mDrawableCounter += node.getNumDrawables();
-         traverse(node);
-      }
-   }
-
 
 
    /////////////////////////////////////////////////////////////////////////////
@@ -275,7 +220,7 @@ namespace dtPhysics
       if ( ! materialName.empty())
       {
          // The string for material name could be a key/value pair.
-         // Use GetMaterialNameFiltered to ensure the key and assignment oprator
+         // Use GetMaterialNameFiltered to ensure the key and assignment operator
          // are removed and white space trimmed.
          std::string matName(GetMaterialNameFiltered(materialName));
 
@@ -441,6 +386,7 @@ namespace dtPhysics
       TriangleVisitor mv(materialLookup);
       mv.mMaterialNameFilter = matNameFilter;
       mv.mFunctor.SetMaxEdgeLength(options.mMaxEdgeLength);
+      mv.mFunctor.SetMaxSizePerBuffer(options.mMaxVertsPerMesh);
       mv.mExportSpecificMaterial = true;
       // The material name (node description) remains the same as found on a node.
       // The description could be a key/value pair string, depending how the
@@ -461,82 +407,11 @@ namespace dtPhysics
       matName = GetMaterialNameFiltered(matName);
       
       // Acquire a container for the current material for capturing new data.
-      VertexDataArray* outVertArray = &outData[matName];
+      TriangleRecorder::VertexDataArray* outVertArray = &outData[matName];
 
-      // Count the number of geodes to be processed.
-      unsigned geodeCount = 1;
-      if(mv.mFunctor.mData->mIndices.size() > options.mMaxVertsPerMesh)
+      for (unsigned i = 0, iend = mv.mFunctor.mData.size(); i < iend; ++i)
       {
-         GeodeCounter gc(getMatNameFunc);
-         gc.mExportSpecificMaterial = true;
-         gc.mSpecificDescription = materialName; // use original string
-         gc.mGeodeCount = 1;
-
-         node.accept(gc);
-
-         geodeCount = gc.mGeodeCount;
-      }
-
-      // If there is too much geometry, break it into multiple pieces
-      // but do not break it up smaller than per geode.
-      if(geodeCount > 1)
-      {
-         unsigned exportCount = 1 + (mv.mFunctor.mData->mIndices.size() / options.mMaxVertsPerMesh);
-         if (exportCount > geodeCount)
-         {
-            exportCount = geodeCount;
-         }
-
-         // DEBUG:
-         LOG_DEBUG("Splitting material \"" + matName
-            + "\" into " + dtUtil::ToString(exportCount)
-            + " pieces because it contains "
-            + dtUtil::ToString(mv.mFunctor.mData->mIndices.size())
-            + " indices, which exceeds the maximum size.");
-
-         for (unsigned i = 0; i <= exportCount; ++i)
-         {
-            TriangleVisitor mv2(materialLookup);
-            mv2.mMaterialNameFilter = matNameFilter;
-            mv2.mExportSpecificMaterial = true;
-            mv2.mSpecificDescription = materialName; // use original string
-            mv2.mSplit = i;
-            mv2.mSplitCount = (int)exportCount;
-            mv2.mNumGeodes = (int)geodeCount;
-
-            node.accept(mv2);
-
-            VertexData* vertData = mv2.mFunctor.mData;
-
-            if (vertData->mIndices.empty() )
-            {
-               // DEBUG:
-                LOG_DEBUG("Finished material: " + matName 
-                   + " with " + dtUtil::ToString(i) + " objects.");
-                break;
-            }
-            else
-            {
-                outVertArray->push_back(vertData);
-                ++results;
-
-               // Notify that a geometry was compiled.
-               if (mGeometryCompiledCallback.valid())
-               {
-                  dtCore::RefPtr<PhysicsCompileResult> result = new PhysicsCompileResult;
-                  result->mPartIndex = (int)i;
-                  result->mPartTotalInProgress = (int)exportCount;
-                  result->mMaterialName = matName;
-                  result->mVertData = vertData;
-
-                  mGeometryCompiledCallback(*result);
-               }
-            }
-         }
-      }
-      else // 1 or less geodes
-      {
-         VertexData* vertData = mv.mFunctor.mData;
+         VertexData* vertData = mv.mFunctor.mData[i];
 
          if (vertData->mIndices.empty())
          {
@@ -552,8 +427,8 @@ namespace dtPhysics
             if (mGeometryCompiledCallback.valid())
             {
                dtCore::RefPtr<PhysicsCompileResult> result = new PhysicsCompileResult;
-               result->mPartIndex = 0;
-               result->mPartTotalInProgress = 1;
+               result->mPartIndex = int(i);
+               result->mPartTotalInProgress = int(iend);
                result->mMaterialName = matName;
                result->mVertData = vertData;
 
@@ -583,7 +458,7 @@ namespace dtPhysics
 
    int PhysicsCompiler::CreatePhysicsObjectsForGeometry(
       const PhysicsObjectOptions& options,
-      VertexDataArray& vertData,
+      TriangleRecorder::VertexDataArray& vertData,
       PhysicsObjectArray& outObjects) const
    {
       int results = 0;
@@ -594,8 +469,8 @@ namespace dtPhysics
       std::string idxBuffer;
       VertexData* curData = NULL;
       unsigned padding = unsigned(std::log10(float(vertData.size())));
-      VertexDataArray::const_iterator curIter = vertData.begin();
-      VertexDataArray::const_iterator endIter = vertData.end();
+      TriangleRecorder::VertexDataArray::const_iterator curIter = vertData.begin();
+      TriangleRecorder::VertexDataArray::const_iterator endIter = vertData.end();
       for (; curIter != endIter; ++curIter)
       {
          curData = curIter->get();

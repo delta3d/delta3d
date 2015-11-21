@@ -40,7 +40,7 @@ class FIRE_FIGHTER_EXPORT FireSuitActor : public GameItemActor
    protected:
 
       /// Destructor
-      ~FireSuitActor() override;
+      virtual ~FireSuitActor();
 };
 
 #endif

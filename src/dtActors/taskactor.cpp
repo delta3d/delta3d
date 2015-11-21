@@ -618,7 +618,7 @@ namespace dtActors
             else
             {
                TaskActorProxy* taskActor = NULL;
-               dtCore::Map* m = dtCore::Project::GetInstance().GetMapForActorProxy(*this);
+               dtCore::Map* m = dtCore::Project::GetInstance().GetMapForActor(*this);
                if (m != NULL)
                {
                    m->GetProxyById(id, taskActor);

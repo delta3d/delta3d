@@ -393,8 +393,8 @@ namespace dtActors
    /////////////////////////////////////////////////////////////////////////////
    void DynamicParticlesPropertyContainer::InterpolateParticleSystem(DynamicParticles& particles, float ratio)
    {
-      particles.InterpolateAllLayers(dtCore::ParticlePropertyEnum::PS_EMIT_SPEED, ratio);
-      particles.InterpolateAllLayers(dtCore::ParticlePropertyEnum::PS_EMIT_RATE, ratio);
+      particles.InterpolateAllLayers(dtCore::PS_EMIT_SPEED, ratio);
+      particles.InterpolateAllLayers(dtCore::PS_EMIT_RATE, ratio);
    }
 
    /////////////////////////////////////////////////////////////////////////////

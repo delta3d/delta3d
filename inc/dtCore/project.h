@@ -31,10 +31,9 @@
 
 #include <dtCore/uniqueid.h>
 #include <dtUtil/utiltree.h>
-#include <dtCore/mapheaderdata.h>
 #include <dtCore/resourcetreenode.h>
-#include <dtCore/resourcehelper.h>
 #include <dtCore/prefabactortype.h>
+#include <dtCore/resourcehelper.h>
 #include <dtCore/export.h>
 
 namespace dtUtil
@@ -52,6 +51,7 @@ namespace dtCore
 {
 
    class Map;
+   typedef dtCore::RefPtr<Map> MapPtr;
    class MapParser;
    class MapWriter;
    class DataType;
@@ -216,13 +216,27 @@ namespace dtCore
       const MapTreeData& GetMapTree();
 
       /**
-       * Parses and returns the map header data for the given map.  This is the metadata for the map.
-       * @return the MapHeaderData
+       * Parses and returns a map pointer.  This map will only have the header data populated.
+       * This will actually read the header from disk, don't let the "Get" prefix on the name confuse you, it will, however,
+       * not read the entire file.
+       * @return A map with the header data filled out.
        * @throws ProjectInvalidContextException if there is no context.
        * @throws MapParsingException if the map fails to load.
        * @throws FileNotFoundException if the map does not exist.
        */
-      MapHeaderData GetMapHeader(const std::string& mapName);
+      MapPtr GetMapHeader(const std::string& mapName);
+
+      /**
+       * Parses and returns a map pointer with prefab data.  This map will only have the header data populated.
+       * This will actually read the header from disk, don't let the "Get" prefix on the name confuse you, it will, however,
+       * not read the entire file.
+       * @return A map with the header data filled out.
+       * @param prefabResource a resource descriptor that should point to a prefab.
+       * @throws ProjectInvalidContextException if there is no context.
+       * @throws MapParsingException if the map fails to load.
+       * @throws FileNotFoundException if the map does not exist.
+       */
+      MapPtr GetPrefabHeader(const dtCore::ResourceDescriptor& prefabResource);
 
       /**
        * returns the map with the given name.
@@ -245,13 +259,19 @@ namespace dtCore
       /**
        * Loads a prefab
        * @param rd Resource pointing to the prefab
+       * @return a pointer to the map that loaded with the prefab information.
        * @throws MapParsingException if an error occurs reading the prefab
        * @throws FileNotFoundException if the prefab doesn't exist.
        * @throws ProjectInvalidContextException if the context is not set.
        */
-      void LoadPrefab(const dtCore::ResourceDescriptor& rd, dtCore::ActorRefPtrVector& actorsOut);
+      MapPtr LoadPrefab(const dtCore::ResourceDescriptor& rd, dtCore::ActorRefPtrVector& actorsOut);
+
+      /// This does not yes work.
       dtCore::RefPtr<BaseActorObject> LoadPrefab(const dtCore::PrefabActorType& actorType);
 
+      ResourceDescriptor SavePrefab(const std::string& name, const std::string& category, const ActorRefPtrVector& actorList,
+            const std::string& description,
+            const std::string& iconFile = std::string(), ContextSlot slot = DEFAULT_SLOT_VALUE);
 
       /**
        * returns the last backup save of the map with the given name.
@@ -437,7 +457,6 @@ namespace dtCore
        * @param id the id of the actor to search for.
        */
       Map* GetMapForActor(const dtCore::UniqueId& id);
-      Map* GetMapForActorProxy(const dtCore::UniqueId& id) { return GetMapForActor(id); }
 
       /**
        * This will search all open maps until is finds the one that contains the given actor obj id.
@@ -445,23 +464,20 @@ namespace dtCore
        * @param id the id of the actor to search for.
        */
       const Map* GetMapForActor(const dtCore::UniqueId& id) const;
-      const Map* GetMapForActorProxy(const dtCore::UniqueId& id) const { return GetMapForActor(id); }
 
       /**
        * This will search all open maps until is finds the one that contains the given actor obj.
        * @return the map that contains a given actor proxy or NULL if it's not found.
-       * @param proxy the actor to search for.
+       * @param actor the actor to search for.
        */
       Map* GetMapForActor(const BaseActorObject& actor);
-      Map* GetMapForActorProxy(const BaseActorObject& actor) { return GetMapForActor(actor); }
 
       /**
        * This will search all open maps until is finds the one that contains the given actor obj.
        * @return the map that contains a given actor proxy or NULL if it's not found.
-       * @param proxy the actor to search for.
+       * @param actor the actor to search for.
        */
       const Map* GetMapForActor(const BaseActorObject& actor) const;
-      const Map* GetMapForActorProxy(const BaseActorObject& actor) const { return GetMapForActor(actor); }
 
       /**
        * This will search for a map event in all currently loaded maps.

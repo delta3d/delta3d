@@ -43,7 +43,7 @@ SET(LIB_SOURCES
     ${SOURCE_PATH}/playerstartactorproxy.cpp
     ${SOURCE_PATH}/positionallightactorproxy.cpp
     ${SOURCE_PATH}/positiondataactor.cpp
-    ${SOURCE_PATH}/prefabactorproxy.cpp
+    ${SOURCE_PATH}/prefabactor.cpp
     ${SOURCE_PATH}/proximitytriggeractorproxy.cpp
     ${SOURCE_PATH}/skyboxactorproxy.cpp
     ${SOURCE_PATH}/skydomeactorproxy.cpp

@@ -157,6 +157,9 @@ namespace dtPhysics
       void testPhysicsObjectCollision(const std::string& engine);
       void testPhysicsObjectWithOffset(const std::string& engine);
       void testPhysicsObjectMaterialActor(const std::string& engine);
+
+      void testPhysicsObjectWithMultipleShapes();
+
       void testPhysicsObjectWithOffsetAndShape(dtPhysics::PrimitiveType& shapeType);
       void testPhysicsObjectVisualTransform(const std::string& engine);
       void testPhysicsObjectConvex(const std::string& engine);
@@ -943,6 +946,8 @@ namespace dtPhysics
       ChangeEngine(engine);
       try
       {
+         testPhysicsObjectWithMultipleShapes();
+
          testPhysicsObjectWithOffsetAndShape(PrimitiveType::BOX);
          testPhysicsObjectWithOffsetAndShape(PrimitiveType::SPHERE);
          testPhysicsObjectWithOffsetAndShape(PrimitiveType::CYLINDER);
@@ -997,8 +1002,8 @@ namespace dtPhysics
 
    void dtPhysicsTests::testPhysicsObjectMaterialActor(const std::string& engine)
    {
-      ChangeEngine(engine);
       mGM->DeleteAllActors(true);
+      ChangeEngine(engine);
 
       dtCore::RefPtr<PhysicsObject> po = PhysicsObject::CreateNew("jojo");
       dtCore::RefPtr<dtPhysics::MaterialActor> mat;
@@ -1054,6 +1059,70 @@ namespace dtPhysics
       po->SetMaterialId(matAutre->GetId());
       CPPUNIT_ASSERT(po->GetMaterial() != nullptr);
       CPPUNIT_ASSERT(po->GetMaterial() == materials.GetMaterial(PhysicsMaterials::DEFAULT_MATERIAL_NAME));
+   }
+
+   void dtPhysicsTests::testPhysicsObjectWithMultipleShapes()
+   {
+      dtCore::RefPtr<PhysicsObject> po = PhysicsObject::CreateNew("jojo");
+
+      po->SetOriginOffset(VectorType(40.0,40.0,40.0));
+
+      VectorType extents(3.0f, 3.0f, 3.0f);
+      dtCore::Transform xform;
+      VectorType pos(0.0f, 10.0f, 0.0f);
+      xform.SetTranslation(pos);
+      po->SetTransform(xform);
+      po->SetMass(50.0f);
+      po->SetMechanicsType(dtPhysics::MechanicsType::KINEMATIC);
+      std::vector<dtPhysics::GeometryPtr> geoms;
+
+      geoms.push_back(dtPhysics::Geometry::CreateBoxGeometry(xform, extents, 50.0f/4.0f));
+
+      pos.y() += 10.0f;
+      xform.SetTranslation(pos);
+      geoms.push_back(dtPhysics::Geometry::CreateSphereGeometry(xform, extents.x(), 50.0f/4.0f));
+
+      pos.y() += 10.0f;
+      xform.SetTranslation(pos);
+      geoms.push_back(dtPhysics::Geometry::CreateCylinderGeometry(xform, extents.x(), extents.y(), 50.0f/4.0f));
+
+      pos.y() += 10.0f;
+      xform.SetTranslation(pos);
+      geoms.push_back(dtPhysics::Geometry::CreateCapsuleGeometry(xform, extents.x(), extents.y(), 50.0f/4.0f));
+
+      po->CreateFromGeometry(geoms);
+
+      dtPhysics::PhysicsWorld::GetInstance().UpdateStep(0.0166667f);
+      dtPhysics::PhysicsWorld::GetInstance().UpdateStep(0.0166667f);
+
+      dtPhysics::RayCast ray;
+      dtPhysics::RayCast::Report report;
+
+      ray.SetOrigin(VectorType(0.0f, 0.0f, 50.0f));
+      //Shoot at the additional objects first
+      ray.SetDirection(VectorType(0.0, 10.0, -50.0));
+
+         PhysicsWorld::GetInstance().TraceRay(ray, report);
+      CPPUNIT_ASSERT_MESSAGE("The box geometry should have been hit by the ray"
+                , report.mHasHitObject);
+
+      // aim high to test the height and orientation of the capsule .
+      ray.SetDirection(VectorType(0.0, 20.0, -50.0));
+      PhysicsWorld::GetInstance().TraceRay(ray, report);
+      CPPUNIT_ASSERT_MESSAGE("The sphere geometry should have been hit by the ray"
+                , report.mHasHitObject);
+
+      // aim high to test the size of the box.
+      ray.SetDirection(VectorType(0.0, 30.0, -50.0));
+      PhysicsWorld::GetInstance().TraceRay(ray, report);
+      CPPUNIT_ASSERT_MESSAGE("The capsule geometry should have been hit by the ray"
+                , report.mHasHitObject);
+
+      ray.SetDirection(VectorType(0.0, 40.0, -50.0));
+      PhysicsWorld::GetInstance().TraceRay(ray, report);
+      CPPUNIT_ASSERT_MESSAGE("The cylinder geometry should have been hit by the ray"
+                , report.mHasHitObject);
+
    }
 
    void dtPhysicsTests::testPhysicsObjectWithOffsetAndShape(dtPhysics::PrimitiveType& shapeType)

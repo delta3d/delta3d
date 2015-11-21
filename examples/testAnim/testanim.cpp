@@ -196,17 +196,16 @@ void TestAnim::OnStartup(dtABC::BaseABC& app, dtGame::GameManager& gameManager)
       {
          for (int j = 0; j < 10; ++j, startPos[1] += 2.0f)
          {
-            dtCore::RefPtr<dtAnim::AnimationGameActor> proxy;
-            gameManager.CreateActor(*dtAnim::AnimActorRegistry::ANIMATION_ACTOR_TYPE, proxy);
-            if (proxy.valid())
+            dtCore::RefPtr<dtAnim::AnimationGameActor> actor;
+            gameManager.CreateActor(*dtAnim::AnimActorRegistry::ANIMATION_ACTOR_TYPE, actor);
+            if (actor.valid())
             {
-               gameManager.AddActor(*proxy);
+               gameManager.AddActor(*actor);
 
-               dtAnim::AnimationGameActor* actor = proxy->GetDrawable<dtAnim::AnimationGameActor>();
                actor->GetComponent<dtAnim::AnimationHelper>()->SetSkeletalMesh(dtCore::ResourceDescriptor("SkeletalMeshes:Marine:marine.xml"));
-               InitializeAnimationActor(proxy.get(), mAnimationComponent, false, app.GetCamera());
+               InitializeAnimationActor(actor, mAnimationComponent, false, app.GetCamera());
 
-               proxy->SetTranslation(startPos);
+               actor->SetTranslation(startPos);
 
             }
          }

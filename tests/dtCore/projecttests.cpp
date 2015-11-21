@@ -425,16 +425,13 @@ void ProjectTests::TestGetMapHeader()
       p.SaveMap(testMeMap);
       p.CloseMap(testMeMap);
 
-      dtCore::MapHeaderData headerData = p.GetMapHeader("TestMe");
-      CPPUNIT_ASSERT_EQUAL(std::string("Joe"), headerData.mAuthor);
-      CPPUNIT_ASSERT_EQUAL(std::string("Frank is Joe's friend"), headerData.mDescription);
-      CPPUNIT_ASSERT_EQUAL(std::string("Frank is an odd fella."), headerData.mComment);
-      CPPUNIT_ASSERT_EQUAL(std::string("No matter"), headerData.mCopyright);
-      CPPUNIT_ASSERT_EQUAL(std::string(dtCore::MapXMLConstants::SCHEMA_VERSION), headerData.mSchemaVersion);
-      CPPUNIT_ASSERT_EQUAL(std::string(Delta3DGetVersion()), headerData.mEditorVersion);
-      CPPUNIT_ASSERT_EQUAL(std::string("TestMe"), headerData.mName);
-      CPPUNIT_ASSERT(!headerData.mLastUpdateTime.empty());
-      CPPUNIT_ASSERT(!headerData.mCreateTime.empty());
+      dtCore::MapPtr mapHeader = p.GetMapHeader("TestMe");
+      CPPUNIT_ASSERT_EQUAL(std::string("Joe"), mapHeader->GetAuthor());
+      CPPUNIT_ASSERT_EQUAL(std::string("Frank is Joe's friend"), mapHeader->GetDescription());
+      CPPUNIT_ASSERT_EQUAL(std::string("Frank is an odd fella."), mapHeader->GetComment());
+      CPPUNIT_ASSERT_EQUAL(std::string("No matter"), mapHeader->GetCopyright());
+      CPPUNIT_ASSERT_EQUAL(std::string("TestMe"), mapHeader->GetName());
+      CPPUNIT_ASSERT(!mapHeader->GetCreateDateTime().empty());
 
       // Blast the directory
       dtUtil::FileUtils::GetInstance().DirDelete(TEST_PROJECT_DIR + "/Maps", true);
@@ -1263,13 +1260,13 @@ void ProjectTests::TestMapSaveAsBackups()
       !project.HasBackup(mapName));
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Map file name should have changed during a SaveAs",
-      newMapFileName + dtCore::Map::MAP_FILE_EXTENSION, map->GetFileName());
+      newMapFileName + "." + dtCore::Map::MAP_FILE_EXTENSION, map->GetFileName());
 
    CPPUNIT_ASSERT_MESSAGE("Map name didn't change during a SaveAs.",
       map->GetName() == newMapName && map->GetSavedName() == newMapName);
 
    std::string newMapFilePath = project.GetContext() + dtUtil::FileUtils::PATH_SEPARATOR + "maps"
-      + dtUtil::FileUtils::PATH_SEPARATOR + "oo" + dtCore::Map::MAP_FILE_EXTENSION;
+      + dtUtil::FileUtils::PATH_SEPARATOR + "oo." + dtCore::Map::MAP_FILE_EXTENSION;
 
    CPPUNIT_ASSERT_MESSAGE(std::string("The new map file should exist: ") + newMapFilePath,
       dtUtil::FileUtils::GetInstance().FileExists(newMapFilePath));

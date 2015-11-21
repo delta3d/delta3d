@@ -99,7 +99,7 @@ namespace dtCore
       dtCore::UniqueId newIdValue(value);
       try
       {
-         Map* map = Project::GetInstance().GetMapForActorProxy(*mProxy);
+         Map* map = Project::GetInstance().GetMapForActor(*mProxy);
 
          if (map == NULL)
          {

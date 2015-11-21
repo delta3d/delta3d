@@ -636,6 +636,16 @@ namespace dtPhysics
    /////////////////////////////////////////////////////////////////////////////
    bool PhysicsObject::CreateFromGeometry(dtPhysics::Geometry& geometry)
    {
+      std::vector<GeometryPtr> geometryVec;
+      geometryVec.push_back(&geometry);
+      return CreateFromGeometry(geometryVec);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   bool PhysicsObject::CreateFromGeometry(std::vector<GeometryPtr> geometry)
+   {
+      if (geometry.empty()) return false;
+
       dtCore::Transform transform;
       GetTransform(transform);
 
@@ -647,7 +657,10 @@ namespace dtPhysics
       {
          mDataMembers->mGenericBody->Init();
 
-         AddGeometry(geometry);
+         for (auto i = geometry.begin(), iend = geometry.end(); i != iend; ++i)
+         {
+            AddGeometry(**i);
+         }
 
          //Reset this because it has to be done after geometry is added.
          SetMomentOfInertia(mDataMembers->mMomentOfInertia);
@@ -655,36 +668,34 @@ namespace dtPhysics
       else
       {
          LOGN_ERROR("physicsobject.cpp", "Created a GenericBodyWrapper, but dynamic casting it to one failed.  Bailing out.");
-         mDataMembers->mGenericBody = nullptr;
+         mDataMembers->mGenericBody = NULL;
          return false;
       }
 
       bool materialWasSet = false;
-      // If the property is configured, it overrides the vert data.
-      if (GetMaterialId().IsNull())
+      // Attempt to assign a material from the arbitrary triangle data that may have been loaded.
+      const dtPhysics::VertexData* vertData = geometry[0]->GetVertexData();
+      if (GetMaterialId().IsNull() && vertData != nullptr && vertData->GetMaterialCount() > 0)
       {
-         // Attempt to assign a material from the arbitrary triangle data that may have been loaded.
-         const dtPhysics::VertexData* vertData = geometry.GetVertexData();
-         if (vertData != nullptr && vertData->GetMaterialCount() > 0)
-         {
-            // For now one material can be applied per object.
-            std::string matName = vertData->GetMaterialName(vertData->GetFirstMaterialIndex());
+         // For now one material can be applied per object.
+         std::string matName = vertData->GetMaterialName(vertData->GetFirstMaterialIndex());
 
-            if (! matName.empty())
+         if (! matName.empty())
+         {
+            // Try to set the physics material by name.
+            materialWasSet = SetMaterialByName(matName);
+            if (!materialWasSet)
             {
-               // Try to set the physics material by name.
-               materialWasSet = SetMaterialByName(matName);
-               if (!materialWasSet)
-               {
-                  LOG_ERROR("Could not assign a physics material by name \"" + matName
-                        + "\" for object \"" + GetName() + "\" the property configured");
-               }
+               LOG_ERROR("Could not assign a physics material by name \"" + matName
+                     + "\" for object \"" + GetName() + "\" the property configured");
             }
          }
       }
 
+      // Set the default material if nothing is set.
       if (!materialWasSet)
       {
+         // If the id is not found or is empty, it will just assign the default material.
          SetMaterialById(GetMaterialId());
       }
 
@@ -763,6 +774,7 @@ namespace dtPhysics
 
       if (!materialWasSet)
       {
+         // If the id is not found or is empty, it will just assign the default material.
          SetMaterialById(GetMaterialId());
       }
 

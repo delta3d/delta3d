@@ -193,19 +193,13 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   bool BaseXMLParser::ParseFileByToken(const std::string& filename, BaseXMLHandler* handler) const
+   bool BaseXMLParser::ParseFileByToken(std::istream& stream, BaseXMLHandler* handler) const
    {
-      if (dtUtil::FileUtils::GetInstance().FileExists(filename) == false)
-      {
-         throw dtCore::XMLLoadParsingException("Could not find file to parse: " + filename, __FILE__, __LINE__);
-      }
-
       mXercesParser->setContentHandler(handler);
       mXercesParser->setErrorHandler(handler);
 
       XMLPScanToken token;
-      std::ifstream fileStream(filename.c_str());
-      InputSourcefStream xerStream(fileStream);
+      InputSourcefStream xerStream(stream);
 
       if (!mXercesParser->parseFirst(xerStream, token))
       {

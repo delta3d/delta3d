@@ -153,7 +153,7 @@ namespace dtGame
       virtual dtCore::RefPtr<dtGame::GameActorProxy> CloneGameActor();
 
       /// Overridden to copy properties from actor components.
-      void CopyPropertiesFrom(const PropertyContainer& copyFrom) override;
+      void CopyPropertiesFrom(const PropertyContainer& copyFrom, bool copyMetaData = true) override;
 
       /// Overridden to call BuildInvokables
       void Init(const dtCore::ActorType& actorType) override;
@@ -177,7 +177,7 @@ namespace dtGame
        * stored on both the game actor proxy AND on the actor component itself. In the future,
        * tools like STAGE should know how to resolve this and this whole method can go away.
        */
-      virtual void RemoveActorComponentProperties(ActorComponent& component);
+      void RemoveActorComponentProperties(ActorComponent& component);
 
       /**
        * We are probably adding this actor component. So, we need to add each of the properties
@@ -187,13 +187,13 @@ namespace dtGame
        * stored on both the game actor proxy AND on the actor component itself. In the future,
        * tools like STAGE should know how to resolve this and this whole method can go away.
        */
-      virtual void AddActorComponentProperties(ActorComponent& component);
+      void AddActorComponentProperties(ActorComponent& component);
 
       /**
        * This is a shortcut to avoid having to dynamic cast to a GameActorProxy.
        * @return true always
        */
-      virtual bool IsGameActor() const { return true; }
+      bool IsGameActor() const override { return true; }
 
       /**
        * @return a const pointer to the parent game manager that owns this actor.
@@ -522,19 +522,19 @@ namespace dtGame
        * @param[in]  name  The name of the property queried for.
        * @return           A property, or NULL if none found.
        */
-      virtual dtCore::RefPtr<dtCore::ActorProperty> GetDeprecatedProperty(const std::string& name);
+      dtCore::RefPtr<dtCore::ActorProperty> GetDeprecatedProperty(const std::string& name) override;
 
       /**
        * Add an ActorComponent.
        * @param component The ActorComponent to try to add
        */
-      virtual void AddComponent(ActorComponent& component);
+      void AddComponent(ActorComponent& component) override;
 
       /**
        * Remove component by reference
        * @param component : Reference to the ActorComponent to remove
        */
-      virtual void RemoveComponent(ActorComponent& component);
+      void RemoveComponent(ActorComponent& component) override;
 
       /**
        * Method for handling local ticks.  This will called by the "Tick Local" invokable.
@@ -688,8 +688,9 @@ namespace dtGame
 
       /**
        * Removes child actors that are attached directly to this actor.
+       * @bool deleteFromGM calls DeleteActor() on the GM for each child removed.
        */
-      unsigned DetachChildActors();
+      unsigned DetachChildActors(bool deleteFromGM = false);
 
       /**
        * This is a temporary override from dtCore so it can set the parent/child relationships
@@ -756,7 +757,7 @@ namespace dtGame
       /**
        * Override of the Tree base class.
        */
-      GameActorProxy::ref_pointer clone() const;
+      GameActorProxy::ref_pointer clone() const override;
 
       /**
        * Populates an update message from the actor proxy.

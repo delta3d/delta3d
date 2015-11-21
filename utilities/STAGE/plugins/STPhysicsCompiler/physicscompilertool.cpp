@@ -196,7 +196,7 @@ public:
       PhysicsObjectArray objArray;
       if (mVertData != NULL && ! mVertData->empty())
       {
-         VertexDataArray* curArray = NULL;
+         TriangleRecorder::VertexDataArray* curArray = NULL;
          VertexDataTable::iterator curIter = mVertData->begin();
          VertexDataTable::iterator endIter = mVertData->end();
          for (; curIter != endIter; ++curIter)

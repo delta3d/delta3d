@@ -401,11 +401,11 @@ namespace dtPhysics
          {
             TriangleRecorder tr;
             tr.Record(*node);
-            if (!tr.mData->mVertices.empty() && !tr.mData->mIndices.empty())
+            if (!tr.mData.back()->mVertices.empty() && !tr.mData.back()->mIndices.empty())
             {
-               triangleData.mVertices = tr.mData->mVertices;
-               triangleData.mIndices.swap(tr.mData->mIndices);
-               triangleData.SwapMaterialTable(*tr.mData);
+               triangleData.mVertices = tr.mData.back()->mVertices;
+               triangleData.mIndices.swap(tr.mData.back()->mIndices);
+               triangleData.SwapMaterialTable(*tr.mData.back());
             }
          }
       }

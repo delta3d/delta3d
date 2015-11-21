@@ -105,6 +105,11 @@ namespace dtPhysics
       MaterialNameTable mMatNameTable;
    };
 
+   typedef dtCore::RefPtr<VertexData> VertexDataPtr;
+
+   /**
+    * Physics Geometry.  These are added to physics objects as the collision geometry.
+    */
    class DT_PHYSICS_EXPORT Geometry : public osg::Referenced
    {
    public:
@@ -162,6 +167,8 @@ namespace dtPhysics
    private:
       GeometryImpl* mImpl;
    };
+
+   typedef dtCore::RefPtr<Geometry> GeometryPtr;
 }
 
 #endif /* DTPHYSICS_GEOMETRY_H_ */

@@ -30,13 +30,14 @@
 #ifndef DELTA_PREFAB_BROWSER
 #define DELTA_PREFAB_BROWSER
 
+#include <dtActors/prefabactor.h>
+
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QShortcut>
 #include <QtWidgets/QWidget>
 #include <vector>
 
 #include <dtEditQt/actortypetreewidget.h>
-#include <dtActors/prefabactorproxy.h>
 #include <dtCore/refptr.h>
 #include <dtCore/actortype.h>
 #include <dtCore/resourcetreenode.h>

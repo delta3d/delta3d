@@ -107,7 +107,7 @@ namespace dtCore
 
       try
       {
-         dtCore::Map* map = Project::GetInstance().GetMapForActorProxy(idValue);
+         dtCore::Map* map = Project::GetInstance().GetMapForActor(idValue);
          if (map)
          {
             BaseActorObject* proxyValue = map->GetProxyById(idValue);
@@ -153,7 +153,7 @@ namespace dtCore
 
       try
       {
-         dtCore::Map* map = Project::GetInstance().GetMapForActorProxy(idValue);
+         dtCore::Map* map = Project::GetInstance().GetMapForActor(idValue);
          if (map)
          {
             BaseActorObject* proxyValue = map->GetProxyById(idValue);
