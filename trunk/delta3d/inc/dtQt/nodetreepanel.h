@@ -26,7 +26,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include <dtQt/export.h>
 #include <dtCore/observerptr.h>
-#include <dtCore/refptr.h>
+#include <dtQt/typedefs.h>
 #include <QtGui/qwidget.h>
 #include <QtGui/qtreewidget.h>
 #include <QtGui/qstyleditemdelegate.h>
@@ -87,8 +87,6 @@ namespace dtQt
       Q_OBJECT
    public:
       typedef QWidget BaseClass;
-      typedef dtCore::RefPtr<osg::Node> OsgNodePtr;
-      typedef std::vector<OsgNodePtr > OsgNodeArray;
 
       NodeTreePanel(QWidget* parent = NULL);
 
@@ -101,7 +99,7 @@ namespace dtQt
 
    signals:
       void SignalNodeSelected(OsgNodePtr node);
-      void SignalNodesSelected(OsgNodeArray nodeArray);
+      void SignalNodesSelected(OsgNodePtrVector nodeArray);
 
    public slots:
       void UpdateColumns();
