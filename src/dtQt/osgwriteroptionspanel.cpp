@@ -21,7 +21,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "ui_osgwriteroptionspanel.h"
 #include <dtQt/osgwriteroptionspanel.h>
-#include <QtCore/QString.h>
+#include <QtCore/QString>
 #include <QtWidgets/qtreewidget.h>
 
 

@@ -127,7 +127,8 @@ SOURCE_GROUP("UI Files" FILES ${UI_SOURCES})
 INCLUDE_DIRECTORIES(
                     ${QT_INCLUDE_DIR}
                     ${UI_PATH}
-					${Qt5Multimedia_INCLUDE_DIRS}
+		    ${Qt5Multimedia_INCLUDE_DIRS}
+                    ${CMAKE_CURRENT_BINARY_DIR} # ui compiled files
                    )
 
 ADD_PRECOMPILED_HEADER(${LIB_NAME} prefix/dtdirectorqtprefix.h prefix/dtdirectorqtprefix.cpp LIB_SOURCES)

@@ -35,6 +35,10 @@
 #include <dtUtil/log.h>
 #include <dtCore/actorproxyicon.h>
 
+// debug
+#include <iostream>
+#include <osg/io_utils>
+
 namespace dtEditQt
 {
 
@@ -50,13 +54,14 @@ namespace dtEditQt
    {
       mDeltaCamera->SetupBackwardCompatibleStateset();
       resetRotation();
-      setPosition(osg::Vec3(0, 0, 0));
+      setPosition(osg::Vec3(0.0f, 0.0f, 0.0f));
       mDeltaCamera->SetNearFarCullingMode(dtCore::Camera::NO_AUTO_NEAR_FAR);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void StageCamera::setPosition(const osg::Vec3& pos)
    {
+      std::cout << "Camera pos change: " << pos << std::endl;
       dtCore::Transform xform;
       mDeltaCamera->GetTransform(xform);
       xform.SetTranslation(pos);
@@ -80,7 +85,9 @@ namespace dtEditQt
    {
       dtCore::Transform xform;
       mDeltaCamera->GetTransform(xform);
-      xform.SetTranslation(xform.GetTranslation() + relPos);
+      std::cout << "Delta Camera pos change: " << relPos << std::endl;
+      xform.Move(relPos);
+      std::cout << "New pos change: " << xform.GetTranslation() << std::endl;
       mDeltaCamera->SetTransform(xform);
    }
 

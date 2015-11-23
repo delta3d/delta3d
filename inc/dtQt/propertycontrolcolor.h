@@ -31,7 +31,7 @@
 #include <dtQt/basepropertycontrol.h>
 #include <dtQt/clickablelabelcontrol.h>
 
-#include <QtWidgets/QLabel.h>
+#include <QtWidgets/QLabel>
 
 
 

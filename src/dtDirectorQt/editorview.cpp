@@ -22,6 +22,7 @@
 #include <dtDirectorQt/editorview.h>
 #include <dtDirectorQt/editorscene.h>
 #include <dtDirectorQt/groupitem.h>
+#include <dtUtil/mathdefines.h>
 
 #include <QtGui/QMouseEvent>
 #include <QtWidgets/QGraphicsRectItem>
@@ -100,7 +101,7 @@ namespace dtDirector
    void EditorView::TimerTick()
    {
       // calculate the amount of zoom to increment based on current and goal scales.
-      if (mCurrentScale != 0.0f && abs(mCurrentScale - mGoalScale) > 0.02f)
+      if (mCurrentScale != 0.0f && dtUtil::Abs(mCurrentScale - mGoalScale) > 0.02f)
       {
          float inc = mGoalScale / mCurrentScale;
 

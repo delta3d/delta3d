@@ -8,8 +8,8 @@
 #include <dtCore/actorproperty.h>
 #include <dtCore/datatype.h>
 // Qt
-#include <QtWidgets/QLabel.h>
-#include <QtWidgets/QWidget.h>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QWidget>
 // OSG
 #include <osg/Referenced>
 

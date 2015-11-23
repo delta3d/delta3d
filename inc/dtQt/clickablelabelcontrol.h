@@ -5,7 +5,7 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include <dtQt/export.h>
-#include <QtWidgets/QLabel.h>
+#include <QtWidgets/QLabel>
 
 
 
