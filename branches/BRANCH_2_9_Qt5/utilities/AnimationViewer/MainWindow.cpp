@@ -542,11 +542,11 @@ void MainWindow::OnNewAnimation(unsigned int id, const QString& animationName,
                                 float duration)
 {
    int rowCount = mAnimListWidget->rowCount();
-   if ((int)(id) > rowCount)
+   if (int(id) > rowCount)
    {
       mAnimListWidget->setRowCount(id+1);
    }
-   else if (id == rowCount)
+   else if (int(id) == rowCount)
    {
       mAnimListWidget->insertRow(rowCount);
    }

@@ -22,8 +22,8 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include "ui_nodetreepanel.h"
-#include <QtCore/QString.h>
-#include <QtWidgets/qtreewidget.h>
+#include <QtCore/QString>
+#include <QtWidgets/QTreeWidget>
 #include <dtQt/nodetreepanel.h>
 #include <osg/Group>
 #include <osg/NodeVisitor>

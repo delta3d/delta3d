@@ -3,7 +3,7 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include "AnimationSliderPanel.h"
-#include <QtGui/QIcon.h>
+#include <QtGui/QIcon>
 
 
 

@@ -346,7 +346,6 @@ void ObjectViewer::ResetMotionModel(float radius, const osg::Vec3& center)
    if (orbit != nullptr)
    {
       dtCore::Camera* cam = GetCamera();
-      float distance = 5.0f;
 
       dtCore::Transform camPos;
       cam->GetTransform(camPos);
@@ -1049,9 +1048,9 @@ void ObjectViewer::InitWireDecorator()
 void ObjectViewer::InitGridPlanes()
 {
    const int GRID_LINE_COUNT = 49;
-   const float GRID_LINE_SPACING = 2.0f;
+   const float GRID_LINE_SPACING = 1.0f;
 
-   const int numVerts(2 * 2 * GRID_LINE_COUNT);
+   const int numVerts(2 * 2 * GRID_LINE_COUNT * 3);
    const float length(((GRID_LINE_COUNT - 1) * GRID_LINE_SPACING) / 2.0f);
 
    osg::Vec3 verts[numVerts];
@@ -1059,14 +1058,41 @@ void ObjectViewer::InitGridPlanes()
 
    for (int ii(0L); ii < GRID_LINE_COUNT; ii++)
    {
-      verts[indx++].set(-length + ii * GRID_LINE_SPACING,  length, 0.0f);
-      verts[indx++].set(-length + ii * GRID_LINE_SPACING, -length, 0.0f);
+      float a = -length + ii * GRID_LINE_SPACING, b = length;
+      verts[indx++].set(a,  b, 0.0f);
+      verts[indx++].set(a, -b, 0.0f);
    }
 
-   for (int ii(0L); ii < GRID_LINE_COUNT; ii++ )
+   for (int ii(0L); ii < GRID_LINE_COUNT; ii++)
    {
-      verts[indx++].set(length, -length + ii * GRID_LINE_SPACING, 0.0f);
-      verts[indx++].set(-length, -length + ii * GRID_LINE_SPACING, 0.0f);
+      float a = -length + ii * GRID_LINE_SPACING, b = length;
+      verts[indx++].set(b,  a, 0.0f);
+      verts[indx++].set(-b, a, 0.0f);
+   }
+   for (int ii(0L); ii < GRID_LINE_COUNT; ii++)
+   {
+      float a = -length + ii * GRID_LINE_SPACING, b = length;
+      verts[indx++].set(a, 0.0f, b);
+      verts[indx++].set(a, 0.0f, -b);
+   }
+   for (int ii(0L); ii < GRID_LINE_COUNT; ii++)
+   {
+      float a = -length + ii * GRID_LINE_SPACING, b = length;
+      verts[indx++].set(b, 0.0f,  a);
+      verts[indx++].set(-b, 0.0f, a);
+   }
+   for (int ii(0L); ii < GRID_LINE_COUNT; ii++)
+   {
+      float a = -length + ii * GRID_LINE_SPACING, b = length;
+      verts[indx++].set(0.0f, a, b);
+      verts[indx++].set(0.0f, a, -b);
+   }
+
+   for (int ii(0L); ii < GRID_LINE_COUNT; ii++)
+   {
+      float a = -length + ii * GRID_LINE_SPACING, b = length;
+      verts[indx++].set(0.0f, b,  a);
+      verts[indx++].set(0.0f,-b,  a);
    }
 
    osg::Geometry* geometry = new osg::Geometry;

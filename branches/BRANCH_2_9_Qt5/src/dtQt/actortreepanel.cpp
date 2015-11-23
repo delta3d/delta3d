@@ -3,7 +3,7 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include "ui_actortreepanel.h"
-#include <QtCore/QString.h>
+#include <QtCore/QString>
 #include <dtQt/actortreepanel.h>
 
 

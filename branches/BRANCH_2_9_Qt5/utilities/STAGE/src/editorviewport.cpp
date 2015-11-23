@@ -745,6 +745,7 @@ namespace dtEditQt
       {
          if (mCameraMotionModel.valid())
          {
+            std::cout << "Mouse Move:" << dx << " " << dy << std::endl;
             mCameraMotionModel->OnMouseMoved(dx, dy);
          }
       }
