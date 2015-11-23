@@ -1312,7 +1312,7 @@ void ObjectViewer::OnNextStatistics()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void ObjectViewer::OnNodesSelected(OsgNodeArray nodes)
+void ObjectViewer::OnNodesSelected(OsgNodePtrVector nodes)
 {
    mNodeHighlighter->SetHighlightsDisabled();
 

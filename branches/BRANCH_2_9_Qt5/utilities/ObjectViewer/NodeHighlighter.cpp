@@ -103,7 +103,7 @@ void NodeHighlighter::SetHighlightEnabled(osg::Node& node, bool enableHighlight)
    }
 }
 
-void NodeHighlighter::SetHighlightsEnabled(OsgNodeArray& nodes, bool enableHighlight)
+void NodeHighlighter::SetHighlightsEnabled(OsgNodePtrVector& nodes, bool enableHighlight)
 {
    std::for_each(nodes.begin(), nodes.end(),
       [&](dtCore::RefPtr<osg::Node> node)

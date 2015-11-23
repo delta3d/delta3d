@@ -1766,7 +1766,6 @@ void MainWindow::SetupConnectionsWithViewer()
    connect(mAttachmentPanel, SIGNAL(SignalAttachmentChanged(AttachmentInfo)),
            mViewer, SLOT(OnAttachmentSettingsChanged(AttachmentInfo)));
 
-   typedef dtCore::RefPtr<osg::Node> OsgNodePtr;
    connect(mNodeTreePanel, SIGNAL(SignalNodeSelected(OsgNodePtr)),
       mAttachmentPanel, SLOT(OnNodeSelected(OsgNodePtr)));
 
