@@ -23,6 +23,7 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include <dtCore/pointaxis.h>
+#include <dtQt/typedefs.h>
 
 
 
@@ -41,8 +42,7 @@ public:
 
    void SetHighlightEnabled(osg::Node& node, bool enableHighlight);
 
-   typedef std::vector<dtCore::RefPtr<osg::Node> > OsgNodeArray;
-   void SetHighlightsEnabled(OsgNodeArray& nodes, bool enableHighlight);
+   void SetHighlightsEnabled(OsgNodePtrVector& nodes, bool enableHighlight);
 
    void SetHighlightsDisabled();
 

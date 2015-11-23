@@ -101,7 +101,7 @@ public slots:
    void OnSetGenerateTangentAttribute(bool shouldGenerate);
    void OnToggleGrid(bool shouldDisplay);
    void OnNextStatistics();
-   void OnNodesSelected(OsgNodeArray nodes);
+   void OnNodesSelected(OsgNodePtrVector nodes);
 
    // Lighting slots
    void OnFixLights();

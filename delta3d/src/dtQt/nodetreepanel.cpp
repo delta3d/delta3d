@@ -542,7 +542,7 @@ namespace dtQt
 
    void NodeTreePanel::OnItemSelectionChanged()
    {
-      OsgNodeArray nodeArray;
+      OsgNodePtrVector nodeArray;
 
       typedef QList<QTreeWidgetItem*> NodeItemsArray;
       const NodeItemsArray items = mUI->mTree->selectedItems();
