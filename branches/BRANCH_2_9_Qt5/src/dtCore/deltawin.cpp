@@ -10,12 +10,11 @@
 
 #include <cassert>
 
-using namespace dtCore;
 using namespace dtUtil;
-
-IMPLEMENT_MANAGEMENT_LAYER(DeltaWin)
 namespace dtCore
 {
+
+IMPLEMENT_MANAGEMENT_LAYER(DeltaWin)
    ///Default WindowResizeCallback.  Used to implement the default OSG window resizing
    class DefResizeCB : public WindowResizeCallback
    {
@@ -36,7 +35,6 @@ namespace dtCore
          }
       }
    };
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 DeltaWin::DeltaWin(const DeltaWinTraits& windowTraits)
@@ -103,9 +101,11 @@ void DeltaWin::CreateGraphicsWindow(osg::GraphicsContext::Traits& traits,
       {
          mOsgViewerGraphicsWindow->realize();
          mOsgViewerGraphicsWindow->makeCurrent();
-         mOsgViewerGraphicsWindow->setClearMask(~0);
+         GLbitfield temp = mOsgViewerGraphicsWindow->getClearMask();
+         if (temp == 0)
+            mOsgViewerGraphicsWindow->setClearMask(~0);
          mOsgViewerGraphicsWindow->clear();
-         mOsgViewerGraphicsWindow->setClearMask(0);
+         mOsgViewerGraphicsWindow->setClearMask(temp);
       }
 
    }
@@ -473,14 +473,15 @@ osg::ref_ptr<osg::GraphicsContext::Traits> DeltaWin::CreateOSGTraits(const Delta
 
 
 //////////////////////////////////////////////////////////////////////////
-void dtCore::DeltaWin::AddResizeCallback(WindowResizeCallback& cb)
+void DeltaWin::AddResizeCallback(WindowResizeCallback& cb)
 {
    mResizeCallbackContainer->AddCallback(cb);
 }
 
 //////////////////////////////////////////////////////////////////////////
-void dtCore::DeltaWin::RemoveResizeCallback(WindowResizeCallback& cb)
+void DeltaWin::RemoveResizeCallback(WindowResizeCallback& cb)
 {
    mResizeCallbackContainer->RemoveCallback(cb);
 }
 
+}
