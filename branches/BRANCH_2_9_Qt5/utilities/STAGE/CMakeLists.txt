@@ -20,7 +20,7 @@ file(GLOB PROG_HEADERS "inc/dtEditQt/*.h")
 file(GLOB PROG_SOURCES "src/*.cpp" "*.rc")
 list(REMOVE_ITEM PROG_SOURCES ${SOURCE_PATH}/src/precomp.cpp)
 
-INCLUDE_DIRECTORIES(${SOURCE_PATH}/inc ${QT_INCLUDE_DIR}
+INCLUDE_DIRECTORIES(${SOURCE_PATH}/inc ${QT_INCLUDE_DIRS}
                     ${ALUT_INCLUDE_DIR} #for dtAudio
                     ${OPENAL_INCLUDE_DIR} #for dtAudio
                     ${CAL3D_INCLUDE_DIR} #for dtAnim
@@ -59,7 +59,7 @@ SET(APP_DEPS
                       ${DTPHYSICS_LIBRARY}
                       ${DTQT_LIBRARY}
                       ${DTUTIL_LIBRARY}
-					  ${DT_QT_LIBRARIES}
+                      ${DT_QT_LIBRARIES}
 )
 SET(PROG_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/STAGE.plist.in)
 

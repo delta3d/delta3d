@@ -125,7 +125,7 @@ SOURCE_GROUP("UI Files" FILES ${UI_SOURCES})
 ##########################################################
 
 INCLUDE_DIRECTORIES(
-                    ${QT_INCLUDE_DIR}
+                    ${QT_INCLUDE_DIRS}
                     ${UI_PATH}
 		    ${Qt5Multimedia_INCLUDE_DIRS}
                     ${CMAKE_CURRENT_BINARY_DIR} # ui compiled files
@@ -141,7 +141,7 @@ set(LIB_SOURCES
 )
 
 SET(LIB_EXTERNAL_DEPS
-  ${DT_QT_LIBRARIES}
+  ${QT_LIBRARIES}
  )
 
 SET(LIB_DEPS

@@ -15,8 +15,8 @@ SET(LIB_PUBLIC_HEADERS
 )
 
 INCLUDE_DIRECTORIES(  ${CMAKE_SOURCE_DIR}/utilities/STAGE/inc
-            ${QT_INCLUDE_DIR}
-            ${DT_QT_INCLUDE_DIRS}
+            ${QT_INCLUDE_DIRS}
+            ${QT_INCLUDE_DIRS}
             ${DELTA3D_SOURCE_DIR}/ui/dtDirectorQt # for ui*.h files
 )
 
@@ -39,10 +39,10 @@ SET(LIB_DEPS
                        ${DTABC_LIBRARY}
                        ${DTDIRECTOR_LIBRARY}
                        ${DTDIRECTORQT_LIBRARY}
-                       ${QT_QTCORE_LIBRARY}
-                       ${QT_QTGUI_LIBRARY}
-                       ${QT_QTOPENGL_LIBRARY}
-                       ${DT_QT_LIBRARIES}
+                       ${Qt5Core_LIBRARIES}
+                       ${Qt5Gui_LIBRARIES}
+                       ${Qt5OpenGL_LIBRARIES}
+                       ${Qt5Widgets_LIBRARIES}
                       )
 
 SETUP_PLUGIN_WITH_OUTPUT_DIRS(${LIB_NAME} DT_DIRECTOR_TOOL_PLUGIN stplugins)

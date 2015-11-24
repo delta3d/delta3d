@@ -7,7 +7,7 @@ QT5_WRAP_UI(UI_SOURCES MainWindow.ui)
 SET(TARGET_SRC ${TARGET_SRC} ${MOC_SOURCES} ${UI_SOURCES})
 
 INCLUDE_DIRECTORIES(
-                    ${QT_INCLUDE_DIR}
+                    ${QT_INCLUDE_DIRS}
                     ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
                    )
                    

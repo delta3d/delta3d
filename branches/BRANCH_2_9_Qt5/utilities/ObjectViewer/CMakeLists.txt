@@ -4,8 +4,8 @@ SET(APP_NAME ObjectViewer)
 FIND_PACKAGE(Qt5PrintSupport)
 
 
-INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}
-					${DT_QT_INCLUDE_DIRS}
+INCLUDE_DIRECTORIES(${QT_INCLUDE_DIRS}
+					${QT_INCLUDE_DIRS}
 					${Qt5PrintSupport_INCLUDE_DIR}
                     ${CAL3D_INCLUDE_DIR}#for dtAnim
                     ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
@@ -59,8 +59,8 @@ SET(APP_DEPS
                        ${DTCORE_LIBRARY}
                        ${DTANIM_LIBRARY}
                        ${DTQT_LIBRARY}
-					   ${DT_QT_LIBRARIES}
-					   ${Qt5PrintSupport_LIBRARIES}
+                       ${QT_LIBRARIES}
+                       ${Qt5PrintSupport_LIBRARIES}
 )
 
 DELTA3D_ADD_PROGRAM(${APP_NAME} MACOSX_BUNDLE DT_OBJECT_VIEWER)
