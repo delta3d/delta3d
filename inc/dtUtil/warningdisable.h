@@ -45,6 +45,7 @@ __pragma(warning(disable:4251))
         _Pragma("clang diagnostic push") \
         _Pragma("GCC diagnostic ignored \"-Wall\"") \
         _Pragma("GCC diagnostic ignored \"-Wignored-qualifiers\"")
+         _Pragma("GCC diagnostic ignored \"-Winconsistent-missing-override\"")
 #   define DT_DISABLE_WARNING_END \
         _Pragma("clang diagnostic pop")
 // warning is triggered on things that are not a problem.
