@@ -6,7 +6,7 @@ file(GLOB PROG_HEADERS "inc/*.h")
 file(GLOB PROG_SOURCES "src/*.cpp" "*.rc")
 list(REMOVE_ITEM PROG_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
-INCLUDE_DIRECTORIES(${SOURCE_PATH}/inc ${QT_INCLUDE_DIR}
+INCLUDE_DIRECTORIES(${SOURCE_PATH}/inc ${QT_INCLUDE_DIRS}
                     ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
 )
 

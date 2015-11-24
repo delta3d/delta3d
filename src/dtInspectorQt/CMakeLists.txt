@@ -60,7 +60,7 @@ SET(LIB_SOURCES
 )
 
 INCLUDE_DIRECTORIES(${HEADER_PATH}
-                    ${QT_INCLUDE_DIR}
+                    ${QT_INCLUDE_DIRS}
                     ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
                     ${DELTA3D_SOURCE_DIR}/ui/dtDirectorQt)
 

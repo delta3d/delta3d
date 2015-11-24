@@ -145,15 +145,15 @@ STRING(REGEX MATCH "#define DELTA3D_VERSION_PATCH[ \t]+([0-9]+)" delta3d_VERSION
 IF(NOT delta3d_VERSION_MAJOR OR NOT delta3d_VERSION_MINOR OR NOT delta3d_VERSION_PATCH)
    MESSAGE(SEND_ERROR "Could not read version numbers from ${DELTA_VERSION_FILE_PATH}")
 ENDIF()
-STRING(REGEX REPLACE ".+([0-9]+)" "\\1" delta3d_VERSION_MAJOR ${delta3d_VERSION_MAJOR})
-STRING(REGEX REPLACE ".+([0-9]+)" "\\1" delta3d_VERSION_MINOR ${delta3d_VERSION_MINOR})
-STRING(REGEX REPLACE ".+([0-9]+)" "\\1" delta3d_VERSION_PATCH ${delta3d_VERSION_PATCH})
-
+MESSAGE("delta3d version: " ${delta3d_VERSION_MAJOR}.${delta3d_VERSION_MINOR}.${delta3d_VERSION_PATCH})
+STRING(REGEX REPLACE "([^0-9]+)([0-9]+)" "\\2" delta3d_VERSION_MAJOR ${delta3d_VERSION_MAJOR})
+STRING(REGEX REPLACE "([^0-9]+)([0-9]+)" "\\2" delta3d_VERSION_MINOR ${delta3d_VERSION_MINOR})
+STRING(REGEX REPLACE "([^0-9]+)([0-9]+)" "\\2" delta3d_VERSION_PATCH ${delta3d_VERSION_PATCH})
 MESSAGE("delta3d version: " ${delta3d_VERSION_MAJOR}.${delta3d_VERSION_MINOR}.${delta3d_VERSION_PATCH})
 
 ################################################################################
 # User Options
-OPTION(BUILD_STATIC          "Builds delta3d as static libraries.(Experimental)" OFF)
+OPTION(BUILD_STATIC        "Builds delta3d as static libraries.(Experimental)" OFF)
 
 OPTION(BUILD_ANIM          "Enables the building of dtAnim (requires CAL3D)" ON)
 OPTION(BUILD_AUDIO         "Enables the building of dtAudio (requires openAL/ALUT)" ON)
@@ -252,18 +252,7 @@ IF (OSG_VERSION_MAJOR AND OSG_VERSION_MAJOR LESS 3)
 ENDIF (OSG_VERSION_MAJOR AND OSG_VERSION_MAJOR LESS 3)
 
 IF (BUILD_WITH_QT)
-   SET(QT_USE_QTOPENGL "true")
-   #FIND_PACKAGE(Qt5 REQUIRED)     #for STAGE, AnimationViewer, ObjectViewer, ParticleEditor
-
-   FIND_PACKAGE(Qt5Core)
-   FIND_PACKAGE(Qt5Gui)
-   FIND_PACKAGE(Qt5OpenGL)
-   FIND_PACKAGE(Qt5WebKitWidgets)
-   FIND_PACKAGE(Qt5Widgets)
-   SET(DT_QT_INCLUDE_DIRS ${Qt5Core_INCLUDE_DIRS};${Qt5Gui_INCLUDE_DIRS};${Qt5WebKitWidgets_INCLUDE_DIRS};${Qt5Widgets_INCLUDE_DIRS})
-   SET(DT_QT_LIBRARIES ${Qt5Core_LIBRARIES};${Qt5Gui_LIBRARIES};${Qt5OpenGL_LIBRARIES};${Qt5WebKitWidgets_LIBRARIES};${Qt5Widgets_LIBRARIES})
-
-   SET(QT5_FOUND ${Qt5Core_FOUND})
+   FIND_PACKAGE(Qt5)
 ENDIF (BUILD_WITH_QT)
 
 

@@ -5,8 +5,8 @@ file(GLOB LIB_PUBLIC_HEADERS "*.h")
 file(GLOB LIB_C_SOURCES "*.cpp")
 
 INCLUDE_DIRECTORIES(  ${CMAKE_SOURCE_DIR}/utilities/STAGE/inc
-            ${QT_INCLUDE_DIR}
-            ${DT_QT_INCLUDE_DIRS}
+            ${QT_INCLUDE_DIRS}
+            ${QT_INCLUDE_DIRS}
             ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
 )
 
@@ -26,10 +26,7 @@ SET(LIB_DEPS
      ${DTGAME_LIBRARY}
      ${DTABC_LIBRARY}
      ${DTACTORS_LIBRARY}
-     ${QT_QTCORE_LIBRARY}
-     ${QT_QTGUI_LIBRARY}
-     ${QT_QTOPENGL_LIBRARY}
-     ${DT_QT_LIBRARIES}
+     ${QT_LIBRARIES}
  )
 
 

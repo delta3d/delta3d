@@ -1,10 +1,10 @@
 
 SET(APP_NAME AnimationViewer)
 
-INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}
+INCLUDE_DIRECTORIES(${QT_INCLUDE_DIRS}
                                             ${CAL3D_INCLUDE_DIR} # for dtAnim
                                             ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
-											${DT_QT_INCLUDE_DIRS}
+											${QT_INCLUDE_DIRS}
                                            )
 
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/utilities/${APP_NAME})
@@ -61,7 +61,7 @@ SET(APP_DEPS
                        ${DTANIM_LIBRARY}
                        ${DTABC_LIBRARY}
                        ${DTQT_LIBRARY}
-					   ${DT_QT_LIBRARIES}
+					   ${QT_LIBRARIES}
 )
 
 DELTA3D_ADD_PROGRAM(${APP_NAME} MACOSX_BUNDLE DT_ANIMATION_VIEWER)

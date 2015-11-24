@@ -6,8 +6,8 @@ file(GLOB LIB_C_SOURCES "*.cpp")
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/utilities/STAGE/inc
                     ${CAL3D_INCLUDE_DIR}
-                    ${QT_INCLUDE_DIR}
-                    ${DT_QT_INCLUDE_DIRS}
+                    ${QT_INCLUDE_DIRS}
+                    ${QT_INCLUDE_DIRS}
                     ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
                     ${DELTA3D_SOURCE_DIR}/ui/dtDirectorQt # for director editor ui*.h files
 )
@@ -35,7 +35,10 @@ SET(LIB_DEPS
                        ${QT_QTCORE_LIBRARY}
                        ${QT_QTGUI_LIBRARY}
                        ${QT_QTOPENGL_LIBRARY}
-                       ${DT_QT_LIBRARIES}
+                       ${Qt5Core_LIBRARIES}
+                       ${Qt5Gui_LIBRARIES}
+                       ${Qt5OpenGL_LIBRARIES}
+                       ${Qt5Widgets_LIBRARIES}
                       )
 
 #put the binary into a "STAGE plugins" folder

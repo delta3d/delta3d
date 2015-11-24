@@ -1,7 +1,7 @@
 
 SET(APP_NAME AIUtility)
 
-INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}
+INCLUDE_DIRECTORIES(${QT_INCLUDE_DIRS}
                                   ${CAL3D_INCLUDE_DIR}#for dtAnim
                                   ${CMAKE_CURRENT_BINARY_DIR}
                                   )

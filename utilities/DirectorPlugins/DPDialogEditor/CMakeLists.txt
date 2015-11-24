@@ -30,7 +30,7 @@ SET(LIB_PUBLIC_HEADERS
 )
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/utilities/DirectorPlugins/${LIB_NAME}
-                    ${QT_INCLUDE_DIR}
+                    ${QT_INCLUDE_DIRS}
                     ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
                     ${DELTA3D_SOURCE_DIR}/ui/dtDirectorQt # for director editor ui*.h files
 )
