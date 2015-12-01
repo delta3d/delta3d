@@ -608,6 +608,10 @@
    </shadergroup>
 
   <shadergroup name="TestShaders">
+      <shader name="TestOverdraw" default="no">
+         <source type="Vertex">shaders/test/testoverdraw.vert</source>
+         <source type="Fragment">shaders/test/testoverdraw.frag</source>
+      </shader>
 
       <shader name="TestBumpMap" default="yes">
          <source type="Vertex">shaders/lighting/TestBumpMap.vert</source>
