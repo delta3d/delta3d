@@ -148,8 +148,17 @@ namespace dtRender
          //the remove must first traverse all scene children for cleanup
          sb->RemoveAllChildren();
 
+         SceneArray::iterator iter = std::find(mImpl->mChildren.begin(), mImpl->mChildren.end(), sb);
+
          //remove from internal child array
-         mImpl->mChildren.erase(std::find(mImpl->mChildren.begin(), mImpl->mChildren.end(), sb));
+         if (iter != mImpl->mChildren.end())
+         {
+            mImpl->mChildren.erase(iter);
+         }
+         else
+         {
+            LOG_ERROR("Error removing child from scene.");
+         }
 
          //SceneBase handles removing the OSG node and calling the DeltaDrawable interface
          BaseClass::RemoveChild(sb);

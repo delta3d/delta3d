@@ -23,7 +23,11 @@
 
 #include <dtRender/scenegroup.h>
 
+#include <dtUtil/log.h>
+
 #include <osg/Group>
+
+//#include <iostream>
 
 namespace dtRender
 {
@@ -65,8 +69,24 @@ namespace dtRender
 
    void SceneBase::RemoveChild( DeltaDrawable* child )
    {
-      GetSceneNode()->removeChild(child->GetOSGNode());
-      DeltaDrawable::RemoveChild(child);
+      if (GetSceneNode()->containsNode(child->GetOSGNode()))
+      {
+         GetSceneNode()->removeChild(child->GetOSGNode());
+         DeltaDrawable::RemoveChild(child);
+      }
+      else
+      {
+         LOG_ERROR("Child node not a child of scene.");
+
+         //osg::NodePathList nodePath = child->GetOSGNode()->getParentalNodePaths();
+
+         //std::cout << "num parents " << nodePath.size() << std::endl;
+
+         //if (!nodePath.empty())
+         //{
+         //   std::cout << "Has Parent " << nodePath[0][nodePath[0].size() - 1]->getName() << std::endl;
+         //}
+      }
    }
 
 
