@@ -65,6 +65,7 @@ namespace dtRender
 
          virtual void OnEnteredWorld();
 
+         virtual void OnRemovedFromWorld();
 
          /// Adds the properties associated with this actor
          virtual void BuildPropertyMap();

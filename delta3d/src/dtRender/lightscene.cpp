@@ -335,7 +335,12 @@ namespace dtRender
       }
 
       //now remove all flagged lights, note this is actually faster because we only have a single deallocation for N lights
-      mLights.erase(std::remove_if(mLights.begin(), mLights.end(), removeLightsFunc()), mLights.end());
+      LightArray::iterator lightIter = std::remove_if(mLights.begin(), mLights.end(), removeLightsFunc());
+      if (lightIter != mLights.end())
+      {
+         //std::cout << "Deleting lights" << std::endl;
+         mLights.erase(lightIter, mLights.end());
+      }
 
    }
 
@@ -480,6 +485,8 @@ namespace dtRender
 
       numDynLightsUniform->set(numDynamicLights / numDynamicLightAttributes);
       numSpotLightsUniform->set(numSpotLights / numSpotLightAttributes);
+
+      //std::cout << "Num Lights " << numLights << std::endl;
 
    }
 
