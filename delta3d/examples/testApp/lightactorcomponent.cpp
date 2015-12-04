@@ -97,8 +97,8 @@ namespace dtExample
          if(act->GetDrawable() != nullptr )
          {
             act->GetGameManager()->CreateActor(*dtRender::RenderActorRegistry::DYNAMIC_LIGHT_ACTOR_TYPE, light);
-            light->SetAttenuation(osg::Vec3(0.00001, 0.000014, 0.000007));
-            light->SetLightColor(osg::Vec3(1.0, 1.0, 1.0));
+            light->SetAttenuation(osg::Vec3(0.00001f, 0.000014f, 0.000007f));
+            light->SetLightColor(osg::Vec3(1.0f, 1.0f, 1.0f));
             light->SetTarget(*dynamic_cast<dtCore::Transformable*>(act->GetDrawable()));
             act->GetGameManager()->AddActor(*light, false, false);
          }
