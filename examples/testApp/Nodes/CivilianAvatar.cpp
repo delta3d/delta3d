@@ -99,7 +99,8 @@ namespace dtExample
       {
          LOG_ERROR("Actor")
       }
-      civAI->Initialize();
+      else
+         civAI->Initialize();
    }
 
    /////////////////////////////////////////////////////////////////////////////
