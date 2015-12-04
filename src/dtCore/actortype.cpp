@@ -64,6 +64,10 @@ namespace dtCore
    void ActorType::MergeSharedClassInfo(SharedClassInfo& clsInfo) const
    {
       mClassInfo->mClassHierarchy.insert(clsInfo.mClassHierarchy.begin(), clsInfo.mClassHierarchy.end());
+      if (mClassInfo->GetClassName()->empty())
+      {
+         mClassInfo->SetClassName(clsInfo.GetClassName());
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
