@@ -127,7 +127,7 @@ namespace dtUtil
 
    #define LOG_ONCE_ALWAYS(msg) LOGN_ONCE_ALWAYS(dtUtil::LogFile::LOG_DEFAULT_NAME, msg)
 
-   struct LogImpl;
+   class LogImpl;
 
    /**
     * Log class which the engine uses for all of its logging
