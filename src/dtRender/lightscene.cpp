@@ -212,7 +212,14 @@ namespace dtRender
    {
       if (dl != NULL)
       {
-         mLights.push_back(dl);
+         if (std::find(mLights.begin(), mLights.end(), dl) == mLights.end())
+         {
+            mLights.push_back(dl);
+         }
+         else
+         {
+            LOG_ERROR("Light already added to LightScene.");
+         }
       }
       else
       {
