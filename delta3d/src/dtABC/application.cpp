@@ -244,6 +244,9 @@ void Application::EventTraversal(const double deltaSimTime)
 ///////////////////////////////////////////////////////////////////////////////
 void Application::Frame(const double deltaSimTime)
 {
+   
+   LOGN_DEBUG("application.cpp" ,"Frame Start");
+
    if(!mCompositeViewer->done())
    {
       bool singleThreaded = mCompositeViewer->getThreadingModel() == osgViewer::ViewerBase::SingleThreaded;
@@ -254,6 +257,7 @@ void Application::Frame(const double deltaSimTime)
       //typical Delta3D update of PreFrame().  The only exception to this is that we need
       if(mFirstFrame)
       {
+         LOGN_DEBUG("application.cpp" ,"First Frame");
 
 #ifndef MULTITHREAD_FIX_HACK_BREAKS_CEGUI
          dtCore::ObserverPtr<osgViewer::GraphicsWindow> gw;
@@ -278,24 +282,44 @@ void Application::Frame(const double deltaSimTime)
       // to update drawables; especially particle systems.
       // The time delta will be ignored here and the absolute simulation
       // time passed to the OSG scene updater.
+      
+      LOGN_DEBUG("application.cpp", "Advance Composite Viewer");
+      
+      LOGN_DEBUG("ApplicationTime", "Total time simulated: " + dtUtil::ToString(dtCore::System::GetInstance().GetSimTimeSinceStartup()));
+
       mCompositeViewer->advance(dtCore::System::GetInstance().GetSimTimeSinceStartup());
+   
+      LOGN_DEBUG("application.cpp" ,"Update Traversals");
+
       mCompositeViewer->updateTraversal();
+      
+      LOGN_DEBUG("application.cpp" ,"Rendering Traversals");
+
       mCompositeViewer->renderingTraversals();
 
    }
+   
+   LOGN_DEBUG("application.cpp" ,"Frame End");
+
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 void Application::PreFrame(const double deltaSimTime)
 {
+   LOGN_DEBUG("application.cpp" ,"PreFrame");
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void Application::PostFrame(const double deltaSimTime)
 {
+   LOGN_DEBUG("application.cpp" ,"Post Frame");
+
    while (!mViewsToDelete.empty())
    {
+      LOGN_DEBUG("application.cpp" ,"Deleting views.");
+
       RemoveViewImpl(*mViewsToDelete.back());
       mViewsToDelete.pop_back();
    }
@@ -304,6 +328,8 @@ void Application::PostFrame(const double deltaSimTime)
 ///////////////////////////////////////////////////////////////////////////////
 void Application::Pause(const double deltaRealTime)
 {
+   LOGN_DEBUG("application.cpp" ,"Pause.");
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
