@@ -248,6 +248,26 @@ namespace dtRender
          }
       }
 
+      void DynamicLight::OnRemovedFromWorld()
+      {
+         dtGame::GameManager* gm = GetGameManager();
+         if (gm != NULL)
+         {
+            dtGame::IEnvGameActorProxy* env = gm->GetEnvironmentActor();
+            SceneManagerActor* smp = dynamic_cast<SceneManagerActor*>(env);
+            if (smp != NULL)
+            {
+               SceneManager* sm = dynamic_cast<SceneManager*>(smp->GetDrawable());
+
+               LightScene* ls = dynamic_cast<LightScene*>(sm->FindSceneByType(*LightScene::LIGHT_SCENE));
+               if (ls != NULL)
+               {
+                  ls->RemoveDynamicLight(GetLightId());
+               }
+            }
+         }
+      }
+
       //////////////////////////////////////////////////////////
       // Proxy code
       //////////////////////////////////////////////////////////
