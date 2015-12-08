@@ -129,7 +129,7 @@ namespace dtQt
    {
       QWidget* wrapper = DynamicAbstractControl::createEditor(parent, option, index);
 
-      if (!mInitialized)
+      if (!IsInitialized())
       {
          LOG_ERROR("Tried to add itself to the parent widget before being initialized");
          return wrapper;
@@ -217,18 +217,6 @@ namespace dtQt
          updateModelFromEditor(mWrapper);
          CopyBaseValueToLinkedProperties();
       }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   bool DynamicGameEventControl::updateData(QWidget* widget)
-   {
-      if (mInitialized || widget == NULL)
-      {
-         LOG_ERROR("Tried to updateData before being initialized");
-         return false;
-      }
-
-      return updateModelFromEditor(widget);
    }
 
    /////////////////////////////////////////////////////////////////////////////////

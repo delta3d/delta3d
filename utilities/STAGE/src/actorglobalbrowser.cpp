@@ -71,19 +71,15 @@ namespace dtEditQt
       connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryAboutToBeRemoved()),
          this, SLOT(refreshAll()));
       connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(dtCore::ActorPtr, bool)),
-         this, SLOT(onActorProxyCreated(dtCore::ActorPtr, bool)));
+         this, SLOT(onActorCreated(dtCore::ActorPtr, bool)));
       connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyDestroyed(dtCore::ActorPtr)),
-         this, SLOT(onActorProxyDestroyed(dtCore::ActorPtr)));
+         this, SLOT(onActorDestroyed(dtCore::ActorPtr)));
 
       connect(&EditorEvents::GetInstance(),
          SIGNAL(actorPropertyChanged(dtCore::ActorPtr, ActorPropertyRefPtr)),
          this,
          SLOT(onActorPropertyChanged(dtCore::ActorPtr, ActorPropertyRefPtr)));
 
-      connect(&EditorEvents::GetInstance(),
-         SIGNAL(ProxyNameChanged(dtCore::BaseActorObject&, std::string)),
-         this,
-         SLOT(onActorProxyNameChanged(dtCore::BaseActorObject&, std::string)));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -115,7 +111,7 @@ namespace dtEditQt
    {
       EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
-      std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > globalProxies;
+      dtCore::ActorRefPtrVector globalActors;
       dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
 
       // empty out our table, just in case - Must happen BEFORE libraries are removed
@@ -123,44 +119,39 @@ namespace dtEditQt
 
       if (map != NULL)
       {
-         map->FindProxies(globalProxies, "", "", "", "", dtCore::Map::NotPlaceable);
+         map->FindProxies(globalActors, "", "", "", "", dtCore::Map::NotPlaceable);
 
-         mResultsTable->addProxies(globalProxies);
+         mResultsTable->addActors(globalActors);
       }
 
       EditorData::GetInstance().getMainWindow()->endWaitCursor();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorGlobalBrowser::onActorProxyCreated(dtCore::RefPtr<dtCore::BaseActorObject> proxy, bool /*forceNoAdjustments*/)
+   void ActorGlobalBrowser::onActorCreated(dtCore::ActorPtr actor, bool /*forceNoAdjustments*/)
    {
-      if (!proxy->IsPlaceable())
+      if (!actor->IsPlaceable())
       {
-         mResultsTable->addProxy(proxy);
+         mResultsTable->addActor(actor);
       }
 
       //refreshAll();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorGlobalBrowser::onActorProxyDestroyed(dtCore::RefPtr<dtCore::BaseActorObject> proxy)
+   void ActorGlobalBrowser::onActorDestroyed(dtCore::ActorPtr actor)
    {
-      if (!proxy->IsPlaceable())
+      if (!actor->IsPlaceable())
       {
-         mResultsTable->actorProxyAboutToBeDestroyed(proxy);
+         mResultsTable->removeDeletedActor(actor);
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorGlobalBrowser::onActorPropertyChanged(dtCore::ActorPtr proxy, ActorPropertyRefPtr /*property*/)
+   void ActorGlobalBrowser::onActorPropertyChanged(dtCore::ActorPtr actor, ActorPropertyRefPtr /*property*/)
    {
-      mResultsTable->HandleProxyUpdated(proxy);
+      mResultsTable->HandleActorUpdated(actor);
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void ActorGlobalBrowser::onActorProxyNameChanged(dtCore::BaseActorObject& proxy, std::string /*oldName*/)
-   {
-      mResultsTable->HandleProxyUpdated(&proxy);
-   }
 
 } // namespace dtEditQt

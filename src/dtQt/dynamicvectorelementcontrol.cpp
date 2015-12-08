@@ -205,7 +205,6 @@ namespace dtQt
          const double value = getValue();
 
          osg::Vec3 testVect;
-         const bool isVecFloat = (sizeof(testVect.x()) == sizeof(float));
 
          QString strValue = RealToString(value, mIsVecFloat ? NUM_DECIMAL_DIGITS_FLOAT : NUM_DECIMAL_DIGITS_DOUBLE);
          mTemporaryEditControl->setText(strValue);
@@ -270,7 +269,7 @@ namespace dtQt
 
       connect(mTemporaryEditControl, SIGNAL(returnPressed()), this, SLOT(enterPressed()));
 
-      if (!mInitialized)
+      if (!IsInitialized())
       {
          LOGN_ERROR("dynamicvectorelementcontrol.cpp", "Tried to add itself to the parent widget before being initialized");
          return mTemporaryEditControl;
@@ -595,20 +594,6 @@ namespace dtQt
       }
 
       return dataChanged;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   // SLOTS
-   /////////////////////////////////////////////////////////////////////////////////
-   bool DynamicVectorElementControl::updateData(QWidget* widget)
-   {
-      if (!mInitialized || widget == NULL)
-      {
-         LOG_ERROR("Tried to updateData before being initialized");
-         return false;
-      }
-
-      return updateModelFromEditor(widget);
    }
 
 } // namespace dtQt

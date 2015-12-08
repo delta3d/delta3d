@@ -138,7 +138,7 @@ namespace dtQt
       // create and init the combo box
       mTemporaryEditControl = new SubQComboBox(wrapper, this);
 
-      if (!mInitialized)
+      if (!IsInitialized())
       {
          LOG_ERROR("Tried to add itself to the parent widget before being initialized");
          return wrapper;
@@ -209,18 +209,6 @@ namespace dtQt
    {
       updateModelFromEditor(mWrapper);
       CopyBaseValueToLinkedProperties();
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   bool DynamicEnumControl::updateData(QWidget* widget)
-   {
-      if (!mInitialized || widget == NULL)
-      {
-         LOG_ERROR("Tried to updateData before being initialized");
-         return false;
-      }
-
-      return updateModelFromEditor(widget);
    }
 
    ////////////////////////////////////////////////////////////////////////////////

@@ -37,13 +37,14 @@ namespace dtABC
 
       int WINDOW_X, WINDOW_Y;
       dtCore::DeltaWin::Resolution RESOLUTION;
-      bool SHOW_CURSOR, FULL_SCREEN, CHANGE_RESOLUTION, REALIZE_UPON_CREATE, VSYNC;
+      bool SHOW_CURSOR, FULL_SCREEN, CHANGE_RESOLUTION, REALIZE_UPON_CREATE, VSYNC, HIDE_WINDOWS_CONSOLE;
       std::string CAMERA_NAME, VIEW_NAME, SCENE_NAME, WINDOW_NAME;
       std::string CAMERA_INSTANCE, SCENE_INSTANCE, WINDOW_INSTANCE;
       int VIEWPORT_X, VIEWPORT_Y, VIEWPORT_W, VIEWPORT_H, MULTI_SAMPLE;
       
       std::map<std::string, std::string> LOG_LEVELS;
       std::string GLOBAL_LOG_LEVEL;
+      std::string LOG_OUTPUT_TYPE;
       std::vector<std::string> LIBRARY_PATHS;
       
       std::map<std::string, std::string> mProperties;

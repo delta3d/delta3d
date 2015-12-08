@@ -34,7 +34,6 @@
 
 #include <dtEditQt/dynamicactorcontrol.h>
 #include <dtEditQt/dynamicgrouppropertycontrol.h>
-#include <dtEditQt/dynamicnamecontrol.h>
 #include <dtEditQt/dynamicresourcecontrol.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/editordata.h>
@@ -225,11 +224,7 @@ namespace dtEditQt
             const std::string& oldValue, const std::string& newValue)
    {
       dtCore::BaseActorObject* actor = dynamic_cast<dtCore::BaseActorObject*>(&propCon);
-      if (prop.GetName() == "Actor Name")
-      {
-         EditorEvents::GetInstance().emitProxyNameChanged(*actor, oldValue);
-      }
-      else if (actor != nullptr)
+     if (actor != nullptr)
       {
          EditorEvents::GetInstance().emitActorPropertyAboutToChange(actor, &prop, oldValue, newValue);
       }

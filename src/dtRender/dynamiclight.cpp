@@ -226,24 +226,79 @@ namespace dtRender
          }
       }
 
-      void DynamicLight::OnEnteredWorld()
+      bool DynamicLight::IsInLightScene() const
       {
+         bool result = false;
+
          dtGame::GameManager* gm = GetGameManager();
-         if(gm != NULL)
+         if (gm != NULL)
          {
             dtGame::IEnvGameActorProxy* env = gm->GetEnvironmentActor();
             SceneManagerActor* smp = dynamic_cast<SceneManagerActor*>(env);
-            if(smp != NULL)
+            if (smp != NULL)
             {
                SceneManager* sm = dynamic_cast<SceneManager*>(smp->GetDrawable());
 
                LightScene* ls = dynamic_cast<LightScene*>(sm->FindSceneByType(*LightScene::LIGHT_SCENE));
-               if(ls != NULL)
+               if (ls != NULL)
+               {
+                  result = ls->HasLight(GetLightId());
+               }
+            }
+         }
+
+         return result;
+      }
+
+
+      void DynamicLight::AddToLightScene()
+      {
+         dtGame::GameManager* gm = GetGameManager();
+         if (gm != NULL)
+         {
+            dtGame::IEnvGameActorProxy* env = gm->GetEnvironmentActor();
+            SceneManagerActor* smp = dynamic_cast<SceneManagerActor*>(env);
+            if (smp != NULL)
+            {
+               SceneManager* sm = dynamic_cast<SceneManager*>(smp->GetDrawable());
+
+               LightScene* ls = dynamic_cast<LightScene*>(sm->FindSceneByType(*LightScene::LIGHT_SCENE));
+               if (ls != NULL)
                {
                   ls->AddDynamicLight(this);
                }
             }
          }
+      }
+
+      void DynamicLight::RemoveFromLightScene()
+      {
+         dtGame::GameManager* gm = GetGameManager();
+         if (gm != NULL)
+         {
+            dtGame::IEnvGameActorProxy* env = gm->GetEnvironmentActor();
+            SceneManagerActor* smp = dynamic_cast<SceneManagerActor*>(env);
+            if (smp != NULL)
+            {
+               SceneManager* sm = dynamic_cast<SceneManager*>(smp->GetDrawable());
+
+               LightScene* ls = dynamic_cast<LightScene*>(sm->FindSceneByType(*LightScene::LIGHT_SCENE));
+               if (ls != NULL)
+               {
+                  ls->RemoveDynamicLight(GetLightId());
+               }
+            }
+         }
+      }
+
+      void DynamicLight::OnEnteredWorld()
+      {
+         AddToLightScene();
+      }
+
+      void DynamicLight::OnRemovedFromWorld()
+      {
+         RemoveFromLightScene();
       }
 
       //////////////////////////////////////////////////////////

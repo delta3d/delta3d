@@ -155,11 +155,6 @@ namespace dtEditQt
       void onActorProxyDestroyed(dtCore::ActorPtr actor);
 
       /**
-       * When the name changes, trap this event.
-       */
-      void onProxyNameChanged(dtCore::BaseActorObject&, std::string);
-
-      /**
        * Called when a map, project, or libraries change.  Clears all undo/redo events.
        */
       void clearAllHistories();

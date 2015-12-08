@@ -100,7 +100,7 @@ namespace dtQt
       /**
       * Signal when the data is updated.
       */
-      virtual bool updateData(QWidget* widget);
+      bool updateData(QWidget* widget) override;
 
 
    private:

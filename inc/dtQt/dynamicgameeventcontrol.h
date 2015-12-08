@@ -92,10 +92,6 @@ namespace dtQt
 
       public slots:
 
-         /**
-          * @see DynamicAbstractControl#updateData
-          */
-         virtual bool updateData(QWidget* widget);
 
          void actorPropertyChanged(dtCore::PropertyContainer& propCon,
                   dtCore::ActorProperty& property);

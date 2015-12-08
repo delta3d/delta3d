@@ -100,10 +100,6 @@ namespace dtQt
          virtual const QString getValueAsString();
 
       public slots:
-         /**
-          * @see DynamicAbstractControl#updateData
-          */
-         virtual bool updateData(QWidget* widget);
 
          void actorPropertyChanged(dtCore::PropertyContainer& propCon,
                   dtCore::ActorProperty& property);
@@ -127,6 +123,7 @@ namespace dtQt
           */
          void GetActors(std::vector< dtCore::RefPtr<dtCore::BaseActorObject> >& toFill, const std::string& className);
 
+      private:
          dtCore::ActorActorProperty*   mProperty;
          dtCore::ActorIDActorProperty* mIdProperty;
 

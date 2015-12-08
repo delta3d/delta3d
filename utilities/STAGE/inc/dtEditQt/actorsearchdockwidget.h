@@ -39,52 +39,51 @@ class QWidget;
 namespace dtEditQt
 {
 
-    class TabWrapper;
-    class TabContainer;
-    class ActorBrowser;
-    class ActorSearcher;
-    class ActorGlobalBrowser;
-    class PrefabBrowser;
+   class TabWrapper;
+   class TabContainer;
+   class ActorBrowser;
+   class ActorSearcher;
+   class ActorGlobalBrowser;
+   class PrefabBrowser;
 
-    /**
+   /**
     * @class ActorSearchDockWidget
     * @brief This class holds all actor related tabs.
     */
-    class ActorSearchDockWidget : public QDockWidget
-    {
-    public:
-        /**
-        * Constructor
-        */
-        ActorSearchDockWidget(QWidget* parent = 0);
+   class ActorSearchDockWidget : public QDockWidget
+   {
+   public:
+      /**
+       * Constructor
+       */
+      ActorSearchDockWidget(QWidget* parent = 0);
 
-        /**
-        * Destructor
-        */
-        ~ActorSearchDockWidget();
+      /**
+       * Destructor
+       */
+      ~ActorSearchDockWidget();
 
-        /**
-        * Adds tab widgets to the tab container
-        */
-        void addTabs();
+      /**
+       * Adds tab widgets to the tab container
+       */
+      void addTabs();
 
-        /**
-        * gets the actor tab widget
-        * @return The main QWidget control for the tab
-        */
-        QWidget* getWidget();
+      /**
+       * gets the actor tab widget
+       * @return The main QWidget control for the tab
+       */
+      QWidget* getWidget();
 
-    private:
-        TabContainer* mTabC;        
-        TabWrapper*   mTabActorSearch;
-        TabWrapper*   mTabGlobalActor;        
-        
-        dtQt::ActorTreePanel* mActorTreePanel;
-        ActorSearcher*      mActorSearchWidget;
-        ActorGlobalBrowser* mActorGlobalWidget;        
+   private:
+      TabContainer* mTabC;
+      TabWrapper*   mTabActorSearch;
+      TabWrapper*   mTabGlobalActor;
 
-        void closeEvent(QCloseEvent* e);
-    };
+      ActorSearcher*      mActorSearchWidget;
+      ActorGlobalBrowser* mActorGlobalWidget;
+
+      void closeEvent(QCloseEvent* e);
+   };
 
 } // namespace dtEditQt
 

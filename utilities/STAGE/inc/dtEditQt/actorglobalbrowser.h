@@ -74,22 +74,17 @@ namespace dtEditQt
       /**
        * When a new actor is created, we may have to add to the global list
        */
-      void onActorProxyCreated(dtCore::ActorPtr proxy, bool forceNoAdjustments);
+      void onActorCreated(dtCore::ActorPtr proxy, bool forceNoAdjustments);
 
       /**
        * Called when an actor proxy is deleted
        */
-      void onActorProxyDestroyed(dtCore::ActorPtr proxy);
+      void onActorDestroyed(dtCore::ActorPtr proxy);
 
       /**
        * Called when a property changes to update the list
        */
       void onActorPropertyChanged(dtCore::ActorPtr proxy, ActorPropertyRefPtr property);
-
-      /**
-       * Called when a proxy's name is changed
-       */
-      void onActorProxyNameChanged(dtCore::BaseActorObject& proxy, std::string oldName);
 
    private:
       QGroupBox* resultsGroup();

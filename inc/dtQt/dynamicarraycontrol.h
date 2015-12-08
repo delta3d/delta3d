@@ -150,7 +150,7 @@ namespace dtQt
       /**
        * Signal when the data is updated.
        */
-      virtual bool updateData(QWidget* widget) override;
+      bool updateData(QWidget* widget) override;
 
       /**
        * Signal when the Add button has been clicked.

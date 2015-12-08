@@ -49,17 +49,6 @@ namespace dtQt
    class DynamicNumericBaseControl: public DynamicAbstractControl
    {
       Q_OBJECT;
-   public slots:
-      virtual bool updateData(QWidget* widget)
-      {
-         if (!mInitialized || widget == NULL)
-         {
-            LOG_ERROR("Tried to updateData before being initialized");
-            return false;
-         }
-
-         return updateModelFromEditor(widget);
-      }
    };
 
 
@@ -270,7 +259,7 @@ namespace dtQt
    {
       QWidget* wrapper = DynamicAbstractControl::createEditor(parent, option, index);
 
-      if (!mInitialized)
+      if (!IsInitialized())
       {
          LOG_ERROR("Tried to add itself to the parent widget before being initialized");
          return wrapper;

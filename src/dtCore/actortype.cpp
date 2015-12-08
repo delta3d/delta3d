@@ -36,7 +36,8 @@ namespace dtCore
    void SharedClassInfo::SetClassName(const dtUtil::RefString& name)
    {
       mClassName = name;
-      mClassHierarchy.insert(mClassName);
+      if (!mClassName->empty())
+         mClassHierarchy.insert(mClassName);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -73,6 +74,13 @@ namespace dtCore
             at = at->GetParentActorType();
          }
          while (at != NULL);
+      }
+      if (mClassInfo->GetClassName()->empty())
+      {
+         if (clsInfo.GetClassName()->empty())
+            mClassInfo->SetClassName(GetFullName());
+         else
+            mClassInfo->SetClassName(clsInfo.GetClassName());
       }
    }
 

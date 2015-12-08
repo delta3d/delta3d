@@ -200,7 +200,7 @@ namespace dtQt
       }
 
       connect(this, SIGNAL(PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
-         this, SLOT(OnPropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
+         this, SLOT(OnPropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)), Qt::QueuedConnection);
 
       mInitialized = true;
 
@@ -225,7 +225,7 @@ namespace dtQt
          mDefaultResetButton->setToolTip("Reset the property to its default value.");
          mDefaultResetButton->setIcon(QIcon(":dtQt/icons/resetproperty.png"));
 
-         connect(mDefaultResetButton, SIGNAL(clicked()), this, SLOT(onResetClicked()));
+         connect(mDefaultResetButton, SIGNAL(clicked()), this, SLOT(onResetClicked()), Qt::QueuedConnection);
 
          mDefaultResetButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
@@ -258,10 +258,10 @@ namespace dtQt
 
          UpdateButtonStates();
 
-         connect(mShiftUpButton,   SIGNAL(clicked()), this, SLOT(onShiftUpClicked()));
-         connect(mShiftDownButton, SIGNAL(clicked()), this, SLOT(onShiftDownClicked()));
-         connect(mCopyButton,      SIGNAL(clicked()), this, SLOT(onCopyClicked()));
-         connect(mDeleteButton,    SIGNAL(clicked()), this, SLOT(onDeleteClicked()));
+         connect(mShiftUpButton,   SIGNAL(clicked()), this, SLOT(onShiftUpClicked()), Qt::QueuedConnection);
+         connect(mShiftDownButton, SIGNAL(clicked()), this, SLOT(onShiftDownClicked()), Qt::QueuedConnection);
+         connect(mCopyButton,      SIGNAL(clicked()), this, SLOT(onCopyClicked()), Qt::QueuedConnection);
+         connect(mDeleteButton,    SIGNAL(clicked()), this, SLOT(onDeleteClicked()), Qt::QueuedConnection);
 
          mGridLayout->addWidget(mShiftUpButton,   0, 10, 1, 1);
          mGridLayout->addWidget(mShiftDownButton, 0, 11, 1, 1);
@@ -733,4 +733,17 @@ namespace dtQt
       updateEditorFromModel(mWrapper);
       property.SetAlwaysSave(true);
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DynamicAbstractControl::updateData(QWidget* widget)
+   {
+      if (!mInitialized || widget == NULL)
+      {
+         LOG_ERROR("Tried to updateData before being initialized");
+         return false;
+      }
+
+      return updateModelFromEditor(widget);
+   }
+
 } // namespace dtEditQt

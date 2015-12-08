@@ -57,6 +57,7 @@ namespace dtABC
       static const std::string REALIZE_UPON_CREATE;
       static const std::string CHANGEDISPLAYRESOLUTION;
       static const std::string VSYNC;
+      static const std::string HIDE_WINDOWS_CONSOLE;
       static const std::string MULTI_SAMPLE;
 
       static const std::string WINDOWINSTANCE;

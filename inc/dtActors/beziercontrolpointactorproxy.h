@@ -45,12 +45,12 @@ namespace dtActors
          /**
           * Builds the properties associated with this actor proxy
           */
-         void BuildPropertyMap();
+         void BuildPropertyMap() override;
 
          /**
           * Cameras can be placed in a scene
           */
-         virtual bool IsPlaceable() const { return true; }
+         bool IsPlaceable() const override { return true; }
 
 
          /**
@@ -66,12 +66,11 @@ namespace dtActors
          dtCore::DeltaDrawable* GetBezierNode();
 
 
-         dtCore::ActorProxyIcon* GetBillBoardIcon();
-         const dtCore::BaseActorObject::RenderMode& GetRenderMode();
+         dtCore::ActorProxyIcon* GetBillBoardIcon() override;
+         const dtCore::BaseActorObject::RenderMode& GetRenderMode() override;
 
-         /*virtual*/ void OnScale(const osg::Vec3& oldValue, const osg::Vec3& newValue);
-         /*virtual*/ void OnRotation(const osg::Vec3& oldValue, const osg::Vec3& newValue);
-         /*virtual*/ void OnTranslation(const osg::Vec3& oldValue, const osg::Vec3& newValue);
+         void OnRotation(const osg::Vec3& oldValue, const osg::Vec3& newValue) override;
+         void OnTranslation(const osg::Vec3& oldValue, const osg::Vec3& newValue) override;
 
       protected:
          /// Destructor

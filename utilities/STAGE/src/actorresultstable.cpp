@@ -137,10 +137,14 @@ namespace dtEditQt
       connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryImported()),
          this, SLOT(clearAll()));
       // Remove search items that are being destroyed
-      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyAboutToBeDestroyed(dtCore::ActorPtr)),
-         this, SLOT(actorProxyAboutToBeDestroyed(dtCore::ActorPtr)));
+      connect(&EditorEvents::GetInstance(), SIGNAL(actorAboutToBeDestroyed(dtCore::ActorPtr)),
+         this, SLOT(removeDeletedActor(dtCore::ActorPtr)));
       connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorRefPtrVector &)),
          this, SLOT(selectedActors(ActorRefPtrVector &)));
+
+      connect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(dtCore::ActorPtr, ActorPropertyRefPtr)),
+         this, SLOT(changeActorName(dtCore::ActorPtr, ActorRefPtrVector)));
+
 
       QAction* copySelect = new QAction(tr("&Copy Selection"), this);
       copySelect->setStatusTip(tr("Copy the names of the selected actors."));
@@ -159,19 +163,18 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorResultsTable::addProxies(std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > foundProxies)
+   void ActorResultsTable::addActors(const dtCore::ActorRefPtrVector& actorsFound)
    {
-      std::vector< dtCore::RefPtr<dtCore::BaseActorObject > >::const_iterator iter;
       int row = 0;
 
       // do something with the results
-      for (iter = foundProxies.begin(); iter != foundProxies.end(); ++iter)
+      for (auto iter = actorsFound.begin(); iter != actorsFound.end(); ++iter)
       {
-         dtCore::RefPtr<dtCore::BaseActorObject> myProxy = (*iter);
+         dtCore::RefPtr<dtCore::BaseActorObject> actor = (*iter);
 
-         addProxy(myProxy, false);
+         addActor(actor, false);
 
-         //selectedActors.push_back(myProxy);
+         //selectedActors.push_back(actor);
          row ++;
       }
 
@@ -179,18 +182,11 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorResultsTable::addProxy(dtCore::RefPtr<dtCore::BaseActorObject> myProxy, bool updateCount)
+   void ActorResultsTable::addActor(dtCore::ActorPtr actor, bool updateCount)
    {
-      QString name(myProxy->GetName().c_str());
-      QString type(myProxy->GetActorType().GetName().c_str());
-      QString category(myProxy->GetActorType().GetCategory().c_str());
-
       // create the tree entry
-      ActorResultsTreeItem* item = new ActorResultsTreeItem(mResultsTree, myProxy);
-      item->setText(0, name);
-      item->setText(1, category);
-      item->setText(2, type);
-
+      ActorResultsTreeItem* item = new ActorResultsTreeItem(mResultsTree, actor);
+      updateItemData(actor, *item);
       if (updateCount)
       {
          updateResultsCount();
@@ -198,27 +194,32 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorResultsTable::HandleProxyUpdated(dtCore::RefPtr<dtCore::BaseActorObject> proxy)
+   void ActorResultsTable::updateItemData(dtCore::ActorPtr actor, ActorResultsTreeItem& item)
    {
-      if (mResultsTree != NULL && proxy.valid())
+      QString name(actor->GetName().c_str());
+      QString type(actor->GetActorType().GetName().c_str());
+      QString category(actor->GetActorType().GetCategory().c_str());
+      item.setText(0, name);
+      item.setText(1, category);
+      item.setText(2, type);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void ActorResultsTable::HandleActorUpdated(dtCore::ActorPtr actor)
+   {
+      if (mResultsTree != NULL && actor.valid())
       {
          QTreeWidgetItem* item;
          int index = 0;
 
          // Iterate through the items in our list and find a match. If we find the
-         // matching proxy, then update it's 3 fields
-         while (NULL != (item = mResultsTree->topLevelItem(index)))
+         // matching actor, then update it's 3 fields
+         while ((item = mResultsTree->topLevelItem(index)) != nullptr)
          {
             ActorResultsTreeItem* treeItem = static_cast<ActorResultsTreeItem*>(item);
-            if (proxy == treeItem->GetActor())
+            if (actor == treeItem->GetActor())
             {
-               QString name(proxy->GetName().c_str());
-               QString type(proxy->GetActorType().GetName().c_str());
-               QString category(proxy->GetActorType().GetCategory().c_str());
-
-               treeItem->setText(0, name);
-               treeItem->setText(1, category);
-               treeItem->setText(2, type);
+               updateItemData(actor, *treeItem);
             }
 
             index ++;
@@ -273,10 +274,10 @@ namespace dtEditQt
          ActorResultsTreeItem* item = dynamic_cast<ActorResultsTreeItem*>(itemList[index]);
          if (item)
          {
-            dtCore::RefPtr<dtCore::BaseActorObject> proxy = item->GetActor();
-            if (proxy.valid())
+            dtCore::RefPtr<dtCore::BaseActorObject> actor = item->GetActor();
+            if (actor.valid())
             {
-               resultList.push_back(proxy->GetId());
+               resultList.push_back(actor->GetId());
             }
          }
       }
@@ -320,7 +321,7 @@ namespace dtEditQt
       int selectionCount = (int)items.size();
       for (int selectionIndex = 0; selectionIndex < selectionCount; ++selectionIndex)
       {
-         dtCore::UniqueId proxyId = items[selectionIndex];
+         dtCore::UniqueId actorId = items[selectionIndex];
 
          int itemCount = (int)mResultsTree->topLevelItemCount();
          for (int itemIndex = 0; itemIndex < itemCount; ++itemIndex)
@@ -328,8 +329,8 @@ namespace dtEditQt
             ActorResultsTreeItem* item = dynamic_cast<ActorResultsTreeItem*>(mResultsTree->topLevelItem(itemIndex));
             if (item)
             {
-               dtCore::RefPtr<dtCore::BaseActorObject> proxy = item->GetActor();
-               if (proxy.valid() && proxy->GetId() == proxyId)
+               dtCore::RefPtr<dtCore::BaseActorObject> actor = item->GetActor();
+               if (actor.valid() && actor->GetId() == actorId)
                {
                   mResultsTree->setItemSelected(item, true);
                   break;
@@ -406,13 +407,13 @@ namespace dtEditQt
 
       if (selection != NULL)
       {
-         dtCore::RefPtr<dtCore::BaseActorObject> proxyPtr = selection->GetActor();
+         dtCore::RefPtr<dtCore::BaseActorObject> actorPtr = selection->GetActor();
 
          // Make sure we are in sync so that we goto the right object.
          sendSelection();
 
          // now tell the viewports to goto that actor
-         EditorEvents::GetInstance().emitGotoActor(proxyPtr);
+         EditorEvents::GetInstance().emitGotoActor(actorPtr);
       }
    }
 
@@ -457,17 +458,17 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorResultsTable::actorProxyAboutToBeDestroyed(dtCore::RefPtr<dtCore::BaseActorObject> proxy)
+   void ActorResultsTable::removeDeletedActor(dtCore::ActorPtr actor)
    {
       QTreeWidgetItem* item;
       int index = 0;
 
       // iterate through our top level items until we have no more.
-      while (NULL != (item = mResultsTree->topLevelItem(index)))
+      while ((item = mResultsTree->topLevelItem(index)) != nullptr)
       {
          ActorResultsTreeItem* treeItem = static_cast<ActorResultsTreeItem*>(item);
 
-         if (proxy == treeItem->GetActor())
+         if (actor == treeItem->GetActor())
          {
             mResultsTree->takeTopLevelItem(index);
             updateResultsCount();
@@ -482,6 +483,16 @@ namespace dtEditQt
       // supposed to.  So we should not have to handle our selection separately.  We'll get
       // an event.
    }
+
+   ///////////////////////////////////////////////////////////////////////////////
+    void ActorResultsTable::changeActorName(dtCore::ActorPtr actor, ActorPropertyRefPtr property)
+    {
+       if (property->GetName() != dtCore::BaseActorObject::PROPERTY_NAME)
+          return;
+
+       HandleActorUpdated(actor);
+    }
+
 
    ///////////////////////////////////////////////////////////////////////////////
    void ActorResultsTable::onSelectionChanged()

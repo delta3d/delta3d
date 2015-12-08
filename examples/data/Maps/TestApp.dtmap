@@ -8,7 +8,7 @@
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2014-07-15T22:49:46-05:00</createTimestamp>
-        <lastUpdateTimestamp>2015-09-25T19:46:29-05:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2015-11-17T13:56:28-05:00</lastUpdateTimestamp>
         <editorVersion>2.8.100</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
@@ -10368,7 +10368,7 @@
             </property>
             <property>
                 <name>Bezier Node</name>
-                <actorId>8c8be7b7-5645-4997-873b-266c7b6af1ec</actorId>
+                <actorId>5e9ad074-dfdc-4432-be58-53326f1f2e43</actorId>
             </property>
         </actor>
         <actor>
@@ -17462,14 +17462,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-111.978371</value3>
+                    <value3>-112.443054</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-413.256958</value1>
-                    <value2>-302.454468</value2>
+                    <value1>-423.114441</value1>
+                    <value2>-298.428650</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -25889,15 +25889,15 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-90.138031</value3>
+                    <value3>-90.395187</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-1376.927734</value1>
-                    <value2>-439.653229</value2>
-                    <value3>74.999992</value3>
+                    <value1>-2130.840820</value1>
+                    <value2>-435.732178</value2>
+                    <value3>75.000000</value3>
                 </vec3>
             </property>
             <property>
@@ -42630,14 +42630,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>-45.117123</value3>
+                    <value3>-47.407536</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>-447.120544</value1>
-                    <value2>-203.580292</value2>
+                    <value1>-461.080811</value1>
+                    <value2>-216.920685</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -42648,6 +42648,191 @@
                     <value2>0.001000</value2>
                     <value3>0.001000</value3>
                 </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Game.Actors.Game Mesh Actor</type>
+            <id>F3B1FFA0-8E95-4717-A1CB-28B12F81A72A</id>
+            <name>barstool_12</name>
+            <actorComponents>
+                <actor>
+                    <type>ActorComponents.ShaderActorComponent</type>
+                    <id>F1F46C9C-7291-40C7-A69B-BC592ECE38AE</id>
+                    <name></name>
+                    <property>
+                        <name>CurrentShader</name>
+                        <resourceType>Shaders</resourceType>
+                        <resourceDisplayName></resourceDisplayName>
+                        <resource></resource>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.PhysicsActComp</type>
+                    <id>CA430073-4346-4462-8EF2-BF894D87EAD5</id>
+                    <name></name>
+                    <property>
+                        <name>Material Actor</name>
+                        <actorId></actorId>
+                    </property>
+                    <property>
+                        <name>Physics Name</name>
+                        <string></string>
+                    </property>
+                    <property>
+                        <name>Physics Mass</name>
+                        <float>0</float>
+                    </property>
+                    <property>
+                        <name>Default Collision Group</name>
+                        <integer>0</integer>
+                    </property>
+                    <property>
+                        <name>Auto-Create Physics Objects</name>
+                        <boolean>true</boolean>
+                    </property>
+                    <property>
+                        <name>Physics Objects</name>
+                        <array>
+                            <size>1</size>
+                            <element>
+                                <index>0</index>
+                                <property>
+                                    <name>Physics Object</name>
+                                    <propertyContainer>
+                                        <property>
+                                            <name>Mechanics Type</name>
+                                            <enumerated>Static</enumerated>
+                                        </property>
+                                        <property>
+                                            <name>Primitive Type</name>
+                                            <enumerated>Triangle Mesh</enumerated>
+                                        </property>
+                                        <property>
+                                            <name>PhysicsMesh</name>
+                                            <resourceType>StaticMeshes</resourceType>
+                                            <resourceDisplayName>StaticMeshes:walkways:boardwalk_and_bar:barstool_PHYSICS.osg</resourceDisplayName>
+                                            <resource>StaticMeshes:walkways:boardwalk_and_bar:barstool_PHYSICS.osg</resource>
+                                        </property>
+                                    </propertyContainer>
+                                </property>
+                            </element>
+                        </array>
+                    </property>
+                    <property>
+                        <name>Joints</name>
+                        <array>
+                            <size>0</size>
+                        </array>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.DeadReckoningActComp</type>
+                    <id>DDBBA897-D331-4DA3-B69C-AD97C3935C0A</id>
+                    <name></name>
+                    <property>
+                        <name>Last Known Translation</name>
+                        <vec3>
+                            <value1>0.000000</value1>
+                            <value2>0.000000</value2>
+                            <value3>0.000000</value3>
+                        </vec3>
+                    </property>
+                    <property>
+                        <name>Last Known Rotation</name>
+                        <vec3>
+                            <value1>0.000000</value1>
+                            <value2>0.000000</value2>
+                            <value3>0.000000</value3>
+                        </vec3>
+                    </property>
+                    <property>
+                        <name>Velocity Vector</name>
+                        <vec3>
+                            <value1>0.000000</value1>
+                            <value2>0.000000</value2>
+                            <value3>0.000000</value3>
+                        </vec3>
+                    </property>
+                    <property>
+                        <name>Acceleration Vector</name>
+                        <vec3>
+                            <value1>0.000000</value1>
+                            <value2>0.000000</value2>
+                            <value3>0.000000</value3>
+                        </vec3>
+                    </property>
+                    <property>
+                        <name>Angular Velocity Vector</name>
+                        <vec3>
+                            <value1>0.000000</value1>
+                            <value2>0.000000</value2>
+                            <value3>0.000000</value3>
+                        </vec3>
+                    </property>
+                    <property>
+                        <name>Dead Reckoning Algorithm</name>
+                        <enumerated>Static</enumerated>
+                    </property>
+                    <property>
+                        <name>GroundClampType</name>
+                        <enumerated>KeepAbove</enumerated>
+                    </property>
+                    <property>
+                        <name>Ground Offset</name>
+                        <float>0</float>
+                    </property>
+                </actor>
+                <actor>
+                    <type>ActorComponents.DRPublishingActComp</type>
+                    <id>9DD6BBC7-F870-42C3-A00F-B7B18080E3E4</id>
+                    <name></name>
+                    <property>
+                        <name>VelocityAveragingFrameCount</name>
+                        <integer>1</integer>
+                    </property>
+                    <property>
+                        <name>DesiredNumUpdatesPerSec</name>
+                        <float>5</float>
+                    </property>
+                    <property>
+                        <name>MaxTranslationError</name>
+                        <float>0.02</float>
+                    </property>
+                    <property>
+                        <name>MaxRotationError</name>
+                        <float>1</float>
+                    </property>
+                </actor>
+            </actorComponents>
+            <property>
+                <name>ShaderGroup</name>
+                <string>MultiMap</string>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-78.165085</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.929263</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:walkways:boardwalk_and_bar:barstool.osg</resourceDisplayName>
+                <resource>StaticMeshes:walkways:boardwalk_and_bar:barstool.osg</resource>
+            </property>
+            <property>
+                <name>GenerateTangents</name>
+                <boolean>true</boolean>
             </property>
         </actor>
         <actor>
@@ -42663,14 +42848,14 @@
                 <vec3>
                     <value1>0.000000</value1>
                     <value2>-0.000000</value2>
-                    <value3>47.668941</value3>
+                    <value3>47.707874</value3>
                 </vec3>
             </property>
             <property>
                 <name>Translation</name>
                 <vec3>
-                    <value1>131.870834</value1>
-                    <value2>-348.426086</value2>
+                    <value1>145.813522</value1>
+                    <value2>-361.116943</value2>
                     <value3>0.000000</value3>
                 </vec3>
             </property>
@@ -71188,6 +71373,10 @@
             </property>
         </actor>
     </actors>
-    <groups></groups>
+    <groups>
+        <group>
+            <actor>F3B1FFA0-8E95-4717-A1CB-28B12F81A72A</actor>
+        </group>
+    </groups>
     <presetCameras></presetCameras>
 </map>

@@ -85,6 +85,7 @@ namespace dtPhysics
       DT_DECLARE_ACCESSOR(Mode, Mode);
       DT_DECLARE_ACCESSOR(size_t, MaxSizePerBuffer);
       DT_DECLARE_ACCESSOR(size_t, GeodeCount);
+      DT_DECLARE_ACCESSOR(bool, HideGeodes);
 
       /**
        * Called once for each visited triangle.

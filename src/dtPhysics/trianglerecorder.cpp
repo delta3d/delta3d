@@ -12,13 +12,14 @@ namespace dtPhysics
    //////////////////////////////////////////////////////
    TriangleRecorder::TriangleRecorder()
    : mData()
-   , mCurrentMaterial(0)
+   , mCurrentMaterial()
    , mMaxEdgeLength(20.0)
    , mMode(TriangleRecorder::COMBINED)
-   , mMaxSizePerBuffer(0)
-   , mGeodeCount(0)
-   , mSplitCount(0)
-   , mReuseCount(0)
+   , mMaxSizePerBuffer()
+   , mGeodeCount()
+   , mHideGeodes()
+   , mSplitCount()
+   , mReuseCount()
    , mMatrixIsIdentity(true)
    {
       mData.push_back(new VertexData);
@@ -43,6 +44,7 @@ namespace dtPhysics
       visitor.mFunctor.SetCurrentMaterial(GetCurrentMaterial());
       visitor.mFunctor.SetMaxSizePerBuffer(GetMaxSizePerBuffer());
       visitor.mFunctor.SetPhysicsNodeNamePattern(GetPhysicsNodeNamePattern());
+      visitor.mFunctor.SetHideGeodes(GetHideGeodes());
 
       // sorry about the const cast.  The node SHOULD be const since we aren't changing it
       // but accept doesn't work as const.
@@ -152,6 +154,8 @@ namespace dtPhysics
    DT_IMPLEMENT_ACCESSOR(TriangleRecorder, TriangleRecorder::Mode, Mode);
    DT_IMPLEMENT_ACCESSOR(TriangleRecorder, size_t, MaxSizePerBuffer);
    DT_IMPLEMENT_ACCESSOR(TriangleRecorder, size_t, GeodeCount);
+   DT_IMPLEMENT_ACCESSOR(TriangleRecorder, bool, HideGeodes);
+
 
    //////////////////////////////////////////////////////
    bool TriangleRecorder::operator()(osg::Geode& geode)
@@ -162,6 +166,10 @@ namespace dtPhysics
             return false;
       }
       ++mGeodeCount;
+      if (mHideGeodes)
+      {
+         geode.setNodeMask(0);
+      }
       size_t currentVertCount = mData.back()->mIndices.size();
       bool split = (mMode == TriangleRecorder::PER_GEODE && geode.getNumDrawables() > 0U && mGeodeCount > 1) ||
             (mMaxSizePerBuffer > 0 && currentVertCount >= mMaxSizePerBuffer);

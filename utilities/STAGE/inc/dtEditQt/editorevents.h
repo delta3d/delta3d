@@ -143,11 +143,6 @@ namespace dtEditQt
       void emitResetWindows();
 
       /**
-       * This is emitted when the user edits the name in the property editor.
-       */
-      void emitProxyNameChanged(dtCore::BaseActorObject& proxy, std::string oldName);
-
-      /**
        * The user has modified the passed in property on the passed in proxy.  There are
        * no assumptions about the previous value.  You should be able to assume that the value
        * is valid and that it is different than what it was before.  NULL may be valid in some
@@ -248,7 +243,6 @@ namespace dtEditQt
       void actorPropertyAboutToChange(dtCore::ActorPtr proxy,
          ActorPropertyRefPtr property, std::string oldValue, std::string newValue);
       void actorHierarchyUpdated(dtCore::ActorPtr actor, dtCore::ActorPtr oldParent);
-      void ProxyNameChanged(dtCore::BaseActorObject& proxy, std::string oldName);
       void beginChangeTransaction();
       void endChangeTransaction();
       void mapLibraryImported();
