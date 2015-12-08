@@ -127,7 +127,7 @@ namespace dtUtil
 
    #define LOG_ONCE_ALWAYS(msg) LOGN_ONCE_ALWAYS(dtUtil::LogFile::LOG_DEFAULT_NAME, msg)
 
-   struct LogImpl;
+   class LogImpl;
 
    /**
     * Log class which the engine uses for all of its logging
@@ -321,6 +321,11 @@ namespace dtUtil
        *  \param option A bitwise combination of options.
        */
       void SetOutputStreamBit(unsigned int option);
+
+      /**
+       * The same as above, but it sets the bits on ALL active log instances.
+       */
+      static void SetAllOutputStreamBits(unsigned int option);
 
       ///Get the currently defined output stream options
       unsigned int GetOutputStreamBit() const;

@@ -25,6 +25,7 @@
 #include <dtUtil/logobserverconsole.h>
 #include <dtUtil/logobserverfile.h>
 #include <dtUtil/logtimeprovider.h>
+#include <dtUtil/stringutils.h>
 #include <osg/ref_ptr>
 #include <osg/observer_ptr>
 #include <osgDB/FileNameUtils>
@@ -99,19 +100,25 @@ namespace dtUtil
       }
 
       ////////////////////////////////////////////////////////////////
-      void SetAllLogLevels(const Log::LogMessageType &newLevel)
+      void SetAllLogLevels(const Log::LogMessageType& newLevel)
       {
-         dtUtil::HashMap<std::string, osg::ref_ptr<Log> >::iterator i, iend;
-
-         i = mInstances.begin();
-         iend = mInstances.end();
-
-         for (;i != iend; i++)
+         std::for_each(mInstances.begin(), mInstances.end(), [this, &newLevel](dtUtil::HashMap<std::string, osg::ref_ptr<Log> >::value_type& value)
          {
-            Log* log = i->second.get();
+            Log* log = value.second.get();
             log->SetLogLevel(newLevel);
-         }
+         });
       }
+
+      ////////////////////////////////////////////////////////////////
+      void SetAllOutputStreamBits(unsigned int option)
+      {
+         std::for_each(mInstances.begin(), mInstances.end(), [this, option](dtUtil::HashMap<std::string, osg::ref_ptr<Log> >::value_type& value)
+         {
+            Log* log = value.second.get();
+            log->SetOutputStreamBit(option);
+         });
+      }
+
 
       bool IsLogTimeProviderValid() const
       {
@@ -398,23 +405,23 @@ namespace dtUtil
    //////////////////////////////////////////////////////////////////////////
    Log::LogMessageType Log::GetLogLevelForString(const std::string& levelString)  //static
    {
-      if (levelString == "Always" || levelString == "ALWAYS")
+      if (dtUtil::StrCompare(levelString, "always", false) == 0)
       {
          return LOG_ALWAYS;
       }
-      else if (levelString == "Error" || levelString == "ERROR")
+      else if (dtUtil::StrCompare(levelString, "error", false) == 0)
       {
          return LOG_ERROR;
       }
-      else if (levelString == "Warn" || levelString == "WARN" || levelString == "Warning" || levelString == "WARNING")
+      else if (dtUtil::StrCompare(levelString, "warn", false) == 0 || dtUtil::StrCompare(levelString, "warning", false) == 0)
       {
          return LOG_WARNING;
       }
-      else if (levelString == "Info" || levelString == "INFO")
+      else if (dtUtil::StrCompare(levelString, "info", false) == 0 || dtUtil::StrCompare(levelString, "information", false) == 0)
       {
          return LOG_INFO;
       }
-      else if (levelString == "Debug" || levelString == "DEBUG")
+      else if (dtUtil::StrCompare(levelString, "debug", false) == 0)
       {
          return LOG_DEBUG;
       }
@@ -428,6 +435,15 @@ namespace dtUtil
    void Log::SetOutputStreamBit(unsigned int option)
    {
       mImpl->mOutputStreamBit = option;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////
+   void Log::SetAllOutputStreamBits(unsigned int option)
+   {
+      if (LOG_MANAGER.valid())
+      {
+         LOG_MANAGER->SetAllOutputStreamBits(option);
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////
