@@ -42,52 +42,56 @@
 class LogTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(LogTests);
-      CPPUNIT_TEST(TestLogMessage1);
-      CPPUNIT_TEST(TestLogMessage2);
-      CPPUNIT_TEST(TestLogMessage3);
-      CPPUNIT_TEST(TestIsLevelEnabled);
-      CPPUNIT_TEST(TestLogFilename);
-      CPPUNIT_TEST(TestLogFilenameWithPath);
-      CPPUNIT_TEST(TestOutputStream);
-      CPPUNIT_TEST(TestAddingCustomLogObserver);
-      CPPUNIT_TEST(TestTriggeringCustomLogObserver);
+   CPPUNIT_TEST(TestLogMessage1);
+   CPPUNIT_TEST(TestLogMessage2);
+   CPPUNIT_TEST(TestLogMessage3);
+   CPPUNIT_TEST(TestIsLevelEnabled);
+   CPPUNIT_TEST(TestNameFromString);
+   CPPUNIT_TEST(TestLogFilename);
+   CPPUNIT_TEST(TestLogFilenameWithPath);
+   CPPUNIT_TEST(TestOutputStream);
+   CPPUNIT_TEST(TestAddingCustomLogObserver);
+   CPPUNIT_TEST(TestTriggeringCustomLogObserver);
+   CPPUNIT_TEST(TestSetAll);
    CPPUNIT_TEST_SUITE_END();
 
-   public:
-      static const unsigned int MAX_LENGTH = 512;
+public:
+   static const unsigned int MAX_LENGTH = 512;
 
-      void setUp();
-      void tearDown();
+   void setUp();
+   void tearDown();
 
-      /**
-       * Tests the string, int, string version of LogMessage
-       */
-      void TestLogMessage1();
+   /**
+    * Tests the string, int, string version of LogMessage
+    */
+   void TestLogMessage1();
 
-      /**
-       * Tests the type, string, int, char*, ... version of LogMessage
-       */
-      void TestLogMessage2();
+   /**
+    * Tests the type, string, int, char*, ... version of LogMessage
+    */
+   void TestLogMessage2();
 
-      /**
-       * Tests the type, string, char*, ... version of LogMessage
-       */
-      void TestLogMessage3();
-      void TestIsLevelEnabled();
+   /**
+    * Tests the type, string, char*, ... version of LogMessage
+    */
+   void TestLogMessage3();
+   void TestIsLevelEnabled();
 
-      void TestLogFilename();
-      void TestLogFilenameWithPath();
+   void TestNameFromString();
+   void TestLogFilename();
+   void TestLogFilenameWithPath();
 
-      void TestOutputStream();
+   void TestOutputStream();
+   void TestSetAll();
 
-      void TestAddingCustomLogObserver();
+   void TestAddingCustomLogObserver();
 
-      void TestTriggeringCustomLogObserver();
+   void TestTriggeringCustomLogObserver();
 
-   private:
-      std::string mMsgStr;
-      std::string mSource;
-      dtUtil::Log* mLogger;
+private:
+   std::string mMsgStr;
+   std::string mSource;
+   dtUtil::Log* mLogger;
 };
 
 // Registers the fixture into the 'registry'
@@ -266,6 +270,51 @@ void LogTests::TestIsLevelEnabled()
    }
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+void LogTests::TestSetAll()
+{
+   using dtUtil::Log;
+   Log* logs[4];
+   logs[0] = &Log::GetInstance();
+   logs[1] = &Log::GetInstance("one");
+   logs[2] = &Log::GetInstance("two");
+   logs[3] = &Log::GetInstance("three");
+
+   Log::SetAllLogLevels(Log::LOG_INFO);
+   Log::SetAllOutputStreamBits(Log::NO_OUTPUT);
+
+   for (auto i = 0; i < 4; ++i)
+   {
+      CPPUNIT_ASSERT_EQUAL(logs[i]->GetLogLevel(), Log::LOG_INFO);
+      CPPUNIT_ASSERT_EQUAL(logs[i]->GetOutputStreamBit(), unsigned(Log::NO_OUTPUT));
+   }
+
+   Log::SetAllLogLevels(Log::LOG_DEBUG);
+   Log::SetAllOutputStreamBits(Log::STANDARD);
+
+   for (auto i = 0; i < 4; ++i)
+   {
+      CPPUNIT_ASSERT_EQUAL(logs[i]->GetLogLevel(), Log::LOG_DEBUG);
+      CPPUNIT_ASSERT_EQUAL(logs[i]->GetOutputStreamBit(), unsigned(Log::STANDARD));
+   }
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+void LogTests::TestNameFromString()
+{
+   // Checking with strange case should prove well enough that it's case insensitive.
+   CPPUNIT_ASSERT_EQUAL(dtUtil::Log::GetLogLevelForString("deBuG"), dtUtil::Log::LOG_DEBUG);
+   CPPUNIT_ASSERT_EQUAL(dtUtil::Log::GetLogLevelForString("inFo"), dtUtil::Log::LOG_INFO);
+   CPPUNIT_ASSERT_EQUAL(dtUtil::Log::GetLogLevelForString("inFormatIon"), dtUtil::Log::LOG_INFO);
+   CPPUNIT_ASSERT_EQUAL(dtUtil::Log::GetLogLevelForString("wArN"), dtUtil::Log::LOG_WARNING);
+   CPPUNIT_ASSERT_EQUAL(dtUtil::Log::GetLogLevelForString("WaRnIng"), dtUtil::Log::LOG_WARNING);
+   CPPUNIT_ASSERT_EQUAL(dtUtil::Log::GetLogLevelForString("eRroR"), dtUtil::Log::LOG_ERROR);
+   CPPUNIT_ASSERT_EQUAL(dtUtil::Log::GetLogLevelForString("aLwAys"), dtUtil::Log::LOG_ALWAYS);
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 void LogTests::TestLogFilename()
 {
@@ -283,8 +332,8 @@ void LogTests::TestLogFilename()
    dtUtil::LogFile::SetFileName("logtest.html");
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Filename should be: logtest.html"
-      " but returned: " + dtUtil::LogFile::GetFileName(),
-      std::string("logtest.html"), dtUtil::LogFile::GetFileName() );
+         " but returned: " + dtUtil::LogFile::GetFileName(),
+         std::string("logtest.html"), dtUtil::LogFile::GetFileName() );
 
    LOG_ALWAYS("Filename test");
 
@@ -307,8 +356,8 @@ void LogTests::TestLogFilenameWithPath()
    dtUtil::LogFile::SetFileName(newFileName);
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Filename should be: " + newFileName +
-      " but returned: " + dtUtil::LogFile::GetFileName(),
-      newFileName, dtUtil::LogFile::GetFileName() );
+         " but returned: " + dtUtil::LogFile::GetFileName(),
+         newFileName, dtUtil::LogFile::GetFileName() );
 
    LOG_ALWAYS("Filename test");
 
@@ -329,14 +378,14 @@ void LogTests::TestOutputStream()
    unsigned int newBit = dtUtil::Log::GetInstance().GetOutputStreamBit();
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Returned bit doesn't match set bit",
-                                option, newBit);
+         option, newBit);
 
    option = dtUtil::Log::TO_CONSOLE | dtUtil::Log::TO_FILE;
    dtUtil::Log::GetInstance().SetOutputStreamBit( option );
    newBit = dtUtil::Log::GetInstance().GetOutputStreamBit();
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Returned bit doesn't match set bit",
-                                 option, newBit);
+         option, newBit);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -344,8 +393,8 @@ class TestObserver : public dtUtil::LogObserver
 {
 public:
    TestObserver(): mLogged(false)
-   {
-   }
+{
+}
 
    virtual void LogMessage(const LogData& logData)
    {
@@ -372,15 +421,15 @@ void LogTests::TestAddingCustomLogObserver()
 
    //should be one more
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Custom LogObserver didn't get added",
-                                 originalCount+1, 
-                                 Log::GetInstance().GetObservers().size());
+         originalCount+1,
+         Log::GetInstance().GetObservers().size());
 
    Log::GetInstance().RemoveObserver(*testObserver);
 
    //should be back to where we started
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Custom LogObserver didn't get removed",
-                                 originalCount, 
-                                 Log::GetInstance().GetObservers().size());
+         originalCount,
+         Log::GetInstance().GetObservers().size());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -397,14 +446,14 @@ void LogTests::TestTriggeringCustomLogObserver()
    LOG_ALWAYS("custom LogObserver message");
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Custom LogObserver should have not been triggered",
-                                 false, testObserver->mLogged);
+         false, testObserver->mLogged);
 
    Log::GetInstance().SetOutputStreamBit(Log::GetInstance().GetOutputStreamBit() | Log::TO_OBSERVER); //Turn on the observer bit
 
    LOG_ALWAYS("custom LogObserver message");
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Custom LogObserver should have been triggered",
-                                 true, testObserver->mLogged);
+         true, testObserver->mLogged);
 
    Log::GetInstance().RemoveObserver(*testObserver);
 }
