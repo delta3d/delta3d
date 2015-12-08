@@ -132,6 +132,11 @@ size_t displayBitsPerPixel( CGDirectDisplayID displayId )
       DeltaWin::Resolution result = { w,h, depth, refresh };
       return result;
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DeltaWin::HideWindowsConsole(bool hide)
+   {
+   }
 }
 #endif // __APPLE__
 

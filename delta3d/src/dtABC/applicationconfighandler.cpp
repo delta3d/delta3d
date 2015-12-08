@@ -95,7 +95,7 @@ namespace dtABC
                      xstring("100"), ystring("100"),
                      wstring("640"), hstring("480"),
                      showstring("1"), fullstring("0"), realizestring("1"),
-                     changeres("0"), bitdepth("24"), refresh("60"), vsyncString("true"), multiSampleString("0");
+                     changeres("0"), bitdepth("24"), refresh("60"), vsyncString("true"), hideConsole("false"), multiSampleString("0");
 
          // search for specific named attributes, append the list of searched strings
          dtUtil::AttributeSearch windowattrs;
@@ -153,6 +153,10 @@ namespace dtABC
          if (iter != results.end())
             vsyncString = iter->second;
 
+         iter = results.find(ApplicationConfigSchema::HIDE_WINDOWS_CONSOLE);
+         if (iter != results.end())
+            hideConsole = iter->second;
+
          iter = results.find(ApplicationConfigSchema::MULTI_SAMPLE);
          if (iter != results.end())
             multiSampleString = iter->second;
@@ -168,6 +172,7 @@ namespace dtABC
          int depth = dtUtil::ToType<int>(bitdepth);
          int rate = dtUtil::ToType<int>(refresh);
          bool vsync = dtUtil::ToType<bool>(vsyncString);
+         bool hideCon = dtUtil::ToType<bool>(hideConsole);
          int multiSample = dtUtil::ToType<int>(multiSampleString);
 
          dtUtil::Clamp(multiSample, 0, 128);
@@ -184,6 +189,7 @@ namespace dtABC
          mConfigData.REALIZE_UPON_CREATE = realizeUponCreate;
          mConfigData.CHANGE_RESOLUTION = resolution_changed;
          mConfigData.VSYNC = vsync;
+         mConfigData.HIDE_WINDOWS_CONSOLE = hideCon;
          mConfigData.MULTI_SAMPLE = multiSample;
       }
       else if (mCurrentElement == ApplicationConfigSchema::SCENE)

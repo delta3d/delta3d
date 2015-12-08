@@ -111,6 +111,12 @@ namespace dtABC
          ).ToXmlString()
       );
 
+      windo->setAttribute(sch.HIDE_WINDOWS_CONSOLE,
+         dtUtil::StringToXMLConverter(
+         data.HIDE_WINDOWS_CONSOLE ? "1" : "0"
+         ).ToXmlString()
+         );
+
       ss.str("");
       ss << data.MULTI_SAMPLE;
       windo->setAttribute( sch.MULTI_SAMPLE, dtUtil::StringToXMLConverter(ss.str()).ToXmlString() );

@@ -49,7 +49,8 @@ namespace dtABC
    const std::string ApplicationConfigSchema::FULLSCREEN="FullScreen";
    const std::string ApplicationConfigSchema::REALIZE_UPON_CREATE="RealizeUponCreate";
    const std::string ApplicationConfigSchema::CHANGEDISPLAYRESOLUTION="ChangeDisplayResolution";
-   const std::string ApplicationConfigSchema::VSYNC="VSync";
+   const std::string ApplicationConfigSchema::VSYNC = "VSync";
+   const std::string ApplicationConfigSchema::HIDE_WINDOWS_CONSOLE = "HideWindowsConsole";
    const std::string ApplicationConfigSchema::MULTI_SAMPLE="MultiSample";
    
    const std::string ApplicationConfigSchema::WINDOWINSTANCE="WindowInstance";

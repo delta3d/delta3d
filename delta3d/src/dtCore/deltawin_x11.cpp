@@ -181,4 +181,9 @@ DeltaWin::Resolution DeltaWin::GetCurrentResolution()
    return r;
 }
 
+//////////////////////////////////////////////////////////////////////////
+void DeltaWin::HideWindowsConsole(bool hide)
+{
+}
+
 #endif // defined(__GNUG__) && !defined(WIN32) && !defined(__APPLE__)

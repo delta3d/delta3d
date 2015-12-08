@@ -45,7 +45,7 @@
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/threadpool.h>
 #include <dtCore/mouse.h>
-
+#include <dtCore/deltawin.h>
 #include <cassert>
 
 #include <dtUtil/xercesutils.h>
@@ -738,8 +738,13 @@ bool AppXMLApplicator::operator ()(const ApplicationConfigData& data, dtABC::App
       }
    }
 
+   if (data.HIDE_WINDOWS_CONSOLE)
+   {
+      dtCore::DeltaWin::HideWindowsConsole(true);
+   }
+      
+   
    bool valid = true; //optimistic
-
    // connect the camera, scene, and window
    // since they might not be the same as the app's instances, we will use the instance management layer
    dtCore::DeltaWin* win = dtCore::DeltaWin::GetInstance(data.WINDOW_INSTANCE);
