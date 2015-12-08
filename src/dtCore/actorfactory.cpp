@@ -35,12 +35,12 @@ namespace dtCore
    const std::string ActorFactory::DEFAULT_ACTOR_LIBRARY("dtActors");
 
    //Singleton global variable for the library manager.
-   dtCore::RefPtr<ActorFactory> ActorFactory::mInstance(NULL);
+   dtCore::RefPtr<ActorFactory> ActorFactory::mInstance(nullptr);
 
    ActorFactory::RegistryEntry::RegistryEntry()
-   : registry(NULL)
-   , createFn(NULL)
-   , destroyFn(NULL)
+   : registry(nullptr)
+   , createFn(nullptr)
+   , destroyFn(nullptr)
    {
    }
 
@@ -255,7 +255,7 @@ namespace dtCore
    const ActorType* ActorFactory::FindActorType(const std::string& category,
          const std::string& name) const
    {
-      const ActorType* result = NULL;
+      const ActorType* result = nullptr;
       dtCore::RefPtr<const ActorType> typeToFind = new ActorType(name, category);
       ActorTypeMapItor itor = mActorTypeCache.find(typeToFind);
       // Verify the cache is correct.  This is to support dynamically changing actor registries
@@ -274,11 +274,11 @@ namespace dtCore
          RegistryMapConstItor i, iend;
          i = mRegistries.begin();
          iend = mRegistries.end();
-         for (; result == NULL && i != iend; ++i)
+         for (; result == nullptr && i != iend; ++i)
          {
             ActorPluginRegistry* curReg = i->second.registry;
             result = curReg->GetActorType(category, name);
-            if (result != NULL)
+            if (result != nullptr)
                mActorTypeCache.insert(std::make_pair(result, curReg));
          }
       }
@@ -307,7 +307,7 @@ namespace dtCore
    {
       std::string fullName = category + "." + name;
       std::string resultName = FindActorTypeReplacementName(fullName);
-      const ActorType* result = NULL;
+      const ActorType* result = nullptr;
       if (!resultName.empty())
       {
          std::pair<std::string, std::string> replacementName = ActorType::ParseNameAndCategory(resultName);
@@ -370,7 +370,7 @@ namespace dtCore
 
       if (itor == mRegistries.end())
       {
-         return NULL;
+         return nullptr;
       }
       else
       {
@@ -388,7 +388,7 @@ namespace dtCore
       //requested type.
       dtCore::RefPtr<const ActorType> actorTypePtr(&actorType);
 
-      ActorPluginRegistry* result = NULL;
+      ActorPluginRegistry* result = nullptr;
       ActorTypeMapItor found = mActorTypeCache.find(actorTypePtr);
       if (found == mActorTypeCache.end() || !found->second->IsActorTypeSupported(actorType))
       {
@@ -407,7 +407,7 @@ namespace dtCore
          }
 
 
-         if (result == NULL)
+         if (result == nullptr)
          {
             error << "Requested actor type: \"" << actorType.GetFullName() <<
                   "\" but is unknown or has not been registered.";
@@ -490,7 +490,7 @@ namespace dtCore
       mRegistries.erase(regItor);
 
       // If it has no destroyFn, then it was added with an autoregister class, so just ignore it, it should go away on its own.
-      if (regEntry.destroyFn != NULL)
+      if (regEntry.destroyFn != nullptr)
       {
          //Now that all references are gone, take the pointer to the registry so that we can
          //manually free it in the plugin.
@@ -518,7 +518,7 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    void ActorFactory::Destroy()
    {
-      ActorFactory::mInstance = NULL;
+      ActorFactory::mInstance = nullptr;
    }
 
    /////////////////////////////////////////////////////////////////////////////
