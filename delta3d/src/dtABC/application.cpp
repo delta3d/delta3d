@@ -687,11 +687,18 @@ bool AppXMLApplicator::operator ()(const ApplicationConfigData& data, dtABC::App
    // apply the window settings
    dtCore::DeltaWin* dwin = app->GetWindow();
 
-   //set the default log level for all future Log instances
-   dtUtil::Log::SetDefaultLogLevel(dtUtil::Log::GetLogLevelForString(data.GLOBAL_LOG_LEVEL));
+   if (dtUtil::StrCompare(data.GLOBAL_LOG_LEVEL, "off", false) == 0)
+   {
+      dtUtil::Log::SetAllOutputStreamBits(dtUtil::Log::NO_OUTPUT);
+   }
+   else
+   {
+      //set the default log level for all future Log instances
+      dtUtil::Log::SetDefaultLogLevel(dtUtil::Log::GetLogLevelForString(data.GLOBAL_LOG_LEVEL));
 
-   //Also set the level for any existing Log instances
-   dtUtil::Log::SetAllLogLevels(dtUtil::Log::GetLogLevelForString(data.GLOBAL_LOG_LEVEL));
+      //Also set the level for any existing Log instances
+      dtUtil::Log::SetAllLogLevels(dtUtil::Log::GetLogLevelForString(data.GLOBAL_LOG_LEVEL));
+   }
 
    //Set the log level for any specifically defined Log instances, overwriting the default level
    for (std::map<std::string, std::string>::const_iterator i = data.LOG_LEVELS.begin();
