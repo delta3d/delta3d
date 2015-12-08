@@ -200,7 +200,7 @@ namespace dtQt
       }
 
       connect(this, SIGNAL(PropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)),
-         this, SLOT(OnPropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)), Qt::QueuedConnection);
+         this, SLOT(OnPropertyChanged(dtCore::PropertyContainer&, dtCore::ActorProperty&)));
 
       mInitialized = true;
 
