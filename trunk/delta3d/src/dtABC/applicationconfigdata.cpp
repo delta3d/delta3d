@@ -32,6 +32,7 @@ namespace dtABC
    , CHANGE_RESOLUTION(false)
    , REALIZE_UPON_CREATE(false)
    , VSYNC(true)
+   , HIDE_WINDOWS_CONSOLE(false)
    , CAMERA_NAME("")
    , VIEW_NAME("")
    , SCENE_NAME("")

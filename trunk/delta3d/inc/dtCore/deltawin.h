@@ -288,6 +288,11 @@ namespace dtCore
       static int IsValidResolution(const ResolutionVec &rv, int width = 0, int height = 0, int refreshRate = 0, int colorDepth = 0);
 
       /**
+      *  This function will hide and show the console window for which standard out is going to.
+      */
+      static void HideWindowsConsole(bool hide);
+
+      /**
        * Tests to see if the system supports the desired resolution.
        * @param candidate the Resolution to be tested.
        * @return 'true' when the Resolution is supported.

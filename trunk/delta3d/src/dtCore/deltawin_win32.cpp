@@ -133,4 +133,13 @@ DeltaWin::Resolution DeltaWin::GetCurrentResolution()
    return r;
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+void DeltaWin::HideWindowsConsole(bool hide)
+{
+   HWND hwnd = GetConsoleWindow();
+   int cmd = hide ? 0 : 5;
+   ShowWindow(hwnd, cmd);
+}
+
 #endif //WIN32
