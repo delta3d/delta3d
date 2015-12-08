@@ -322,6 +322,11 @@ namespace dtUtil
        */
       void SetOutputStreamBit(unsigned int option);
 
+      /**
+       * The same as above, but it sets the bits on ALL active log instances.
+       */
+      static void SetAllOutputStreamBits(unsigned int option);
+
       ///Get the currently defined output stream options
       unsigned int GetOutputStreamBit() const;
 
