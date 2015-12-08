@@ -30,6 +30,7 @@
 #include <dtCore/actorfactory.h>
 #include <dtCore/environmentactor.h>
 #include <dtCore/map.h>
+#include <dtCore/exceptionenum.h>
 
 #include <dtUtil/stringutils.h>
 #include <dtUtil/log.h>
@@ -529,15 +530,22 @@ namespace dtCore
          }
          for (auto j = actors.begin(), jend = actors.end(); j != jend; ++j)
          {
-            ActorPluginRegistry* apr = ActorFactory::GetInstance().GetRegistryForType((*j)->GetActorType());
-            if (apr != nullptr)
+            try
             {
-               std::string libraryName = ActorFactory::GetInstance().GetLibraryNameForRegistry(*apr);
-               if (!libraryName.empty() && !HasLibrary(libraryName))
+               ActorPluginRegistry* apr = ActorFactory::GetInstance().GetRegistryForType((*j)->GetActorType());
+               if (apr != nullptr)
                {
-                  AddLibrary(libraryName, versionNumber);
-                  SetModified(true);
+                  std::string libraryName = ActorFactory::GetInstance().GetLibraryNameForRegistry(*apr);
+                  if (!libraryName.empty() && !HasLibrary(libraryName))
+                  {
+                     AddLibrary(libraryName, versionNumber);
+                     SetModified(true);
+                  }
                }
+            }
+            catch(const dtCore::ObjectFactoryUnknownTypeException& ex)
+            {
+               ex.LogException(dtUtil::Log::LOG_WARNING, "map.cpp");
             }
          }
       }

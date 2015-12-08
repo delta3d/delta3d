@@ -409,7 +409,7 @@ namespace dtCore
 
          if (result == NULL)
          {
-            error << "Requested actor type: \"" << actorType.GetCategory() << "." <<  actorType.GetName() <<
+            error << "Requested actor type: \"" << actorType.GetFullName() <<
                   "\" but is unknown or has not been registered.";
             throw dtCore::ObjectFactoryUnknownTypeException(error.str(), __FILE__, __LINE__);
          }
