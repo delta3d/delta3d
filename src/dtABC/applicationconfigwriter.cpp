@@ -203,7 +203,8 @@ namespace dtABC
       FULLSCREEN = XMLString::transcode( ApplicationConfigSchema::FULLSCREEN.c_str() );
       REALIZE_UPON_CREATE = XMLString::transcode( ApplicationConfigSchema::REALIZE_UPON_CREATE.c_str() );
       CHANGEDISPLAYRESOLUTION = XMLString::transcode( ApplicationConfigSchema::CHANGEDISPLAYRESOLUTION.c_str() );
-      VSYNC = XMLString::transcode( ApplicationConfigSchema::VSYNC.c_str() );
+      VSYNC = XMLString::transcode(ApplicationConfigSchema::VSYNC.c_str());
+      HIDE_WINDOWS_CONSOLE = XMLString::transcode(ApplicationConfigSchema::HIDE_WINDOWS_CONSOLE.c_str());
       MULTI_SAMPLE = XMLString::transcode( ApplicationConfigSchema::MULTI_SAMPLE.c_str() );
 
       WINDOWINSTANCE = XMLString::transcode( ApplicationConfigSchema::WINDOWINSTANCE.c_str() );
