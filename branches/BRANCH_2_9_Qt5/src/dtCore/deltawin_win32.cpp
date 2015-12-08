@@ -103,7 +103,6 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
       Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__,
          "Resolution could not be changed to %dx%d @ %d, %d",
          width, height, colorDepth, refreshRate );
-
    }
    else
    {
@@ -131,6 +130,15 @@ DeltaWin::Resolution DeltaWin::GetCurrentResolution()
       GetDeviceCaps(hdc, BITSPIXEL),
       GetDeviceCaps(hdc, VREFRESH) };
    return r;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+void DeltaWin::HideWindowsConsole(bool hide)
+{
+   HWND hwnd = GetConsoleWindow();
+   int cmd = hide ? 0 : 5;
+   ShowWindow(hwnd, cmd);
 }
 
 #endif //WIN32

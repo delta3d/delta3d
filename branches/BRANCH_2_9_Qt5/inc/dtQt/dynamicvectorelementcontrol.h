@@ -169,8 +169,6 @@ namespace dtQt
 
    public slots:
 
-      virtual bool updateData(QWidget* widget);
-
       /**
        * @see DynamicAbstractControl#handleSubEditDestroy
        */

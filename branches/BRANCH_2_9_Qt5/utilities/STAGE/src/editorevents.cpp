@@ -145,13 +145,6 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorEvents::emitProxyNameChanged(dtCore::BaseActorObject& proxy, std::string oldName)
-   {
-      LOG_INFO("Emitting UI event - [proxyNameChanged]");
-      emit ProxyNameChanged(proxy, oldName);
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
    void EditorEvents::emitActorPropertyChanged(dtCore::ActorPtr proxy,
       dtCore::RefPtr<dtCore::ActorProperty> property)
    {

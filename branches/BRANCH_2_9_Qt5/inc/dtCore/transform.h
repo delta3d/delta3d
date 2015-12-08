@@ -179,9 +179,9 @@ namespace dtCore
       /// calculates the scale using a polar decomposition.
       void CalcScale(osg::Vec3d& scale) const;
 
-      /// Calculates the distance from this tranform to another
+      /// Calculates the distance from this trannform to another
       value_type CalcDistance(const dtCore::Transform& xform) const;
-      /// Calculates the distance squared from this tranform to another
+      /// Calculates the distance squared from this transform to another
       value_type CalcDistanceSquared(const dtCore::Transform& xform) const;
 
       /**

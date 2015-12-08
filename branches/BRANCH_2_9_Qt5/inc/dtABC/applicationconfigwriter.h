@@ -67,6 +67,7 @@ namespace dtABC
          XMLCh* REALIZE_UPON_CREATE;
          XMLCh* CHANGEDISPLAYRESOLUTION;
          XMLCh* VSYNC;
+         XMLCh* HIDE_WINDOWS_CONSOLE;
          XMLCh* MULTI_SAMPLE;
 
          XMLCh* WINDOWINSTANCE;

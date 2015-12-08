@@ -63,8 +63,17 @@ namespace dtRender
 
          void CreateDrawable();
 
+         /**
+         *  Use this to add and remove the dynamic light from being rendered
+         *     without modifying any of its properties.
+         */
+         void AddToLightScene();
+         void RemoveFromLightScene();
+         bool IsInLightScene() const;
+
          virtual void OnEnteredWorld();
 
+         virtual void OnRemovedFromWorld();
 
          /// Adds the properties associated with this actor
          virtual void BuildPropertyMap();

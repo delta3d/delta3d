@@ -115,11 +115,6 @@ namespace dtQt
    public slots:
 
       /**
-       * Signal when the data is updated.
-       */
-      virtual bool updateData(QWidget* widget);
-
-      /**
        * Signal when a bit button is toggled.
        */
       virtual void onBitToggled(bool checked);

@@ -101,17 +101,17 @@ namespace dtEditQt
       /**
        * Add a vector of ActorProxies to the table.
        */
-      void addProxies(std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > foundProxies);
+      void addActors(const dtCore::ActorRefPtrVector& actorsFound);
 
       /**
        * Add just a single BaseActorObject to the table. Puts it at the end
        */
-      void addProxy(dtCore::RefPtr<dtCore::BaseActorObject> myProxy, bool updateCount = true);
+      void addActor(dtCore::ActorPtr actor, bool updateCount = true);
 
       /**
        * Find the item in our table and update it's display columns.
        */
-      void HandleProxyUpdated(dtCore::RefPtr<dtCore::BaseActorObject> proxy);
+      void HandleActorUpdated(dtCore::ActorPtr actor);
 
       /**
        * Enable or disable the action buttons appropriately based
@@ -136,6 +136,8 @@ namespace dtEditQt
       void setSelectedItems(const std::vector<dtCore::UniqueId>& items);
 
       void contextMenuEvent(QContextMenuEvent *event);
+
+      void updateItemData(dtCore::ActorPtr actor, ActorResultsTreeItem& item);
 
    public slots:
       /**
@@ -164,22 +166,14 @@ namespace dtEditQt
       void deletePressed();
 
       /**
-       * Traps the table change event
-       */
-      //void currentItemChanged(QTreeWidgetItem* current, QTableWidgetItem* previous);
-
-      /**
-       * Traps the table double clicked event - causes a single select by unselecting other items.
-       * -- can't be used because the itemdoubleclicked signal from Qt isn't found at runtime.
-       */
-      //void OnItemDoubleClicked(QTreeWidgetItem* item);
-
-      //void OnDoCurrentItemChanged(QTreeWidgetItem* test1, QTreeWidgetItem* test2);
-
-      /**
        * Remove an item from our search results if it's about to be destroyed
        */
-      void actorProxyAboutToBeDestroyed(dtCore::ActorPtr proxy);
+      void removeDeletedActor(dtCore::ActorPtr actor);
+
+      /**
+       * Change an actor's name in the search result
+       */
+      void changeActorName(dtCore::ActorPtr actor, ActorPropertyRefPtr property);
 
       /**
        * Handle the selection changed event in the tree table.  Should enable/disable buttons

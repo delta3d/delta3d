@@ -82,7 +82,7 @@ namespace dtEditQt
       /**
        * When a new actor is created, we have to add it's classes to our class list.
        */
-      void onActorProxyCreated(dtCore::ActorPtr proxy, bool forceNoAdjustments);
+      void onActorCreated(dtCore::ActorPtr actor, bool forceNoAdjustments);
 
    private:
       QGroupBox* resultsGroup();

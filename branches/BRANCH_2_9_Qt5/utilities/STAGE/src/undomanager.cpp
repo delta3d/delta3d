@@ -82,8 +82,6 @@ namespace dtEditQt
          std::string, std::string)),
          this, SLOT(actorPropertyAboutToChange(dtCore::ActorPtr, ActorPropertyRefPtr,
          std::string, std::string)));
-      connect(&EditorEvents::GetInstance(), SIGNAL(ProxyNameChanged(dtCore::BaseActorObject&, std::string)),
-         this, SLOT(onProxyNameChanged(dtCore::BaseActorObject&, std::string)));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -160,34 +158,6 @@ namespace dtEditQt
 
          ChangeEvent* undoEvent = createFullUndoEvent(proxy.get());
          undoEvent->mType = ChangeEvent::PROXY_CREATED;
-
-         // add it to our main undo stack
-         mUndoStack.push(undoEvent);
-
-         enableButtons();
-      }
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   void UndoManager::onProxyNameChanged(dtCore::BaseActorObject& proxy, std::string oldName)
-   {
-      if (!mRecursePrevent)
-      {
-         // clear the redo list anytime we add a new item to the undo list.
-         clearRedoList();
-         // clear any incomplete property change events
-         mAboutToChangeEvent = NULL;
-
-         ChangeEvent* undoEvent       = new ChangeEvent();
-         undoEvent->mType              = ChangeEvent::PROPERTY_CHANGED;
-         undoEvent->mObjectId          = proxy.GetId();
-         undoEvent->mTypeName     = proxy.GetObjectType().GetName();
-         undoEvent->mTypeCategory = proxy.GetObjectType().GetCategory();
-         UndoPropertyData* propData = new UndoPropertyData();
-         propData->mPropertyName    = "Name";
-         propData->mOldValue        = oldName;
-         propData->mNewValue        = proxy.GetName();
-         undoEvent->mUndoPropData.push_back(propData);
 
          // add it to our main undo stack
          mUndoStack.push(undoEvent);

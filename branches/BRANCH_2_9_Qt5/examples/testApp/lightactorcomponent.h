@@ -131,9 +131,12 @@ namespace dtExample
 
       /*virtual*/ void OnRemovedFromActor(dtCore::BaseActorObject& actor);
 
+      /*virtual*/ void OnRemovedFromWorld();
+
 
    protected:
       virtual ~LightActorComponent();
+      void DeleteLight();
 
       bool mAttachLightToOwner;
       bool mCreateLight;

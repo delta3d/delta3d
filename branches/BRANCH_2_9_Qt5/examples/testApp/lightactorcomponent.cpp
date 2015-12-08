@@ -91,14 +91,14 @@ namespace dtExample
 
       if ( ! light.valid())
       {
-         dtGame::GameActorProxy* act = NULL;
+         dtGame::GameActorProxy* act = nullptr;
          GetOwner(act);
 
-         if(act->GetDrawable() != NULL )
+         if(act->GetDrawable() != nullptr )
          {
             act->GetGameManager()->CreateActor(*dtRender::RenderActorRegistry::DYNAMIC_LIGHT_ACTOR_TYPE, light);
-            light->SetAttenuation(osg::Vec3(0.00001, 0.000014, 0.000007));
-            light->SetLightColor(osg::Vec3(1.0, 1.0, 1.0));
+            light->SetAttenuation(osg::Vec3(0.00001f, 0.000014f, 0.000007f));
+            light->SetLightColor(osg::Vec3(1.0f, 1.0f, 1.0f));
             light->SetTarget(*dynamic_cast<dtCore::Transformable*>(act->GetDrawable()));
             act->GetGameManager()->AddActor(*light, false, false);
          }
@@ -131,15 +131,15 @@ namespace dtExample
       }
 
       // Ensure the light targets the owner actor.
-      if (light != NULL && light->GetInitialOwnership() != dtGame::GameActorProxy::Ownership::PROTOTYPE && mAttachLightToOwner)
+      if (light != nullptr && light->GetInitialOwnership() != dtGame::GameActorProxy::Ownership::PROTOTYPE && mAttachLightToOwner)
       {
-         dtGame::GameActorProxy* actor = NULL;
+         dtGame::GameActorProxy* actor = nullptr;
          GetOwner(actor);
 
-         dtCore::Transformable* drawable = NULL;
+         dtCore::Transformable* drawable = nullptr;
          actor->GetDrawable(drawable);
 
-         if (drawable != NULL)
+         if (drawable != nullptr)
          {
             light->SetTarget(*drawable);
          }
@@ -178,19 +178,19 @@ namespace dtExample
    /////////////////////////////////////////////////////////////////////////////
    dtRender::DynamicLight* LightActorComponent::GetLightActorById(const dtCore::UniqueId& id)
    {
-      dtRender::DynamicLight* light = NULL;
+      dtRender::DynamicLight* light = nullptr;
 
-      dtGame::GameActorProxy* actor = NULL;
+      dtGame::GameActorProxy* actor = nullptr;
       GetOwner(actor);
 
-      if (actor != NULL)
+      if (actor != nullptr)
       {
          dtGame::GameManager* gm = actor->GetGameManager();
-         if (gm != NULL)
+         if (gm != nullptr)
          {
             gm->FindActorById(id, light);
 
-            if (light == NULL)
+            if (light == nullptr)
             {
                dtCore::RefPtr<dtRender::DynamicLight> ptr;
                gm->FindPrototypeByID(id, ptr);
@@ -355,7 +355,7 @@ namespace dtExample
       if ( ! mLight.valid())
       {
          // Use a refptr here in case a new light is created.
-         dtCore::RefPtr<dtRender::DynamicLight> light = NULL;
+         dtCore::RefPtr<dtRender::DynamicLight> light = nullptr;
 
          /*if (mCreateLight)
          {
@@ -383,7 +383,7 @@ namespace dtExample
             // Determine if the referenced actor is a prototype.
             if (light.valid() && light->GetInitialOwnership() == dtGame::GameActorProxy::Ownership::PROTOTYPE)
             {
-               dtGame::GameActorProxy* actor = NULL;
+               dtGame::GameActorProxy* actor = nullptr;
                GetOwner(actor);
 
                if (actor->GetInitialOwnership() != dtGame::GameActorProxy::Ownership::PROTOTYPE)
@@ -420,7 +420,32 @@ namespace dtExample
    /////////////////////////////////////////////////////////////////////////////
    void LightActorComponent::OnRemovedFromActor(dtCore::BaseActorObject& actor)
    {
-      mLight = NULL;
+      DeleteLight();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void LightActorComponent::OnRemovedFromWorld()
+   {
+      DeleteLight();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void LightActorComponent::DeleteLight()
+   {
+      if (mLight != nullptr)
+      {
+         dtGame::GameActorProxy* act = nullptr;
+         GetOwner(act);
+
+         if (act->GetDrawable() != nullptr)
+         {
+            //std::cout << "Delete Light" << std::endl;
+
+            act->GetGameManager()->DeleteActor(*mLight);
+         }
+
+         mLight = nullptr;
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -428,13 +453,13 @@ namespace dtExample
    {
       if ( ! mShader.valid() && ! mShaderParameterName.empty())
       {
-         dtCore::BaseActorObject* actor = NULL;
+         dtCore::BaseActorObject* actor = nullptr;
          GetOwner(actor);
 
-         if (actor != NULL)
+         if (actor != nullptr)
          {
             dtCore::DeltaDrawable* drawable = actor->GetDrawable();
-            if (drawable != NULL)
+            if (drawable != nullptr)
             {
                mShader = dtCore::ShaderManager::GetInstance().GetShaderInstanceForDrawable(*drawable);
                mShaderParameter = mShader->FindParameter(mShaderParameterName);
@@ -449,7 +474,7 @@ namespace dtExample
          if (mShaderParameterType == &ParamType::FLOAT)
          {
             dtCore::ShaderParamFloat* param = dynamic_cast<dtCore::ShaderParamFloat*>(mShaderParameter.get());
-            if (param != NULL)
+            if (param != nullptr)
             {
                param->SetValue(intensity);
             }
@@ -476,7 +501,7 @@ namespace dtExample
                value.w() = intensity;
             }
 
-            if (param != NULL)
+            if (param != nullptr)
             {
                param->SetValue(value);
             }
@@ -491,7 +516,7 @@ namespace dtExample
       {
          dtRender::DynamicLight* light = GetLightActorById(mLightId);
 
-         if(light != NULL)
+         if(light != nullptr)
          {
             SetLight(light);
          }

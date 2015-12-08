@@ -49,22 +49,22 @@ namespace dtDirector
 {
    ////////////////////////////////////////////////////////////////////////////////
    NodeScene::NodeScene(DirectorEditor* parent, DirectorGraph* graph)
-      : QGraphicsScene(parent)
-      , mpEditor(parent)
-      , mpGraph(graph)
-      , mpDraggedItem(NULL)
-      , mHeight(0.0f)
-      , mWidth(0.0f)
+   : QGraphicsScene(parent)
+   , mpEditor(parent)
+   , mpGraph(graph)
+   , mpDraggedItem(NULL)
+   , mHeight(0.0f)
+   , mWidth(0.0f)
    {
       setBackgroundBrush(Qt::lightGray);
 
       mpItem = new QGraphicsRectItem(NULL);
-	  addItem(mpItem);
+      addItem(mpItem);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    NodeItem* NodeScene::CreateNode(NodeType::NodeTypeEnum nodeType, const std::string& name,
-      const std::string& category)
+         const std::string& category)
    {
       dtCore::RefPtr<Node> node = NodeManager::GetInstance().CreateNode(name, category, mpGraph);
       if (node.valid())
@@ -75,40 +75,40 @@ namespace dtDirector
          {
          case NodeType::MUTATOR_NODE:
          case NodeType::VALUE_NODE:
+         {
+            item = new ValueItem(node, false, false, mpItem, NULL);
+            break;
+         }
+         case NodeType::MACRO_NODE:
+         {
+            if (IS_A(node.get(), ReferenceScriptAction*))
+            {
+               item = new ScriptItem(node, false, false, mpItem, NULL);
+            }
+            else
+            {
+               return CreateMacro("");
+            }
+            break;
+         }
+         case NodeType::MISC_NODE:
+         {
+            if (IS_A(node.get(), GroupNode*))
+            {
+               item = new GroupItem(node, false, false, mpItem, NULL, true);
+               break;
+            }
+         }
+         default:
+         {
+            if (name == "Value Link" && category == "Core")
             {
                item = new ValueItem(node, false, false, mpItem, NULL);
                break;
             }
-         case NodeType::MACRO_NODE:
-            {
-               if (IS_A(node.get(), ReferenceScriptAction*))
-               {
-                  item = new ScriptItem(node, false, false, mpItem, NULL);
-               }
-               else
-               {
-                  return CreateMacro("");
-               }
-               break;
-            }
-         case NodeType::MISC_NODE:
-            {
-               if (IS_A(node.get(), GroupNode*))
-               {
-                  item = new GroupItem(node, false, false, mpItem, NULL, true);
-                  break;
-               }
-            }
-         default:
-            {
-               if (name == "Value Link" && category == "Core")
-               {
-                  item = new ValueItem(node, false, false, mpItem, NULL);
-                  break;
-               }
-               item = new ActionItem(node, false, false, mpItem, NULL);
-               break;
-            }
+            item = new ActionItem(node, false, false, mpItem, NULL);
+            break;
+         }
          }
 
          if (item != NULL)
@@ -238,7 +238,7 @@ namespace dtDirector
       setSceneRect(boundRect);
 
       view->centerOn(center, 0);
-  }
+   }
 
    ///////////////////////////////////////////////////////////////////////////////
    void NodeScene::Clear()
@@ -248,7 +248,7 @@ namespace dtDirector
       delete mpItem;
 
       mpItem = new QGraphicsRectItem(NULL);
-	  addItem(mpItem);
+      addItem(mpItem);
 
       mHeight = 0;
    }
@@ -303,8 +303,8 @@ namespace dtDirector
 
       //shift to the right to account for some negative geometry
       painter.translate(QPoint(
-         -mpDraggedItem->boundingRect().left() + LINK_LENGTH,
-         -mpDraggedItem->boundingRect().top() + LINK_LENGTH));
+            -mpDraggedItem->boundingRect().left() + LINK_LENGTH,
+            -mpDraggedItem->boundingRect().top() + LINK_LENGTH));
 
       PaintItemChildren(&painter, mpDraggedItem, new QStyleOptionGraphicsItem());
       painter.end();
@@ -369,21 +369,21 @@ namespace dtDirector
       painter->scale(scale, scale);
       item->paint(painter, options);
 
-	  QGraphicsItem* curItem = nullptr;
-	  QList<QGraphicsItem*> children = item->childItems();
-	  std::for_each(children.begin(), children.end(),
-		  [&](QGraphicsItem* child)
-		  {
-			 if (child != nullptr)
-			 {
-				painter->translate(child->pos());
+      //QGraphicsItem* curItem = nullptr;
+      QList<QGraphicsItem*> children = item->childItems();
+      std::for_each(children.begin(), children.end(),
+            [&](QGraphicsItem* child)
+            {
+         if (child != nullptr)
+         {
+            painter->translate(child->pos());
 
-				PaintItemChildren(painter, child, options);
+            PaintItemChildren(painter, child, options);
 
-				painter->translate(-child->pos());
-			 }
-		  }
-	  );
+            painter->translate(-child->pos());
+         }
+            }
+      );
 
       // Undo the previous scale amount.
       scale = 1.0f / scale;

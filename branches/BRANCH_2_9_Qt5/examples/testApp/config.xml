@@ -8,7 +8,7 @@
 	<Camera Name="defaultCam" WindowInstance="testApp"/>
 	<View Name="defaultView" CameraInstance="defaultCam" SceneInstance="defaultScene"/>
         <Log Name="animationtransitionplanner.cpp" Level="Warning"/>
-   
+        <Log Name="librarysharingmanager.cpp" Level="Debug"/>
    <Properties>
    <!-- Possible threading models:
 	 SingleThreaded,
@@ -31,12 +31,28 @@
    <Property Name="dtPhysics.EnableStepPhysicsInBackground">true</Property>
    <!-- This is the number of steps the physics engine will use for solving
     constraints per engine substep -->
-   <Property Name="dtPhysics.SolverIterationCount">20</Property>
+   <Property Name="dtPhysics.SolverIterationCount">10</Property>
    <Property Name="dtPhysics.TicksPerSecond">60</Property>
    <!-- This is the number of threads to run the physics on, which
          defaults to the number of cores you have, except that not all engines
          will run in a background thread.-->
    <Property Name="dtPhysics.NumProcessingElements">1</Property>
+    <!-- The range from the main camera to use for debug-drawing
+         the physics.  Setting this to 0 means infinite range.  Physics debug
+         drawing has lots of overhead and is completely brute force, so if you
+         have a large complex physics scene with lots of triangle mesh data,
+         you should probably set this to something small or you likely won't be
+         able to run at an interactive framerate. -->
+    <Property Name="dtPhysics.DebugDrawRange">80.0</Property>
+
+
+    <!-- To get documentation fore these pal parameters, set the  dtPhysics.PrintEnginePropertyDocumentation
+         option to true -->
+    <Property Name="dtPhysics.PrintEnginePropertyDocumentation">false</Property>
+    <!-- This has to be true to enable multi-threaded bullet internally-->
+    <Property Name="pal.Bullet_UseMultithreadedDispatcher">true</Property>
+    <Property Name="pal.Bullet_Solver">fast</Property><!--you can put accurate or turn on PrintEnginePropertyDocumentation to get a list of options at runtime.-->
+
    <!-- The range from the main camera to use for debug-drawing
          the physics.  Setting this to 0 is infinite range.  Physics debug
          drawing has lots of overhead and is completely brute force, so if you

@@ -70,17 +70,17 @@ namespace dtEditQt
 
       // connect
       connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryImported()),
-         this, SLOT(refreshAll()));
+         this, SLOT(refreshAll()), Qt::QueuedConnection);
       connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryRemoved()),
-         this, SLOT(refreshAll()));
+         this, SLOT(refreshAll()), Qt::QueuedConnection);
       connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryAboutToBeRemoved()),
-         this, SLOT(refreshAll())); // make sure the table is emptied here or crash!
+         this, SLOT(refreshAll()), Qt::QueuedConnection); // make sure the table is emptied here or crash!
       connect(&EditorEvents::GetInstance(), SIGNAL(currentMapChanged()),
-         this, SLOT(refreshAll()));
+         this, SLOT(refreshAll()), Qt::QueuedConnection);
       connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()),
-         this, SLOT(refreshAll()));
+         this, SLOT(refreshAll()), Qt::QueuedConnection);
       connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(dtCore::ActorPtr, bool)),
-         this, SLOT(onActorProxyCreated(dtCore::ActorPtr, bool)));
+         this, SLOT(onActorCreated(dtCore::ActorPtr, bool)), Qt::QueuedConnection);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -190,21 +190,9 @@ namespace dtEditQt
 
       mClassList.clear();
 
-      // clear the category box - there's no clear all....
-      while (mCategoryBox->count() > 0)
-      {
-         mCategoryBox->removeItem(0);
-      }
-      // clear the type box - there's no clear all....
-      while (mTypeBox->count() > 0)
-      {
-         mTypeBox->removeItem(0);
-      }
-      // clear the type box - there's no clear all....
-      while (mClassBox->count() > 0)
-      {
-         mClassBox->removeItem(0);
-      }
+      mCategoryBox->clear();
+      mTypeBox->clear();
+      mClassBox->clear();
 
       // Remember our currently selected actors.
       std::vector<dtCore::UniqueId> selection = mResultsTable->getSelectedItems();
@@ -271,12 +259,11 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ActorSearcher::searchPressed()
    {
-      typedef std::vector< dtCore::RefPtr<dtCore::BaseActorObject> > ActorArray;
-      ActorArray foundActors;
-      ActorArray validActors;
+      dtCore::ActorRefPtrVector foundActors;
+      dtCore::ActorRefPtrVector validActors;
 
       dtCore::Map* map = EditorData::GetInstance().getCurrentMap();
-      if (map == NULL)
+      if (map == nullptr)
       {
          return;
       }
@@ -309,8 +296,8 @@ namespace dtEditQt
 
       // Remove actor components.
       dtGame::ActorComponent* comp = NULL;
-      ActorArray::iterator curIter = foundActors.begin();
-      ActorArray::iterator endIter = foundActors.end();
+      dtCore::ActorRefPtrVector::iterator curIter = foundActors.begin();
+      dtCore::ActorRefPtrVector::iterator endIter = foundActors.end();
       for (; curIter != endIter; ++curIter)
       {
          comp = dynamic_cast<dtGame::ActorComponent*>(curIter->get());
@@ -335,7 +322,7 @@ namespace dtEditQt
       // Empty out the table before adding items.
       mResultsTable->clearAll();
       mResultsTable->setUpdatesEnabled(false);
-      mResultsTable->addProxies(validActors);
+      mResultsTable->addActors(validActors);
       mResultsTable->setUpdatesEnabled(true);
       //showResults(foundProxies);
 
@@ -343,14 +330,14 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorSearcher::onActorProxyCreated(dtCore::RefPtr<dtCore::BaseActorObject> proxy, bool forceNoAdjustments)
+   void ActorSearcher::onActorCreated(dtCore::ActorPtr actor, bool forceNoAdjustments)
    {
       EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
       std::set<dtUtil::RefString>::const_iterator setIter;
       bool addedClasses = false;
 
-      const std::set<dtUtil::RefString>& actorClasses = proxy->GetActorType().GetSharedClassInfo().mClassHierarchy;
+      const std::set<dtUtil::RefString>& actorClasses = actor->GetActorType().GetSharedClassInfo().mClassHierarchy;
 
       // walk through the class hierarchy of the new object
       for (setIter = actorClasses.begin(); setIter != actorClasses.end(); ++setIter)
@@ -371,11 +358,7 @@ namespace dtEditQt
          // hold previous selection - nice for the user
          QString previousSelection = mClassBox->currentText();
 
-         // clear the type box - there's no clear all....
-         while (mClassBox->count() > 0)
-         {
-            mClassBox->removeItem(0);
-         }
+         mClassBox->clear();
 
          // add the new sorted list.
          mClassList.sort();

@@ -310,13 +310,6 @@ namespace dtActors
       return mBillBoardIcon.get();
    }
 
-   void BezierNodeActorProxy::OnScale(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
-   {
-      dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (GetDrawable());
-
-      bn->SetDirtyFlag(true);
-   }
-
    void BezierNodeActorProxy::OnRotation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue)
    {
       dtABC::BezierNode *bn = static_cast<dtABC::BezierNode*> (GetDrawable());

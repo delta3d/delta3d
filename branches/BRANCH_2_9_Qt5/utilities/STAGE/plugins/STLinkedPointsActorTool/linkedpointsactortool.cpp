@@ -20,6 +20,7 @@
 #include <dtEditQt/viewport.h>
 
 #include <dtUtil/fileutils.h>
+#include <dtUtil/mathdefines.h>
 
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMessageBox>
@@ -945,7 +946,7 @@ void LinkedPointsActorToolPlugin::UpdatePlacementGhost(Viewport* vp, osg::Vec2 m
             vec.z() = 0.0f;
             vec.normalize();
             float dot = vec * angle1;
-            if (abs(dot) >= 0.99f)
+            if (dtUtil::Abs(dot) >= 0.99f)
             {
                osg::Vec3 start = prevPos - (angle1 * len);
                osg::Vec3 end = prevPos + (angle1 * len);
@@ -954,7 +955,7 @@ void LinkedPointsActorToolPlugin::UpdatePlacementGhost(Viewport* vp, osg::Vec2 m
             else
             {
                dot = vec * angle2;
-               if (abs(dot) >= 0.99f)
+               if (dtUtil::Abs(dot) >= 0.99f)
                {
                   osg::Vec3 start = prevPos - (angle2 * len);
                   osg::Vec3 end = prevPos + (angle2 * len);

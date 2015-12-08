@@ -46,12 +46,11 @@ namespace dtEditQt
 {
    ///////////////////////////////////////////////////////////////////////////////
    ActorSearchDockWidget::ActorSearchDockWidget(QWidget* parent)
-      : QDockWidget(parent)
-      , mTabActorSearch(NULL)
-      , mTabGlobalActor(NULL)
-      , mActorTreePanel(NULL)
-      , mActorSearchWidget(NULL)
-      , mActorGlobalWidget(NULL)
+   : QDockWidget(parent)
+   , mTabActorSearch(NULL)
+   , mTabGlobalActor(NULL)
+   , mActorSearchWidget(NULL)
+   , mActorGlobalWidget(NULL)
    {
       setWindowTitle(tr("Search"));
 

@@ -51,6 +51,8 @@ namespace dtPhysics
                SetRotation(osg::Vec3(pos, 0.0f, 0.0f));
                break;
             }
+            default:
+               break;
          }
       }
       else

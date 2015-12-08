@@ -292,7 +292,12 @@ namespace dtCore
       if (mActorMap.insert(std::make_pair(proxy.GetId(), dtCore::RefPtr<BaseActorObject>(&proxy))).second)
       {
          const std::set<dtUtil::RefString>& hierarchy = proxy.GetActorType().GetSharedClassInfo().mClassHierarchy;
-         mProxyActorClasses.insert(proxy.GetActorType().GetSharedClassInfo().GetClassName());
+         dtUtil::RefString classNm = proxy.GetActorType().GetSharedClassInfo().GetClassName();
+         if (classNm->empty())
+         {
+            LOGN_ERROR("map.cpp", "Empty class name on actor with type " + proxy.GetActorType().GetFullName());
+         }
+         mProxyActorClasses.insert(classNm);
          mProxyActorClasses.insert(hierarchy.begin(), hierarchy.end());
          mModified = true;
       }

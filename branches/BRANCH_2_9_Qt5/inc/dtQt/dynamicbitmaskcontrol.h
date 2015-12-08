@@ -105,11 +105,6 @@ namespace dtQt
       public slots:
 
          /**
-          * @see DynamicAbstractControl#updateData
-          */
-         virtual bool updateData(QWidget* widget);
-
-         /**
           * Event handler when a menu option has been selected.
           */
          virtual void itemSelected(QAction* action);

@@ -427,12 +427,8 @@ namespace dtQt
       {
          GetRootControl()->OnPropertyChanged(propCon, property);
       }
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void BasePropertyEditor::ProxyNameChanged(dtCore::BaseActorObject& propCon, std::string oldName)
-   {
-      UpdateTitle();
+      if (property.GetName() == "Name")
+         UpdateTitle();
    }
 
    /////////////////////////////////////////////////////////////////////////////////

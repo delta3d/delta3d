@@ -59,7 +59,7 @@ namespace dtQt
       //setEvenRowColor(ROW_COLOR_EVEN);//QColor(237, 243, 254));
       //setOddRowColor(ROW_COLOR_ODD);//QColor(255, 255, 255));
 
-      setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+      //setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
       //setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
    }
 

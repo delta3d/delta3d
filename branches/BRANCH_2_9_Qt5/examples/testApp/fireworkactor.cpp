@@ -583,6 +583,7 @@ namespace dtExample
       {
          light->SetFadeOut(false);
          light->SetIntensity(0.0f);
+         light->RemoveFromLightScene();
       }
    }
 
@@ -620,6 +621,11 @@ namespace dtExample
       if (light != NULL)
       {
          light->SetFadeOut(false);
+         
+         if (!light->IsInLightScene())
+         {
+            light->AddToLightScene();
+         }
       }
    }
 

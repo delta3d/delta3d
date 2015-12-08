@@ -45,7 +45,7 @@
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/threadpool.h>
 #include <dtCore/mouse.h>
-
+#include <dtCore/deltawin.h>
 #include <cassert>
 
 #include <dtUtil/xercesutils.h>
@@ -244,6 +244,9 @@ void Application::EventTraversal(const double deltaSimTime)
 ///////////////////////////////////////////////////////////////////////////////
 void Application::Frame(const double deltaSimTime)
 {
+   
+   LOGN_DEBUG("application.cpp" ,"Frame Start");
+
    if(!mCompositeViewer->done())
    {
       bool singleThreaded = mCompositeViewer->getThreadingModel() == osgViewer::ViewerBase::SingleThreaded;
@@ -254,6 +257,7 @@ void Application::Frame(const double deltaSimTime)
       //typical Delta3D update of PreFrame().  The only exception to this is that we need
       if(mFirstFrame)
       {
+         LOGN_DEBUG("application.cpp" ,"First Frame");
 
 #ifndef MULTITHREAD_FIX_HACK_BREAKS_CEGUI
          dtCore::ObserverPtr<osgViewer::GraphicsWindow> gw;
@@ -278,24 +282,44 @@ void Application::Frame(const double deltaSimTime)
       // to update drawables; especially particle systems.
       // The time delta will be ignored here and the absolute simulation
       // time passed to the OSG scene updater.
+      
+      LOGN_DEBUG("application.cpp", "Advance Composite Viewer");
+      
+      LOGN_DEBUG("ApplicationTime", "Total time simulated: " + dtUtil::ToString(dtCore::System::GetInstance().GetSimTimeSinceStartup()));
+
       mCompositeViewer->advance(dtCore::System::GetInstance().GetSimTimeSinceStartup());
+   
+      LOGN_DEBUG("application.cpp" ,"Update Traversals");
+
       mCompositeViewer->updateTraversal();
+      
+      LOGN_DEBUG("application.cpp" ,"Rendering Traversals");
+
       mCompositeViewer->renderingTraversals();
 
    }
+   
+   LOGN_DEBUG("application.cpp" ,"Frame End");
+
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 void Application::PreFrame(const double deltaSimTime)
 {
+   LOGN_DEBUG("application.cpp" ,"PreFrame");
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void Application::PostFrame(const double deltaSimTime)
 {
+   LOGN_DEBUG("application.cpp" ,"Post Frame");
+
    while (!mViewsToDelete.empty())
    {
+      LOGN_DEBUG("application.cpp" ,"Deleting views.");
+
       RemoveViewImpl(*mViewsToDelete.back());
       mViewsToDelete.pop_back();
    }
@@ -304,6 +328,8 @@ void Application::PostFrame(const double deltaSimTime)
 ///////////////////////////////////////////////////////////////////////////////
 void Application::Pause(const double deltaRealTime)
 {
+   LOGN_DEBUG("application.cpp" ,"Pause.");
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -661,11 +687,18 @@ bool AppXMLApplicator::operator ()(const ApplicationConfigData& data, dtABC::App
    // apply the window settings
    dtCore::DeltaWin* dwin = app->GetWindow();
 
-   //set the default log level for all future Log instances
-   dtUtil::Log::SetDefaultLogLevel(dtUtil::Log::GetLogLevelForString(data.GLOBAL_LOG_LEVEL));
+   if (dtUtil::StrCompare(data.GLOBAL_LOG_LEVEL, "off", false) == 0)
+   {
+      dtUtil::Log::SetAllOutputStreamBits(dtUtil::Log::NO_OUTPUT);
+   }
+   else
+   {
+      //set the default log level for all future Log instances
+      dtUtil::Log::SetDefaultLogLevel(dtUtil::Log::GetLogLevelForString(data.GLOBAL_LOG_LEVEL));
 
-   //Also set the level for any existing Log instances
-   dtUtil::Log::SetAllLogLevels(dtUtil::Log::GetLogLevelForString(data.GLOBAL_LOG_LEVEL));
+      //Also set the level for any existing Log instances
+      dtUtil::Log::SetAllLogLevels(dtUtil::Log::GetLogLevelForString(data.GLOBAL_LOG_LEVEL));
+   }
 
    //Set the log level for any specifically defined Log instances, overwriting the default level
    for (std::map<std::string, std::string>::const_iterator i = data.LOG_LEVELS.begin();
@@ -712,8 +745,13 @@ bool AppXMLApplicator::operator ()(const ApplicationConfigData& data, dtABC::App
       }
    }
 
+   if (data.HIDE_WINDOWS_CONSOLE)
+   {
+      dtCore::DeltaWin::HideWindowsConsole(true);
+   }
+      
+   
    bool valid = true; //optimistic
-
    // connect the camera, scene, and window
    // since they might not be the same as the app's instances, we will use the instance management layer
    dtCore::DeltaWin* win = dtCore::DeltaWin::GetInstance(data.WINDOW_INSTANCE);

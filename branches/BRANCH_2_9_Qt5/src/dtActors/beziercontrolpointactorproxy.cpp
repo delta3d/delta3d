@@ -97,16 +97,6 @@ namespace dtActors
    }
 
 
-   void BezierControlPointActorProxy::OnScale(const osg::Vec3& oldValue, const osg::Vec3& newValue)
-   {
-      dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (GetDrawable());
-
-      if (bcp->GetParent() != NULL)
-      {
-         bcp->GetParent()->SetDirtyFlag(true);
-      }
-   }
-
    void BezierControlPointActorProxy::OnRotation(const osg::Vec3& oldValue, const osg::Vec3& newValue)
    {
       dtABC::BezierControlPoint *bcp = static_cast<dtABC::BezierControlPoint*> (GetDrawable());

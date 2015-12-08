@@ -334,6 +334,8 @@ namespace dtQt
       */
       virtual void actorPropertyChanged(dtCore::PropertyContainer& propCon, dtCore::ActorProperty& property);
 
+      bool IsInitialized() const { return mInitialized; }
+
    signals:
       void SignalShiftUpClicked(int itemIndex);
       void SignalShiftDownClicked(int itemIndex);
@@ -355,10 +357,10 @@ namespace dtQt
        * actor.  This is typically trapped to a lost focus or return pressed or similar
        * user event behavior.  This can also be called by the parent control at the
        * moment we change selection.
-       * @return Returns true if any data was actually changed and sucessfully set on the control
+       * @return Returns true if any data was actually changed and successfully set on the control
        * @note - This is purely virtual
        */
-      virtual bool updateData(QWidget* widget) = 0;
+      virtual bool updateData(QWidget* widget);
 
       /**
        * Called when the user presses the enter key on the editing widget.
@@ -416,7 +418,10 @@ namespace dtQt
       virtual void UpdateButtonStates();
 
       // indicates whether the object has been initialized
+   private:
       bool mInitialized;
+   protected:
+
       int  mArrayIndex;
 
       dtCore::RefPtr<dtCore::PropertyContainer> mPropContainer;

@@ -140,7 +140,6 @@ namespace dtQt
       void ActorPropertyChanged(dtCore::PropertyContainer& propCon,
          dtCore::ActorProperty& property);
 
-      void ProxyNameChanged(dtCore::BaseActorObject& pc, std::string oldName);
       void UpdateTitle();
 
       virtual void PropertyAboutToChangeFromControl(dtCore::PropertyContainer&, dtCore::ActorProperty&,

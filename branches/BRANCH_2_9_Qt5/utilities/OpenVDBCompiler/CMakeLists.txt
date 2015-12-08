@@ -1,10 +1,9 @@
 
-SET(APP_NAME     OpenVDBCompiler)
-
-SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/utilities/${APP_NAME})
+#SET(APP_NAME     OpenVDBCompiler)
+SET(APP_NAME     CrapCompiler)
 
 SET(PROG_SOURCES
-    ${SOURCE_PATH}/main.cpp
+    generatecrap.cpp
     )
 
 ADD_EXECUTABLE(${APP_NAME}

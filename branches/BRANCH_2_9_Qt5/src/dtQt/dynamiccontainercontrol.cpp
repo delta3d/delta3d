@@ -93,7 +93,7 @@ namespace dtQt
    {
       QWidget* wrapper = DynamicAbstractControl::createEditor(parent, option, index);
 
-      if (!mInitialized)
+      if (!IsInitialized())
       {
          LOG_ERROR("Tried to add itself to the parent widget before being initialized");
          return wrapper;

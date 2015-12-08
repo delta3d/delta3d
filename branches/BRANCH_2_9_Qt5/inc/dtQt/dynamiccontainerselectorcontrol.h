@@ -107,10 +107,6 @@ namespace dtQt
       void refreshChildren();
 
    public slots:
-      /**
-       * @see DynamicAbstractControl#updateData
-       */
-      virtual bool updateData(QWidget* widget);
 
       /**
        * Called when the user selects an item in the combo box

@@ -156,7 +156,7 @@ namespace dtQt
    {
       QWidget* wrapper = DynamicAbstractControl::createEditor(parent, option, index);
 
-      if (!mInitialized)
+      if (!IsInitialized())
       {
          LOG_ERROR("Tried to add itself to the parent widget before being initialized");
          return wrapper;
@@ -242,21 +242,6 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////////
    // SLOTS
    /////////////////////////////////////////////////////////////////////////////////
-
-   bool DynamicStringControl::updateData(QWidget* widget)
-   {
-      // returns true if we successfully change data
-      bool dataChanged = false;
-
-      if (!mInitialized || widget == NULL)
-      {
-         LOG_ERROR("Tried to updateData before being initialized");
-         return dataChanged;
-      }
-
-      return updateModelFromEditor(widget);
-   }
-
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicStringControl::itemSelected(int index)
    {
