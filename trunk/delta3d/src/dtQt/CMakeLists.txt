@@ -14,6 +14,7 @@ baselibrarylisteditor.cpp
 basepropertycontrol.cpp
 basepropertyeditor.cpp
 clickablelabelcontrol.cpp
+constants.cpp
 deltastepper.cpp
 docbrowser.cpp
 docbrowserxmlreader.cpp
@@ -38,6 +39,7 @@ dynamicresourcecontrol.cpp
 dynamicstringcontrol.cpp
 dynamicvectorelementcontrol.cpp
 librarypathseditor.cpp
+nodegraphview.cpp
 nodetreepanel.cpp
 objecttypelistpanel.cpp
 objecttypeselectdialog.cpp
@@ -78,6 +80,7 @@ INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}
 qt4_wrap_ui(UI_SOURCES actortreepanel.ui
                        basedialog.ui
                        basepropertycontrol.ui
+					   nodegraphviewer.ui
                        nodetreepanel.ui
                        objecttypelistpanel.ui
 					   osgoptimizerpanel.ui
