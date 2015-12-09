@@ -28,6 +28,7 @@ SET( LIB_SOURCES
     ${SOURCE_PATH}/nodecollector.cpp
     ${SOURCE_PATH}/nodemask.cpp
     ${SOURCE_PATH}/nodeprintout.cpp
+    ${SOURCE_PATH}/nodetypes.cpp
     ${SOURCE_PATH}/noisetexture.cpp
     ${SOURCE_PATH}/polardecomp.cpp
 #    ${SOURCE_PATH}/precomp.cpp
