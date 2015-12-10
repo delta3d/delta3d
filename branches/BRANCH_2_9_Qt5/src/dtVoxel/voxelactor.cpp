@@ -233,14 +233,14 @@ namespace dtVoxel
             {
                double correctSimTime = dtCore::System::GetInstance().GetCorrectSimulationTime();
                double timeDiff = dtUtil::Max(correctSimTime - tickMessage.GetSimulationTime(), 0.0);
-               if (timeDiff < tickMessage.GetDeltaSimTime())
+               if (timeDiff < tickMessage.GetDeltaSimTime() || mMinCellsToUpdatePerFrame > 0)
                {
                   double fractionOfTickBehind = (tickMessage.GetDeltaSimTime()-timeDiff)/tickMessage.GetDeltaRealTime();
                   unsigned numToUpdate = unsigned(std::ceil(fractionOfTickBehind * double(mMaxCellsToUpdatePerFrame)));
                   if (numToUpdate < mMinCellsToUpdatePerFrame)
                      numToUpdate = mMinCellsToUpdatePerFrame;
-                  //if (numToUpdate != mMaxCellsToUpdatePerFrame)
-                  //   std::cout << "Updating at most " << numToUpdate << " cells." << std::endl;
+//                  if (numToUpdate != mMaxCellsToUpdatePerFrame)
+//                     std::cout << "Updating at most " << numToUpdate << " cells." << std::endl;
                   mVisualGrid->BeginNewUpdates(pos, numToUpdate, mUpdateCellsOnBackgroundThread);
                   mTicksSinceVisualUpdate = 0;
                }
@@ -289,6 +289,51 @@ namespace dtVoxel
 
       openvdb::Vec3d lastVector;
       osg::BoundingBox bb;
+      for (unsigned i = 0, iend = indicesDeactivated->GetSize(); i < iend; ++i)
+      {
+         const dtCore::NamedParameter* indexP = indicesDeactivated->GetParameter(i);
+         if (indexP != nullptr && indexP->GetDataType() == dtCore::DataType::VEC3)
+         {
+            auto indexVp = static_cast<const dtCore::NamedVec3Parameter*>(indexP);
+            osg::Vec3 idxVec = indexVp->GetValue();
+            openvdb::Vec3d idxOVDBVec(idxVec.x(), idxVec.y(), idxVec.z());
+            openvdb::Vec3d worldVec = grid->transform().indexToWorld(idxOVDBVec);
+            if (first)
+            {
+               lastVector = worldVec;
+
+               first = false;
+            }
+            else
+            {
+               openvdb::Vec3d diff = lastVector - worldVec;
+               double lengthSqr = diff.lengthSqr();
+               if (lengthSqr > rangeToRecomputeBound)
+               {
+                  //markDirtyCounter++;
+                  MarkVisualDirty(bb, 0);
+                  bb = osg::BoundingBox();
+               }
+            }
+
+            bb.expandBy(osg::Vec3(worldVec.x(), worldVec.y(), worldVec.z()));
+            if (!updateVisualOnly)
+            {
+               openvdb::Coord c(openvdb::Coord::round(idxOVDBVec));
+               accessor.setValueOff(c, grid->background());
+            }
+
+            lastVector = worldVec;
+         }
+         else
+         {
+            LOGN_ERROR("voxelactor.cpp", "Received a VolumeUpdateMessage, but the indices deactivated are not Vec3 parameters.");
+         }
+      }
+
+      first = true;
+      MarkVisualDirty(bb, 0);
+
       for (unsigned i = 0, iend = indices->GetSize(); i < iend; ++i)
       {
          const dtCore::NamedParameter* indexP = indices->GetParameter(i);
@@ -334,51 +379,6 @@ namespace dtVoxel
          else
          {
             LOGN_ERROR("voxelactor.cpp", "Received a VolumeUpdateMessage, but the indices are not Vec3 parameters.");
-         }
-      }
-
-      first = true;
-      MarkVisualDirty(bb, 0);
-
-      for (unsigned i = 0, iend = indicesDeactivated->GetSize(); i < iend; ++i)
-      {
-         const dtCore::NamedParameter* indexP = indicesDeactivated->GetParameter(i);
-         if (indexP != nullptr && indexP->GetDataType() == dtCore::DataType::VEC3)
-         {
-            auto indexVp = static_cast<const dtCore::NamedVec3Parameter*>(indexP);
-            osg::Vec3 idxVec = indexVp->GetValue();
-            openvdb::Vec3d idxOVDBVec(idxVec.x(), idxVec.y(), idxVec.z());
-            openvdb::Vec3d worldVec = grid->transform().indexToWorld(idxOVDBVec);
-            if (first)
-            {
-               lastVector = worldVec;
-
-               first = false;
-            }
-            else
-            {
-               openvdb::Vec3d diff = lastVector - worldVec;
-               double lengthSqr = diff.lengthSqr();
-               if (lengthSqr > rangeToRecomputeBound)
-               {
-                  //markDirtyCounter++;
-                  MarkVisualDirty(bb, 0);
-                  bb = osg::BoundingBox();
-               }
-            }
-
-            bb.expandBy(osg::Vec3(worldVec.x(), worldVec.y(), worldVec.z()));
-            if (!updateVisualOnly)
-            {
-               openvdb::Coord c(openvdb::Coord::round(idxOVDBVec));
-               accessor.setValueOff(c, grid->background());
-            }
-
-            lastVector = worldVec;
-         }
-         else
-         {
-            LOGN_ERROR("voxelactor.cpp", "Received a VolumeUpdateMessage, but the indices deactivated are not Vec3 parameters.");
          }
       }
       
