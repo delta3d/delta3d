@@ -284,7 +284,7 @@ namespace dtVoxel
                   {
                      if (!curBlock->HasCachedModel(mFullPathToFileCache, index))
                      {
-                        std::cout << "Caching model for later use" << std::endl;
+                        //std::cout << "Caching model for later use" << std::endl;
                         //curBlock->AllocateCombinedMesh(*mVoxelActor, mStaticResolution);
                         curBlock->AllocateLODMesh(*mVoxelActor, mRes0, mDist0, mRes1, mDist1, mRes2, mDist2, mRes3, mViewDistance);
 
@@ -305,7 +305,7 @@ namespace dtVoxel
       }
             });
 
-      std::cout << std::endl << "Done Creating Voxel Grid" << std::endl;
+      LOGN_DEBUG("voxelgrid.cpp", "Done Creating Voxel Grid");
 
       /*std::cout << std::endl << "Optimizing Grid" << std::endl;
       osgUtil::Optimizer opt;
@@ -328,7 +328,7 @@ namespace dtVoxel
 
       mVoxelActor = &voxelActor;
 
-      std::cout << std::endl << "Creating Voxel Grid with " << mNumBlocks << " Voxel Blocks" << std::endl;
+      LOGN_DEBUG("voxelgrid.cpp", "Creating Voxel Grid with " + dtUtil::ToString(mNumBlocks) + " Voxel Blocks");
 
       GenerateCacheString();
 
@@ -399,12 +399,12 @@ namespace dtVoxel
          });
       }
 
-      std::cout << std::endl << "Done Creating Voxel Grid" << std::endl;
+      LOGN_DEBUG("voxelgrid.cpp", "Done Creating Voxel Grid");
 
-      std::cout << std::endl << "Optimizing Grid" << std::endl;
+      LOGN_DEBUG("voxelgrid.cpp", "Optimizing Grid");
       osgUtil::Optimizer opt;
       opt.optimize(mRootNode, osgUtil::Optimizer::SPATIALIZE_GROUPS);
-      std::cout << std::endl << "Done Optimizing" << std::endl;
+      LOGN_DEBUG("voxelgrid.cpp", "Done Optimizing");
    }
 
 
@@ -416,7 +416,7 @@ namespace dtVoxel
          return;
       }
     
-      std::cout << std::endl << "Generating Visibility" << std::endl;
+      LOGN_DEBUG("voxelgrid.cpp", "Generating Visibility");
       
       mBlockVisibility.resize(mNumBlocks);
       
@@ -461,7 +461,7 @@ namespace dtVoxel
          });
       }
 
-      std::cout << std::endl << "Done Generating Visibility" << std::endl;
+      LOGN_DEBUG("voxelgrid.cpp", "Done Generating Visibility");
 
       /*std::cout << "Visibility Table" << std::endl;
 
@@ -644,7 +644,7 @@ namespace dtVoxel
    {      
       std::string filePath = mFullPathToFileCache;
       std::string filename("VisibilityCache.dat");
-      std::cout << "Writing visibility cache to " << filePath + filename << std::endl;
+      LOGN_DEBUG("voxelgrid.cpp", "Writing visibility cache to " + filePath + filename);
       std::ofstream outFile(filePath + filename, std::ios::out | std::ios::binary);
       
       if (!outFile.fail())
@@ -722,14 +722,14 @@ namespace dtVoxel
 
       fileName << mFullPathToFileCache << DATABASE_FILENAME;
 
-      std::cout << "Writing voxel database to " << fileName.str() << std::endl;
+      LOGN_DEBUG("voxelgrid.cpp", "Writing voxel database to " + fileName.str());
 
 
       if (dtUtil::FileUtils::GetInstance().DirExists(mFullPathToFileCache))
       {
          result = osgDB::writeNodeFile(*mRootNode, fileName.str());
 
-         std::cout << "Writing master voxel database " << fileName.str() << std::endl;
+         LOGN_DEBUG("voxelgrid.cpp", "Writing master voxel database " + fileName.str());
       }
 
       return result;
@@ -745,7 +745,7 @@ namespace dtVoxel
 
       fileName << filePath << DATABASE_FILENAME;
 
-      std::cout << "Reading master voxel database." << fileName.str() << std::endl;
+      LOGN_DEBUG("voxelgrid.cpp", "Reading master voxel database." + fileName.str());
 
       if (dtUtil::FileUtils::GetInstance().FileExists(fileName.str()))
       {
