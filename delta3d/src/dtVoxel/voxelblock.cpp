@@ -600,7 +600,7 @@ namespace dtVoxel
 
    void VoxelBlock::AllocateCombinedMesh(VoxelActor& voxelActor, osg::Group& parentNode, const osg::Vec3& gridDimensions, const osg::Vec3i& textureResolution)
    {
-      std::cout << "Allocating Combined Voxel Block" << std::endl;
+      //std::cout << "Allocating Combined Voxel Block" << std::endl;
 
       dtCore::RefPtr<osg::Geometry> geom = new osg::Geometry();
       dtCore::RefPtr<osg::Vec3Array> vertArray = new osg::Vec3Array();            
@@ -768,7 +768,7 @@ namespace dtVoxel
 
       if (dtUtil::FileUtils::GetInstance().FileExists(fileName.str()))
       {
-         std::cout << "Reading block num " << index << " from model cache " << fileName.str() << std::endl;
+         LOGN_DEBUG("voxelblock.cpp", "Reading block num " + dtUtil::ToString(index) + " from model cache " + fileName.str());
 
          osg::Node* n = dtUtil::FileUtils::GetInstance().ReadNode(fileName.str());
          if (n != nullptr)
@@ -811,7 +811,7 @@ namespace dtVoxel
       {
          result = osgDB::writeNodeFile(*mVolume, fileName.str());
 
-         std::cout << "Writing PagedLOD for block num " << index << " to model cache " << fileName.str() << std::endl;
+         LOGN_DEBUG("voxelblock.cpp", "Writing PagedLOD for block num " + dtUtil::ToString(index) + " to model cache " + fileName.str());
       }
 
       return result;
@@ -838,7 +838,7 @@ namespace dtVoxel
          {
             //result will be empty string if this fails
             result = fileName.str();
-            std::cout << "Writing lod " << lod << " for block num " << index << " to model   cache " << folderName + fileName.str() << std::endl;
+            LOGN_DEBUG("voxelblock.cpp", "Writing lod " + dtUtil::ToString(lod) + " for block num " + dtUtil::ToString(index) + " to model   cache " + folderName + fileName.str());
          }
          else
          {
