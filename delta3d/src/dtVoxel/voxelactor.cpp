@@ -235,19 +235,16 @@ namespace dtVoxel
                double timeDiff = dtUtil::Max(correctSimTime - tickMessage.GetSimulationTime(), 0.0);
                if (timeDiff < tickMessage.GetDeltaSimTime())
                {
-                  double fractionOfTickBehind = (tickMessage.GetDeltaSimTime()-timeDiff)/tickMessage.GetDeltaRealTime();
-                  unsigned numToUpdate = unsigned(std::ceil(fractionOfTickBehind * double(mMaxCellsToUpdatePerFrame)));
-                  if (numToUpdate < mMinCellsToUpdatePerFrame)
-                     numToUpdate = mMinCellsToUpdatePerFrame;
-                  //if (numToUpdate != mMaxCellsToUpdatePerFrame)
-                  //   std::cout << "Updating at most " << numToUpdate << " cells." << std::endl;
+                  double fractionOfTickBehind = timeDiff/tickMessage.GetDeltaSimTime();
+                  unsigned numToUpdate = unsigned(std::ceil((1.0 - fractionOfTickBehind) * double(mMaxCellsToUpdatePerFrame)));
+                  dtUtil::Clamp(numToUpdate, mMinCellsToUpdatePerFrame, mMaxCellsToUpdatePerFrame);
                   mVisualGrid->BeginNewUpdates(pos, numToUpdate, mUpdateCellsOnBackgroundThread);
                   mTicksSinceVisualUpdate = 0;
                }
-               else if (mTicksSinceVisualUpdate > 2)
+               else if (mMinCellsToUpdatePerFrame > 0 || mTicksSinceVisualUpdate > 2)
                {
-                  //std::cout << "Updating forced to 1 cell." << std::endl;
-                  mVisualGrid->BeginNewUpdates(pos, 1U, mUpdateCellsOnBackgroundThread);
+                  //std::cout << "Updating forced to 1 or minimum cells." << std::endl;
+                  mVisualGrid->BeginNewUpdates(pos, dtUtil::Max(mMinCellsToUpdatePerFrame, 1U), mUpdateCellsOnBackgroundThread);
                   mTicksSinceVisualUpdate = 0;
                }
                else
