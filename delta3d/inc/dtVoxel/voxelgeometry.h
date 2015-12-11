@@ -80,7 +80,7 @@ namespace dtVoxel
          }
          else // debug draw
          {
-            return;
+            //return;
             dtCore::Transform xform;
             dtCore::Camera::GetInstance(0)->GetTransform(xform);
             osg::Vec3d cameraPos = xform.GetTranslation();
