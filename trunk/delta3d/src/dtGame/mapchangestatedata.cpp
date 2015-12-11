@@ -312,7 +312,7 @@ namespace dtGame
 
          SendMapMessage(MessageType::INFO_MAPS_OPENED, mNewMapNames);
          SendMapMessage(MessageType::INFO_MAP_CHANGE_LOAD_END, mNewMapNames);
-         SendMapMessage(MessageType::INFO_MAP_CHANGED, mNewMapNames);
+         SendMapMessage(MessageType::INFO_MAP_CHANGE_END, mNewMapNames);
          mCurrentState = &MapChangeState::IDLE;
       }
    }
