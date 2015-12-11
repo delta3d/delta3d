@@ -24,6 +24,7 @@
 #include "ui_nodetreepanel.h"
 #include <QtCore/QString>
 #include <QtWidgets/QTreeWidget>
+#include <dtQt/constants.h>
 #include <dtQt/nodetreepanel.h>
 #include <osg/Group>
 #include <osg/NodeVisitor>
@@ -36,18 +37,6 @@ namespace dtQt
    /////////////////////////////////////////////////////////////////////////////
    // CONSTANTS
    /////////////////////////////////////////////////////////////////////////////
-   static const QString ICON_NODE("");
-   static const QString ICON_BONE(":dtQt/icons/nodes/bone.png");
-   static const QString ICON_DOF(":dtQt/icons/nodes/dof.png");
-   static const QString ICON_GEODE(":dtQt/icons/nodes/geode.png");
-   static const QString ICON_GEOMETRY(":dtQt/icons/nodes/geometry.png");
-   static const QString ICON_GROUP(":dtQt/icons/nodes/group.png");
-   static const QString ICON_MATRIX(":dtQt/icons/nodes/matrix.png");
-   static const QString ICON_OCCLUDER(":dtQt/icons/nodes/occluder.png");
-   static const QString ICON_OCCLUSION_QUERY(":dtQt/icons/nodes/occlusionquery.png");
-   static const QString ICON_SKELETON(":dtQt/icons/nodes/skeleton.png");
-   static const QString ICON_STATESET(":dtQt/icons/nodes/stateset.png");
-
    const static int ITEM_COLUMN_NAME = 0;
    const static int ITEM_COLUMN_DETAILS = 1;
    
@@ -178,29 +167,32 @@ namespace dtQt
 
       bool IsNodeAllowed(osg::Node& node) const
       {
+         using namespace dtUtil;
+
          bool answer = true;
 
-         std::string nodeType(node.className());
+         std::string nodeClass(node.className());
+         const NodeType* nodeType = NodeType::GetNodeTypeByClassName(nodeClass);
 
-         if (nodeType.compare("MatrixTransform") == 0)
+         if (nodeType == &NodeType::MATRIX)
          {
             answer = ! mFilterOutTransforms;
          }
-         else if (nodeType.compare("Group") == 0)
+         else if (nodeType == &NodeType::GROUP)
          {
             answer = ! mFilterOutGroups;
          }
-         else if (nodeType.compare("Geode") == 0
-            || nodeType.compare("Geometry") == 0)
+         else if (nodeType == &NodeType::GEODE
+            || nodeType == &NodeType::GEOMETRY)
          {
             answer = ! mFilterOutGeodes;
          }
-         else if (nodeType.compare("DOFTransform") == 0)
+         else if (nodeType == &NodeType::DOF)
          {
             answer = ! mFilterOutDOFs;
          }
-         else if (nodeType.compare("OccluderNode") == 0
-            || nodeType.compare("OcclusionQueryNode") == 0)
+         else if (nodeType == &NodeType::OCCLUDER
+            || nodeType == &NodeType::OCCLUSION_QUERY)
          {
             answer = ! mFilterOutOccluders;
          }
@@ -318,7 +310,7 @@ namespace dtQt
          {
             int col = ITEM_COLUMN_DETAILS;
 
-            QIcon statesetIcon(ICON_STATESET);
+            QIcon statesetIcon(Constants::ICON_STATESET);
             item->setIcon(col, statesetIcon);
 
             std::string str = "Stateset \"" + ss->getName() + "\"";
@@ -353,45 +345,15 @@ namespace dtQt
    
       const QString& GetIconForNodeType(const osg::Node& node)
       {
-         const QString* icon = &ICON_NODE;
+         const QString* icon = &Constants::ICON_NODE;
 
          std::string nodeType(node.className());
 
-         if (nodeType.compare("MatrixTransform") == 0)
+         const QString* result = Constants::GetIconPathByClassName(nodeType);
+
+         if (result != nullptr)
          {
-            icon = &ICON_MATRIX;
-         }
-         else if (nodeType.compare("Group") == 0)
-         {
-            icon = &ICON_GROUP;
-         }
-         else if (nodeType.compare("Geode") == 0)
-         {
-            icon = &ICON_GEODE;
-         }
-         else if (nodeType.compare("Geometry") == 0)
-         {
-            icon = &ICON_GEOMETRY;
-         }
-         else if (nodeType.compare("DOFTransform") == 0)
-         {
-            icon = &ICON_DOF;
-         }
-         else if (nodeType.compare("Bone") == 0)
-         {
-            icon = &ICON_BONE;
-         }
-         else if (nodeType.compare("Skeleton") == 0)
-         {
-            icon = &ICON_SKELETON;
-         }
-         else if (nodeType.compare("OccluderNode") == 0)
-         {
-            icon = &ICON_OCCLUDER;
-         }
-         else if (nodeType.compare("OcclusionQueryNode") == 0)
-         {
-            icon = &ICON_OCCLUSION_QUERY;
+            icon = result;
          }
 
          return *icon;

@@ -17,6 +17,7 @@
       <file>icons/nodes/geode.png</file>
       <file>icons/nodes/geometry.png</file>
       <file>icons/nodes/group.png</file>
+      <file>icons/nodes/lod.png</file>
       <file>icons/nodes/matrix.png</file>
       <file>icons/nodes/occluder.png</file>
       <file>icons/nodes/occlusionquery.png</file>
