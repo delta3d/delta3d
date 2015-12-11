@@ -74,7 +74,7 @@ namespace dtVoxel
 
       if (rd != GetDatabase() && !rd.IsEmpty())
       {
-         std::cout << "Loading Grid" << std::endl;
+         LOGN_DEBUG("voxelactor.cpp", "Loading Grid");
          try
          {
             openvdb::io::File file(dtCore::Project::GetInstance().GetResourcePath(rd));
@@ -82,21 +82,21 @@ namespace dtVoxel
             mGrids = file.getGrids();
             file.close();
 
-            std::cout << "Done Loading Grid" << std::endl;
+            LOGN_DEBUG("voxelactor.cpp", "Done Loading Grid");
 
             InitializePhysics();
 
          }
          catch (const openvdb::IoError& ioe)
          {
-            std::cout << "Error Loading Grid" << std::endl;
+            LOG_ERROR("Error Loading Grid");
 
             throw dtUtil::FileUtilIOException(ioe.what(), __FILE__, __LINE__);
          }
       }
       else if (rd.IsEmpty())
       {
-         std::cout << "Unloading Grid" << std::endl;
+         LOGN_DEBUG("voxelactor.cpp", "Unloading Grid");
          mGrids.reset();
       }
    }

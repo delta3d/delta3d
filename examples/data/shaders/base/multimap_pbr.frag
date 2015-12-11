@@ -57,7 +57,7 @@ struct MapParams
 
 
 // External Functions
-void computeMultiMapColor(MapParams m, inout FragParams f, inout EffectParams e);
+void computeMultiMapColor(inout MapParams m, inout FragParams f, inout EffectParams e);
 float SampleShadowTexture();
 float computeFragDepth(float);
 
