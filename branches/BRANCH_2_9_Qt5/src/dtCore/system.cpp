@@ -483,13 +483,12 @@ namespace dtCore
       }
 
       // If ahead enough that we could draw and still be ahead, then just waste time (do nothing in a loop)
-      //double previousDrawTime = mSystemStageTimes[System::STAGE_FRAME] / 1000.0;
-      if (mCorrectSimulationTime + (0.5f * simFrameTime) /*+ previousDrawTime*/ < mSimulationTime + simFrameTime)
+      if (mCorrectSimulationTime + (0.5 * simFrameTime) /*+ previousDrawTime*/ < mSimulationTime + simFrameTime)
       {
 #ifndef DELTA_WIN32
-         AppSleep(1); // In Linux, it seems to sleep for 1 like it should
+         AppSleep(1); // On Linux and OS X, it seems to sleep for 1 like it should, and 0 is a nop.
 #else
-         AppSleep(0); // in Windows, it sleeps a LONG time so we just 'yield'
+         AppSleep(0); // On Windows, sleeping 0 does a minimal sleep, but 1 is too long.
 #endif
          return;
       }
