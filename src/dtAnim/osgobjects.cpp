@@ -976,13 +976,13 @@ namespace dtAnim
             if (playMode == dtAnim::PlayModeEnum::LOOP)
             {
                float ratio = animTime / duration;
-               ratio -= std::floorf(ratio); // Loop count
+               ratio -= std::floor(ratio); // Loop count
                animTime = duration * ratio;
             }
             else if (playMode == dtAnim::PlayModeEnum::SWING)
             {
                float ratio = (animTime / duration) * 0.5; // Twice the anim time is one full swing loop.
-               ratio -= std::floorf(ratio); // Loop count
+               ratio -= std::floor(ratio); // Loop count
                animTime = duration * ratio;
             }
             else

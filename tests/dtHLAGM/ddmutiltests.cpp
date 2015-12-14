@@ -32,6 +32,7 @@
 #include <string>
 #include <iostream>
 #include <dtHLAGM/ddmutil.h>
+#include <limits>
 
 class DDMUtilTests : public CPPUNIT_NS::TestFixture 
 {
@@ -51,7 +52,7 @@ class DDMUtilTests : public CPPUNIT_NS::TestFixture
       
       void tearDown()
       {
-         dtHLAGM::DDMUtil::SetMaxExtent(UINT_MAX);
+         dtHLAGM::DDMUtil::SetMaxExtent(std::numeric_limits<unsigned int>::max());
          dtHLAGM::DDMUtil::SetMinExtent(0U);
       }
       
