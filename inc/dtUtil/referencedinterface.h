@@ -47,11 +47,13 @@ namespace dtUtil
  * Declare this in any class that implements and Referenced interface so that you can map the functions
  * to the ones of referenced
  */
-//#define DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE \
-//   using osg::Referenced::ref;\
-//   using osg::Referenced::unref;\
-//   using osg::Referenced::unref_nodelete;\
-//   using osg::Referenced::getOrCreateObserverSet;
+#if 0
+#define DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE \
+   using osg::Referenced::ref;\
+   using osg::Referenced::unref;\
+   using osg::Referenced::unref_nodelete;\
+   using osg::Referenced::getOrCreateObserverSet;
+#endif
 
 #define DT_DECLARE_VIRTUAL_REF_INTERFACE_OVERRIDE_INLINE \
       int ref() override { return osg::Referenced::ref(); }\
