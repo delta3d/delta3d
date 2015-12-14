@@ -70,15 +70,18 @@ namespace dtUtil
          _logger.LogMessage(DT_LOG_SOURCE, msg, level); \
    }\
 
-//   #define LOGN(level, name, msg) \
-//   {\
-//      dtUtil::Log& _logger = dtUtil::Log::GetInstance(name); \
-//      if (_logger.IsLevelEnabled(level)) \
-//      {\
-//         _logger(DT_LOG_SOURCE, level) << msg \
-//      }\
-//   }\
-//
+#if 0
+   #define LOGN(level, name, msg) \
+   {\
+      dtUtil::Log& _logger = dtUtil::Log::GetInstance(name); \
+      if (_logger.IsLevelEnabled(level)) \
+      {\
+         _logger(DT_LOG_SOURCE, level) << msg \
+      }\
+   }\
+
+#endif
+
    #define LOGN_ONCE(level, name, msg) \
    {\
       static bool _log_once_guard_ = false; \
