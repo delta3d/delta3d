@@ -2719,8 +2719,8 @@ namespace dtHLAGM
 
       if (hasAtLeastOneNonDefaultedParameter)
       {
-         size_t bufferSize;
-         char* buffer;
+         size_t bufferSize = 0U;
+         char* buffer = nullptr;
 
          ParameterTranslator::AllocateBuffer(buffer, bufferSize, hlaType);
 
@@ -2850,8 +2850,8 @@ namespace dtHLAGM
 
       if (hasAtLeastOneNonDefaultedParameter && arrayParameter.valid())
       {
-         size_t bufferSize = 0;
-         char* buffer = NULL;
+         size_t bufferSize = 0U;
+         char* buffer = nullptr;
 
          ParameterTranslator::AllocateBuffer(buffer, bufferSize, hlaType, arrayParameter->GetSize());
 
@@ -2937,8 +2937,8 @@ namespace dtHLAGM
             mRuntimeMappings.Put(thisEntityId, actorID);
          }
 
-         size_t bufferSize;
-         char* buffer;
+         size_t bufferSize = 0U;
+         char* buffer = nullptr;
 
          ParameterTranslator::AllocateBuffer(buffer, bufferSize, RPRAttributeType::ENTITY_IDENTIFIER_TYPE);
 
@@ -2959,8 +2959,8 @@ namespace dtHLAGM
 
       if (objectToActor.GetEntityType() != NULL)
       {
-         size_t bufferSize;
-         char* buffer;
+         size_t bufferSize = 0U;
+         char* buffer = nullptr;
 
          ParameterTranslator::AllocateBuffer(buffer, bufferSize, RPRAttributeType::ENTITY_TYPE);
 
@@ -3148,8 +3148,8 @@ namespace dtHLAGM
          {
             const AttributeType& hlaType = paramMappingItor->GetHLAType();
 
-            size_t bufferSize;
-            char* buffer;
+            size_t bufferSize = 0U;
+            char* buffer = nullptr;
 
             ParameterTranslator::AllocateBuffer(buffer, bufferSize, hlaType);
 

@@ -8,7 +8,7 @@
 #ifndef HASHSET_H_
 #define HASHSET_H_
 
-#if defined( _LIBCPP_VERSION ) || (defined(_MSC_VER) && _MSC_VER >= 1700)
+#if (defined(__cplusplus) && __cplusplus >= 201103L) || defined( _LIBCPP_VERSION ) || (defined(_MSC_VER) && _MSC_VER >= 1700)
 #  include <unordered_map>
 #  define _UNORDERED_MAP
 #elif defined(__GNUG__)

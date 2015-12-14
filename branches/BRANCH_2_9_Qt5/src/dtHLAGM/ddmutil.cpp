@@ -21,11 +21,12 @@
 
 #include <dtHLAGM/ddmutil.h>
 #include <dtUtil/mathdefines.h>
+#include <limits>
 
 namespace dtHLAGM
 {
-   unsigned int DDMUtil::mMinExtent = 0;
-   unsigned int DDMUtil::mMaxExtent = UINT_MAX;
+   unsigned int DDMUtil::mMinExtent = 0U;
+   unsigned int DDMUtil::mMaxExtent = std::numeric_limits<unsigned int>::max();
 
    unsigned int DDMUtil::GetMinExtent() { return mMinExtent; }
    void DDMUtil::SetMinExtent(unsigned int val) { mMinExtent = val; }
