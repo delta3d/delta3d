@@ -118,7 +118,9 @@ void LogTests::setUp()
 ///////////////////////////////////////////////////////////////////////////////
 void LogTests::tearDown()
 {
-   //turn of logging when done.
+
+   //turn off logging when done.
+   dtUtil::Log::SetAllLogLevels(dtUtil::Log::LOG_ERROR);
    mLogger = NULL;
 }
 
