@@ -42,8 +42,8 @@
 #include <dtCore/shaderparamoscillator.h>
 #include <osg/Geode>
 
-const std::string TESTS_DIR = dtUtil::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"tests";
-const std::string projectContext = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "data" + dtUtil::FileUtils::PATH_SEPARATOR + "ProjectContext";
+
+std::string GetTestsDir();
 
 class ShaderManagerTests : public CPPUNIT_NS::TestFixture
 {
@@ -92,6 +92,8 @@ void ShaderManagerTests::setUp()
 {
    try
    {
+      const std::string projectContext = GetTestsDir() + dtUtil::FileUtils::PATH_SEPARATOR + "data" + dtUtil::FileUtils::PATH_SEPARATOR + "ProjectContext";
+
       mShaderMgr =& dtCore::ShaderManager::GetInstance();
       //dtCore::Project::GetInstance().SetContext(projectContext);
       dtUtil::SetDataFilePathList(projectContext);

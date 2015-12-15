@@ -56,8 +56,7 @@ namespace dtTest
          void TestEnvironment()
          {
             std::string result = dtUtil::GetEnvironment("nothing");
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("An environment variable that doesn't exist should yield a result of ./.  "
-                  "This is for historic reasons.", std::string("./"), result);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("An environment variable that doesn't exist should yield a result of "". ", std::string(), result);
             dtUtil::SetEnvironment("silly", "goose");
             result = dtUtil::GetEnvironment("silly");
             CPPUNIT_ASSERT_EQUAL_MESSAGE("The environment variable \"silly\" should have the value \"goose\".", std::string("goose"), result);

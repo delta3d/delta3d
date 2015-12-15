@@ -172,11 +172,7 @@ namespace dtVoxel
 
 
    void VoxelGrid::UpdateGrid(const osg::Vec3& newCameraPos)
-   {   
-      
-      //int cellsToUpdate = mDirtyCells.size();
-
-      //std::cout << "UpdateGrid " << mDirtyCells.size() << " dirty cells." << std::endl;
+   {
 
       std::list<VoxelCellUpdateInfo>::iterator iter = mDirtyCells.begin();
       std::list<VoxelCellUpdateInfo>::iterator iterEnd = mDirtyCells.end();
@@ -212,7 +208,6 @@ namespace dtVoxel
          }
       }
    }
-
 
    void VoxelGrid::CreateGridFromActor(const osg::Vec3& pos, VoxelActor& voxelActor)
    {

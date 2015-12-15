@@ -38,6 +38,8 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
+std::string GetTestsDir();
+
 class GameApplicationLoaderTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(GameApplicationLoaderTests);
@@ -48,11 +50,11 @@ class GameApplicationLoaderTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST_SUITE_END();
 
 public:
-   static const std::string TESTS_DIR;
-   static const std::string projectContext;
+   std::string projectContext;
 
    void setUp()
    {
+      projectContext = GetTestsDir() + dtUtil::FileUtils::PATH_SEPARATOR + "data" + dtUtil::FileUtils::PATH_SEPARATOR + "ProjectContext";
       mGameApplicationLoader = new dtGame::GameApplicationLoader(0, NULL);
    }
    
@@ -102,6 +104,3 @@ private:
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(GameApplicationLoaderTests);
 
-
-const std::string GameApplicationLoaderTests::TESTS_DIR(dtUtil::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"tests");
-const std::string GameApplicationLoaderTests::projectContext(GameApplicationLoaderTests::TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "data" + dtUtil::FileUtils::PATH_SEPARATOR + "ProjectContext");

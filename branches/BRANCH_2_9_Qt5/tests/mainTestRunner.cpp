@@ -139,6 +139,9 @@ dtABC::Application& GetGlobalApplication()
   return *GlobalApplication;
 }
 
+std::string GetExamplesDataDir() { return dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "examples/data"; }
+std::string GetTestsDir() { return dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "tests"; };
+
 class TimingListener : public CppUnit::TestListener
 {
   public:
@@ -154,7 +157,7 @@ class TimingListener : public CppUnit::TestListener
          std::ostringstream testResult;
          dtCore::Timer_t testClockStop = mTestClock.Tick();
          double timeDelta = mTestClock.DeltaSec(mTestClockStart, testClockStop);
-         timeDelta = (floor(timeDelta * 10000.0)) / 10000.0; // force data truncation
+         timeDelta = (std::floor(timeDelta * 10000.0)) / 10000.0; // force data truncation
          testResult << test->getName()  << ((!mFailure) ? ": OK " : ": FAILURE ") <<
             ": time [" << timeDelta << "]";
          if (timeDelta > 0.7)
@@ -212,22 +215,58 @@ int main(int argc, char* argv[])
          std::cerr << "Ignoring argument: " << currArg << std::endl;
       }
    }
+   
+   std::string testRoot = GET_PATH(TEST_ROOT);
+   LOG_ALWAYS("The test root is: " + testRoot);
 
    if (changeDir)
    {
-      std::string path = GET_PATH(TEST_ROOT);
-      LOG_ALWAYS("The test root is: " + path);
-      LOG_ALWAYS(std::string("Changing to directory \"") + path + dtUtil::FileUtils::PATH_SEPARATOR + "tests\".");
+      LOG_ALWAYS(std::string("Changing to directory \"") + testRoot + dtUtil::FileUtils::PATH_SEPARATOR + "tests\".");
 
       try
       {
-         dtUtil::FileUtils::GetInstance().ChangeDirectory(path + dtUtil::FileUtils::PATH_SEPARATOR + "tests");
+         dtUtil::FileUtils::GetInstance().ChangeDirectory(testRoot + dtUtil::FileUtils::PATH_SEPARATOR + "tests");
       }
       catch(const dtUtil::Exception& ex)
       {
          ex.LogException(dtUtil::Log::LOG_ERROR);
       }
    }
+   
+   // Must check this env var instead of GetDeltaRootPath because the function uses the app bundle path on osx and 
+   // that will return a non-empty path.
+   if (dtUtil::GetEnvironment("DELTA_ROOT").empty())
+   {
+      if (!testRoot.empty())
+      {
+         LOG_ALWAYS("DELTA_ROOT is not set, setting to " + testRoot);
+         dtUtil::SetEnvironment("DELTA_ROOT", testRoot);
+      }
+      else
+      {
+         LOG_ERROR("DELTA_ROOT is not set, and the test root was not compiled in.  Aborting...");
+         return -1;
+      }
+   }
+   
+   // Must check this env var instead of GetDeltaRootPath because the function uses the app bundle path on osx and 
+   // that will return a non-empty path.
+   if (dtUtil::GetEnvironment("DELTA_DATA").empty())
+   {
+      if (!testRoot.empty())
+      {
+         LOG_ALWAYS("DELTA_DATA is not set, setting to " + testRoot + "/data");
+         dtUtil::SetEnvironment("DELTA_DATA", testRoot + "/data");
+      }
+      else
+      {
+         LOG_ERROR("DELTA_DATA is not set, and the test root was not compiled in.  Aborting...");
+         return -1;
+      }
+   }
+   
+   LOG_ALWAYS("DELTA_ROOT is set to " + dtUtil::GetDeltaRootPath());
+   LOG_ALWAYS("DELTA_DATA is set to " + dtUtil::GetDeltaDataPathList());
 
    //Set delta data.
    dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
