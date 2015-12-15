@@ -223,7 +223,7 @@ namespace dtUtil
       }
       else
       {
-         return std::string("./");
+         return std::string();
       }
    }
 
@@ -340,9 +340,7 @@ namespace dtUtil
    {
       std::string result = GetEnvironment("DELTA_DATA");
 #ifdef __APPLE__
-      // Have to recheck because the get environment call doesn't currently return empty when it doesn't exist.
-      char* ptr = getenv("DELTA_DATA");
-      if(ptr == NULL)
+      if (result.empty())
       {
          result = GetBundleResourcesPath() + "/deltaData";
       }
@@ -358,9 +356,7 @@ namespace dtUtil
    {
       std::string result = GetEnvironment("DELTA_ROOT");
 #ifdef __APPLE__
-      // Have to recheck because the get environment call doesn't currently return empty when it doesn't exist.
-      char* ptr = getenv("DELTA_ROOT");
-      if(ptr == NULL)
+      if (result.empty())
       {
          result = GetBundleResourcesPath();
       }

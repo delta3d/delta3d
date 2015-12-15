@@ -27,9 +27,7 @@
 
 extern dtABC::Application& GetGlobalApplication();
 
-static const std::string TESTS_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR+"tests";
-
-static const std::string PROJECT_CONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "data" + dtUtil::FileUtils::PATH_SEPARATOR + "ProjectContext";
+std::string GetTestsDir();
 
 namespace dtGame
 {
@@ -48,7 +46,6 @@ namespace dtGame
 
          dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
          dtCore::System::GetInstance().Start();
-         dtUtil::SetDataFilePathList(dtUtil::GetDeltaDataPathList());
 
          mGM = new dtGame::GameManager(*GetGlobalApplication().GetScene());
          CPPUNIT_ASSERT_THROW_MESSAGE("Trying to get the application when it's NULL should fail.",
@@ -82,6 +79,7 @@ namespace dtGame
             mGM->LoadActorRegistry(*i);
          }
          mTestComp->reset();
+         const std::string PROJECT_CONTEXT = GetTestsDir() + dtUtil::FileUtils::PATH_SEPARATOR + "data" + dtUtil::FileUtils::PATH_SEPARATOR + "ProjectContext";
          mGM->SetProjectContext(PROJECT_CONTEXT);
          dtCore::Project::GetInstance().AddContext(dtUtil::GetDeltaRootPath() + "/examples/data");
       }

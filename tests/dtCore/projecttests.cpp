@@ -118,9 +118,8 @@ class ProjectTests : public CPPUNIT_NS::TestFixture
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(ProjectTests);
 
-static const std::string DATA_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR+"examples/data";
-static const std::string TESTS_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR+"tests";
-static const std::string MAPPROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtCore" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingMapProject";
+std::string GetExamplesDataDir();
+std::string GetTestsDir();
 
 
 void ProjectTests::setUp()
@@ -142,7 +141,7 @@ void ProjectTests::setUp()
       //        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
       //        logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Log initialized.\n");
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      fileUtils.ChangeDirectory(TESTS_DIR);
+      fileUtils.ChangeDirectory(GetTestsDir());
       fileUtils.PushDirectory("dtCore");
 
       if (!fileUtils.DirExists("WorkingProject"))
@@ -159,8 +158,8 @@ void ProjectTests::setUp()
       fileUtils.DirDelete("Testing", true);
       fileUtils.DirDelete("recursiveDir", true);
 
-      fileUtils.FileCopy(DATA_DIR + "/StaticMeshes/terrain_simple.ive", ".", false);
-      fileUtils.FileCopy(DATA_DIR + "/StaticMeshes/flatdirt.ive", ".", false);
+      fileUtils.FileCopy(GetExamplesDataDir() + "/StaticMeshes/terrain_simple.ive", ".", false);
+      fileUtils.FileCopy(GetExamplesDataDir() + "/StaticMeshes/flatdirt.ive", ".", false);
 
       dtCore::Project::GetInstance().ClearAllContexts();
       dtCore::Project::GetInstance().SetReadOnly(false);
@@ -722,14 +721,14 @@ void ProjectTests::TestResources()
       std::string dirtCategory = "fun:bigmamajama";
 
 
-      dtCore::ResourceDescriptor terrain1RD = p.AddResource("terrain1", DATA_DIR + "/StaticMeshes/exampleTerrain", "terrain",
+      dtCore::ResourceDescriptor terrain1RD = p.AddResource("terrain1", GetExamplesDataDir() + "/StaticMeshes/exampleTerrain", "terrain",
             dtCore::DataType::TERRAIN, 0);
 
       //force resources to be indexed.
       p.GetAllResources();
 
 
-      dtCore::ResourceDescriptor terrain2RD = p.AddResource("terrain2", DATA_DIR + "/StaticMeshes/exampleTerrain/terrain.3ds", "",
+      dtCore::ResourceDescriptor terrain2RD = p.AddResource("terrain2", GetExamplesDataDir() + "/StaticMeshes/exampleTerrain/terrain.3ds", "",
             dtCore::DataType::TERRAIN, 1);
 
       //printTree(p.GetAllResources());
@@ -770,7 +769,7 @@ void ProjectTests::TestResources()
 
       //Done with the terrains
 
-      dtCore::ResourceDescriptor rd = p.AddResource("flatdirt", std::string(DATA_DIR + "/StaticMeshes/flatdirt.ive"),
+      dtCore::ResourceDescriptor rd = p.AddResource("flatdirt", std::string(GetExamplesDataDir() + "/StaticMeshes/flatdirt.ive"),
             dirtCategory, dtCore::DataType::STATIC_MESH, 0);
 
       CPPUNIT_ASSERT_MESSAGE("Descriptor id should not be empty.", !rd.GetResourceIdentifier().empty());
@@ -851,7 +850,7 @@ void ProjectTests::TestResources()
       CPPUNIT_ASSERT_MESSAGE(std::string("the category \"") + "fun"
             + "\" should not have been found in the resource tree", treeResult == p.GetAllResources().end());
 
-      rd = p.AddResource("pow", std::string(DATA_DIR + "/sounds/pow.wav"), std::string("tea:money"), dtCore::DataType::SOUND, 0);
+      rd = p.AddResource("pow", std::string(GetExamplesDataDir() + "/sounds/pow.wav"), std::string("tea:money"), dtCore::DataType::SOUND, 0);
       testResult = p.GetResourcePath(rd);
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Getting the resource path returned the wrong value: ",
@@ -860,7 +859,7 @@ void ProjectTests::TestResources()
             + "tea" + dtUtil::FileUtils::PATH_SEPARATOR
             + "money" + dtUtil::FileUtils::PATH_SEPARATOR + "pow.wav");
 
-      dtCore::ResourceDescriptor rd1 = p.AddResource("bang", std::string(DATA_DIR + "/sounds/bang.wav"),
+      dtCore::ResourceDescriptor rd1 = p.AddResource("bang", std::string(GetExamplesDataDir() + "/sounds/bang.wav"),
             std::string("tee:cash"), dtCore::DataType::SOUND, 0);
       testResult = p.GetResourcePath(rd1);
 
@@ -876,7 +875,7 @@ void ProjectTests::TestResources()
                p.GetContext(0) + dtUtil::FileUtils::PATH_SEPARATOR + dtCore::DataType::SOUND.GetName(),
                p.GetResourcePath(dtCore::ResourceDescriptor(dtCore::DataType::SOUND.GetName()), true));
 
-      dtCore::ResourceDescriptor rdNoCat = p.AddResource("pow", std::string(DATA_DIR + "/sounds/pow.wav"), std::string(""), dtCore::DataType::SOUND, 1);
+      dtCore::ResourceDescriptor rdNoCat = p.AddResource("pow", std::string(GetExamplesDataDir() + "/sounds/pow.wav"), std::string(""), dtCore::DataType::SOUND, 1);
       CPPUNIT_ASSERT_EQUAL(dtCore::DataType::SOUND.GetName() + ":pow.wav", rdNoCat.GetDisplayName());
 
       p.RemoveResource(rdNoCat);

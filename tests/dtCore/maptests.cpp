@@ -191,9 +191,10 @@ const std::string MapTests::mExampleGameLibraryName="testGameActorLibrary";
 const std::string MapTests::TEST_PROJECT_DIR="WorkingMapProject";
 const std::string MapTests::TEST_PROJECT_DIR_2="WorkingMapProject2";
 
-const std::string DATA_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "examples/data";
-const std::string TESTS_DIR = dtUtil::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "tests";
-const std::string MAPPROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtCore" + dtUtil::FileUtils::PATH_SEPARATOR + MapTests::TEST_PROJECT_DIR;
+std::string GetExamplesDataDir();
+std::string GetTestsDir();
+
+const std::string MAPPROJECTCONTEXT = std::string() + dtUtil::FileUtils::PATH_SEPARATOR + "dtCore" + dtUtil::FileUtils::PATH_SEPARATOR + MapTests::TEST_PROJECT_DIR;
 
 class TestObjectRegistry : public dtCore::ActorPluginRegistry
 {
@@ -2138,12 +2139,12 @@ void MapTests::TestParsingMapHeaderData()
    const std::string mapFileName("MyCoolMap.dtMap");
 
    //remove any leftovers, in case this test failed last time it ran
-   if (dtUtil::FileUtils::GetInstance().FileExists(TESTS_DIR + "/data/ProjectContext/maps/" + mapFileName))
+   if (dtUtil::FileUtils::GetInstance().FileExists(GetTestsDir() + "/data/ProjectContext/maps/" + mapFileName))
    {
-      dtUtil::FileUtils::GetInstance().FileDelete(TESTS_DIR + "/data/ProjectContext/maps/" + mapFileName);
+      dtUtil::FileUtils::GetInstance().FileDelete(GetTestsDir() + "/data/ProjectContext/maps/" + mapFileName);
    }
 
-   dtCore::Project::GetInstance().SetContext(TESTS_DIR + "/data/ProjectContext");
+   dtCore::Project::GetInstance().SetContext(GetTestsDir() + "/data/ProjectContext");
 
    //create Map
    dtCore::Map& map = dtCore::Project::GetInstance().CreateMap(mapName, mapFileName);   
@@ -2174,7 +2175,7 @@ void MapTests::TestParsingMapHeaderData()
    dtCore::MapPtr mapHeader;
    try
    {
-      mapHeader = parser->ParseMapHeaderData(TESTS_DIR + "/data/ProjectContext/maps/" + mapFileName);
+      mapHeader = parser->ParseMapHeaderData(GetTestsDir() + "/data/ProjectContext/maps/" + mapFileName);
    }
    catch (const dtCore::MapParsingException& e)
    {

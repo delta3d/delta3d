@@ -46,6 +46,9 @@
 #include <osgDB/AuthenticationMap>
 #include <osgDB/ReadFile>
 
+std::string GetExamplesDataDir();
+std::string GetTestsDir();
+
 class FileUtilsTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(FileUtilsTests);
@@ -117,9 +120,6 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(FileUtilsTests);
 
-std::string DATA_DIR = "../examples/data";
-std::string TESTS_DIR = ".";
-
 
 //////////////////////////////////////////////////////////////////////////
 std::string getFileExtensionIncludingDot(const std::string& fileName)
@@ -141,15 +141,15 @@ void FileUtilsTests::setUp()
    {
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-      DATA_DIR = fileUtils.GetAbsolutePath(DATA_DIR);
-      TESTS_DIR = fileUtils.GetAbsolutePath(TESTS_DIR);
+      GetExamplesDataDir() = fileUtils.GetAbsolutePath(GetExamplesDataDir());
+      GetTestsDir() = fileUtils.GetAbsolutePath(GetTestsDir());
 
       dtUtil::SetDataFilePathList(dtUtil::GetDataFilePathList() + ";" +"../examples/data/;");
       std::string logName("projectTest");
 
       logger = &dtUtil::Log::GetInstance(logName);
 
-      fileUtils.ChangeDirectory(TESTS_DIR);
+      fileUtils.ChangeDirectory(GetTestsDir());
       fileUtils.PushDirectory("dtCore");
 
       if (!fileUtils.DirExists("WorkingProject"))
@@ -167,8 +167,8 @@ void FileUtilsTests::setUp()
       fileUtils.DirDelete("Testing", true);
       fileUtils.DirDelete("recursiveDir", true);
 
-      fileUtils.FileCopy(DATA_DIR + "/StaticMeshes/terrain_simple.ive", ".", false);
-      fileUtils.FileCopy(DATA_DIR + "/StaticMeshes/flatdirt.ive", ".", false);
+      fileUtils.FileCopy(GetExamplesDataDir() + "/StaticMeshes/terrain_simple.ive", ".", false);
+      fileUtils.FileCopy(GetExamplesDataDir() + "/StaticMeshes/flatdirt.ive", ".", false);
 
    }
    catch (const dtUtil::Exception& ex)
@@ -729,7 +729,7 @@ void FileUtilsTests::testConcatPaths()
 
 void FileUtilsTests::testCopyFileOntoItself()
 {
-   const std::string testPath = DATA_DIR + "/aNewFilePath";
+   const std::string testPath = GetExamplesDataDir() + "/aNewFilePath";
 
    const std::string path1 = testPath + "/aFile.txt";
    const std::string path2 = testPath + "/../aNewFilePath/aFile.txt";
@@ -780,13 +780,13 @@ void FileUtilsTests::testCopyFileOntoItself()
 //////////////////////////////////////////////////////////////////////////
 void FileUtilsTests::testDirectoryContentsWithOneFilter()
 {
-   const dtUtil::DirectoryContents allContents = dtUtil::FileUtils::GetInstance().DirGetFiles(TESTS_DIR);
+   const dtUtil::DirectoryContents allContents = dtUtil::FileUtils::GetInstance().DirGetFiles(GetTestsDir());
    const size_t numAllFiles = allContents.size();
 
    dtUtil::FileExtensionList extensions;
    extensions.push_back(".cpp");
 
-   const dtUtil::DirectoryContents cppContents = dtUtil::FileUtils::GetInstance().DirGetFiles(TESTS_DIR, extensions);
+   const dtUtil::DirectoryContents cppContents = dtUtil::FileUtils::GetInstance().DirGetFiles(GetTestsDir(), extensions);
    CPPUNIT_ASSERT_MESSAGE("DirGetFiles() with filtering didn't appear to filter on one extension.",
                           numAllFiles > cppContents.size());
 
@@ -802,14 +802,14 @@ void FileUtilsTests::testDirectoryContentsWithOneFilter()
 //////////////////////////////////////////////////////////////////////////
 void FileUtilsTests::testDirectoryContentsWithTwoFilters()
 {
-   const dtUtil::DirectoryContents allContents = dtUtil::FileUtils::GetInstance().DirGetFiles(TESTS_DIR);
+   const dtUtil::DirectoryContents allContents = dtUtil::FileUtils::GetInstance().DirGetFiles(GetTestsDir());
 
    dtUtil::FileExtensionList extensions;
    extensions.push_back(".cpp");
-   const dtUtil::DirectoryContents cppContents = dtUtil::FileUtils::GetInstance().DirGetFiles(TESTS_DIR, extensions);
+   const dtUtil::DirectoryContents cppContents = dtUtil::FileUtils::GetInstance().DirGetFiles(GetTestsDir(), extensions);
 
    extensions.push_back(".h");
-   const dtUtil::DirectoryContents cppHContents = dtUtil::FileUtils::GetInstance().DirGetFiles(TESTS_DIR, extensions);
+   const dtUtil::DirectoryContents cppHContents = dtUtil::FileUtils::GetInstance().DirGetFiles(GetTestsDir(), extensions);
 
    //should be more cpp & h files than just cpp files
    CPPUNIT_ASSERT_MESSAGE("DirGetFiles() with filtering didn't appear to filter with two extensions.",
@@ -831,13 +831,13 @@ void FileUtilsTests::testDirectoryContentsWithDuplicateFilter()
 {
    dtUtil::FileExtensionList singleExtension;
    singleExtension.push_back(".cpp");
-   const dtUtil::DirectoryContents singleFilterList = dtUtil::FileUtils::GetInstance().DirGetFiles(TESTS_DIR, singleExtension);
+   const dtUtil::DirectoryContents singleFilterList = dtUtil::FileUtils::GetInstance().DirGetFiles(GetTestsDir(), singleExtension);
 
    dtUtil::FileExtensionList duplicateExtension;
    duplicateExtension.push_back(".cpp");
    duplicateExtension.push_back(".cpp"); //add another of the same
 
-   const dtUtil::DirectoryContents duplicateFilter = dtUtil::FileUtils::GetInstance().DirGetFiles(TESTS_DIR, duplicateExtension);
+   const dtUtil::DirectoryContents duplicateFilter = dtUtil::FileUtils::GetInstance().DirGetFiles(GetTestsDir(), duplicateExtension);
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("DirGetFiles() should not count duplicate extensions",
                                  singleFilterList.size(), duplicateFilter.size());
@@ -849,7 +849,7 @@ void FileUtilsTests::testLoadFromArchive()
 
    dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-   fileUtils.ChangeDirectory(TESTS_DIR);
+   fileUtils.ChangeDirectory(GetTestsDir());
 
    dtUtil::FileInfo info = fileUtils.GetFileInfo(archivePath);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("The file type for a zip file should be an archive", dtUtil::ARCHIVE, info.fileType);
@@ -869,7 +869,7 @@ void FileUtilsTests::testLoadFromArchive()
       CPPUNIT_ASSERT_MESSAGE("Node should not be NULL", nodeFile != NULL);
    }
 
-   fileUtils.ChangeDirectory(TESTS_DIR);
+   fileUtils.ChangeDirectory(GetTestsDir());
 
 }
 
@@ -880,7 +880,7 @@ void FileUtilsTests::testArchiveRelativePath()
 
    dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-   fileUtils.ChangeDirectory(TESTS_DIR);
+   fileUtils.ChangeDirectory(GetTestsDir());
 
    dtUtil::FileInfo info = fileUtils.GetFileInfo(archivePath);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("The file type for a zip file should be an archive", dtUtil::ARCHIVE, info.fileType);
@@ -888,7 +888,7 @@ void FileUtilsTests::testArchiveRelativePath()
    osgDB::ArchiveExtended* a = fileUtils.FindArchive(archivePath);
 
    CPPUNIT_ASSERT(a != NULL);
-   fileUtils.ChangeDirectory(TESTS_DIR);
+   fileUtils.ChangeDirectory(GetTestsDir());
 
 }
 
@@ -898,7 +898,7 @@ void FileUtilsTests::testIsSameFile()
 
    try
    {
-      fileUtils.ChangeDirectory(DATA_DIR);
+      fileUtils.ChangeDirectory(GetExamplesDataDir());
 
       std::string filename("test_planes.osg");
       std::string relPath("./StaticMeshes/tests/" + filename);
@@ -926,7 +926,7 @@ void FileUtilsTests::testIsSameFileInArchive()
 {
 
    std::string archivePath("./data/ProjectArchive.zip");
-   std::string pathToFile = TESTS_DIR + "/data/ProjectArchive.zip/StaticMeshes/articulation_test.ive";
+   std::string pathToFile = GetTestsDir() + "/data/ProjectArchive.zip/StaticMeshes/articulation_test.ive";
    std::string filename("articulation_test.ive");
 
 
@@ -934,7 +934,7 @@ void FileUtilsTests::testIsSameFileInArchive()
 
    try
    {
-      fileUtils.ChangeDirectory(TESTS_DIR);
+      fileUtils.ChangeDirectory(GetTestsDir());
 
       dtUtil::FileInfo info = fileUtils.GetFileInfo(archivePath);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The file type for a zip file should be an archive", dtUtil::ARCHIVE, info.fileType);
@@ -947,7 +947,7 @@ void FileUtilsTests::testIsSameFileInArchive()
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Given a full path to the file and a relative, it should be able to compare them and find them to be the same",
                                     true, fileUtils.IsSameFile(pathToFile, filename));
 
-      fileUtils.ChangeDirectory(TESTS_DIR);
+      fileUtils.ChangeDirectory(GetTestsDir());
    }
    catch (dtUtil::Exception& ex)
    {
@@ -966,7 +966,7 @@ void FileUtilsTests::testDirExistsInArchive()
 
    dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-   fileUtils.ChangeDirectory(TESTS_DIR);
+   fileUtils.ChangeDirectory(GetTestsDir());
 
    dtUtil::FileInfo info = fileUtils.GetFileInfo(archivePath);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("The file type for a zip file should be an archive", dtUtil::ARCHIVE, info.fileType);
@@ -977,12 +977,12 @@ void FileUtilsTests::testDirExistsInArchive()
    fileUtils.ChangeDirectory(archivePath);
 
    bool relativeTest = fileUtils.DirExists("StaticMeshes");
-   bool absoluteTest = fileUtils.DirExists(TESTS_DIR + "/data/ProjectArchive.zip/StaticMeshes");
+   bool absoluteTest = fileUtils.DirExists(GetTestsDir() + "/data/ProjectArchive.zip/StaticMeshes");
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("The directory in the archive should be found to exist when searching with a relative path", true, relativeTest);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("The directory in the archive should be found to exist when searching with an absolute path", true, absoluteTest);
 
-   fileUtils.ChangeDirectory(TESTS_DIR);
+   fileUtils.ChangeDirectory(GetTestsDir());
 }
 
 void FileUtilsTests::testFileExistsInArchive()
@@ -993,15 +993,15 @@ void FileUtilsTests::testFileExistsInArchive()
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-      fileUtils.ChangeDirectory(TESTS_DIR + "/data/ProjectArchive.zip/StaticMeshes");
+      fileUtils.ChangeDirectory(GetTestsDir() + "/data/ProjectArchive.zip/StaticMeshes");
 
       bool relativeTest = fileUtils.FileExists("articulation_test.ive");
-      bool absoluteTest = fileUtils.FileExists(TESTS_DIR + "/data/ProjectArchive.zip/StaticMeshes/articulation_test.ive");
+      bool absoluteTest = fileUtils.FileExists(GetTestsDir() + "/data/ProjectArchive.zip/StaticMeshes/articulation_test.ive");
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The static mesh in the archive should be found to exist when searching with a relative path", true, relativeTest);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The static mesh in the archive should be found to exist when searching with an absolute path", true, absoluteTest);
 
-      fileUtils.ChangeDirectory(TESTS_DIR);
+      fileUtils.ChangeDirectory(GetTestsDir());
    }
    catch (const dtUtil::Exception& ex)
    {
@@ -1024,7 +1024,7 @@ void FileUtilsTests::testLoadFromPasswordProtectedArchive()
 
    dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-   fileUtils.ChangeDirectory(TESTS_DIR);
+   fileUtils.ChangeDirectory(GetTestsDir());
 
    dtUtil::FileInfo info = fileUtils.GetFileInfo(archivePath);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("The file type for a zip file should be an archive", dtUtil::ARCHIVE, info.fileType);
@@ -1038,7 +1038,7 @@ void FileUtilsTests::testLoadFromPasswordProtectedArchive()
    CPPUNIT_ASSERT_MESSAGE("Node should not be NULL", nodeFile != NULL);
 
 
-   fileUtils.ChangeDirectory(TESTS_DIR);
+   fileUtils.ChangeDirectory(GetTestsDir());
 
 }
 
@@ -1064,7 +1064,7 @@ void FileUtilsTests::testArchiveReadNodeFile()
 
       CPPUNIT_ASSERT_MESSAGE("Should be able to call osgDB::readNodeFile() for a file within an archive.", node != NULL);
 
-      fileUtils.ChangeDirectory(TESTS_DIR);
+      fileUtils.ChangeDirectory(GetTestsDir());
    }
    catch (const dtUtil::Exception& ex)
    {
