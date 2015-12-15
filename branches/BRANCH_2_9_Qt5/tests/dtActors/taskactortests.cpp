@@ -142,7 +142,7 @@ void TaskActorTests::tearDown()
    mNotifyCompletedEvent = nullptr;
    mNotifyFailedEvent = nullptr;
 
-   if (mEventMgr.valid())
+   if (mEventMgr != nullptr)
    {
       mEventMgr->ClearAllEvents();
    }
