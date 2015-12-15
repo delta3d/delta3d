@@ -141,8 +141,13 @@ void TaskActorTests::tearDown()
    // Clear all events
    mNotifyCompletedEvent = nullptr;
    mNotifyFailedEvent = nullptr;
-   mEventMgr->ClearAllEvents();
+
+   if (mEventMgr.valid())
+   {
+      mEventMgr->ClearAllEvents();
+   }
    mEventMgr = nullptr;
+
    dtGame::BaseGMTestFixture::tearDown();
 }
 
