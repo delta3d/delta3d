@@ -12,6 +12,7 @@
       <file>icons/actors/drawable.png</file>
       <file>icons/actors/transform.png</file>
       <file>icons/common/visibility.png</file>
+      <file>icons/common/visibility_hide.png</file>
       <file>icons/nodes/bone.png</file>
       <file>icons/nodes/dof.png</file>
       <file>icons/nodes/geode.png</file>

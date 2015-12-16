@@ -81,6 +81,14 @@ namespace dtQt
             mNode->setName(itemText);
          }
 
+         UpdateNodeVisibility();
+      }
+   }
+
+   void NodeTreeItem::UpdateNodeVisibility()
+   {
+      if (mNode.valid())
+      {
          osg::Node::NodeMask masks = mNode->getNodeMask();
 
          // Determine if the node should be visible.
@@ -427,6 +435,11 @@ namespace dtQt
       connect(mUI->mButtonCollapseAll, SIGNAL(clicked()),
          this, SLOT(UpdateColumns()));
 
+      connect(mUI->mButtonHideSelectedItems, SIGNAL(clicked()),
+         this, SLOT(OnHideSelectedItems()));
+      connect(mUI->mButtonShowSelectedItems, SIGNAL(clicked()),
+         this, SLOT(OnShowSelectedItems()));
+
       connect(mUI->mButtonFilterDOFs, SIGNAL(clicked()),
          this, SLOT(OnNodeFilterClicked()));
       connect(mUI->mButtonFilterGeodes, SIGNAL(clicked()),
@@ -571,6 +584,37 @@ namespace dtQt
    {
       NodeTreeItem* nodeItem = static_cast<NodeTreeItem*>(item);
       nodeItem->UpdateData();
+   }
+
+   void NodeTreePanel::OnHideSelectedItems()
+   {
+      SetSelectedItemVisibility(false);
+   }
+
+   void NodeTreePanel::OnShowSelectedItems()
+   {
+      SetSelectedItemVisibility(true);
+   }
+
+   void NodeTreePanel::SetSelectedItemVisibility(bool visible)
+   {
+      QList<QTreeWidgetItem*> itemArray = mUI->mTree->selectedItems();
+
+      // NOTE: The following loop will trigger sig/slots per item
+      // if signals are not disabled. Disable signals to reduce processing
+      // and to make the program flow more straight forward.
+      blockSignals(true);
+
+      std::for_each(itemArray.begin(), itemArray.end(),
+         [&](QTreeWidgetItem* item)
+         {
+            NodeTreeItem* nodeItem = static_cast<NodeTreeItem*>(item);
+            nodeItem->setCheckState(ITEM_COLUMN_NAME, visible ? Qt::Checked : Qt::Unchecked);
+            nodeItem->UpdateNodeVisibility();
+         }
+      );
+
+      blockSignals(false);
    }
 
 }
