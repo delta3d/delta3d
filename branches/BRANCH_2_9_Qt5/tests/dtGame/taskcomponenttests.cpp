@@ -81,6 +81,7 @@ void GMTaskComponentTests::setUp()
       mGameManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
       mGameManager->SetApplication(GetGlobalApplication());
       mGameManager->LoadActorRegistry(mTestGameActorLibrary);
+      mGameManager->LoadActorRegistry("dtActors");
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
       dtCore::System::GetInstance().Start();
    }
@@ -101,6 +102,7 @@ void GMTaskComponentTests::tearDown()
          dtCore::System::GetInstance().SetPause(false);
          dtCore::System::GetInstance().Stop();
          mGameManager->DeleteAllActors();
+         mGameManager->UnloadActorRegistry("dtActors");
          mGameManager->UnloadActorRegistry(mTestGameActorLibrary);
          mGameManager = NULL;
       }

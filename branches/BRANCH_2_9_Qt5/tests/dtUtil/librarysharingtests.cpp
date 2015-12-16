@@ -65,6 +65,7 @@ public:
            
          //ensure the example library is unloaded.
          dtCore::ActorFactory::GetInstance().UnloadActorRegistry(mExampleLibraryName);
+         dtCore::ActorFactory::GetInstance().UnloadActorRegistry(mActorLibraryName);
    
       }
       catch (const dtUtil::Exception& e)
@@ -77,7 +78,23 @@ public:
       }    
    }
    
-   void tearDown() {}
+   void tearDown()
+   {
+      try
+      {
+         logger = &dtUtil::Log::GetInstance();
+         dtCore::ActorFactory::GetInstance().UnloadActorRegistry(mExampleLibraryName);
+         dtCore::ActorFactory::GetInstance().UnloadActorRegistry(mActorLibraryName);
+      }
+      catch (const dtUtil::Exception& e)
+      {
+         CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+      }
+//      catch (const std::exception& e)
+//      {
+//         CPPUNIT_FAIL((std::string("Error: ") + e.what()).c_str());
+//      }
+   }
 
    void TestPaths()
    {
@@ -129,8 +146,10 @@ public:
       dtCore::ActorTypeVec actors;
       std::vector<dtCore::ActorProperty*> props;
    
-      CPPUNIT_ASSERT(libMgr.GetRegistry(mActorLibraryName) != NULL);
+      CPPUNIT_ASSERT(libMgr.GetRegistry(mActorLibraryName) == nullptr);
       
+      CPPUNIT_ASSERT_NO_THROW(libMgr.LoadActorRegistry(mActorLibraryName));
+
       libMgr.GetActorTypes(actors);
       
       CPPUNIT_ASSERT(actors.size() > 0);

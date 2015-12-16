@@ -38,6 +38,7 @@
 #include <dtCore/booleanactorproperty.h>
 #include <dtCore/datatype.h>
 #include <dtCore/floatactorproperty.h>
+#include <dtCore/actorfactory.h>
 
 #include <dtGame/gamemanager.h>
 
@@ -128,6 +129,8 @@ CPPUNIT_TEST_SUITE_REGISTRATION(LMSTests);
 
 void LMSTests::setUp()
 {
+   // For the task actors;
+   CPPUNIT_ASSERT_NO_THROW(dtCore::ActorFactory::GetInstance().LoadActorRegistry("dtActors"));
    mGameManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
    mGameManager->SetApplication(GetGlobalApplication());
 }
@@ -139,6 +142,8 @@ void LMSTests::tearDown()
       mGameManager->DeleteAllActors(true);
       mGameManager = NULL;
    }
+   // For the task actors;
+   CPPUNIT_ASSERT_NO_THROW(dtCore::ActorFactory::GetInstance().UnloadActorRegistry("dtActors"));
 }
 
 void LMSTests::TestTaskStatus()
