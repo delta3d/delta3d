@@ -66,6 +66,11 @@ namespace dtQt
       void UpdateData();
 
       /**
+       * Updates the node visibility based on the checked state of the list item.
+       */
+      void UpdateNodeVisibility();
+
+      /**
        * Sets values on the UI from values  contained in the node.
        */
       void UpdateUI();
@@ -108,9 +113,13 @@ namespace dtQt
       void OnNodeFilterNameChanged();
       
       void OnItemChanged(QTreeWidgetItem* item, int column);
+      void OnHideSelectedItems();
+      void OnShowSelectedItems();
 
    protected:
       virtual void CreateConnections();
+
+      void SetSelectedItemVisibility(bool visible);
 
       Ui::NodeTreePanel* mUI;
 
