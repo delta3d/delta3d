@@ -89,6 +89,7 @@ void SoundComponentTests::setUp()
       dtCore::Scene* scene = new dtCore::Scene();
       mGM = new dtGame::GameManager(*scene);
       mGM->LoadActorRegistry(LIBRARY_TEST_GAME_ACTOR);
+      mGM->LoadActorRegistry("dtAudio");
 
       mSndActorType = mGM->FindActorType("dtcore.Environment","Sound Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",mSndActorType.valid());
@@ -119,6 +120,7 @@ void SoundComponentTests::tearDown()
       mSndComp = NULL;
 
       mGM->DeleteAllActors();
+      mGM->UnloadActorRegistry("dtAudio");
       mGM->UnloadActorRegistry(LIBRARY_TEST_GAME_ACTOR);
       mGM = NULL;
 
@@ -326,7 +328,7 @@ void SoundComponentTests::TestSoundActorManagement()
       // Create Sound Actors.
       int soundActorCount = 5;
       CreateSoundActors(soundActorCount, true);
-      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step(0.016);
       CPPUNIT_ASSERT(GetGMSoundActorCount() == soundActorCount);
       CPPUNIT_ASSERT(mSndComp->GetSoundActorContainedCount() == 0);
 
@@ -337,7 +339,7 @@ void SoundComponentTests::TestSoundActorManagement()
 
       // Sound Actor Evacuation.
       mSndComp->RemoveSoundActorsFromWorld();
-      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step(0.016);
       CPPUNIT_ASSERT(GetGMSoundActorCount() == 0);
       CPPUNIT_ASSERT(mSndComp->GetSoundActorContainedCount() == soundActorCount);
 
@@ -348,7 +350,7 @@ void SoundComponentTests::TestSoundActorManagement()
 
       // Sound Actor Insertion.
       mSndComp->AddSoundActorsToWorld();
-      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step(0.016);
       CPPUNIT_ASSERT(GetGMSoundActorCount() == soundActorCount);
       CPPUNIT_ASSERT(mSndComp->GetSoundActorContainedCount() == 0);
 
@@ -360,7 +362,7 @@ void SoundComponentTests::TestSoundActorManagement()
       // Sound Actor Deletion.
       mSndComp->RemoveSoundActorsFromWorld();
       mSndComp->ClearSoundActorArray();
-      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step(0.016);
       mSndComp->GetSoundActorSounds(soundArray);
       CPPUNIT_ASSERT(GetGMSoundActorCount() == 0);
       CPPUNIT_ASSERT(mSndComp->GetSoundActorContainedCount() == 0);
