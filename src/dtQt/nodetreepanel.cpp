@@ -169,6 +169,7 @@ namespace dtQt
          , mFilterOutGeodes(false)
          , mFilterOutGroups(false)
          , mFilterOutOccluders(false)
+         , mFilterOutNullStateSets(false)
          , mFilterOutTransforms(false)
          , mFilterNameInvalid(false)
       {}
@@ -205,6 +206,11 @@ namespace dtQt
             answer = ! mFilterOutOccluders;
          }
 
+         if (answer && mFilterOutNullStateSets)
+         {
+            answer = node.getStateSet() != nullptr;
+         }
+
          // If the node has not already been filtered out with answer == false...
          if (answer && ! mFilterName.empty())
          {
@@ -233,6 +239,7 @@ namespace dtQt
             || mFilterOutGeodes
             || mFilterOutGroups
             || mFilterOutOccluders
+            || mFilterOutNullStateSets
             || mFilterOutTransforms
             || ! mFilterName.empty();
       }
@@ -261,6 +268,7 @@ namespace dtQt
       bool mFilterOutGeodes;
       bool mFilterOutGroups;
       bool mFilterOutOccluders;
+      bool mFilterOutNullStateSets;
       bool mFilterOutTransforms;
 
    protected:
@@ -440,6 +448,8 @@ namespace dtQt
       connect(mUI->mButtonShowSelectedItems, SIGNAL(clicked()),
          this, SLOT(OnShowSelectedItems()));
 
+      connect(mUI->mButtonFilterStateSets, SIGNAL(clicked()),
+         this, SLOT(OnNodeFilterClicked()));
       connect(mUI->mButtonFilterDOFs, SIGNAL(clicked()),
          this, SLOT(OnNodeFilterClicked()));
       connect(mUI->mButtonFilterGeodes, SIGNAL(clicked()),
@@ -470,6 +480,7 @@ namespace dtQt
       {
          // Determine if node types should be filtered.
          dtCore::RefPtr<NodeFilter> filter = new NodeFilter;
+         filter->mFilterOutNullStateSets = mUI->mButtonFilterStateSets->isChecked();
          filter->mFilterOutDOFs = mUI->mButtonFilterDOFs->isChecked();
          filter->mFilterOutGeodes = mUI->mButtonFilterGeodes->isChecked();
          filter->mFilterOutGroups = mUI->mButtonFilterGroups->isChecked();
