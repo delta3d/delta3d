@@ -222,7 +222,6 @@ namespace dtAnim
 
    dtAnim::BaseModelData* ModelDatabase::GetModelData(const dtCore::ResourceDescriptor& resource)
    {
-      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mAsynchronousLoadLock);
       return Find(resource);
    }
 
