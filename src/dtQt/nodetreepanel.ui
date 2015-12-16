@@ -135,7 +135,7 @@
          <normaloff>:/dtQt/icons/common/visibility.png</normaloff>:/dtQt/icons/common/visibility.png</iconset>
        </property>
        <property name="checkable">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <property name="checked">
         <bool>false</bool>
@@ -155,7 +155,7 @@
          <normaloff>:/dtQt/icons/common/visibility_hide.png</normaloff>:/dtQt/icons/common/visibility_hide.png</iconset>
        </property>
        <property name="checkable">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <property name="checked">
         <bool>false</bool>
