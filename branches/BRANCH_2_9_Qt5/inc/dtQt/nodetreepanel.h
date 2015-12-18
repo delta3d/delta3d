@@ -111,6 +111,7 @@ namespace dtQt
       void OnItemSelectionChanged();
       void OnNodeFilterClicked();
       void OnNodeFilterNameChanged();
+      void OnCaseSensitiveChanged();
       
       void OnItemChanged(QTreeWidgetItem* item, int column);
       void OnHideSelectedItems();
