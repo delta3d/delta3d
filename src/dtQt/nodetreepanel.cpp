@@ -26,9 +26,9 @@
 #include <QtWidgets/QTreeWidget>
 #include <dtQt/constants.h>
 #include <dtQt/nodetreepanel.h>
+#include <dtUtil/stringutils.h>
 #include <osg/Group>
 #include <osg/NodeVisitor>
-#include <regex>
 
 
 
@@ -171,6 +171,7 @@ namespace dtQt
          , mFilterOutOccluders(false)
          , mFilterOutNullStateSets(false)
          , mFilterOutTransforms(false)
+         , mMatchCase(false)
          , mFilterNameInvalid(false)
       {}
 
@@ -180,35 +181,38 @@ namespace dtQt
 
          bool answer = true;
 
-         std::string nodeClass(node.className());
-         const NodeType* nodeType = NodeType::GetNodeTypeByClassName(nodeClass);
-
-         if (nodeType == &NodeType::MATRIX)
-         {
-            answer = ! mFilterOutTransforms;
-         }
-         else if (nodeType == &NodeType::GROUP)
-         {
-            answer = ! mFilterOutGroups;
-         }
-         else if (nodeType == &NodeType::GEODE
-            || nodeType == &NodeType::GEOMETRY)
-         {
-            answer = ! mFilterOutGeodes;
-         }
-         else if (nodeType == &NodeType::DOF)
-         {
-            answer = ! mFilterOutDOFs;
-         }
-         else if (nodeType == &NodeType::OCCLUDER
-            || nodeType == &NodeType::OCCLUSION_QUERY)
-         {
-            answer = ! mFilterOutOccluders;
-         }
-
-         if (answer && mFilterOutNullStateSets)
+         if (mFilterOutNullStateSets)
          {
             answer = node.getStateSet() != nullptr;
+         }
+
+         if (answer)
+         {
+            std::string nodeClass(node.className());
+            const NodeType* nodeType = NodeType::GetNodeTypeByClassName(nodeClass);
+
+            if (nodeType == &NodeType::MATRIX)
+            {
+               answer = ! mFilterOutTransforms;
+            }
+            else if (nodeType == &NodeType::GROUP)
+            {
+               answer = ! mFilterOutGroups;
+            }
+            else if (nodeType == &NodeType::GEODE
+               || nodeType == &NodeType::GEOMETRY)
+            {
+               answer = ! mFilterOutGeodes;
+            }
+            else if (nodeType == &NodeType::DOF)
+            {
+               answer = ! mFilterOutDOFs;
+            }
+            else if (nodeType == &NodeType::OCCLUDER
+               || nodeType == &NodeType::OCCLUSION_QUERY)
+            {
+               answer = ! mFilterOutOccluders;
+            }
          }
 
          // If the node has not already been filtered out with answer == false...
@@ -217,7 +221,17 @@ namespace dtQt
             // ...attempt a match by name.
             try
             {
-               answer = std::regex_match(node.getName(), std::regex(mFilterName));
+               if (mMatchCase)
+               {
+                  answer = dtUtil::Match(mFilterNameMatchStr.c_str(), node.getName().c_str());
+               }
+               else
+               {
+                  std::string nameUpper(node.getName());
+                  dtUtil::ToUpperCase(nameUpper);
+                  answer = dtUtil::Match(mFilterNameMatchStr.c_str(), nameUpper.c_str());
+               }
+               //answer = std::regex_match(node.getName(), std::regex(mFilterName));
             }
             catch (...)
             {
@@ -225,6 +239,7 @@ namespace dtQt
                // It needs to be nullified to suppress any more
                // exception throwing.
                mFilterName = "";
+               mFilterNameMatchStr = "";
                mFilterNameInvalid = true;
                answer = true;
             }
@@ -241,16 +256,29 @@ namespace dtQt
             || mFilterOutOccluders
             || mFilterOutNullStateSets
             || mFilterOutTransforms
-            || ! mFilterName.empty();
+            || ! mFilterNameMatchStr.empty();
       }
 
       void SetFilterName(const std::string& nameFilter)
       {
          mFilterName = nameFilter;
 
-         if ( ! mFilterName.empty())
+         if (nameFilter.empty())
          {
-            mFilterName = ".*" + mFilterName + ".*";
+            mFilterNameMatchStr = "";
+         }
+         else
+         {
+            std::string tmpStr(nameFilter);
+
+            // If not case sensitive, set all characters to the same case.
+            if ( ! mMatchCase)
+            {
+               dtUtil::ToUpperCase(tmpStr);
+            }
+
+            // Put wildcard on ends for greedy matching.
+            mFilterNameMatchStr = "*" + tmpStr + "*";
          }
       }
 
@@ -270,11 +298,13 @@ namespace dtQt
       bool mFilterOutOccluders;
       bool mFilterOutNullStateSets;
       bool mFilterOutTransforms;
+      bool mMatchCase;
 
    protected:
       virtual ~NodeFilter() {}
 
       mutable std::string mFilterName;
+      mutable std::string mFilterNameMatchStr;
       mutable bool mFilterNameInvalid;
    };
 
@@ -464,6 +494,9 @@ namespace dtQt
       connect(mUI->mTextFilterName, SIGNAL(editingFinished()),
          this, SLOT(OnNodeFilterNameChanged()));
 
+      connect(mUI->mCaseSensitive, SIGNAL(stateChanged(int)),
+         this, SLOT(OnCaseSensitiveChanged()));
+
       // ITEMS
       connect(mUI->mTree, SIGNAL(itemSelectionChanged()),
          this, SLOT(OnItemSelectionChanged()));
@@ -480,6 +513,7 @@ namespace dtQt
       {
          // Determine if node types should be filtered.
          dtCore::RefPtr<NodeFilter> filter = new NodeFilter;
+         filter->mMatchCase = mUI->mCaseSensitive->checkState() == Qt::Checked;
          filter->mFilterOutNullStateSets = mUI->mButtonFilterStateSets->isChecked();
          filter->mFilterOutDOFs = mUI->mButtonFilterDOFs->isChecked();
          filter->mFilterOutGeodes = mUI->mButtonFilterGeodes->isChecked();
@@ -505,7 +539,7 @@ namespace dtQt
          if (filter != nullptr && filter->IsFilterNameInvalid())
          {
             mUI->mTextFilterName->setStyleSheet("color: red");
-            mUI->mTextFilterName->setToolTip("Regex string malformed.");
+            mUI->mTextFilterName->setToolTip("Search string malformed.");
          }
          else
          {
@@ -565,6 +599,11 @@ namespace dtQt
    }
 
    void NodeTreePanel::OnNodeFilterNameChanged()
+   {
+      UpdateUI();
+   }
+
+   void NodeTreePanel::OnCaseSensitiveChanged()
    {
       UpdateUI();
    }

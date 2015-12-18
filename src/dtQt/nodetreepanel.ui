@@ -112,6 +112,16 @@
      <item>
       <widget class="QLineEdit" name="mTextFilterName"/>
      </item>
+     <item>
+      <widget class="QCheckBox" name="mCaseSensitive">
+       <property name="toolTip">
+        <string>Case Sensitive</string>
+       </property>
+       <property name="text">
+        <string>Case</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
