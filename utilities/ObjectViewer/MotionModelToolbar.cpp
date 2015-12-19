@@ -27,13 +27,16 @@
 // CONSTANTS
 ////////////////////////////////////////////////////////////////////
 IMPLEMENT_ENUM(MotionModelType);
-const MotionModelType MotionModelType::FLY("Fly", MM_FLY);
-const MotionModelType MotionModelType::ORBIT("Orbit", MM_ORBIT);
-const MotionModelType MotionModelType::UFO("UFO", MM_UFO);
+const MotionModelType MotionModelType::FLY("Fly", MM_FLY, ":dtQt/icons/common/motion_fly.png");
+const MotionModelType MotionModelType::ORBIT("Orbit", MM_ORBIT, ":dtQt/icons/common/motion_orbit.png");
+const MotionModelType MotionModelType::UFO("UFO", MM_UFO, ":dtQt/icons/common/motion_ufo.png");
 
-MotionModelType::MotionModelType(const std::string& name, MotionModelTypeE value)
+
+
+MotionModelType::MotionModelType(const std::string& name, MotionModelTypeE value, const std::string& iconPath)
    : BaseClass(name)
    , mValue(value)
+   , mIconPath(iconPath)
 {
    AddInstance(this);
 }
@@ -46,6 +49,22 @@ MotionModelTypeE MotionModelType::GetValue() const
    return mValue;
 }
 
+const std::string& MotionModelType::GetIconPath() const
+{
+   return mIconPath;
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////////////
+// CLASS CODE
+/////////////////////////////////////////////////////////////////////////////////
+MotionModelPropertiesWidget::MotionModelPropertiesWidget(QWidget* parent)
+   : BaseClass(parent)
+{
+   mUI.setupUi(this);
+}
+
 
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -55,10 +74,24 @@ MotionModelToolbar::MotionModelToolbar(QWidget* parent)
    : BaseClass(parent)
    , mCurrentMotionModel(&MotionModelType::ORBIT)
 {
-   mUI.setupUi(this);
+   mPropWidget = new MotionModelPropertiesWidget;
 
-   // Set initial checked button.
-   // TODO:
+   QIcon iconFly(MotionModelType::FLY.GetIconPath().c_str());
+   QIcon iconOrbit(MotionModelType::ORBIT.GetIconPath().c_str());
+   QIcon iconUFO(MotionModelType::UFO.GetIconPath().c_str());
+
+   QAction* actionFly = new QAction(iconFly, "Fly", this);
+   QAction* actionOrbit = new QAction(iconOrbit, "Orbit", this);
+   QAction* actionUFO = new QAction(iconUFO, "UFO", this);
+
+   addAction(actionFly);
+   addAction(actionOrbit);
+   addAction(actionUFO);
+   addWidget(mPropWidget);
+
+   mActionMap[actionFly] = &MotionModelType::FLY;
+   mActionMap[actionOrbit] = &MotionModelType::ORBIT;
+   mActionMap[actionUFO] = &MotionModelType::UFO;
 
    CreateConnections();
 
@@ -66,23 +99,25 @@ MotionModelToolbar::MotionModelToolbar(QWidget* parent)
 }
 
 MotionModelToolbar::~MotionModelToolbar()
-{}
+{
+   delete mPropWidget;
+   mPropWidget = nullptr;
+}
 
 void MotionModelToolbar::CreateConnections()
 {
    // BUTTONS
-   connect(mUI.mButtonFly, SIGNAL(pressed()), this, SLOT(OnButtonClick()));
-   connect(mUI.mButtonOrbit, SIGNAL(pressed()), this, SLOT(OnButtonClick()));
-   connect(mUI.mButtonUFO, SIGNAL(pressed()), this, SLOT(OnButtonClick()));
+   connect(this, SIGNAL(actionTriggered(QAction*)),
+      this, SLOT(OnButtonClick(QAction*)));
 
    // SPINNERS
-   connect(mUI.mSpeed, SIGNAL(valueChanged(double)),
+   connect(mPropWidget->mUI.mSpeed, SIGNAL(valueChanged(double)),
       this, SLOT(OnSpeedChanged(double)));
 }
 
 void MotionModelToolbar::UpdateUI()
 {
-   mUI.mMotionModelName->setText(tr(mCurrentMotionModel->GetName().c_str()));
+   mPropWidget->mUI.mMotionModelName->setText(tr(mCurrentMotionModel->GetName().c_str()));
 }
 
 const MotionModelType& MotionModelToolbar::GetCurrentMotioModel() const
@@ -90,23 +125,15 @@ const MotionModelType& MotionModelToolbar::GetCurrentMotioModel() const
    return *mCurrentMotionModel;
 }
 
-void MotionModelToolbar::OnButtonClick()
+void MotionModelToolbar::OnButtonClick(QAction* action)
 {
    const MotionModelType* mmType = mCurrentMotionModel;
 
-   QObject* button = sender();
-   // Determine which motion model button has been clicked.
-   if (button == mUI.mButtonFly)
+   ActionMotionModelTypeMap::iterator foundIter = mActionMap.find(action);
+
+   if (foundIter != mActionMap.end())
    {
-      mmType = &MotionModelType::FLY;
-   }
-   else if (button == mUI.mButtonOrbit)
-   {
-      mmType = &MotionModelType::ORBIT;
-   }
-   else if (button == mUI.mButtonUFO)
-   {
-      mmType = &MotionModelType::UFO;
+      mmType = foundIter->second;
    }
 
    if (mCurrentMotionModel != mmType)
@@ -121,6 +148,6 @@ void MotionModelToolbar::OnButtonClick()
 
 void MotionModelToolbar::OnSpeedChanged(double speed)
 {
-   SignalMotionModelSpeedChanged(mCurrentMotionModel->GetValue(), mUI.mSpeed->value());
+   SignalMotionModelSpeedChanged(mCurrentMotionModel->GetValue(), mPropWidget->mUI.mSpeed->value());
 }
 
