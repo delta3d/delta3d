@@ -58,11 +58,14 @@ public:
 
    MotionModelTypeE GetValue() const;
 
+   const std::string& GetIconPath() const;
+
 protected:
-   MotionModelType(const std::string& name, MotionModelTypeE value);
+   MotionModelType(const std::string& name, MotionModelTypeE value, const std::string& iconPath);
    virtual ~MotionModelType();
 
    MotionModelTypeE mValue;
+   std::string mIconPath;
 };
 
 
@@ -72,6 +75,26 @@ protected:
 ////////////////////////////////////////////////////////////////////////////////
 Q_DECLARE_METATYPE(MotionModelTypeE);
 static const int typePhysObjArray = qRegisterMetaType<MotionModelTypeE>();
+
+
+
+/////////////////////////////////////////////////////////////////////////////////
+// CLASS CODE
+/////////////////////////////////////////////////////////////////////////////////
+class MotionModelToolbar;
+class MotionModelPropertiesWidget : public QWidget
+{
+   Q_OBJECT
+public:
+   typedef QWidget BaseClass;
+
+   MotionModelPropertiesWidget(QWidget* parent = 0);
+
+private:
+   friend class MotionModelToolbar;
+
+   Ui::MotionModelToolbar mUI;
+};
 
 
 
@@ -94,7 +117,7 @@ public:
    const MotionModelType& GetCurrentMotioModel() const;
 
 public slots:
-   void OnButtonClick();
+   void OnButtonClick(QAction* action);
    void OnSpeedChanged(double speed);
 
 signals:
@@ -105,8 +128,11 @@ protected:
    void CreateConnections();
 
 private:
-   Ui::MotionModelToolbar mUI;
+   MotionModelPropertiesWidget* mPropWidget;
    const MotionModelType* mCurrentMotionModel;
+
+   typedef std::map<QAction*, const MotionModelType*> ActionMotionModelTypeMap;
+   ActionMotionModelTypeMap mActionMap;
 };
 
 

@@ -11,6 +11,9 @@
       <file>icons/actors/actor.png</file>
       <file>icons/actors/drawable.png</file>
       <file>icons/actors/transform.png</file>
+      <file>icons/common/motion_fly.png</file>
+      <file>icons/common/motion_orbit.png</file>
+      <file>icons/common/motion_ufo.png</file>
       <file>icons/common/visibility.png</file>
       <file>icons/common/visibility_hide.png</file>
       <file>icons/nodes/bone.png</file>
