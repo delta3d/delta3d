@@ -73,7 +73,7 @@ namespace dtPhysics
          mDrag->Init(&body, mSurfaceAreaSqM, mCD, mLiquidDensityGramsPerSqCm);
          // The 100 is a unit conversion to kg per square M.
          mBuoyancy->Init(&body, mLiquidDensityGramsPerSqCm * 100.0f, mDrag);
-         dtPhysics::PhysicsActComp* pac = dynamic_cast<dtPhysics::PhysicsActComp*>(po.GetUserData());
+         dtPhysics::PhysicsActComp* pac = po.GetUserData<dtPhysics::PhysicsActComp>();
          if (pac != NULL)
          {
             pac->SetActionUpdateCallback(PhysicsActComp::ActionUpdateCallback(this, &BuoyancyAction::Update));

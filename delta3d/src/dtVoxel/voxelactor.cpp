@@ -200,7 +200,7 @@ namespace dtVoxel
    }
 
    /////////////////////////////////////////////////////
-   void VoxelActor::OnTickLocal(const dtGame::TickMessage& tickMessage)
+   void VoxelActor::SharedTick(const dtGame::TickMessage& tickMessage, bool local)
    {
       if (mVisualGrid.valid())// && !mPauseUpdate)
       {
@@ -217,7 +217,11 @@ namespace dtVoxel
 
             mVisualGrid->UpdateGrid(pos);
 
-            ModifyGrids.emit_signal(tickMessage);
+            if (local)
+            {
+               ModifyGrids.emit_signal(tickMessage);
+            }
+
             std::for_each(mUpdateMessages.begin(), mUpdateMessages.end(),
                   [this](VolumeUpdateMessagePtr& msg)
                   {
@@ -255,6 +259,19 @@ namespace dtVoxel
             }
          }
       }
+
+   }
+
+   /////////////////////////////////////////////////////
+   void VoxelActor::OnTickLocal(const dtGame::TickMessage& tickMessage)
+   {
+      SharedTick(tickMessage, true);
+   }
+
+   /////////////////////////////////////////////////////
+   void VoxelActor::OnTickRemote(const dtGame::TickMessage& tickMessage)
+   {
+      SharedTick(tickMessage, false);
    }
 
    /////////////////////////////////////////////////////
@@ -366,7 +383,7 @@ namespace dtVoxel
                if (!updateVisualOnly)
                {
                   openvdb::Coord c(std::round(idxVec.x()), std::round(idxVec.y()), std::round(idxVec.z()));
-                  accessor.setValue(c, val);
+                  accessor.setValueOn(c, val);
                }
             
                lastVector = worldVec;
@@ -452,7 +469,14 @@ namespace dtVoxel
    /////////////////////////////////////////////////////
    void VoxelActor::OnEnteredWorld()
    {
-      RegisterForMessages(dtGame::MessageType::TICK_LOCAL, dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
+      if (IsRemote())
+      {
+         RegisterForMessages(dtGame::MessageType::TICK_REMOTE, dtGame::GameActorProxy::TICK_REMOTE_INVOKABLE);
+      }
+      else
+      {
+         RegisterForMessages(dtGame::MessageType::TICK_LOCAL, dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
+      }
 
       osg::Vec3i staticRes(int(mStaticResolution.x()), int(mStaticResolution.y()), int(mStaticResolution.z()));
       osg::Vec3i dynamicRes(int(mDynamicResolution.x()), int(mDynamicResolution.y()), int(mDynamicResolution.z()));

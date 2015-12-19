@@ -252,6 +252,12 @@ namespace dtPhysics
       /// @return a pointer to the user data.  The helper will set this to itself when using the GM
       osg::Referenced* GetUserData();
 
+      template<typename T>
+      T* GetUserData() { return dynamic_cast<T*>(GetUserData()); }
+
+      template<typename T>
+      const T* GetUserData() const { return dynamic_cast<const T*>(GetUserData()); }
+
       //////////////////////////////////////////////////////
       // property functions
       void SetMass(Real);
