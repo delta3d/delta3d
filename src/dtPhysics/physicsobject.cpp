@@ -300,7 +300,7 @@ namespace dtPhysics
       if (PhysicsWorld::IsInitialized())
       {
          Material* mat = nullptr;
-         dtPhysics::PhysicsActComp* owner = dynamic_cast<dtPhysics::PhysicsActComp*>(GetUserData());
+         dtPhysics::PhysicsActComp* owner = GetUserData<dtPhysics::PhysicsActComp>();
          if (owner != nullptr)
          {
             const MaterialActor* matActor = owner->LookupMaterialActor(matName);
@@ -359,7 +359,7 @@ namespace dtPhysics
          PhysicsMaterials& materials = PhysicsWorld::GetInstance().GetMaterials();
          if (!id.IsNull())
          {
-            PhysicsActComp* owner = dynamic_cast<dtPhysics::PhysicsActComp*>(GetUserData());
+            PhysicsActComp* owner = GetUserData<dtPhysics::PhysicsActComp>();
             if (owner != nullptr)
             {
                const MaterialActor* actor = owner->LookupMaterialActor(id);
