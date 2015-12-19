@@ -22,6 +22,7 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include "ui_nodegraphviewer.h"
+#include <sstream>
 #include <dtQt/nodegraphview.h>
 #include <QtGui/QIcon>
 #include <QtGui/QMouseEvent>
@@ -29,7 +30,6 @@
 #include <osg/Group>
 #include <dtQt/constants.h>
 #include <dtUtil/mathdefines.h>
-#include <sstream>
 
 
 
@@ -38,7 +38,209 @@ namespace dtQt
    ////////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    ////////////////////////////////////////////////////////////////////////////////
-   NodeItem::NodeItem(osg::Node& node)
+   OsgNodeWrapper::OsgNodeWrapper(osg::Node& node)
+      : BaseClass(node)
+   {}
+
+   OsgNodeWrapper::~OsgNodeWrapper()
+   {}
+
+   std::string OsgNodeWrapper::GetName() const
+   {
+      return mObj->getName();
+   }
+
+   std::string OsgNodeWrapper::GetClassName() const
+   {
+      return mObj->className();
+   }
+
+   std::string OsgNodeWrapper::GetDescription() const
+   {
+      std::ostringstream oss;
+      typedef osg::Node::DescriptionList DescList;
+      DescList descList = mObj->getDescriptions();
+
+      size_t i = 0;
+      size_t limit = descList.size();
+      std::for_each(descList.begin(), descList.end(),
+         [&](const std::string& str)
+      {
+         oss << str;
+         if (i + 1 < limit)
+         {
+            oss << "\n";
+         }
+      }
+      );
+
+      return oss.str().c_str();
+   }
+
+   void OsgNodeWrapper::SetParentNode(BaseNodeWrapper* nodeWrapper)
+   {
+      OsgNodeWrapper* parentWrapper = dynamic_cast<OsgNodeWrapper*>(nodeWrapper);
+
+      if (parentWrapper != nullptr)
+      {
+         osg::Group* parent = dynamic_cast<osg::Group*>(parentWrapper->Get());
+
+         if (parent != nullptr)
+         {
+            // TODO: Attach using action object...
+            parent->addChild(mObj.get());
+         }
+         else
+         {
+            // TODO: Detach using action object...
+            while (mObj->getNumParents() > 0)
+            {
+               mObj->getParent(0)->removeChild(mObj.get());
+            }
+         }
+      }
+   }
+
+   BaseNodeWrapperPtr OsgNodeWrapper::GetParentNode() const
+   {
+      BaseNodeWrapperPtr nodeWrapper;
+      osg::Group* parent = mObj->getNumParents() > 0 ? mObj->getParent(0) : nullptr;
+
+      if (parent != nullptr)
+      {
+         nodeWrapper = new OsgNodeWrapper(*parent);
+      }
+
+      return nodeWrapper;
+   }
+
+   unsigned int OsgNodeWrapper::GetChildNodes(BaseNodeWrapperArray& outArray)
+   {
+      unsigned int addCount = 0;
+
+      osg::Group* group = mObj->asGroup();
+
+      if (group != nullptr)
+      {
+         unsigned int numChildren = group->getNumChildren();
+         outArray.reserve(numChildren);
+
+         NodeItem* curNodeItem = nullptr;
+         osg::Node* curNode = nullptr;
+         for (unsigned int i = 0; i < numChildren; ++i)
+         {
+            curNode = group->getChild(i);
+
+            outArray.push_back(new OsgNodeWrapper(*curNode));
+
+            ++addCount;
+         }
+      }
+
+      return addCount;
+   }
+
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   ////////////////////////////////////////////////////////////////////////////////
+   ActorNodeWrapper::ActorNodeWrapper(dtCore::BaseActorObject& actor)
+      : BaseClass(actor)
+   {}
+
+   ActorNodeWrapper::~ActorNodeWrapper()
+   {}
+
+   std::string ActorNodeWrapper::GetName() const
+   {
+      return mObj->GetName();
+   }
+
+   std::string ActorNodeWrapper::GetClassName() const
+   {
+      return mObj->GetActorType().GetName();
+   }
+
+   std::string ActorNodeWrapper::GetDescription() const
+   {
+      return mObj->GetActorType().GetDescription();
+   }
+
+   void ActorNodeWrapper::SetParentNode(BaseNodeWrapper* nodeWrapper)
+   {
+      ActorNodeWrapper* parentNodeWrapper = dynamic_cast<ActorNodeWrapper*>(nodeWrapper);
+
+      dtGame::GameActorProxy* gameActor = GetAsActor();
+
+      if (gameActor != nullptr)
+      {
+         gameActor->SetParentActor(parentNodeWrapper == nullptr ? nullptr : parentNodeWrapper->GetAsActor());
+      }
+   }
+
+   unsigned int ActorNodeWrapper::GetChildNodes(BaseNodeWrapperArray& outArray)
+   {
+      unsigned int addCount = 0;
+
+      dtGame::GameActorProxy* gameActor = GetAsActor();
+
+      if (gameActor != nullptr)
+      {
+         dtGame::GameActorProxy::child_iterator iter = gameActor->begin_child();
+         dtGame::GameActorProxy::child_iterator endIter = gameActor->end_child();
+
+         BaseClass::Type* child = nullptr;
+         for (; iter != endIter; ++iter)
+         {
+            child = (&(*iter));
+
+            if (child == nullptr)
+            {
+               // TODO: Log warning
+            }
+            else
+            {
+               outArray.push_back(new ActorNodeWrapper(*child));
+
+               ++addCount;
+            }
+         }
+      }
+
+      return addCount;
+   }
+
+   BaseNodeWrapperPtr ActorNodeWrapper::GetParentNode() const
+   {
+      BaseNodeWrapperPtr nodeWrapper;
+
+      dtGame::GameActorProxy* gameActor = GetAsActor();
+
+      if (gameActor != nullptr)
+      {
+         BaseClass::Type* parent = gameActor->GetParentActor();
+
+         if (parent != nullptr)
+         {
+            nodeWrapper = new ActorNodeWrapper(*parent);
+         }
+      }
+
+      return nodeWrapper;
+   }
+
+   dtGame::GameActorProxy* ActorNodeWrapper::GetAsActor() const
+   {
+      return dynamic_cast<dtGame::GameActorProxy*>(mObj.get());
+   }
+
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   ////////////////////////////////////////////////////////////////////////////////
+   NodeItem::NodeItem(BaseNodeWrapper& node)
       : mCollapsed(false)
       , mNode(&node)
    {
@@ -46,24 +248,7 @@ namespace dtQt
 
       setZValue(1.0f);
 
-      std::ostringstream oss;
-      typedef osg::Node::DescriptionList DescList;
-      DescList descList = node.getDescriptions();
-
-      size_t i = 0;
-      size_t limit = descList.size();
-      std::for_each(descList.begin(), descList.end(),
-         [&](const std::string& str)
-         {
-            oss << str;
-            if (i + 1 < limit)
-            {
-               oss << "\n";
-            }
-         }
-      );
-
-      setToolTip(oss.str().c_str());
+      setToolTip(node.GetDescription().c_str());
    }
 
    NodeItem::~NodeItem()
@@ -88,23 +273,22 @@ namespace dtQt
    {
       NodeItemArray nodeItemArray;
 
-      osg::Group* group = mNode->asGroup();
+      BaseNodeWrapperArray children;
+      mNode->GetChildNodes(children);
    
-      if (group != nullptr)
+      if ( ! children.empty())
       {
-         unsigned int numChildren = group->getNumChildren();
-         nodeItemArray.reserve(numChildren);
+         nodeItemArray.reserve(children.size());
 
          NodeItem* curNodeItem = nullptr;
-         osg::Node* curNode = nullptr;
-         for (unsigned int i = 0; i < numChildren; ++i)
-         {
-            curNode = group->getChild(i);
-
-            curNodeItem = new NodeItem(*curNode);
-            curNodeItem->setParentItem(this);
-            nodeItemArray.push_back(curNodeItem);
-         }
+         std::for_each(children.begin(), children.end(),
+            [&](BaseNodeWrapper* child)
+            {
+               curNodeItem = new NodeItem(*child);
+               curNodeItem->setParentItem(this);
+               nodeItemArray.push_back(curNodeItem);
+            }
+         );
 
          // Cascade creation down the node tree if recursion has been specified.
          if (recurse)
@@ -124,6 +308,16 @@ namespace dtQt
    NodeItem* NodeItem::ConvertToNodeItem(QGraphicsItem& item)
    {
       return qgraphicsitem_cast<NodeItem*>(&item);
+   }
+
+   BaseNodeWrapper& NodeItem::GetNodeWrapper()
+   {
+      return *mNode;
+   }
+
+   const BaseNodeWrapper& NodeItem::GetNodeWrapper() const
+   {
+      return *mNode;
    }
 
    NodeItem* NodeItem::GetParentNodeItem() const
@@ -203,9 +397,9 @@ namespace dtQt
       textRect.setX(textRect.x() + 5.0f);
       textRect.setWidth(textRect.width() - 5.0f);
       painter->setPen(isSelected() ? SELECTED : Qt::white);
-      painter->drawText(textRect, mNode->getName().c_str(), op);
+      painter->drawText(textRect, mNode->GetName().c_str(), op);
 
-      std::string nodeClass(mNode->className());
+      std::string nodeClass(mNode->GetClassName());
       const QString* iconPath = Constants::GetIconPathByClassName(nodeClass);
 
       QIcon icon;
@@ -385,6 +579,9 @@ namespace dtQt
    ////////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    ////////////////////////////////////////////////////////////////////////////////
+   const float NodeArranger::DEFAULT_PADDING_H = 10.0f;
+   const float NodeArranger::DEFAULT_PADDING_V = 10.0f;
+
    QRectF NodeArranger::Arrange(NodeItem& node, const NodeArranger::Params& params)
    {
       return Arrange_Internal(node, params);
@@ -404,6 +601,7 @@ namespace dtQt
       float offsetX = 0.0f;
       float offsetY = parentRect.height() + params.mPaddingV;
 
+      // Prevent further processing if this is simply a leaf node.
       size_t numChildren = children.size();
       if (numChildren <= 0)
       {
@@ -414,17 +612,29 @@ namespace dtQt
       std::for_each(children.begin(), children.end(),
          [&](NodeItem* child)
          {
+            // Get the rectangle of the node itself.
+            QRectF childOnlyRect = child->boundingRect();
+
+            // Calculate the rectangle for the entire sub tree from the current node.
             QRectF rect = Arrange_Internal(*child, params);
             width += rect.width();
 
-            child->setPos(offsetX, offsetY);
+            // Determine if the node needs to be moved to the right
+            // so that its subtree does not overlap the subtree of
+            // the sibling node to the left.
+            float widthOffset = (rect.width() - childOnlyRect.width()) * 0.5f;
 
+            // Move the child to the right within the parent node space.
+            child->setPos(offsetX + widthOffset, offsetY);
+
+            // Track the maximum height for this tree's tier.
             float tmpH = rect.height();
             if (tmpH > height)
             {
                height = tmpH;
             }
 
+            // Set the offsets if this is not the last child node.
             if (i + 1 < numChildren)
             {
                offsetX += params.mPaddingH + rect.width();
@@ -440,19 +650,16 @@ namespace dtQt
 
 
       // Center the collection of children under the parent.
-      if (numChildren > 1)
-      {
-         offsetX = width * -0.5f + parentRect.width() * 0.5f;
+      offsetX = width * -0.5f + parentRect.width() * 0.5f;
 
-         std::for_each(children.begin(), children.end(),
-            [&](NodeItem* child)
-            {
-               child->setPos(child->pos() + QPointF(offsetX, 0.0f));
-            }
-         );
-      }
+      std::for_each(children.begin(), children.end(),
+         [&](NodeItem* child)
+         {
+            child->setPos(child->pos() + QPointF(offsetX, 0.0f));
+         }
+      );
 
-      // Set the final rect.
+      // Set the final rectangle for the whole node subtree.
       rect.setX(offsetX);
       rect.setY(0.0f);
       rect.setWidth(width);
@@ -492,34 +699,74 @@ namespace dtQt
    NodeGraphScene::~NodeGraphScene()
    {}
 
-   void NodeGraphScene::SetSceneNode(osg::Node* node)
+   void NodeGraphScene::SetSceneNodes(const BaseNodeWrapperArray& nodes)
    {
-      if (mScene != node)
-      {
-         mScene = node;
+      mSceneNodes = nodes;
 
-         UpdateScene();
+      UpdateScene();
+   }
+
+   unsigned int NodeGraphScene::GetSelectedNodes(BaseNodeWrapperArray& outNodes)
+   {
+      unsigned int count = 0;
+
+      QList<QGraphicsItem*> items = selectedItems();
+      if ( ! items.empty())
+      {
+         outNodes.reserve(items.size());
+
+         std::for_each(items.begin(), items.end(),
+            [&](QGraphicsItem* item)
+            {
+               NodeItem* nodeItem = NodeItem::ConvertToNodeItem(*item);
+
+               if (nodeItem != nullptr)
+               {
+                  outNodes.push_back(&nodeItem->GetNodeWrapper());
+
+                  ++count;
+               }
+            }
+         );
       }
+
+      return count;
    }
 
    void NodeGraphScene::UpdateScene()
    {
       clear();
 
-      if (mScene.valid())
+      if (! mSceneNodes.empty())
       {
-         NodeItem* nodeItem = new NodeItem(*mScene);
-         addItem(nodeItem);
-         nodeItem->CreateChildNodeItems(true);
+         float offsetY = 0.0f;
+         int index = 0;
 
-         dtCore::RefPtr<NodeConnectorManager> connMgr = new NodeConnectorManager;
-         connMgr->CreateConnectors(*nodeItem, true);
+         std::for_each(mSceneNodes.begin(), mSceneNodes.end(),
+            [&](BaseNodeWrapper* node)
+            {
+               NodeItem* nodeItem = new NodeItem(*node);
+               addItem(nodeItem);
+               nodeItem->CreateChildNodeItems(true);
 
-         dtCore::RefPtr<NodeArranger> arranger = new NodeArranger;
-         NodeArranger::Params params;
-         params.mPaddingH = 40.0f;
-         params.mPaddingV = 40.0f;
-         arranger->Arrange(*nodeItem, params);
+               dtCore::RefPtr<NodeConnectorManager> connMgr = new NodeConnectorManager;
+               connMgr->CreateConnectors(*nodeItem, true);
+
+               dtCore::RefPtr<NodeArranger> arranger = new NodeArranger;
+               NodeArranger::Params params;
+               params.mPaddingH = 40.0f;
+               params.mPaddingV = 40.0f;
+               QRectF totalTreeBounds = arranger->Arrange(*nodeItem, params);
+
+               if (index > 0)
+               {
+                  nodeItem->setPos(nodeItem->pos() + QPointF(0.0f, offsetY));
+               }
+
+               offsetY += totalTreeBounds.height() + params.mPaddingV;
+               ++index;
+            }
+         );
       }
    }
 
@@ -654,24 +901,25 @@ namespace dtQt
       {
          QVBoxLayout* vlayout = new QVBoxLayout;
          mUI->mView->setLayout(vlayout);
-         vlayout->addWidget(mGraphView);
       }
-      else
-      {
-         mUI->mView->layout()->addWidget(mGraphView);
-      }
+
+      mUI->mView->layout()->addWidget(mGraphView);
+
       mGraphView->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
    }
 
    NodeGraphViewerPanel::~NodeGraphViewerPanel()
-   {}
+   {
+      delete mUI;
+      mUI = nullptr;
+   }
 
-   NodeGraphView& NodeGraphViewerPanel::GetGraphView()
+   NodeGraphView& NodeGraphViewerPanel::GetNodeGraphView()
    {
       return *mGraphView;
    }
 
-   const NodeGraphView& NodeGraphViewerPanel::GetGraphView() const
+   const NodeGraphView& NodeGraphViewerPanel::GetNodeGraphView() const
    {
       return *mGraphView;
    }
