@@ -11,10 +11,7 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/utilities/STAGE/inc
 )
 
 qt5_wrap_cpp(MOC_SOURCES ${LIB_PUBLIC_HEADERS})
-QT5_WRAP_UI(UI_SOURCES buttonconnector.ui)
 QT5_WRAP_UI(UI_SOURCES maphierarchyeditor.ui)
-QT5_WRAP_UI(UI_SOURCES nodebutton.ui)
-QT5_WRAP_UI(UI_SOURCES topbottomconnectornogap.ui)
 
 SET(LIB_SOURCES
    ${LIB_C_SOURCES}
@@ -24,11 +21,12 @@ SET(LIB_SOURCES
 
 SET(LIB_DEPS
                        STAGE
-                       ${DTUTIL_LIBRARY}
-                       ${DTCORE_LIBRARY}
-                       ${DTGAME_LIBRARY}
                        ${DTABC_LIBRARY}
                        ${DTACTORS_LIBRARY}
+                       ${DTCORE_LIBRARY}
+                       ${DTGAME_LIBRARY}
+                       ${DTQT_LIBRARY}
+                       ${DTUTIL_LIBRARY}
                        ${Qt5Core_LIBRARIES}
                        ${Qt5Gui_LIBRARIES}
                        ${Qt5OpenGL_LIBRARIES}
@@ -37,5 +35,5 @@ SET(LIB_DEPS
 
 
 #put the binary into a "STAGE plugins" folder
-SETUP_PLUGIN_WITH_OUTPUT_DIRS(${LIB_NAME} STAGE_MAP_HIERARCHY_EDITOR_PLUGIN stplugins)
+SETUP_PLUGIN_WITH_OUTPUT_DIRS(${LIB_NAME} DELTA_SCENE_HIERARCHY_EDITOR_PLUGIN stplugins)
 

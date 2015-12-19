@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MapHierarchyEditor</class>
- <widget class="QDockWidget" name="MapHierarchyEditor">
+ <class>SceneHierarchyEditor</class>
+ <widget class="QDockWidget" name="SceneHierarchyEditor">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -13,11 +13,11 @@
   <property name="minimumSize">
    <size>
     <width>200</width>
-    <height>118</height>
+    <height>135</height>
    </size>
   </property>
   <property name="windowTitle">
-   <string>Map Hierarchy Editor</string>
+   <string>Scene Hierarchy Editor</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <property name="sizePolicy">
@@ -26,44 +26,13 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_2">
+   <layout class="QVBoxLayout" name="verticalLayout">
     <property name="spacing">
      <number>0</number>
     </property>
-    <item>
-     <widget class="QScrollArea" name="scrollArea">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="autoFillBackground">
-       <bool>true</bool>
-      </property>
-      <property name="widgetResizable">
-       <bool>true</bool>
-      </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>1047</width>
-         <height>545</height>
-        </rect>
-       </property>
-       <layout class="QGridLayout" name="gridLayout">
-        <property name="margin">
-         <number>0</number>
-        </property>
-        <property name="spacing">
-         <number>0</number>
-        </property>
-       </layout>
-      </widget>
-     </widget>
-    </item>
+    <property name="margin">
+     <number>2</number>
+    </property>
    </layout>
   </widget>
  </widget>

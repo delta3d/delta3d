@@ -1,28 +1,56 @@
+/* -*-c++-*-
+* Copyright (C) 2015, Caper Holdings LLC
+*
+* This library is free software; you can redistribute it and/or modify it under
+* the terms of the GNU Lesser General Public License as published by the Free
+* Software Foundation; either version 2.1 of the License, or (at your option)
+* any later version.
+*
+* This library is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* details.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with this library; if not, write to the Free Software Foundation, Inc.,
+* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+*/
+
+////////////////////////////////////////////////////////////////////////////////
+// INCLUDE DIRECTIVES
+////////////////////////////////////////////////////////////////////////////////
 #include "maphierarchyeditor.h"
-
-#include "nodebutton.h"
-
 #include <dtCore/environment.h>
-#include <dtCore/transformable.h>
-
-#include <dtCore/actorhierarchynode.h>
 #include <dtCore/map.h>
-
+#include <dtCore/transformable.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/pluginmanager.h>
 #include <dtEditQt/viewportmanager.h>
+#include <dtQt/nodegraphview.h>
 
-const std::string MapHierarchyEditorPlugin::PLUGIN_NAME = "Map Hierarchy Editor";
+
 
 ////////////////////////////////////////////////////////////////////////////////
-MapHierarchyEditorPlugin::MapHierarchyEditorPlugin(dtEditQt::MainWindow* mw)
+// CONSTANTS
+////////////////////////////////////////////////////////////////////////////////
+const std::string SceneHierarchyEditorPlugin::PLUGIN_NAME = "Scene Hierarchy Editor";
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// CLASS CODE
+////////////////////////////////////////////////////////////////////////////////
+SceneHierarchyEditorPlugin::SceneHierarchyEditorPlugin(dtEditQt::MainWindow* mw)
    : mUI()
    , mMainWindow(mw)
 {
    //apply layout made with QtDesigner
    mUI.setupUi(this);
+
+   mNodeGraphViewer = new dtQt::NodeGraphViewerPanel;
+   mUI.dockWidgetContents->layout()->addWidget(mNodeGraphViewer);
 
    //add dock widget to STAGE main window
    mw->addDockWidget(Qt::BottomDockWidgetArea, this);
@@ -30,17 +58,21 @@ MapHierarchyEditorPlugin::MapHierarchyEditorPlugin(dtEditQt::MainWindow* mw)
    connect(&dtEditQt::EditorEvents::GetInstance(), SIGNAL(currentMapChanged()),
       this, SLOT(onCurrentMapChanged()));
 
-   BuildTreeFromMap();
+   QGraphicsScene* scene = mNodeGraphViewer->GetNodeGraphView().GetNodeGraphScene();
+   connect(scene, SIGNAL(selectionChanged()),
+      this, SLOT(OnSelectionChanged()));
+
+   UpdateUI();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-MapHierarchyEditorPlugin::~MapHierarchyEditorPlugin()
+SceneHierarchyEditorPlugin::~SceneHierarchyEditorPlugin()
 {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // remove our stuff from GUI
-void MapHierarchyEditorPlugin::Destroy()
+void SceneHierarchyEditorPlugin::Destroy()
 {
    mMainWindow->removeDockWidget(this);
 }
@@ -48,192 +80,152 @@ void MapHierarchyEditorPlugin::Destroy()
 
 ////////////////////////////////////////////////////////////////////////////////
 // user has closed the dock widget. Stop the plugin
-void MapHierarchyEditorPlugin::closeEvent(QCloseEvent* event)
+void SceneHierarchyEditorPlugin::closeEvent(QCloseEvent* event)
 {
    mMainWindow->GetPluginManager()->StopPlugin(PLUGIN_NAME);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MapHierarchyEditorPlugin::BuildTreeFromMap()
-{  
-   dtCore::Map* m = dtEditQt::EditorData::GetInstance().getCurrentMap();
-   if (m != NULL)   
-   {      
-      dtCore::ActorHierarchyNode* currentHierNode = m->GetDrawableActorHierarchy();      
-      
-      //The old way -- do this if there is no hierarchy defined in the map
-      if(currentHierNode->GetNumChildren() == 0)
-      {
-         if (m->GetEnvironmentActor() != NULL)
-         {
-            dtCore::ActorHierarchyNode* envNode = new dtCore::ActorHierarchyNode(m->GetEnvironmentActor(), currentHierNode);
-            currentHierNode->AddChild(envNode);
-            currentHierNode = envNode;
-         }      
-
-         const std::map<dtCore::UniqueId, dtCore::RefPtr<dtCore::BaseActorObject> >& allProxies =
-            m->GetAllProxies();
-
-         std::map<dtCore::UniqueId, dtCore::RefPtr<dtCore::BaseActorObject> >::const_iterator it;
-         for (it = allProxies.begin(); it != allProxies.end(); ++it)
-         {
-            if (m->GetEnvironmentActor() != NULL &&
-                it->first == m->GetEnvironmentActor()->GetId())
-            {
-               //don't include env actor (already been included)
-               continue;
-            }            
-           
-            dtCore::BaseActorObject* baseActor = it->second;      
-            if (baseActor->GetDrawable() != NULL)  //only adding Drawable Actors to the scene hierarchy
-            {
-               currentHierNode->AddChild(new dtCore::ActorHierarchyNode(baseActor, currentHierNode));
-            }
-         }// for 
-      }
-      else //There is a hierarchy defined in this map
-      {
-         //Do nothing: the hierarchy was defined when the map was loaded.         
-      }      
-   } //if (map != NULL)
-
-   BuildTreeGUI();   
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void MapHierarchyEditorPlugin::BuildTreeGUI()
+// HELPER PRED
+struct NodeNameComparePred
 {
-   QGridLayout* lo =
-      dynamic_cast<QGridLayout*>(mUI.scrollAreaWidgetContents->layout());
-
-   //cleanup any elements from previous building of the GUI tree
-   //(another map may have been loaded)
-   for (int r = 0; r < lo->rowCount(); ++r)
+   bool operator() (const dtQt::BaseNodeWrapper* nodeA, dtQt::BaseNodeWrapper* nodeB)
    {
-      for (int c = 0; c < lo->columnCount(); ++c)
-      {
-         QLayoutItem* item = lo->itemAtPosition(r, c);
-         if (item != NULL)
-         {
-            if (item->widget())
-            {
-               QWidget* w = item->widget();
-               lo->removeWidget(w);
-               delete w;               
-            }
-            else 
-            {
-               lo->removeItem(item);
-               delete item;
-            }
-            /*
-            else if (item->layout())
-            {
-               QLayout* l = item->layout()->item;
-               lo->removeItem(l);
-               delete l;
-            }
-            */
-         }
-      }
+      return dtUtil::StrCompare(nodeA->GetName(), nodeB->GetName(), false) < 0;
    }
-   /*
-   //const QObjectList& qol = lo->children();
-   //printf ("Num children: %d \n", qol.count());
-   printf ("Row count: %d , Col count: %d\n", lo->rowCount(), lo->columnCount());   
-   */
-
-   NodeButton* root = new NodeButton(NULL, this); 
-   root->Place(0, 0);
-
-   dtCore::Map* m = dtEditQt::EditorData::GetInstance().getCurrentMap();
-   if (m != NULL)   
-   {
-      dtCore::ActorHierarchyNode* currentHierNode = m->GetDrawableActorHierarchy();
-     
-      for (unsigned int i = 0; i < currentHierNode->GetNumChildren(); ++i)
-      {
-         BuildGUIBranch(root, currentHierNode->GetChild(i));
-      }
-   }
-
-   //rightmost column needs a horizontal spacer 
-   QSpacerItem* hs = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-   lo->addItem(hs, 0, lo->columnCount());
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void MapHierarchyEditorPlugin::BuildGUIBranch(NodeButton* GUIparent,
-                                              dtCore::ActorHierarchyNode* branch)
-{
-   //build a node, place it as a child of parent
-   NodeButton* nextGUINode = new NodeButton(branch->GetBaseActorObject(), this);
-   GUIparent->AddChild(nextGUINode);
-
-   //run through all branch's children   
-   for (unsigned int i = 0; i < branch->GetNumChildren(); ++i)
-   {
-      BuildGUIBranch(nextGUINode, branch->GetChild(i));
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void MapHierarchyEditorPlugin::RebuildTree()
-{
-   //TODO
-}
-
-////////////////////////////////////////////////////////////////////////////////
-QGridLayout* MapHierarchyEditorPlugin::GetGridLayout()
-{
-   return dynamic_cast<QGridLayout*>(mUI.scrollAreaWidgetContents->layout());
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void MapHierarchyEditorPlugin::onCurrentMapChanged()
-{
-   BuildTreeFromMap();
-}
-
-namespace MapHierarchyEditor
-{
-class STAGE_MAP_HIERARCHY_EDITOR_EXPORT PluginFactory : public dtEditQt::PluginFactory
-{
-public:
-   PluginFactory() {}
-   ~PluginFactory() {}
-
-   /** get the name of the plugin */
-   virtual std::string GetName() { return MapHierarchyEditorPlugin::PLUGIN_NAME; }
-
-   /** get a description of the plugin */
-   virtual std::string GetDescription() { return "Map Hierarchy Editor"; }
-
-   virtual void GetDependencies(std::list<std::string>& deps)
-   {
-      // just for testing
-      deps.push_back("Plugin Manager");
-   }
-
-    /** construct the plugin and return a pointer to it */
-   virtual dtEditQt::Plugin* Create(dtEditQt::MainWindow* mw)
-   {
-      mPlugin = new MapHierarchyEditorPlugin(mw);
-      return mPlugin;
-   }
-
-   virtual void Destroy()
-   {
-      delete mPlugin;
-   }
-
-private:
-
-   dtEditQt::Plugin* mPlugin;
 };
-} //namespace MapHierarchyEditor
-           
-extern "C" STAGE_MAP_HIERARCHY_EDITOR_EXPORT dtEditQt::PluginFactory* CreatePluginFactory()
+
+////////////////////////////////////////////////////////////////////////////////
+void SceneHierarchyEditorPlugin::UpdateUI()
 {
-   return new MapHierarchyEditor::PluginFactory;
+   dtCore::Map* m = dtEditQt::EditorData::GetInstance().getCurrentMap();
+   if (m != NULL)
+   {
+      dtCore::BaseActorObject* rootActor = m->GetEnvironmentActor();
+
+      typedef std::map<dtCore::UniqueId, dtCore::RefPtr<dtCore::BaseActorObject> > IdActorMap;
+      const IdActorMap& actors = m->GetAllProxies();
+      
+      if (rootActor == nullptr)
+      {
+         LOG_WARNING("Could not access root actor: NULL");
+      }
+      
+      if ( ! actors.empty())
+      {
+         // Reserve enough node elements for all the actors.
+         dtQt::BaseNodeWrapperArray nodes;
+         nodes.reserve(actors.size());
+
+         // Wrap each of the root actors in a node wrapper.
+         std::for_each(actors.begin(), actors.end(),
+            [&](IdActorMap::value_type iter)
+            {
+               dtCore::BaseActorObject* actor = iter.second.get();
+
+               // TODO: Add options and filtering mechanism to limit the node display for large scenes.
+
+               // Accept only scene level actors (those without parents).
+               dtGame::GameActorProxy* gameActor = dynamic_cast<dtGame::GameActorProxy*>(actor);
+               if (gameActor == nullptr || gameActor->GetParentActor() == nullptr)
+               {
+                  nodes.push_back(new dtQt::ActorNodeWrapper(*actor));
+               }
+            }
+         );
+
+         // Sort the nodes by name.
+         NodeNameComparePred pred;
+         std::sort(nodes.begin(), nodes.end(), pred);
+         
+         // Send  the node wrappers to be displayed in the node hierarchy graph.
+         mNodeGraphViewer->GetNodeGraphView().GetNodeGraphScene()->SetSceneNodes(nodes);
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void SceneHierarchyEditorPlugin::onCurrentMapChanged()
+{
+   UpdateUI();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void SceneHierarchyEditorPlugin::OnSelectionChanged()
+{
+   dtQt::NodeGraphScene* scene = mNodeGraphViewer->GetNodeGraphView().GetNodeGraphScene();
+
+   // Get the selected graphics objects as node wrappers...
+   dtQt::BaseNodeWrapperArray nodes;
+   if (scene->GetSelectedNodes(nodes) > 0)
+   {
+      ActorRefPtrVector actors;
+      actors.reserve(nodes.size());
+
+      // Then for each wrapper, access it as an actor...
+      std::for_each(nodes.begin(), nodes.end(),
+         [&](dtQt::BaseNodeWrapper* nodeWrapper)
+         {
+            dtQt::ActorNodeWrapper* actorNode = dynamic_cast<dtQt::ActorNodeWrapper*>(nodeWrapper);
+
+            // If there is an actor, add it to the list for selection in the editor.
+            if (actorNode != nullptr && actorNode->Get() != nullptr)
+            {
+               actors.push_back(actorNode->Get());
+            }
+         }
+      );
+
+      // Signal to the editor that actors were selected.
+      dtEditQt::EditorEvents::GetInstance().selectedActors(actors);
+   }
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// CLASS CODE
+////////////////////////////////////////////////////////////////////////////////
+namespace SceneHierarchyEditor
+{
+   class DELTA_SCENE_HIERARCHY_EDITOR_EXPORT PluginFactory : public dtEditQt::PluginFactory
+   {
+   public:
+      PluginFactory() {}
+      ~PluginFactory() {}
+
+      /** get the name of the plugin */
+      virtual std::string GetName() { return SceneHierarchyEditorPlugin::PLUGIN_NAME; }
+
+      /** get a description of the plugin */
+      virtual std::string GetDescription() { return "Scene Hierarchy Editor"; }
+
+      virtual void GetDependencies(std::list<std::string>& deps)
+      {
+         // just for testing
+         deps.push_back("Plugin Manager");
+      }
+
+       /** construct the plugin and return a pointer to it */
+      virtual dtEditQt::Plugin* Create(dtEditQt::MainWindow* mw)
+      {
+         mPlugin = new SceneHierarchyEditorPlugin(mw);
+         return mPlugin;
+      }
+
+      virtual void Destroy()
+      {
+         delete mPlugin;
+      }
+
+   private:
+
+      dtEditQt::Plugin* mPlugin;
+   };
+
+} //namespace SceneHierarchyEditor
+           
+extern "C" DELTA_SCENE_HIERARCHY_EDITOR_EXPORT dtEditQt::PluginFactory* CreatePluginFactory()
+{
+   return new SceneHierarchyEditor::PluginFactory;
 }

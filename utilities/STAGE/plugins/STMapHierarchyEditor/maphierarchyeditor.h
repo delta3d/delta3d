@@ -1,34 +1,51 @@
-#ifndef STAGE_MAP_HIERARCHY_EDITOR_PLUGIN_H__
-#define STAGE_MAP_HIERARCHY_EDITOR_PLUGIN_H__
+/* -*-c++-*-
+* Copyright (C) 2015, Caper Holdings LLC
+*
+* This library is free software; you can redistribute it and/or modify it under
+* the terms of the GNU Lesser General Public License as published by the Free
+* Software Foundation; either version 2.1 of the License, or (at your option)
+* any later version.
+*
+* This library is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* details.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with this library; if not, write to the Free Software Foundation, Inc.,
+* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+*/
 
+#ifndef DELTA_SCENE_HIERARCHY_EDITOR_PLUGIN_H
+#define DELTA_SCENE_HIERARCHY_EDITOR_PLUGIN_H
+
+////////////////////////////////////////////////////////////////////////////////
+// INCLUDE DIRECTIVES
+////////////////////////////////////////////////////////////////////////////////
 #include "export.h"
-
+#include <QtWidgets/QDockWidget>
+#include <dtEditQt/plugininterface.h>
+#include <dtQt/nodegraphview.h>
 #include "ui_maphierarchyeditor.h"
 
-#include <dtEditQt/plugininterface.h>
 
-#include <QtWidgets/QDockWidget>
 
-//forward declarations
-class Ui_MapHierarcyEditor;
-class QGridLayout;
-
-class NodeButton;
-
-namespace dtCore
-{
-   class ActorHierarchyNode;
-}
+////////////////////////////////////////////////////////////////////////////////
+// FORWARD DECLARATIONS
+////////////////////////////////////////////////////////////////////////////////
+class Ui_SceneHierarcyEditor;
 
 namespace dtEditQt
 {
    class MainWindow;
 }
 
-/**
- The Map Hierarchy Editor STAGE plugin.
-*/      
-class STAGE_MAP_HIERARCHY_EDITOR_EXPORT MapHierarchyEditorPlugin
+
+
+////////////////////////////////////////////////////////////////////////////////
+// CLASS CODE
+////////////////////////////////////////////////////////////////////////////////  
+class DELTA_SCENE_HIERARCHY_EDITOR_EXPORT SceneHierarchyEditorPlugin
    : public QDockWidget   
    , public dtEditQt::Plugin
 {
@@ -37,26 +54,25 @@ class STAGE_MAP_HIERARCHY_EDITOR_EXPORT MapHierarchyEditorPlugin
 public:
    const static std::string PLUGIN_NAME;
 
-   MapHierarchyEditorPlugin(dtEditQt::MainWindow* mw);
-   ~MapHierarchyEditorPlugin();
+   SceneHierarchyEditorPlugin(dtEditQt::MainWindow* mw);
+   ~SceneHierarchyEditorPlugin();
 
    virtual void Destroy();
 
    /** override close event to get notified when user closes the dock */
    virtual void closeEvent(QCloseEvent* event);
    
-   void BuildTreeFromMap();
-   void BuildTreeGUI();
-   void BuildGUIBranch(NodeButton* GUIparent, dtCore::ActorHierarchyNode* branch);
-   void RebuildTree();
-   QGridLayout* GetGridLayout();
+   void UpdateUI();
 
 public slots:
    void onCurrentMapChanged();
 
+   void OnSelectionChanged();
+
 private:
-   Ui_MapHierarchyEditor                              mUI;
-   dtEditQt::MainWindow*                              mMainWindow;
+   Ui_SceneHierarchyEditor mUI;
+   dtEditQt::MainWindow* mMainWindow;
+   dtQt::NodeGraphViewerPanel*  mNodeGraphViewer;
 };
 
-#endif //STAGE_MAP_HIERARCHY_EDITOR_PLUGIN_H__
+#endif
