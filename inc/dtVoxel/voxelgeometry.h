@@ -27,9 +27,14 @@
 #include <pal/palGeometry.h>
 #include <openvdb/openvdb.h>
 #include <bitset>
-// #include <iostream>
 #include <dtCore/camera.h>
 #include <osg/io_utils>
+
+//#define VOXEL_PHYSICS_GEOM_LOGGING
+
+#ifdef VOXEL_PHYSICS_GEOM_LOGGING
+#include <iostream>
+#endif
 
 namespace dtVoxel
 {
@@ -75,7 +80,9 @@ namespace dtVoxel
          GridPtr grid = mGrid;
          if (worldBoundingBox.volume() < size_t(UINT32_MAX))
          {
-            //std::cout << "max extent " << worldBoundingBox.maxExtent();
+#ifdef VOXEL_PHYSICS_GEOM_LOGGING
+            std::cout << "max extent " << worldBoundingBox.maxExtent();
+#endif
             collideBox = grid->transform().worldToIndexCellCentered(worldBoundingBox);
          }
          else // debug draw
@@ -84,7 +91,9 @@ namespace dtVoxel
             dtCore::Transform xform;
             dtCore::Camera::GetInstance(0)->GetTransform(xform);
             osg::Vec3d cameraPos = xform.GetTranslation();
-            //std::cout << "camera pos " << cameraPos;
+#ifdef VOXEL_PHYSICS_GEOM_LOGGING
+            std::cout << "camera pos " << cameraPos;
+#endif
             openvdb::Vec3d cameraOvdb(cameraPos.x(), cameraPos.y(), cameraPos.z());
             openvdb::Vec3d min(cameraOvdb - openvdb::Vec3d(10.0, 10.0, 5.0));
             openvdb::Vec3d max(cameraOvdb + openvdb::Vec3d(10.0, 10.0, 5.0));
@@ -95,7 +104,9 @@ namespace dtVoxel
          const palBoundingBox& fullBoundingBox = GetBoundingBox();
          typename GridType::ConstAccessor ca = mGrid->getConstAccessor();
 
-         //std::cout << " collision box: " << collideBox << std::endl;
+#ifdef VOXEL_PHYSICS_GEOM_LOGGING
+         std::cout << " collision box: " << collideBox << std::endl;
+#endif
          for (int i = collideBox.min().x(), iend = collideBox.max().x() + 1; i < iend; ++i)
          {
             for (int j = collideBox.min().y(), jend = collideBox.max().y() + 1; j < jend; ++j)
@@ -110,7 +121,9 @@ namespace dtVoxel
 
                   openvdb::BBoxd iBox(openvdb::Vec3d(double(coord.x()), double(coord.y()), double(coord.z())), 0);
                   iBox.expand(0.5f);
-                  //std::cout << "Voxel in collision box: " << iBox << std::endl;
+#ifdef VOXEL_PHYSICS_GEOM_LOGGING
+                  std::cout << "Voxel in collision box: " << iBox << std::endl;
+#endif
                   openvdb::BBoxd voxelBBox = grid->transform().indexToWorld(iBox);
                   std::bitset<6> activeNeighbors;
                   activeNeighbors[0] = ca.isValueOn(openvdb::Coord(coord.x()-1,coord.y(),coord.z()));
@@ -119,12 +132,14 @@ namespace dtVoxel
                   activeNeighbors[3] = ca.isValueOn(openvdb::Coord(coord.x(),coord.y(),coord.z()-1));
                   activeNeighbors[4] = ca.isValueOn(openvdb::Coord(coord.x(),coord.y()+1,coord.z()));
                   activeNeighbors[5] = ca.isValueOn(openvdb::Coord(coord.x(),coord.y()-1,coord.z()));
-                  //std::cout << " Neighbors ";
-                  //for (unsigned n = 0 ; n < 6 ; ++n) std::cout << activeNeighbors[n];
-                  //std::cout << std::endl;
                   openvdb::math::Vec3<Float> min = voxelBBox.min();
                   openvdb::math::Vec3<Float> max = voxelBBox.max();
-                  // std::cout << "voxel min max: " << min << max << std::endl;
+#ifdef VOXEL_PHYSICS_GEOM_LOGGING
+                  std::cout << " Neighbors ";
+                  for (unsigned n = 0 ; n < 6 ; ++n) std::cout << activeNeighbors[n];
+                  std::cout << std::endl;
+                  std::cout << "voxel min max: " << min << max << std::endl;
+#endif
                   Float cube_vertices[] =
                         {
                               min.x(),  max.y(),  max.z(),
@@ -143,15 +158,21 @@ namespace dtVoxel
                      if (!activeNeighbors[triIdx/2])
                      {
                         palTriangle triangle;
-                        //std::cout << "triangle ";
+#ifdef VOXEL_PHYSICS_GEOM_LOGGING
+                        std::cout << "triangle ";
+#endif
                         for (unsigned vertIdx = 0; vertIdx < 3; ++vertIdx)
                         {
                            triangle.vertices[vertIdx].x = cube_vertices[3 * faces[3*triIdx + vertIdx] + 0];
                            triangle.vertices[vertIdx].y = cube_vertices[3 * faces[3*triIdx + vertIdx] + 1];
                            triangle.vertices[vertIdx].z = cube_vertices[3 * faces[3*triIdx + vertIdx] + 2];
-                           //std::cout << "[" << triangle.vertices[j].x << " " << triangle.vertices[j].y << " " << triangle.vertices[j].z << "]";
+#ifdef VOXEL_PHYSICS_GEOM_LOGGING
+                           std::cout << "[" << triangle.vertices[vertIdx].x << " " << triangle.vertices[vertIdx].y << " " << triangle.vertices[vertIdx].z << "]";
+#endif
                         }
-                        //std::cout << std::endl;
+#ifdef VOXEL_PHYSICS_GEOM_LOGGING
+                        std::cout << std::endl;
+#endif
                         callback.ProcessTriangle(triangle, partId,  baseTriIdx + triIdx);
                      }
                   }
