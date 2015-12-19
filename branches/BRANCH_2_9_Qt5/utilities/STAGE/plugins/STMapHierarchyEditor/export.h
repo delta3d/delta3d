@@ -1,5 +1,5 @@
-#ifndef STAGE_MAP_HIERARCHY_EDITOR_EXPORT_FOR_MS_WIN
-#define STAGE_MAP_HIERARCHY_EDITOR_EXPORT_FOR_MS_WIN
+#ifndef DELTA_SCENE_HIERARCHY_EDITOR_EXPORT_FOR_MS_WIN
+#define DELTA_SCENE_HIERARCHY_EDITOR_EXPORT_FOR_MS_WIN
 
 /**
 * This is modeled from the DT_EXPORT macro found in dtCore/export.h.  
@@ -10,16 +10,16 @@
 * preprocessor #defines.
 */
 #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
-#  ifdef STAGE_MAP_HIERARCHY_EDITOR_PLUGIN
-#    define STAGE_MAP_HIERARCHY_EDITOR_EXPORT __declspec(dllexport)
+#  ifdef DELTA_SCENE_HIERARCHY_EDITOR_PLUGIN
+#    define DELTA_SCENE_HIERARCHY_EDITOR_EXPORT __declspec(dllexport)
 #  else
-#    define STAGE_MAP_HIERARCHY_EDITOR_EXPORT __declspec(dllimport)
+#    define DELTA_SCENE_HIERARCHY_EDITOR_EXPORT __declspec(dllimport)
 #  endif
 #else
-#  ifdef STAGE_MAP_HIERARCHY_EDITOR_PLUGIN
-#    define STAGE_MAP_HIERARCHY_EDITOR_EXPORT  __attribute__ ((visibility("default")))
+#  ifdef DELTA_SCENE_HIERARCHY_EDITOR_PLUGIN
+#    define DELTA_SCENE_HIERARCHY_EDITOR_EXPORT  __attribute__ ((visibility("default")))
 #  else
-#    define STAGE_MAP_HIERARCHY_EDITOR_EXPORT
+#    define DELTA_SCENE_HIERARCHY_EDITOR_EXPORT
 #  endif
 #endif
 
