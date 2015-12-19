@@ -28,7 +28,7 @@
 #include <QtWidgets/QGraphicsView>
 #include <QtWidgets/QGraphicsItem>
 #include <osg/Node>
-#include <dtCore/refptr.h>
+#include <dtGame/gameactorproxy.h>
 
 
 
@@ -44,31 +44,133 @@ namespace dtQt
    ////////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    ////////////////////////////////////////////////////////////////////////////////
-   /*class DT_QT_EXPORT BaseNodeWrapper : public osg::Referenced
+   class BaseNodeWrapper;
+   typedef dtCore::RefPtr<BaseNodeWrapper> BaseNodeWrapperPtr;
+   typedef std::vector<BaseNodeWrapperPtr> BaseNodeWrapperArray;
+
+   class DT_QT_EXPORT BaseNodeWrapper : public osg::Referenced
    {
    public:
+      typedef dtCore::RefPtr<BaseNodeWrapper> Ptr;
+
       BaseNodeWrapper() {}
 
+      virtual std::string GetName() const = 0;
+      virtual std::string GetClassName() const = 0;
+      virtual std::string GetDescription() const = 0;
       virtual void SetParentNode(BaseNodeWrapper* node) = 0;
-      virtual dtCore::RefPtr<BaseNodeWrapper> GetParentNode() const = 0;
+      virtual BaseNodeWrapperPtr GetParentNode() const = 0;
+      virtual unsigned int GetChildNodes(BaseNodeWrapperArray& outArray) = 0;
+
+      template<class T_DerivedType>
+      T_DerivedType* As()
+      {
+         return dynamic_cast<T_DerivedType*>(this);
+      }
+
+      template<class T_DerivedType>
+      const T_DerivedType* As() const
+      {
+         return dynamic_cast<const T_DerivedType*>(this);
+      }
 
    protected:
       virtual ~BaseNodeWrapper() {}
    };
 
-   typedef dtCore::RefPtr<BaseNodeWrapper> BaseNodeWrapperPtr;
 
-   template<class T_Node>
+
+   template<class T_Node, class T_Ptr>
    class NodeWrapperT : public BaseNodeWrapper
    {
    public:
       typedef BaseNodeWrapper BaseClass;
+      typedef T_Node Type;
+      typedef T_Ptr TypePtr;
 
-      NodeWrapperT() {}
+      NodeWrapperT(Type& node)
+         : mObj(&node)
+      {}
+
+      Type* Get() const
+      {
+         return mObj;
+      }
+
+      Type& operator* ()
+      {
+         return *mObj;
+      }
 
    protected:
       virtual ~NodeWrapperT() {}
-   };*/
+
+      TypePtr mObj;
+   };
+
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   ////////////////////////////////////////////////////////////////////////////////
+   typedef NodeWrapperT<osg::Node, dtCore::RefPtr<osg::Node> > BaseOsgNodeWrapper;
+   class DT_QT_EXPORT OsgNodeWrapper : public BaseOsgNodeWrapper
+   {
+   public:
+      typedef BaseOsgNodeWrapper BaseClass;
+      
+      OsgNodeWrapper(osg::Node& node);
+
+      std::string GetName() const override;
+
+      std::string GetClassName() const override;
+
+      std::string GetDescription() const override;
+
+      void SetParentNode(BaseNodeWrapper* nodeWrapper) override;
+
+      unsigned int GetChildNodes(BaseNodeWrapperArray& outArray) override;
+
+      BaseNodeWrapperPtr GetParentNode() const override;
+
+   protected:
+      virtual ~OsgNodeWrapper();
+   };
+
+   typedef dtCore::RefPtr<OsgNodeWrapper> OsgNodeWrapperPtr;
+
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   ////////////////////////////////////////////////////////////////////////////////
+   typedef NodeWrapperT<dtCore::BaseActorObject, dtCore::RefPtr<dtCore::BaseActorObject> > BaseActorNodeWrapper;
+   class DT_QT_EXPORT ActorNodeWrapper : public BaseActorNodeWrapper
+   {
+   public:
+      typedef BaseActorNodeWrapper BaseClass;
+
+      ActorNodeWrapper(dtCore::BaseActorObject& actor);
+
+      std::string GetName() const override;
+
+      std::string GetClassName() const override;
+
+      std::string GetDescription() const override;
+
+      void SetParentNode(BaseNodeWrapper* nodeWrapper) override;
+
+      unsigned int GetChildNodes(BaseNodeWrapperArray& outArray) override;
+
+      BaseNodeWrapperPtr GetParentNode() const override;
+
+      dtGame::GameActorProxy* GetAsActor() const;
+
+   protected:
+      virtual ~ActorNodeWrapper();
+   };
+
+   typedef dtCore::RefPtr<ActorNodeWrapper> ActorNodeWrapperPtr;
 
 
 
@@ -98,7 +200,7 @@ namespace dtQt
 
       enum { Type = UserType + 1 };
 
-      NodeItem(osg::Node& node);
+      NodeItem(BaseNodeWrapper& node);
       virtual ~NodeItem();
 
       // Enable the use of qgraphicsitem_cast with this item.
@@ -110,6 +212,9 @@ namespace dtQt
       NodeItemArray CreateChildNodeItems(bool recurse);
 
       static NodeItem* ConvertToNodeItem(QGraphicsItem& item);
+
+      BaseNodeWrapper& GetNodeWrapper();
+      const BaseNodeWrapper& GetNodeWrapper() const;
 
       NodeItem* GetParentNodeItem() const;
       unsigned int GetChildNodeItems(NodeItemArray& outChildren) const;
@@ -130,7 +235,7 @@ namespace dtQt
       void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
 
       bool mCollapsed;
-      dtCore::RefPtr<osg::Node> mNode;
+      dtCore::RefPtr<BaseNodeWrapper> mNode;
    };
 
 
@@ -142,7 +247,7 @@ namespace dtQt
    {
       Q_OBJECT
    public slots:
-      virtual void OnNodeMoved() {}
+      virtual void OnNodeMoved() = 0;
    };
 
    class NodeConnector : public QGraphicsItem, virtual public ConnectorSigSlotInterface
@@ -199,20 +304,22 @@ namespace dtQt
    class DT_QT_EXPORT NodeArranger : public osg::Referenced
    {
    public:
+      static const float DEFAULT_PADDING_H;
+      static const float DEFAULT_PADDING_V;
+
       struct Params
       {
          float mPaddingH;
          float mPaddingV;
 
-         Params(float paddingH = 10.0f, float paddingV = 10.0f)
+         Params(float paddingH = DEFAULT_PADDING_H,
+            float paddingV = DEFAULT_PADDING_V)
             : mPaddingH(paddingH)
             , mPaddingV(paddingV)
          {}
       };
 
       NodeArranger() {}
-
-      NodeItem* FindDeepestNode(NodeItem& node);
 
       QRectF Arrange(NodeItem& node, const Params& params);
 
@@ -234,7 +341,9 @@ namespace dtQt
       NodeGraphScene();
       virtual ~NodeGraphScene();
 
-      void SetSceneNode(osg::Node* node);
+      void SetSceneNodes(const BaseNodeWrapperArray& nodes);
+
+      unsigned int GetSelectedNodes(BaseNodeWrapperArray& outNodes);
 
       void UpdateScene();
 
@@ -248,7 +357,7 @@ namespace dtQt
       typedef std::list<NodeConnector*> NodeConnectorList;
       NodeConnectorList mConnectors;
 
-      dtCore::RefPtr<osg::Node> mScene;
+      BaseNodeWrapperArray mSceneNodes;
    };
 
 
@@ -300,8 +409,8 @@ namespace dtQt
       NodeGraphViewerPanel();
       virtual ~NodeGraphViewerPanel();
 
-      NodeGraphView& GetGraphView();
-      const NodeGraphView& GetGraphView() const;
+      NodeGraphView& GetNodeGraphView();
+      const NodeGraphView& GetNodeGraphView() const;
 
       void UpdateUI();
 
