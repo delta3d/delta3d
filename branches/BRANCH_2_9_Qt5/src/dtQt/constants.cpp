@@ -47,7 +47,7 @@ namespace dtQt
    {
       using namespace dtUtil;
 
-      const NodeType* nodeType = NodeType::GetNodeTypeByClassName(className);
+      const NodeType* nodeType = &NodeType::GetNodeTypeByClassName(className);
 
       const QString* icon = &Constants::ICON_NODE;
 
