@@ -53,7 +53,8 @@ typedef std::vector<OsgNodePtr> OsgNodePtrVector;
 typedef std::vector<OsgNodeWeakPtr> OsgNodeWeakPtrVector;
 
 //allows storage in a QVariant
-Q_DECLARE_METATYPE(dtCore::RefPtr<dtCore::BaseActorObject>);
+Q_DECLARE_METATYPE(dtCore::ActorPtr);
+Q_DECLARE_METATYPE(dtCore::ActorRefPtrVector);
 Q_DECLARE_METATYPE(dtCore::RefPtr<dtCore::ActorProperty>);
 Q_DECLARE_METATYPE(OsgNodePtr);
 Q_DECLARE_METATYPE(OsgNodePtrVector);

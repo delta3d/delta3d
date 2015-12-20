@@ -57,7 +57,7 @@ namespace dtUtil
 
       const std::string& GetClassName() const;
 
-      static const NodeType* GetNodeTypeByClassName(const std::string& className);
+      static const NodeType& GetNodeTypeByClassName(const std::string& className);
 
    protected:
       NodeType(const std::string& name, const std::string& className);

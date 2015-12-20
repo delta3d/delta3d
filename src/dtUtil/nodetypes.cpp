@@ -68,7 +68,7 @@ namespace dtUtil
       return mClassName;
    }
 
-   const NodeType* NodeType::GetNodeTypeByClassName(const std::string& className)
+   const NodeType& NodeType::GetNodeTypeByClassName(const std::string& className)
    {
       const NodeType* nodeType = nullptr;
 
@@ -79,7 +79,7 @@ namespace dtUtil
          nodeType = foundIter->second;
       }
 
-      return nodeType;
+      return *nodeType;
    }
 
 

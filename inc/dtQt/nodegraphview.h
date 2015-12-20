@@ -261,6 +261,13 @@ namespace dtQt
 
       void Set(NodeItem& nodeA, NodeItem& nodeB);
 
+      NodeItem* GetNodeA() const;
+      NodeItem* GetNodeB() const;
+
+      bool HasNode(const NodeItem& node) const;
+
+      bool IsValid() const;
+
       QRectF boundingRect() const override;
 
       void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
@@ -279,6 +286,7 @@ namespace dtQt
    };
 
    typedef std::vector<NodeConnector*> NodeConnectorArray;
+   typedef std::list<NodeConnector*> NodeConnectorList;
 
 
 
@@ -290,11 +298,24 @@ namespace dtQt
    public:
       NodeConnectorManager();
 
+      NodeConnector* CreateConnector(NodeItem& nodeParent, NodeItem& nodeChild);
+
       NodeConnectorArray CreateConnectors(NodeItem& node, bool recurse);
+
+      void RemoveConnectorToParent(NodeItem& node);
+
+      NodeConnectorList& GetConnectors();
+      const NodeConnectorList& GetConnectors() const;
+
+      int GetConnectorsForNode(const NodeItem& node, NodeConnectorList& outConnectors) const;
 
    protected:
       virtual ~NodeConnectorManager();
+
+      NodeConnectorList mConnectors;
    };
+
+   typedef dtCore::RefPtr<NodeConnectorManager> NodeConnectorManagerPtr;
 
 
 
@@ -329,6 +350,8 @@ namespace dtQt
       virtual ~NodeArranger() {}
    };
 
+   typedef dtCore::RefPtr<NodeArranger> NodeArrangerPtr;
+
 
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -343,20 +366,57 @@ namespace dtQt
 
       void SetSceneNodes(const BaseNodeWrapperArray& nodes);
 
+      /*
+      * Acquires the objects referenced by the currently selected nodes.
+      * @param outObjects Container to capture the objects of the selected nodes.
+      * @return Count of objects retrieved.
+      */
       unsigned int GetSelectedNodes(BaseNodeWrapperArray& outNodes);
+
+      /*
+      * Acquires the currently selected nodes.
+      * @param outNodeItems Container to capture the selected nodes.
+      * @return Count of nodes retrieved.
+      */
+      unsigned int GetSelectedNodeItems(NodeItemArray& outNodeItems);
+
+      void GetNodesFromItems(const NodeItemArray& nodeItems, BaseNodeWrapperArray& outNodes);
 
       void UpdateScene();
 
+      /*
+      * Method to detach graphical nodes from their graphical node parents.
+      * NOTE: This is only for graphics does not affect the actual
+      * relationships between objects represented by the nodes.
+      */
+      void DetachNodeItems(const NodeItemArray& nodeItems);
+
+      /*
+      * Method to attach graphical nodes to a graphical node parent.
+      * NOTE: This is only for graphics does not affect the actual
+      * relationships between objects represented by the nodes.
+      */
+      void AttachNodeItems(const NodeItemArray& nodeItems, NodeItem& parentNodeItem);
+
+      void DetachSelectedNodes();
+
+      void AttachSelectedNodes(NodeItem& parentNodeItem);
+
+      int GetNodeConnectorsForNode(const NodeItem& nodeItem, NodeConnectorList& outConnectors) const;
+
    public slots:
       void OnSelectionChanged();
+      void OnDetachAction();
 
-   //signals:
-      //void SignalNodesSelected(???);
+   signals:
+      void SignalNodesSelected(const dtQt::BaseNodeWrapperArray& nodes);
+      void SignalNodesDetached(const dtQt::BaseNodeWrapperArray& nodes);
+      void SignalNodesAttached(const dtQt::BaseNodeWrapperArray& nodes, const BaseNodeWrapper& parentNode);
 
-   protected:
-      typedef std::list<NodeConnector*> NodeConnectorList;
-      NodeConnectorList mConnectors;
+   private:
+      void CreateConnections();
 
+      NodeConnectorManagerPtr mConnectorManager;
       BaseNodeWrapperArray mSceneNodes;
    };
 
@@ -391,6 +451,12 @@ namespace dtQt
       virtual void mouseMoveEvent(QMouseEvent* mouseEvent) override;
       virtual void wheelEvent(QWheelEvent* wheelEvent) override;
 
+   signals:
+      void SignalZoomChanged(float zoom);
+
+   public slots:
+      void OnZoomAction(const QString zoomValue);
+
    protected:
       NodeGraphScene* mNodeGraphScene;
       float mZoom;
@@ -405,6 +471,7 @@ namespace dtQt
    ////////////////////////////////////////////////////////////////////////////////
    class DT_QT_EXPORT NodeGraphViewerPanel : public QWidget
    {
+      Q_OBJECT
    public:
       NodeGraphViewerPanel();
       virtual ~NodeGraphViewerPanel();
@@ -413,6 +480,9 @@ namespace dtQt
       const NodeGraphView& GetNodeGraphView() const;
 
       void UpdateUI();
+
+   public slots:
+      void OnZoomChanged(float value);
 
    protected:
       void CreateConnections();
@@ -423,5 +493,12 @@ namespace dtQt
    };
 
 } // END - namespace dtQt
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// QT TYPES FOR SIGNALS
+////////////////////////////////////////////////////////////////////////////////
+Q_DECLARE_METATYPE(dtQt::BaseNodeWrapperArray);
 
 #endif

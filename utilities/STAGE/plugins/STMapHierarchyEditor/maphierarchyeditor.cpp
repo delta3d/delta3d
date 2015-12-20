@@ -24,6 +24,7 @@
 #include <dtCore/map.h>
 #include <dtCore/transformable.h>
 #include <dtEditQt/editordata.h>
+#include <dtEditQt/editoractions.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/pluginmanager.h>
@@ -58,9 +59,15 @@ SceneHierarchyEditorPlugin::SceneHierarchyEditorPlugin(dtEditQt::MainWindow* mw)
    connect(&dtEditQt::EditorEvents::GetInstance(), SIGNAL(currentMapChanged()),
       this, SLOT(onCurrentMapChanged()));
 
-   QGraphicsScene* scene = mNodeGraphViewer->GetNodeGraphView().GetNodeGraphScene();
-   connect(scene, SIGNAL(selectionChanged()),
-      this, SLOT(OnSelectionChanged()));
+   dtQt::NodeGraphScene* scene = mNodeGraphViewer->GetNodeGraphView().GetNodeGraphScene();
+   connect(scene, SIGNAL(SignalNodesSelected(const dtQt::BaseNodeWrapperArray&)),
+      this, SLOT(OnSelectionChanged(const dtQt::BaseNodeWrapperArray&)));
+
+   connect(scene, SIGNAL(SignalNodesDetached(const dtQt::BaseNodeWrapperArray&)),
+      this, SLOT(OnNodesDetached(const dtQt::BaseNodeWrapperArray&)));
+
+   connect(scene, SIGNAL(SignalNodesAttached(const dtQt::BaseNodeWrapperArray&, const dtQt::BaseNodeWrapper&)),
+      this, SLOT(OnNodesAttached(const dtQt::BaseNodeWrapperArray&, const dtQt::BaseNodeWrapper&)));
 
    UpdateUI();
 }
@@ -94,6 +101,28 @@ struct NodeNameComparePred
       return dtUtil::StrCompare(nodeA->GetName(), nodeB->GetName(), false) < 0;
    }
 };
+
+////////////////////////////////////////////////////////////////////////////////
+void SceneHierarchyEditorPlugin::ConvertNodesToActors(
+   const dtQt::BaseNodeWrapperArray& nodes, dtCore::ActorRefPtrVector& outActors)
+{
+   // Get the selected graphics objects as node wrappers...
+   outActors.reserve(nodes.size());
+
+   // Then for each wrapper, access it as an actor...
+   std::for_each(nodes.begin(), nodes.end(),
+      [&](dtQt::BaseNodeWrapper* nodeWrapper)
+      {
+         dtQt::ActorNodeWrapper* actorNode = dynamic_cast<dtQt::ActorNodeWrapper*>(nodeWrapper);
+
+         // If there is an actor, add it to the list for selection in the editor.
+         if (actorNode != nullptr && actorNode->Get() != nullptr)
+         {
+            outActors.push_back(actorNode->Get());
+         }
+      }
+   );
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 void SceneHierarchyEditorPlugin::UpdateUI()
@@ -151,34 +180,67 @@ void SceneHierarchyEditorPlugin::onCurrentMapChanged()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void SceneHierarchyEditorPlugin::OnSelectionChanged()
+void SceneHierarchyEditorPlugin::OnSelectionChanged(const dtQt::BaseNodeWrapperArray& nodes)
 {
    dtQt::NodeGraphScene* scene = mNodeGraphViewer->GetNodeGraphView().GetNodeGraphScene();
 
-   // Get the selected graphics objects as node wrappers...
-   dtQt::BaseNodeWrapperArray nodes;
-   if (scene->GetSelectedNodes(nodes) > 0)
-   {
-      ActorRefPtrVector actors;
-      actors.reserve(nodes.size());
+   ActorRefPtrVector actors;
+   ConvertNodesToActors(nodes, actors);
 
-      // Then for each wrapper, access it as an actor...
-      std::for_each(nodes.begin(), nodes.end(),
-         [&](dtQt::BaseNodeWrapper* nodeWrapper)
+   // Signal to the editor that actors were selected.
+   dtEditQt::EditorEvents::GetInstance().selectedActors(actors);
+}
+
+void SceneHierarchyEditorPlugin::OnNodesDetached(const dtQt::BaseNodeWrapperArray& nodes)
+{
+   ActorRefPtrVector actors;
+   ConvertNodesToActors(nodes, actors);
+
+   dtEditQt::EditorActions& editorActions = dtEditQt::EditorActions::GetInstance();
+
+   // Signal to the editor that actors were requested to be detached.
+   std::for_each(actors.begin(), actors.end(),
+      [&](dtCore::BaseActorObject* object)
+      {
+         dtGame::GameActorProxy* actor = dynamic_cast<dtGame::GameActorProxy*>(object);
+         if (actor != nullptr)
          {
-            dtQt::ActorNodeWrapper* actorNode = dynamic_cast<dtQt::ActorNodeWrapper*>(nodeWrapper);
-
-            // If there is an actor, add it to the list for selection in the editor.
-            if (actorNode != nullptr && actorNode->Get() != nullptr)
-            {
-               actors.push_back(actorNode->Get());
-            }
+            editorActions.slotChangeActorParent(actor, actor->GetParentActor(), nullptr);
          }
-      );
+      }
+   );
+}
 
-      // Signal to the editor that actors were selected.
-      dtEditQt::EditorEvents::GetInstance().selectedActors(actors);
+void SceneHierarchyEditorPlugin::OnNodesAttached(const dtQt::BaseNodeWrapperArray& nodes, const dtQt::BaseNodeWrapper& parentNode)
+{
+   ActorRefPtrVector actors;
+   ConvertNodesToActors(nodes, actors);
+
+   const dtQt::ActorNodeWrapper* actorWrapper = dynamic_cast<const dtQt::ActorNodeWrapper*>(&parentNode);
+   dtCore::BaseActorObject* parentActor = nullptr;
+
+   if (actorWrapper != nullptr)
+   {
+      parentActor = actorWrapper->Get();
    }
+   else
+   {
+      LOG_WARNING("Could not access actor for parent node item \"" + parentNode.GetName() + "\"");
+   }
+
+   dtEditQt::EditorActions& editorActions = dtEditQt::EditorActions::GetInstance();
+
+   // Signal to the editor that actors were requested to be attached to a parent.
+   std::for_each(actors.begin(), actors.end(),
+      [&](dtCore::BaseActorObject* object)
+      {
+         dtGame::GameActorProxy* actor = dynamic_cast<dtGame::GameActorProxy*>(object);
+         if (actor != nullptr)
+         {
+            editorActions.slotChangeActorParent(actor, actor->GetParentActor(), parentActor);
+         }
+      }
+   );
 }
 
 
