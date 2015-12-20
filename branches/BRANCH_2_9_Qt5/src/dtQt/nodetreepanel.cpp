@@ -189,7 +189,7 @@ namespace dtQt
          if (answer)
          {
             std::string nodeClass(node.className());
-            const NodeType* nodeType = NodeType::GetNodeTypeByClassName(nodeClass);
+            const NodeType* nodeType = &NodeType::GetNodeTypeByClassName(nodeClass);
 
             if (nodeType == &NodeType::MATRIX)
             {

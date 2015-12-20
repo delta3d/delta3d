@@ -64,10 +64,14 @@ public:
    
    void UpdateUI();
 
+   void ConvertNodesToActors(const dtQt::BaseNodeWrapperArray& nodes, dtCore::ActorRefPtrVector& outActors);
+
 public slots:
    void onCurrentMapChanged();
 
-   void OnSelectionChanged();
+   void OnSelectionChanged(const dtQt::BaseNodeWrapperArray& nodes);
+   void OnNodesDetached(const dtQt::BaseNodeWrapperArray& nodes);
+   void OnNodesAttached(const dtQt::BaseNodeWrapperArray& nodes, const dtQt::BaseNodeWrapper& parentNode);
 
 private:
    Ui_SceneHierarchyEditor mUI;

@@ -455,6 +455,26 @@ namespace dtQt
       Update();
    }
 
+   NodeItem* NodeConnector::GetNodeA() const
+   {
+      return mNodeA;
+   }
+   
+   NodeItem* NodeConnector::GetNodeB() const
+   {
+      return mNodeB;
+   }
+
+   bool NodeConnector::HasNode(const NodeItem& node) const
+   {
+      return mNodeA == &node || mNodeB == &node;
+   }
+
+   bool NodeConnector::IsValid() const
+   {
+      return mNodeA != nullptr && mNodeB != nullptr;
+   }
+
    QRectF NodeConnector::boundingRect() const
    {
       QPointF pos = scenePos();
@@ -539,6 +559,17 @@ namespace dtQt
    NodeConnectorManager::~NodeConnectorManager()
    {}
 
+   NodeConnector* NodeConnectorManager::CreateConnector(NodeItem& nodeParent, NodeItem& nodeChild)
+   {
+      NodeConnector* connector = new NodeConnector(nodeParent, nodeChild);
+      connector->setParentItem(&nodeParent);
+
+      QObject::connect(&nodeChild, SIGNAL(SignalMoved()),
+         connector, SLOT(OnNodeMoved()));
+
+      return connector;
+   }
+
    NodeConnectorArray NodeConnectorManager::CreateConnectors(NodeItem& node, bool recurse)
    {
       NodeConnectorArray connectorArray;
@@ -551,12 +582,9 @@ namespace dtQt
       std::for_each(children.begin(), children.end(),
          [&](NodeItem* childNode)
          {
-            connector = new NodeConnector(node, *childNode);
-            connector->setParentItem(&node);
+            connector = CreateConnector(node, *childNode);
             connectorArray.push_back(connector);
-
-            QObject::connect(childNode, SIGNAL(SignalMoved()),
-               connector, SLOT(OnNodeMoved()));
+            mConnectors.push_back(connector);
          }
       );
 
@@ -572,6 +600,66 @@ namespace dtQt
       }
 
       return connectorArray;
+   }
+
+   void NodeConnectorManager::RemoveConnectorToParent(NodeItem& node)
+   {
+      NodeConnector* connector = nullptr;
+      NodeConnectorList::iterator iter = mConnectors.begin();
+      NodeConnectorList::iterator endIter = mConnectors.end();
+      for (; iter != endIter; )
+      {
+         connector = *iter;
+
+         if (connector->GetNodeB() == &node)
+         {
+            NodeConnectorList::iterator iterToErase = iter;
+            ++iter;
+
+            // The item should have a reference back o the scene.
+            // Make sure the scene removes the connector.
+            connector->setParentItem(nullptr);
+            QGraphicsScene* scene = connector->scene();
+            scene->removeItem(connector);
+
+            delete connector;
+            connector = nullptr;
+
+            mConnectors.erase(iterToErase);
+         }
+         else
+         {
+            ++iter;
+         }
+      }
+   }
+
+   NodeConnectorList& NodeConnectorManager::GetConnectors()
+   {
+      return mConnectors;
+   }
+
+   const NodeConnectorList& NodeConnectorManager::GetConnectors() const
+   {
+      return mConnectors;
+   }
+
+   int NodeConnectorManager::GetConnectorsForNode(const NodeItem& node, NodeConnectorList& outConnectors) const
+   {
+      int count = 0;
+
+      std::for_each(mConnectors.begin(), mConnectors.end(),
+         [&](NodeConnector* connector)
+         {
+            if (connector->HasNode(node))
+            {
+               outConnectors.push_back(connector);
+               ++count;
+            }
+         }
+      );
+
+      return count;
    }
 
 
@@ -675,29 +763,21 @@ namespace dtQt
    ////////////////////////////////////////////////////////////////////////////////
    NodeGraphScene::NodeGraphScene()
    {
-      QBrush brush;
-      brush.setColor(Qt::gray);
-   
+      mConnectorManager = new NodeConnectorManager;
+
       setBackgroundBrush(Qt::gray);
 
-      // DEBUG:
-      /*dtCore::RefPtr<osg::Group> childA = new osg::Group;
-      childA->setName("A");
-      dtCore::RefPtr<osg::Group> childB = new osg::Group;
-      childB->setName("B");
-      dtCore::RefPtr<osg::Group> node = new osg::Group;
-      node->setName("Test Node");
-      node->addChild(childA.get());
-      node->addChild(childB.get());
-
-      SetSceneNode(node.get());*/
-   
-      connect(this, SIGNAL(selectionChanged()),
-         this, SLOT(OnSelectionChanged()));
+      CreateConnections();
    }
 
    NodeGraphScene::~NodeGraphScene()
    {}
+
+   void NodeGraphScene::CreateConnections()
+   {
+      connect(this, SIGNAL(selectionChanged()),
+         this, SLOT(OnSelectionChanged()));
+   }
 
    void NodeGraphScene::SetSceneNodes(const BaseNodeWrapperArray& nodes)
    {
@@ -710,10 +790,32 @@ namespace dtQt
    {
       unsigned int count = 0;
 
+      NodeItemArray nodeItems;
+      if (GetSelectedNodeItems(nodeItems) > 0)
+      {
+         outNodes.reserve(nodeItems.size());
+
+         std::for_each(nodeItems.begin(), nodeItems.end(),
+            [&](NodeItem* node)
+            {
+               outNodes.push_back(&node->GetNodeWrapper());
+
+               ++count;
+            }
+         );
+      }
+
+      return count;
+   }
+
+   unsigned int NodeGraphScene::GetSelectedNodeItems(NodeItemArray& outNodeItems)
+   {
+      unsigned int count = 0;
+
       QList<QGraphicsItem*> items = selectedItems();
       if ( ! items.empty())
       {
-         outNodes.reserve(items.size());
+         outNodeItems.reserve(items.size());
 
          std::for_each(items.begin(), items.end(),
             [&](QGraphicsItem* item)
@@ -722,7 +824,7 @@ namespace dtQt
 
                if (nodeItem != nullptr)
                {
-                  outNodes.push_back(&nodeItem->GetNodeWrapper());
+                  outNodeItems.push_back(nodeItem);
 
                   ++count;
                }
@@ -731,6 +833,18 @@ namespace dtQt
       }
 
       return count;
+   }
+
+   void NodeGraphScene::GetNodesFromItems(const NodeItemArray& nodeItems, BaseNodeWrapperArray& outNodes)
+   {
+      outNodes.reserve(nodeItems.size());
+
+      std::for_each(nodeItems.begin(), nodeItems.end(),
+         [&](NodeItem* nodeItem)
+         {
+            outNodes.push_back(&nodeItem->GetNodeWrapper());
+         }
+      );
    }
 
    void NodeGraphScene::UpdateScene()
@@ -749,8 +863,7 @@ namespace dtQt
                addItem(nodeItem);
                nodeItem->CreateChildNodeItems(true);
 
-               dtCore::RefPtr<NodeConnectorManager> connMgr = new NodeConnectorManager;
-               connMgr->CreateConnectors(*nodeItem, true);
+               mConnectorManager->CreateConnectors(*nodeItem, true);
 
                dtCore::RefPtr<NodeArranger> arranger = new NodeArranger;
                NodeArranger::Params params;
@@ -770,9 +883,72 @@ namespace dtQt
       }
    }
 
+   void NodeGraphScene::DetachNodeItems(const NodeItemArray& nodeItems)
+   {
+      std::for_each(nodeItems.begin(), nodeItems.end(),
+         [&](NodeItem* nodeItem)
+         {
+            QPointF scenePos = nodeItem->scenePos();
+
+            nodeItem->setParentItem(nullptr);
+            nodeItem->setPos(scenePos);
+
+            mConnectorManager->RemoveConnectorToParent(*nodeItem);
+         }
+      );
+   }
+
+   void NodeGraphScene::AttachNodeItems(const NodeItemArray& nodeItems, NodeItem& parentNodeItem)
+   {
+      std::for_each(nodeItems.begin(), nodeItems.end(),
+         [&](NodeItem* nodeItem)
+         {
+            nodeItem->setParentItem(&parentNodeItem);
+
+            mConnectorManager->CreateConnector(parentNodeItem, *nodeItem);
+         }
+      );
+   }
+
+   void NodeGraphScene::DetachSelectedNodes()
+   {
+      NodeItemArray nodeItems;
+      if (GetSelectedNodeItems(nodeItems) > 0)
+      {
+         DetachNodeItems(nodeItems);
+
+         BaseNodeWrapperArray nodes;
+         GetNodesFromItems(nodeItems, nodes);
+
+         emit SignalNodesDetached(nodes);
+      }
+   }
+
+   void NodeGraphScene::AttachSelectedNodes(NodeItem& parentNodeItem)
+   {
+      NodeItemArray nodeItems;
+      if (GetSelectedNodeItems(nodeItems) > 0)
+      {
+         AttachNodeItems(nodeItems, parentNodeItem);
+
+         BaseNodeWrapperArray nodes;
+         GetNodesFromItems(nodeItems, nodes);
+
+         emit SignalNodesAttached(nodes, parentNodeItem.GetNodeWrapper());
+      }
+   }
+
    void NodeGraphScene::OnSelectionChanged()
    {
-      // TODO:
+      BaseNodeWrapperArray nodes;
+      GetSelectedNodes(nodes);
+
+      emit SignalNodesSelected(nodes);
+   }
+
+   void NodeGraphScene::OnDetachAction()
+   {
+      DetachSelectedNodes();
    }
 
 
@@ -806,15 +982,20 @@ namespace dtQt
 
    void NodeGraphView::SetZoom(float zoom)
    {
-      dtUtil::Clamp(zoom, mZoomMin, mZoomMax);
-      mZoom = zoom;
+      if (mZoom != zoom)
+      {
+         dtUtil::Clamp(zoom, mZoomMin, mZoomMax);
+         mZoom = zoom;
 
-      QTransform oldXform = transform();
+         QTransform oldXform = transform();
 
-      QTransform xform;
-      xform.translate(oldXform.dx(), oldXform.dy());
-      xform.scale(zoom, zoom);
-      setTransform(xform);
+         QTransform xform;
+         xform.translate(oldXform.dx(), oldXform.dy());
+         xform.scale(zoom, zoom);
+         setTransform(xform);
+
+         emit SignalZoomChanged(zoom);
+      }
    }
 
    float NodeGraphView::GetZoom() const
@@ -884,6 +1065,21 @@ namespace dtQt
       }
    }
 
+   void NodeGraphView::OnZoomAction(const QString zoomValue)
+   {
+      bool valid = true;
+
+      std::string str(zoomValue.toLatin1());
+      dtUtil::FindAndReplace(str, "%", "");
+
+      float zoom = QString(str.c_str()).toFloat(&valid) / 100.0f;
+
+      if (valid)
+      {
+         SetZoom(zoom);
+      }
+   }
+
 
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -906,6 +1102,8 @@ namespace dtQt
       mUI->mView->layout()->addWidget(mGraphView);
 
       mGraphView->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+
+      CreateConnections();
    }
 
    NodeGraphViewerPanel::~NodeGraphViewerPanel()
@@ -931,7 +1129,30 @@ namespace dtQt
 
    void NodeGraphViewerPanel::CreateConnections()
    {
-      // TODO:
+      // ZOOM
+      // --- Control zoom factor by combobox selection action.
+      connect(mUI->mZoom, SIGNAL(editTextChanged(const QString)),
+         mGraphView, SLOT(OnZoomAction(const QString)));
+      connect(mUI->mZoom, SIGNAL(currentIndexChanged(const QString)),
+         mGraphView, SLOT(OnZoomAction(const QString)));
+      // --- Update the zoom display value as the zoom factor changes.
+      connect(mGraphView, SIGNAL(SignalZoomChanged(float)),
+         this, SLOT(OnZoomChanged(float)));
+
+      // DETACH
+      connect(mUI->mBtnModeUnlink, SIGNAL(clicked()),
+         mGraphView->GetNodeGraphScene(), SLOT(OnDetachAction()));
+   }
+
+   void NodeGraphViewerPanel::OnZoomChanged(float value)
+   {
+      // Disable signals temporarily to prevent OnZoomValueChanged from triggering,
+      // which could cause unwanted processing.
+      blockSignals(true);
+
+      mUI->mZoom->setCurrentText(QString::number(value * 100.0f) + "%");
+
+      blockSignals(false);
    }
 
 } // END - namespace dtQt
