@@ -206,6 +206,12 @@ namespace dtQt
       // Enable the use of qgraphicsitem_cast with this item.
       int type() const;
 
+      void SetMovable(bool movable);
+      bool IsMovable() const;
+
+      void SetSelectable(bool selectable);
+      bool IsSelectable() const;
+
       void SetCollapsed(bool collapsed);
       bool IsCollapsed() const;
 
@@ -264,6 +270,9 @@ namespace dtQt
       NodeItem* GetNodeA() const;
       NodeItem* GetNodeB() const;
 
+      void SetAbsoluteMode(bool absoluteMode);
+      bool IsAbsoluteMode() const;
+
       bool HasNode(const NodeItem& node) const;
 
       bool IsValid() const;
@@ -281,6 +290,7 @@ namespace dtQt
 
       void UpdateNodeConnectors();
 
+      bool mAbsoluteSpace;
       NodeItem* mNodeA;
       NodeItem* mNodeB;
    };
@@ -298,9 +308,11 @@ namespace dtQt
    public:
       NodeConnectorManager();
 
-      NodeConnector* CreateConnector(NodeItem& nodeParent, NodeItem& nodeChild);
+      NodeConnector* CreateConnector(NodeItem& nodeParent, NodeItem& nodeChild, bool makeConnectorChild = true);
 
-      NodeConnectorArray CreateConnectors(NodeItem& node, bool recurse);
+      NodeConnectorArray CreateConnectors(NodeItem& nodeParent, const NodeItemArray& childNodes, bool makeConnectorChild = true);
+
+      NodeConnectorArray CreateConnectorsToChildren(NodeItem& node, bool recurse);
 
       void RemoveConnectorToParent(NodeItem& node);
 
@@ -308,6 +320,10 @@ namespace dtQt
       const NodeConnectorList& GetConnectors() const;
 
       int GetConnectorsForNode(const NodeItem& node, NodeConnectorList& outConnectors) const;
+
+      unsigned int Clear();
+
+      void UpdateConnectors();
 
    protected:
       virtual ~NodeConnectorManager();
@@ -402,22 +418,37 @@ namespace dtQt
 
       void AttachSelectedNodes(NodeItem& parentNodeItem);
 
-      int GetNodeConnectorsForNode(const NodeItem& nodeItem, NodeConnectorList& outConnectors) const;
+      /**
+       * Updates the floating connector position, the
+       */
+      void SetFloatingConnectorsEndPosition(const QPointF& pos);
+      void CreateFloatingConnectorsToNodeItems(const NodeItemArray& nodeItems);
+
+      void UpdateFloatingConnectors();
+
+      void ClearFloatingConnectors();
+
+      bool IsAttachEnabled() const;
 
    public slots:
       void OnSelectionChanged();
       void OnDetachAction();
+      void OnAttachAction(bool attachEnabled);
 
    signals:
       void SignalNodesSelected(const dtQt::BaseNodeWrapperArray& nodes);
       void SignalNodesDetached(const dtQt::BaseNodeWrapperArray& nodes);
-      void SignalNodesAttached(const dtQt::BaseNodeWrapperArray& nodes, const BaseNodeWrapper& parentNode);
+      void SignalNodesAttached(const dtQt::BaseNodeWrapperArray& nodes, const dtQt::BaseNodeWrapper& parentNode);
 
    private:
       void CreateConnections();
 
       NodeConnectorManagerPtr mConnectorManager;
+      NodeConnectorManagerPtr mFloatingConnectorManager;
       BaseNodeWrapperArray mSceneNodes;
+      NodeItem* mFloatNode;
+
+      bool mAttachMode;
    };
 
 
@@ -437,6 +468,8 @@ namespace dtQt
       NodeGraphScene* GetNodeGraphScene();
       const NodeGraphScene* GetNodeGraphScene() const;
 
+      NodeItem* GetNodeItemAt(const QPoint& scenePos) const;
+
       void SetZoom(float zoom);
       float GetZoom() const;
 
@@ -453,6 +486,8 @@ namespace dtQt
 
    signals:
       void SignalZoomChanged(float zoom);
+      void SignalNodeItemOnMouseClick(NodeItem& nodeItem);
+      void SignalNodeItemOnMouseRelease(NodeItem* nodeItem);
 
    public slots:
       void OnZoomAction(const QString zoomValue);

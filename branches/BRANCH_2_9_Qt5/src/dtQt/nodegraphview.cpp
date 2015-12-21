@@ -259,6 +259,40 @@ namespace dtQt
       return NodeItem::Type;
    }
 
+   void NodeItem::SetMovable(bool movable)
+   {
+      if (movable)
+      {
+         setFlags(flags() | QGraphicsItem::ItemIsMovable);
+      }
+      else
+      {
+         setFlags(flags() & (~QGraphicsItem::ItemIsMovable));
+      }
+   }
+
+   bool NodeItem::IsMovable() const
+   {
+      return (flags() | QGraphicsItem::ItemIsMovable) > 0;
+   }
+
+   void NodeItem::SetSelectable(bool movable)
+   {
+      if (movable)
+      {
+         setFlags(flags() | QGraphicsItem::ItemIsSelectable);
+      }
+      else
+      {
+         setFlags(flags() & (~QGraphicsItem::ItemIsSelectable));
+      }
+   }
+
+   bool NodeItem::IsSelectable() const
+   {
+      return (flags() | QGraphicsItem::ItemIsSelectable) > 0;
+   }
+
    void NodeItem::SetCollapsed(bool collapsed)
    {
       mCollapsed = collapsed;
@@ -438,7 +472,8 @@ namespace dtQt
    // CLASS CODE
    ////////////////////////////////////////////////////////////////////////////////
    NodeConnector::NodeConnector(NodeItem& nodeA, NodeItem& nodeB)
-      : mNodeA(&nodeA)
+      : mAbsoluteSpace(false)
+      , mNodeA(&nodeA)
       , mNodeB(&nodeB)
    {
       setFlags(QGraphicsItem::ItemStacksBehindParent);
@@ -465,6 +500,16 @@ namespace dtQt
       return mNodeB;
    }
 
+   void NodeConnector::SetAbsoluteMode(bool absoluteMode)
+   {
+      mAbsoluteSpace = absoluteMode;
+   }
+   
+   bool NodeConnector::IsAbsoluteMode() const
+   {
+      return mAbsoluteSpace;
+   }
+
    bool NodeConnector::HasNode(const NodeItem& node) const
    {
       return mNodeA == &node || mNodeB == &node;
@@ -480,6 +525,12 @@ namespace dtQt
       QPointF pos = scenePos();
       QPointF ptA = mapToParent(mNodeA->GetCenter() - pos) + QPointF(0.0f, mNodeA->GetHeight() * 0.5f);
       QPointF ptB = mapToParent(mNodeB->GetCenter() - pos) - QPointF(0.0f, mNodeB->GetHeight() * 0.5f);
+
+      if (mAbsoluteSpace)
+      {
+         ptA = mNodeA->GetCenter();
+         ptB = mNodeB->GetCenter();
+      }
 
       float penWidth = 10.0f;// 2.0f;
 
@@ -501,6 +552,12 @@ namespace dtQt
       QPointF pos = scenePos();
       QPointF ptA = mapToParent(mNodeA->GetCenter() - pos) + QPointF(0.0f, mNodeA->GetHeight() * 0.5f) + endOffset;
       QPointF ptB = mapToParent(mNodeB->GetCenter() - pos) - QPointF(0.0f, mNodeB->GetHeight() * 0.5f);
+
+      if (mAbsoluteSpace)
+      {
+         ptA = mNodeA->GetCenter();
+         ptB = mNodeB->GetCenter();
+      }
 
       QPointF mid = (ptB - ptA) * 0.5f + ptA;
 
@@ -529,7 +586,7 @@ namespace dtQt
    {
       float y = dims.y() * direction.y();
 
-      painter.setBrush(Qt::red);
+      painter.setBrush(mAbsoluteSpace ? Qt::green : Qt::red);
 
       QPolygonF poly;
       poly.push_back(point);
@@ -559,10 +616,16 @@ namespace dtQt
    NodeConnectorManager::~NodeConnectorManager()
    {}
 
-   NodeConnector* NodeConnectorManager::CreateConnector(NodeItem& nodeParent, NodeItem& nodeChild)
+   NodeConnector* NodeConnectorManager::CreateConnector(NodeItem& nodeParent, NodeItem& nodeChild, bool makeConnectorChild)
    {
       NodeConnector* connector = new NodeConnector(nodeParent, nodeChild);
-      connector->setParentItem(&nodeParent);
+
+      if (makeConnectorChild)
+      {
+         connector->setParentItem(&nodeParent);
+      }
+
+      mConnectors.push_back(connector);
 
       QObject::connect(&nodeChild, SIGNAL(SignalMoved()),
          connector, SLOT(OnNodeMoved()));
@@ -570,7 +633,30 @@ namespace dtQt
       return connector;
    }
 
-   NodeConnectorArray NodeConnectorManager::CreateConnectors(NodeItem& node, bool recurse)
+   NodeConnectorArray NodeConnectorManager::CreateConnectors(NodeItem& nodeParent, const NodeItemArray& childNodes, bool makeConnectorChild)
+   {
+      NodeConnectorArray connectorArray;
+
+      connectorArray.reserve(childNodes.size());
+
+      NodeConnector* connector = nullptr;
+      std::for_each(childNodes.begin(), childNodes.end(),
+         [&](NodeItem* childNode)
+         {
+            connector = CreateConnector(nodeParent, *childNode, makeConnectorChild);
+
+            if (connector != nullptr)
+            {
+               connectorArray.push_back(connector);
+               mConnectors.push_back(connector);
+            }
+         }
+      );
+
+      return connectorArray;
+   }
+
+   NodeConnectorArray NodeConnectorManager::CreateConnectorsToChildren(NodeItem& node, bool recurse)
    {
       NodeConnectorArray connectorArray;
 
@@ -582,7 +668,7 @@ namespace dtQt
       std::for_each(children.begin(), children.end(),
          [&](NodeItem* childNode)
          {
-            connector = CreateConnector(node, *childNode);
+            connector = CreateConnector(node, *childNode, true);
             connectorArray.push_back(connector);
             mConnectors.push_back(connector);
          }
@@ -594,7 +680,7 @@ namespace dtQt
          std::for_each(children.begin(), children.end(),
             [&](NodeItem* childNode)
             {
-               CreateConnectors(*childNode, true);
+               CreateConnectorsToChildren(*childNode, true);
             }
          );
       }
@@ -616,14 +702,18 @@ namespace dtQt
             NodeConnectorList::iterator iterToErase = iter;
             ++iter;
 
-            // The item should have a reference back o the scene.
+            QGraphicsScene* scene = connector->scene();
+            if (scene != nullptr)
+            {
+               scene->removeItem(connector);
+            }
+
+            // The item should have a reference back to the scene.
             // Make sure the scene removes the connector.
             connector->setParentItem(nullptr);
-            QGraphicsScene* scene = connector->scene();
-            scene->removeItem(connector);
-
-            delete connector;
-            connector = nullptr;
+            
+            /*delete connector;
+            connector = nullptr;*/
 
             mConnectors.erase(iterToErase);
          }
@@ -660,6 +750,43 @@ namespace dtQt
       );
 
       return count;
+   }
+   
+   unsigned int NodeConnectorManager::Clear()
+   {
+      unsigned int count = 0;
+
+      std::for_each(mConnectors.begin(), mConnectors.end(),
+         [&](NodeConnector* connector)
+         {
+            QGraphicsScene* scene = connector->scene();
+            if (scene != nullptr)
+            {
+               scene->removeItem(connector);
+            }
+
+            // The item should have a reference back to the scene.
+            // Make sure the scene removes the connector.
+            connector->setParentItem(nullptr);
+
+            /*delete connector;
+            connector = nullptr;*/
+         }
+      );
+
+      mConnectors.clear();
+
+      return count;
+   }
+
+   void NodeConnectorManager::UpdateConnectors()
+   {
+      std::for_each(mConnectors.begin(), mConnectors.end(),
+         [&](NodeConnector* connector)
+         {
+            connector->Update();
+         }
+      );
    }
 
 
@@ -762,8 +889,18 @@ namespace dtQt
    // CLASS CODE
    ////////////////////////////////////////////////////////////////////////////////
    NodeGraphScene::NodeGraphScene()
+      : mFloatNode(nullptr)
+      , mAttachMode(false)
    {
       mConnectorManager = new NodeConnectorManager;
+      mFloatingConnectorManager = new NodeConnectorManager;
+
+      // Create a float node for pointing floating connectors to
+      // when drawing connections to other nodes.
+      dtCore::RefPtr<osg::Group> node = new osg::Group();
+      node->setName("CONNECTOR_FLOAT_NODE");
+      mFloatNode = new NodeItem(*new OsgNodeWrapper(*node));
+      mFloatNode->setVisible(false);
 
       setBackgroundBrush(Qt::gray);
 
@@ -771,7 +908,10 @@ namespace dtQt
    }
 
    NodeGraphScene::~NodeGraphScene()
-   {}
+   {
+      delete mFloatNode;
+      mFloatNode = nullptr;
+   }
 
    void NodeGraphScene::CreateConnections()
    {
@@ -863,7 +1003,7 @@ namespace dtQt
                addItem(nodeItem);
                nodeItem->CreateChildNodeItems(true);
 
-               mConnectorManager->CreateConnectors(*nodeItem, true);
+               mConnectorManager->CreateConnectorsToChildren(*nodeItem, true);
 
                dtCore::RefPtr<NodeArranger> arranger = new NodeArranger;
                NodeArranger::Params params;
@@ -900,14 +1040,25 @@ namespace dtQt
 
    void NodeGraphScene::AttachNodeItems(const NodeItemArray& nodeItems, NodeItem& parentNodeItem)
    {
-      std::for_each(nodeItems.begin(), nodeItems.end(),
-         [&](NodeItem* nodeItem)
-         {
-            nodeItem->setParentItem(&parentNodeItem);
+      if ( ! nodeItems.empty())
+      {
+         std::for_each(nodeItems.begin(), nodeItems.end(),
+            [&](NodeItem* nodeItem)
+            {
+               if (nodeItem != &parentNodeItem)
+               {
+                  nodeItem->setParentItem(&parentNodeItem);
 
-            mConnectorManager->CreateConnector(parentNodeItem, *nodeItem);
-         }
-      );
+                  mConnectorManager->CreateConnector(parentNodeItem, *nodeItem);
+               }
+            }
+         );
+
+         BaseNodeWrapperArray nodes;
+         GetNodesFromItems(nodeItems, nodes);
+
+         emit SignalNodesAttached(nodes, parentNodeItem.GetNodeWrapper());
+      }
    }
 
    void NodeGraphScene::DetachSelectedNodes()
@@ -938,6 +1089,48 @@ namespace dtQt
       }
    }
 
+   void NodeGraphScene::SetFloatingConnectorsEndPosition(const QPointF& pos)
+   {
+      // Connector ends are based on node center points.
+      // Find the offset to get the top left corner.
+      QRectF rect = mFloatNode->boundingRect();
+      QPointF offset(rect.width(), rect.height());
+      offset *= -0.5f;
+
+      mFloatNode->setPos(pos + offset);
+   }
+
+   void NodeGraphScene::CreateFloatingConnectorsToNodeItems(const NodeItemArray& nodeItems)
+   {
+      mFloatingConnectorManager->Clear();
+      NodeConnectorArray connectors = mFloatingConnectorManager->CreateConnectors(*mFloatNode, nodeItems, false);
+
+      std::for_each(connectors.begin(), connectors.end(),
+         [&](NodeConnector* connector)
+         {
+            // Have the connector calculate node positions in absolute scene coordinates.
+            connector->SetAbsoluteMode(true);
+
+            addItem(connector);
+         }
+      );
+   }
+
+   void NodeGraphScene::UpdateFloatingConnectors()
+   {
+      mFloatingConnectorManager->UpdateConnectors();
+   }
+
+   void NodeGraphScene::ClearFloatingConnectors()
+   {
+      mFloatingConnectorManager->Clear();
+   }
+
+   bool NodeGraphScene::IsAttachEnabled() const
+   {
+      return mAttachMode;
+   }
+
    void NodeGraphScene::OnSelectionChanged()
    {
       BaseNodeWrapperArray nodes;
@@ -949,6 +1142,20 @@ namespace dtQt
    void NodeGraphScene::OnDetachAction()
    {
       DetachSelectedNodes();
+   }
+
+   void NodeGraphScene::OnAttachAction(bool attachEnabled)
+   {
+      if (attachEnabled)
+      {
+         // TODO:
+      }
+      else
+      {
+         ClearFloatingConnectors();
+      }
+
+      mAttachMode = attachEnabled;
    }
 
 
@@ -978,6 +1185,12 @@ namespace dtQt
    const NodeGraphScene* NodeGraphView::GetNodeGraphScene() const
    {
       return mNodeGraphScene;
+   }
+
+   NodeItem* NodeGraphView::GetNodeItemAt(const QPoint& viewPos) const
+   {
+      QGraphicsItem* item = itemAt(viewPos);
+      return item == nullptr ? nullptr : NodeItem::ConvertToNodeItem(*item);
    }
 
    void NodeGraphView::SetZoom(float zoom)
@@ -1027,9 +1240,35 @@ namespace dtQt
    {
       BaseClass::mousePressEvent(mouseEvent);
 
-      if ( ! mouseEvent->isAccepted())
+      //if ( ! mouseEvent->isAccepted())
       {
-         // TODO:
+         NodeItem* node = GetNodeItemAt(mouseEvent->pos());
+
+         if (node != nullptr)
+         {
+            SignalNodeItemOnMouseClick(*node);
+
+            mouseEvent->accept();
+
+            // Start dragging a connection line if nodes were selected.
+            bool attachMode = mNodeGraphScene->IsAttachEnabled();
+            if (attachMode)
+            {
+               NodeItemArray nodeItems;
+               mNodeGraphScene->GetSelectedNodeItems(nodeItems);
+
+               if ( ! nodeItems.empty())
+               {
+                  mNodeGraphScene->CreateFloatingConnectorsToNodeItems(nodeItems);
+
+                  QPointF scenePos = mapToScene(mouseEvent->pos());
+                  mNodeGraphScene->SetFloatingConnectorsEndPosition(scenePos);
+                  mNodeGraphScene->UpdateFloatingConnectors();
+               }
+            }
+
+            node->SetMovable( ! attachMode);
+         }
       }
    }
 
@@ -1037,9 +1276,35 @@ namespace dtQt
    {
       BaseClass::mouseReleaseEvent(mouseEvent);
 
-      if ( ! mouseEvent->isAccepted())
+      //if ( ! mouseEvent->isAccepted())
       {
-         // TODO:
+         NodeItem* node = GetNodeItemAt(mouseEvent->pos());
+
+         /*if (node != nullptr)
+         {
+            mouseEvent->accept();
+         }*/
+
+         SignalNodeItemOnMouseRelease(node);
+
+         // End dragging a connection line if nodes were selected.
+         if (mNodeGraphScene->IsAttachEnabled())
+         {
+            NodeItemArray nodeItems;
+            mNodeGraphScene->GetSelectedNodeItems(nodeItems);
+
+            // Remove the old connectors.
+            mNodeGraphScene->DetachNodeItems(nodeItems);
+
+            // Remove the floating connectors.
+            mNodeGraphScene->ClearFloatingConnectors();
+
+            // Complete the attempted attach action.
+            if (node != nullptr && ! nodeItems.empty())
+            {
+               mNodeGraphScene->AttachNodeItems(nodeItems, *node);
+            }
+         }
       }
    }
 
@@ -1047,9 +1312,15 @@ namespace dtQt
    {
       BaseClass::mouseMoveEvent(mouseEvent);
 
-      if ( ! mouseEvent->isAccepted())
+      //if ( ! mouseEvent->isAccepted())
       {
-         // TODO:
+         // Update the end position of floating connectors if attach mode is enabled.
+         if (mNodeGraphScene->IsAttachEnabled())
+         {
+            QPointF scenePos = mapToScene(mouseEvent->pos());
+            mNodeGraphScene->SetFloatingConnectorsEndPosition(scenePos);
+            mNodeGraphScene->UpdateFloatingConnectors();
+         }
       }
    }
 
@@ -1142,6 +1413,10 @@ namespace dtQt
       // DETACH
       connect(mUI->mBtnModeUnlink, SIGNAL(clicked()),
          mGraphView->GetNodeGraphScene(), SLOT(OnDetachAction()));
+
+      // ATTACH
+      connect(mUI->mBtnModeLink, SIGNAL(clicked(bool)),
+         mGraphView->GetNodeGraphScene(), SLOT(OnAttachAction(bool)));
    }
 
    void NodeGraphViewerPanel::OnZoomChanged(float value)
