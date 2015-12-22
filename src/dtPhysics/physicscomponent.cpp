@@ -79,36 +79,6 @@ namespace dtPhysics
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   class PhysicsComponentPreUpdateFunc
-   {
-   public:
-      PhysicsComponentPreUpdateFunc()
-   {}
-
-      void operator()(dtCore::RefPtr<PhysicsActComp>& helper)
-      {
-         helper->PrePhysicsUpdate();
-      }
-
-   private:
-   };
-
-   /////////////////////////////////////////////////////////////////////////////
-   class PhysicsComponentPostUpdateFunc
-   {
-   public:
-      PhysicsComponentPostUpdateFunc()
-   {}
-
-      void operator()(dtCore::RefPtr<PhysicsActComp>& helper)
-      {
-         helper->PostPhysicsUpdate();
-      }
-
-   private:
-   };
-
-   /////////////////////////////////////////////////////////////////////////////
    class PhysicsComponentRemoveFunc
    {
    public:
@@ -143,8 +113,8 @@ namespace dtPhysics
       }
       else if (message.GetMessageType() == dtGame::MessageType::SYSTEM_POST_FRAME)
       {
-         //const dtGame::TickMessage& tm = static_cast<const dtGame::TickMessage&>(message);
-         WaitUntilUpdateCompletes();
+         const dtGame::TickMessage& tm = static_cast<const dtGame::TickMessage&>(message);
+         WaitUntilUpdateCompletes(tm.GetDeltaSimTime());
       }
       else if (message.GetMessageType() == dtGame::MessageType::INFO_ACTOR_DELETED)
       {
@@ -361,7 +331,10 @@ namespace dtPhysics
             mDebDraw->SetReferencePosition(xform.GetTranslation());
          }
 
-         std::for_each(mRegisteredActorComps.begin(), mRegisteredActorComps.end(), PhysicsComponentPreUpdateFunc());
+         std::for_each(mRegisteredActorComps.begin(), mRegisteredActorComps.end(), [&](PhysicsActCompPtr& pac)
+               {
+            pac->PrePhysicsUpdate(tm.GetDeltaSimTime());
+               });
 
          if (mStepInBackground)
          {
@@ -371,7 +344,10 @@ namespace dtPhysics
          {
             mImpl->UpdateStep(tm.GetDeltaSimTime());
 
-            std::for_each(mRegisteredActorComps.begin(), mRegisteredActorComps.end(), PhysicsComponentPostUpdateFunc());
+            std::for_each(mRegisteredActorComps.begin(), mRegisteredActorComps.end(), [&](PhysicsActCompPtr& pac)
+                  {
+               pac->PostPhysicsUpdate(tm.GetDeltaSimTime());
+                  });
          }
       }
       else
@@ -390,19 +366,30 @@ namespace dtPhysics
          mDebDraw->SetReferencePosition(xform.GetTranslation());
       }
 
-      std::for_each(mRegisteredActorComps.begin(), mRegisteredActorComps.end(), PhysicsComponentPreUpdateFunc());
+      std::for_each(mRegisteredActorComps.begin(), mRegisteredActorComps.end(), [&](PhysicsActCompPtr& pac)
+            {
+         pac->PrePhysicsUpdate(dt);
+            });
+
       mImpl->UpdateStep(dt);
-      std::for_each(mRegisteredActorComps.begin(), mRegisteredActorComps.end(), PhysicsComponentPostUpdateFunc());
+
+      std::for_each(mRegisteredActorComps.begin(), mRegisteredActorComps.end(), [&](PhysicsActCompPtr& pac)
+            {
+         pac->PostPhysicsUpdate(dt);
+            });
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void PhysicsComponent::WaitUntilUpdateCompletes()
+   void PhysicsComponent::WaitUntilUpdateCompletes(float dt)
    {
       if (mSteppingEnabled && mStepInBackground)
       {
          mImpl->WaitForUpdateStepToComplete();
 
-         std::for_each(mRegisteredActorComps.begin(), mRegisteredActorComps.end(), PhysicsComponentPostUpdateFunc());
+         std::for_each(mRegisteredActorComps.begin(), mRegisteredActorComps.end(), [&](PhysicsActCompPtr& pac)
+               {
+            pac->PostPhysicsUpdate(dt);
+               });
       }
    }
 

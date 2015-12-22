@@ -105,8 +105,7 @@ namespace dtVoxel
    private:
 
       template<typename GridTypePtr>
-      void UpdateVolumeInternal(GridTypePtr grid, const dtCore::NamedArrayParameter* indices, const dtCore::NamedArrayParameter* values,
-            const dtCore::NamedArrayParameter* indicesDeactivated, bool updateVisualOnly);
+      void UpdateVolumeInternal(GridTypePtr grid, const dtCore::NamedArrayParameter* indices, const dtCore::NamedArrayParameter* values, bool updateVisualOnly);
 
       dtCore::RefPtr<VoxelGrid> mVisualGrid;
       openvdb::GridPtrVecPtr mGrids;
