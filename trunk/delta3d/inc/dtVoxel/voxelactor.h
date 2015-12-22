@@ -53,6 +53,7 @@ namespace dtVoxel
 
       void OnEnteredWorld() override;
       void OnTickLocal(const dtGame::TickMessage& tickMessage) override;
+      void OnTickRemote(const dtGame::TickMessage& tickMessage) override;
 
       /**
        * Returns a new grid that contains the collision set of the given bounding box.
@@ -87,6 +88,7 @@ namespace dtVoxel
       // This exists external objects can deform the grid, created a change message, and then tell the visual to update with the message.
       void UpdateVolume(const VolumeUpdateMessage& msg, bool updateVisualOnly);
    protected:
+      virtual void SharedTick(const dtGame::TickMessage& tickMessage, bool local);
       /**
        * Loads the voxel mesh.
        * @throw dtUtil::FileNotFoundException if the resource does not exist.
