@@ -125,7 +125,7 @@ namespace dtPhysics
       // Initialize the position
       if (!mPrePhysicsUpdate.valid())
       {
-         DefaultPrePhysicsUpdate();
+         DefaultPrePhysicsUpdate(0.00f);
       }
 
       ForEachPhysicsObject([&](dtCore::RefPtr<dtPhysics::PhysicsObject>& po)
@@ -405,15 +405,15 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////////////////////////////////
-   void PhysicsActComp::PrePhysicsUpdate()
+   void PhysicsActComp::PrePhysicsUpdate(Real simDt)
    {
       if (mPrePhysicsUpdate.valid())
       {
          mPrePhysicsUpdate();
       }
-      else if (mIsRemote)
+      else
       {
-         DefaultPrePhysicsUpdate();
+         DefaultPrePhysicsUpdate(simDt);
       }
 
 
@@ -441,7 +441,7 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////////////////////////////////
-   void PhysicsActComp::PostPhysicsUpdate()
+   void PhysicsActComp::PostPhysicsUpdate(Real simDt)
    {
       if (mPostPhysicsUpdate.valid())
       {
@@ -449,7 +449,7 @@ namespace dtPhysics
       }
       else if (!mIsRemote)
       {
-         DefaultPostPhysicsUpdate();
+         DefaultPostPhysicsUpdate(simDt);
       }
       struct CallUpdate
       {
@@ -466,7 +466,9 @@ namespace dtPhysics
    void PhysicsActComp::ActionUpdate(Real dt)
    {
       if (mActionUpdate.valid())
+      {
          mActionUpdate(dt);
+      }
    }
 
    //////////////////////////////////////////////////////////////////
@@ -979,51 +981,69 @@ namespace dtPhysics
    }
 
    //////////////////////////////////////////////////////////////////
-   void PhysicsActComp::DefaultPrePhysicsUpdate()
+   void PhysicsActComp::DefaultPrePhysicsUpdate(Real simDt)
    {
       if (!mCachedTransformable.valid())
          return;
 
-      dtCore::Transform xform;
-      mCachedTransformable->GetTransform(xform);
-      if (xform.IsValid())
+      // I only want to read the absolute transform if it needs it.
+      bool hasReadTransform = false;
+      dtCore::Transform xform, xformP;
+      for (auto i = mPhysicsObjects.begin(), iend = mPhysicsObjects.end(); i!=iend; ++i)
       {
-         for (unsigned i = 0; i < mPhysicsObjects.size(); ++i)
-         {
-            dtPhysics::PhysicsObject* physObj = mPhysicsObjects[i];
-            bool setTransform = physObj->GetMechanicsType() == MechanicsType::KINEMATIC;
+         PhysicsObjectPtr physObj = *i;
 
-            // It's inefficient to set the position of static objects
-            // and it can mess up dynamic objects to set the position every frame
-            // so we check to see if you moved it since the last update before setting the value.
-            if (!setTransform)
-            {
-               dtCore::Transform xformP;
-               physObj->GetTransformAsVisual(xformP);
-               if (!xformP.EpsilonEquals(xform, 0.01f))
-               {
-                  setTransform = true;
-               }
-            }
-            if (setTransform)
-               physObj->SetTransformAsVisual(xform);
-         }
-      }
-      else
-      {
-         BaseActorObject* actor = nullptr;
-         GetOwner(actor);
-         std::string debugInfo("Invalid transform on physics actor component: ");
-         if (actor)
+         if (!hasReadTransform)
          {
-            debugInfo += actor->GetName() + " " + actor->GetActorType().GetFullName();
+            mCachedTransformable->GetTransform(xform);
+            if (!xform.IsValid())
+            {
+               BaseActorObject* actor = nullptr;
+               GetOwner(actor);
+               std::string debugInfo("Invalid transform on physics actor component: ");
+               if (actor)
+               {
+                  debugInfo += actor->GetName() + " " + actor->GetActorType().GetFullName();
+               }
+               LOGN_ERROR("physicsactcomp.cpp", "Invalid transform on physics actor component: ");
+               break;
+            }
+            hasReadTransform = true;
          }
-         LOGN_ERROR("physicsactcomp.cpp", "Invalid transform on physics actor component: ");
-      }
+
+         dtPhysics::MechanicsType& mechanics = physObj->GetMechanicsType();
+         bool updateDynamic = mIsRemote && mechanics == MechanicsType::DYNAMIC;
+         bool checkChanged = mechanics == MechanicsType::DYNAMIC || mechanics == MechanicsType::STATIC;
+         dtCore::Transform xformCopy = xform;
+
+         bool setTransform = mechanics == MechanicsType::KINEMATIC;
+
+         if (checkChanged)
+         {
+            physObj->GetTransformAsVisual(xformP);
+            setTransform = !xformP.EpsilonEquals(xform, 0.001);
+         }
+
+         if (setTransform && updateDynamic && simDt > std::numeric_limits<Real>::epsilon() && physObj->GetBodyWrapper() != nullptr)
+         {
+            osg::Vec3 velocity = (xformCopy.GetTranslation() - xformP.GetTranslation()) / simDt;
+            physObj->SetLinearVelocity(velocity);
+            // only change the rotation.  The velocity will correct the position, otherwise there is discontinuous motion and all sorts of things go wrong.
+            // Setting the angular velocity was causing problems, so I had to set it correctly
+            // but it would be better to do that.
+            xformCopy.SetTranslation(xformP.GetTranslation());
+         }
+
+         if (setTransform)
+         {
+            physObj->SetTransformAsVisual(xformCopy);
+         }
+
+      };
    }
 
    //////////////////////////////////////////////////////////////////
-   void PhysicsActComp::DefaultPostPhysicsUpdate()
+   void PhysicsActComp::DefaultPostPhysicsUpdate(Real)
    {
       if (!mCachedTransformable.valid())
          return;

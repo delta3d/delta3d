@@ -262,8 +262,8 @@ namespace dtPhysics
          void SetActionUpdateCallback(const ActionUpdateCallback& uc);
 
          // call the call backs
-         void PrePhysicsUpdate();
-         void PostPhysicsUpdate();
+         void PrePhysicsUpdate(Real simDt);
+         void PostPhysicsUpdate(Real simDt);
 
          /**
           * Action updates are called on the physics thread either before the full update or between each substep
@@ -356,13 +356,13 @@ namespace dtPhysics
          ~PhysicsActComp();
 
          /**
-          * If you don't have a prephysics update, it calls this.
+          * If you don't have a prephysics update, and it's remote, it calls this.
           */
-         virtual void DefaultPrePhysicsUpdate();
+         virtual void DefaultPrePhysicsUpdate(Real simDt);
          /**
           * If you don't have a postphysics update, it calls this.
           */
-         virtual void DefaultPostPhysicsUpdate();
+         virtual void DefaultPostPhysicsUpdate(Real simDt);
 
          //For the actor property
          void SetNameByString(const std::string& name);
