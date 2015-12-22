@@ -182,10 +182,10 @@ namespace dtVoxel
              msg->SetSource(*testMI);
              msgResult->SetSource(*testMI);
              msg->AddChangedValue<bool>(osg::Vec3(1.0f, 3.0f, 92.0f), true);
-             msg->AddChangedValue<bool>(osg::Vec3(9.0f, 4.0f, 93.0f), false);
-             msg->AddChangedValue<bool>(osg::Vec3(-71.0f, -8.0f, -96.0f), true);
-             msg->AddDeactivatedIndex(osg::Vec3(2.0f, 4.0f, 98.0f));
              msg->AddDeactivatedIndex(osg::Vec3(9.0f, 5.0f, 94.0f));
+             msg->AddChangedValue<bool>(osg::Vec3(9.0f, 4.0f, 93.0f), false);
+             msg->AddDeactivatedIndex(osg::Vec3(2.0f, 4.0f, 98.0f));
+             msg->AddChangedValue<bool>(osg::Vec3(-71.0f, -8.0f, -96.0f), true);
              msg->AddDeactivatedIndex(osg::Vec3(-78.0f, -9.0f, -7.0f));
              msg->AddDeactivatedIndex(osg::Vec3(-79.0f, 32.0f, -1.0f));
 
@@ -195,9 +195,8 @@ namespace dtVoxel
 
              msgResult->FromDataStream(ds);
 
-             CPPUNIT_ASSERT_EQUAL(size_t(3U), msg->GetIndicesChanged()->GetSize());
-             CPPUNIT_ASSERT_EQUAL(size_t(3U), msg->GetValuesChanged()->GetSize());
-             CPPUNIT_ASSERT_EQUAL(size_t(4U), msg->GetIndicesDeactivated()->GetSize());
+             CPPUNIT_ASSERT_EQUAL(size_t(7U), msg->GetIndicesChanged()->GetSize());
+             CPPUNIT_ASSERT_EQUAL(size_t(7U), msg->GetValuesChanged()->GetSize());
 
           }
           catch(const dtUtil::Exception& ex)
