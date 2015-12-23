@@ -281,12 +281,15 @@ namespace dtCore
       for (size_t i = 0; i < mProperties.size(); ++i)
       {
          const ActorProperty* prop = copyFrom.GetProperty(mProperties[i]->GetName());
-         if (prop != NULL && !prop->IsReadOnly())
+         if (prop != nullptr)
          {
-            mProperties[i]->CopyFrom(*prop);
+            if (!prop->IsReadOnly())
+            {
+               mProperties[i]->CopyFrom(*prop);
+            }
+            if (copyMetadata)
+               mProperties[i]->CopyMetadata(*prop);
          }
-         if (copyMetadata)
-            mProperties[i]->CopyMetadata(*prop);
       }
    }
 
