@@ -160,6 +160,21 @@ vec3 sampleCubeMapReflection(vec3 worldPos, vec3 camPos, vec3 normal)
    return textureCube(d3d_ReflectionCubeMap, rayCol).rgb;   
  }
 
+vec3 sampleCubeMapReflectionLOD(vec3 worldPos, vec3 camPos, vec3 normal, float roughness)
+{
+   float dist = length(worldPos - camPos);
+   
+   //could this end up as a divide by zero ???
+   vec3 wsViewDir = (worldPos - camPos) / dist;
+   
+   vec3 reflectCubeCoords = reflect(wsViewDir, normal);
+   vec3 rayCol = worldPos + ((d3d_FarPlane - dist) * reflectCubeCoords);
+   rayCol = normalize(rayCol - camPos);
+
+   float mipIndex =  roughness * roughness * 8.0;
+   return textureCube(d3d_ReflectionCubeMap, rayCol, mipIndex).rgb;   
+ }
+
 //From GPUGems 1 edited by Randima Fernando, ch1 article by Mark Finch
 //a great fast approximation, use computeRefractCoef for a more physically based computation
 float FastFresnel(float nDotL, float fbias, float fpow)
