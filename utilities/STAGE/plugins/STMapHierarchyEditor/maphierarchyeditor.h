@@ -30,6 +30,7 @@
 
 
 
+
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
 ////////////////////////////////////////////////////////////////////////////////
@@ -39,6 +40,8 @@ namespace dtEditQt
 {
    class MainWindow;
 }
+
+typedef dtCore::ActorRefPtrVector ActorRefPtrVector;
 
 
 
@@ -64,14 +67,20 @@ public:
    
    void UpdateUI();
 
+   void GetRootActorNodeWrappers(dtQt::BaseNodeWrapperArray& outNodes);
+
    void ConvertNodesToActors(const dtQt::BaseNodeWrapperArray& nodes, dtCore::ActorRefPtrVector& outActors);
+   void ConvertActorsToNodes(const dtCore::ActorRefPtrVector& actors, dtQt::BaseNodeWrapperArray& outNodes);
 
 public slots:
    void onCurrentMapChanged();
 
-   void OnSelectionChanged(const dtQt::BaseNodeWrapperArray& nodes);
+   void OnNodeSelectionChanged(const dtQt::BaseNodeWrapperArray& nodes);
    void OnNodesDetached(const dtQt::BaseNodeWrapperArray& nodes);
    void OnNodesAttached(const dtQt::BaseNodeWrapperArray& nodes, const dtQt::BaseNodeWrapper& parentNode);
+   void OnActorCreated(dtCore::ActorPtr actor, bool forceNoAdjustments);
+   void OnActorDestroyed(dtCore::ActorPtr actor);
+   void OnActorsSelected(ActorRefPtrVector& actors);
 
 private:
    Ui_SceneHierarchyEditor mUI;
