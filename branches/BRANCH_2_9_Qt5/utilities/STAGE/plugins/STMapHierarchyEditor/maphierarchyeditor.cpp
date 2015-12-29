@@ -55,19 +55,32 @@ SceneHierarchyEditorPlugin::SceneHierarchyEditorPlugin(dtEditQt::MainWindow* mw)
 
    //add dock widget to STAGE main window
    mw->addDockWidget(Qt::BottomDockWidgetArea, this);
+
+   dtEditQt::EditorEvents& editorEvents = dtEditQt::EditorEvents::GetInstance();
    
-   connect(&dtEditQt::EditorEvents::GetInstance(), SIGNAL(currentMapChanged()),
+   connect(&editorEvents, SIGNAL(currentMapChanged()),
       this, SLOT(onCurrentMapChanged()));
 
    dtQt::NodeGraphScene* scene = mNodeGraphViewer->GetNodeGraphView().GetNodeGraphScene();
    connect(scene, SIGNAL(SignalNodesSelected(const dtQt::BaseNodeWrapperArray&)),
-      this, SLOT(OnSelectionChanged(const dtQt::BaseNodeWrapperArray&)));
+      this, SLOT(OnNodeSelectionChanged(const dtQt::BaseNodeWrapperArray&)));
 
    connect(scene, SIGNAL(SignalNodesDetached(const dtQt::BaseNodeWrapperArray&)),
       this, SLOT(OnNodesDetached(const dtQt::BaseNodeWrapperArray&)));
 
    connect(scene, SIGNAL(SignalNodesAttached(const dtQt::BaseNodeWrapperArray&, const dtQt::BaseNodeWrapper&)),
       this, SLOT(OnNodesAttached(const dtQt::BaseNodeWrapperArray&, const dtQt::BaseNodeWrapper&)));
+
+   // Handle actor creation, deletion, and selection.
+   connect(&editorEvents, SIGNAL(actorProxyCreated(dtCore::ActorPtr, bool)),
+      this, SLOT(OnActorCreated(dtCore::ActorPtr, bool)));
+   connect(&editorEvents, SIGNAL(actorProxyDestroyed(dtCore::ActorPtr)),
+      this, SLOT(OnActorDestroyed(dtCore::ActorPtr)));
+   connect(&editorEvents, SIGNAL(selectedActors(ActorRefPtrVector&)),
+      this, SLOT(OnActorsSelected(ActorRefPtrVector&)));
+
+   dtQt::NodeProviderFunc nodeProviderFunc(this, &SceneHierarchyEditorPlugin::GetRootActorNodeWrappers);
+   mNodeGraphViewer->GetNodeGraphView().GetNodeGraphScene()->SetNodeProviderFunc(nodeProviderFunc);
 
    UpdateUI();
 }
@@ -103,6 +116,51 @@ struct NodeNameComparePred
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+void SceneHierarchyEditorPlugin::GetRootActorNodeWrappers(dtQt::BaseNodeWrapperArray& outNodes)
+{
+   dtCore::Map* m = dtEditQt::EditorData::GetInstance().getCurrentMap();
+   if (m != NULL)
+   {
+      dtCore::BaseActorObject* rootActor = m->GetEnvironmentActor();
+
+      typedef std::map<dtCore::UniqueId, dtCore::RefPtr<dtCore::BaseActorObject> > IdActorMap;
+      const IdActorMap& actors = m->GetAllProxies();
+
+      if (rootActor == nullptr)
+      {
+         LOG_WARNING("Could not access root actor: NULL");
+      }
+
+      if ( ! actors.empty())
+      {
+         // Reserve enough node elements for all the actors.
+         outNodes.reserve(actors.size());
+
+         // Wrap each of the root actors in a node wrapper.
+         std::for_each(actors.begin(), actors.end(),
+            [&](IdActorMap::value_type iter)
+            {
+               dtCore::BaseActorObject* actor = iter.second.get();
+
+               // TODO: Add options and filtering mechanism to limit the node display for large scenes.
+
+               // Accept only scene level actors (those without parents).
+               dtGame::GameActorProxy* gameActor = dynamic_cast<dtGame::GameActorProxy*>(actor);
+               if (gameActor == nullptr || gameActor->GetParentActor() == nullptr)
+               {
+                  outNodes.push_back(new dtQt::ActorNodeWrapper(*actor));
+               }
+            }
+         );
+
+         // Sort the nodes by name.
+         NodeNameComparePred pred;
+         std::sort(outNodes.begin(), outNodes.end(), pred);
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void SceneHierarchyEditorPlugin::ConvertNodesToActors(
    const dtQt::BaseNodeWrapperArray& nodes, dtCore::ActorRefPtrVector& outActors)
 {
@@ -125,52 +183,30 @@ void SceneHierarchyEditorPlugin::ConvertNodesToActors(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void SceneHierarchyEditorPlugin::ConvertActorsToNodes(const dtCore::ActorRefPtrVector& actors, dtQt::BaseNodeWrapperArray& outNodes)
+{
+   // Reserve enough node elements for all the actors.
+   outNodes.reserve(actors.size());
+
+   // Wrap each of the root actors in a node wrapper.
+   std::for_each(actors.begin(), actors.end(),
+      [&](dtCore::BaseActorObject* actor)
+      {
+         // Accept only scene level actors (those without parents).
+         outNodes.push_back(new dtQt::ActorNodeWrapper(*actor));
+      }
+   );
+
+   // Sort the nodes by name.
+   NodeNameComparePred pred;
+   std::sort(outNodes.begin(), outNodes.end(), pred);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void SceneHierarchyEditorPlugin::UpdateUI()
 {
-   dtCore::Map* m = dtEditQt::EditorData::GetInstance().getCurrentMap();
-   if (m != NULL)
-   {
-      dtCore::BaseActorObject* rootActor = m->GetEnvironmentActor();
-
-      typedef std::map<dtCore::UniqueId, dtCore::RefPtr<dtCore::BaseActorObject> > IdActorMap;
-      const IdActorMap& actors = m->GetAllProxies();
-      
-      if (rootActor == nullptr)
-      {
-         LOG_WARNING("Could not access root actor: NULL");
-      }
-      
-      if ( ! actors.empty())
-      {
-         // Reserve enough node elements for all the actors.
-         dtQt::BaseNodeWrapperArray nodes;
-         nodes.reserve(actors.size());
-
-         // Wrap each of the root actors in a node wrapper.
-         std::for_each(actors.begin(), actors.end(),
-            [&](IdActorMap::value_type iter)
-            {
-               dtCore::BaseActorObject* actor = iter.second.get();
-
-               // TODO: Add options and filtering mechanism to limit the node display for large scenes.
-
-               // Accept only scene level actors (those without parents).
-               dtGame::GameActorProxy* gameActor = dynamic_cast<dtGame::GameActorProxy*>(actor);
-               if (gameActor == nullptr || gameActor->GetParentActor() == nullptr)
-               {
-                  nodes.push_back(new dtQt::ActorNodeWrapper(*actor));
-               }
-            }
-         );
-
-         // Sort the nodes by name.
-         NodeNameComparePred pred;
-         std::sort(nodes.begin(), nodes.end(), pred);
-         
-         // Send  the node wrappers to be displayed in the node hierarchy graph.
-         mNodeGraphViewer->GetNodeGraphView().GetNodeGraphScene()->SetSceneNodes(nodes);
-      }
-   }
+   // Send  the node wrappers to be displayed in the node hierarchy graph.
+   mNodeGraphViewer->GetNodeGraphView().GetNodeGraphScene()->UpdateScene();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -180,7 +216,7 @@ void SceneHierarchyEditorPlugin::onCurrentMapChanged()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void SceneHierarchyEditorPlugin::OnSelectionChanged(const dtQt::BaseNodeWrapperArray& nodes)
+void SceneHierarchyEditorPlugin::OnNodeSelectionChanged(const dtQt::BaseNodeWrapperArray& nodes)
 {
    dtQt::NodeGraphScene* scene = mNodeGraphViewer->GetNodeGraphView().GetNodeGraphScene();
 
@@ -241,6 +277,30 @@ void SceneHierarchyEditorPlugin::OnNodesAttached(const dtQt::BaseNodeWrapperArra
          }
       }
    );
+}
+
+void SceneHierarchyEditorPlugin::OnActorCreated(dtCore::ActorPtr actor, bool forceNoAdjustments)
+{
+   dtQt::NodeGraphScene* nodeScene = mNodeGraphViewer->GetNodeGraphView().GetNodeGraphScene();
+
+   nodeScene->AddNode(*new dtQt::ActorNodeWrapper(*actor), true);
+}
+
+void SceneHierarchyEditorPlugin::OnActorDestroyed(dtCore::ActorPtr actor)
+{
+   dtQt::NodeGraphScene* nodeScene = mNodeGraphViewer->GetNodeGraphView().GetNodeGraphScene();
+
+   nodeScene->RemoveNode(*new dtQt::ActorNodeWrapper(*actor));
+}
+
+void SceneHierarchyEditorPlugin::OnActorsSelected(dtCore::ActorRefPtrVector& actors)
+{
+   dtQt::NodeGraphScene* nodeScene = mNodeGraphViewer->GetNodeGraphView().GetNodeGraphScene();
+
+   dtQt::BaseNodeWrapperArray nodes;
+   ConvertActorsToNodes(actors, nodes);
+
+   nodeScene->SetSelectedNodes(nodes);
 }
 
 

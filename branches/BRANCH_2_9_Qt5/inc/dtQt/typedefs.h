@@ -27,13 +27,22 @@
 #ifndef DELTA_PROPERTY_TYPEDEFS
 #define DELTA_PROPERTY_TYPEDEFS
 
+////////////////////////////////////////////////////////////////////////////////
+// INCLUDE DIRECTIVES
+////////////////////////////////////////////////////////////////////////////////
 #include <QtCore/QMetaType>
 #include <vector>
 #include <osg/Node>
 #include <dtCore/refptr.h>
 #include <dtCore/actorproxy.h>
 #include <dtCore/actorproperty.h>
+#include <dtCore/baseactorobject.h>
 
+
+
+////////////////////////////////////////////////////////////////////////////////
+// TYPE DEFINITIONS
+////////////////////////////////////////////////////////////////////////////////
 // TODO: Remove these typedefs that have "Proxy" and "Ref" in the name.
 // Actor Pointers
 typedef dtCore::ObserverPtr<dtCore::BaseActorObject> ActorWeakPtr;
@@ -52,10 +61,15 @@ typedef dtCore::ObserverPtr<osg::Node> OsgNodeWeakPtr;
 typedef std::vector<OsgNodePtr> OsgNodePtrVector;
 typedef std::vector<OsgNodeWeakPtr> OsgNodeWeakPtrVector;
 
+
+
+////////////////////////////////////////////////////////////////////////////////
+// QT TYPE REGISTRATION
+////////////////////////////////////////////////////////////////////////////////
 //allows storage in a QVariant
 Q_DECLARE_METATYPE(dtCore::ActorPtr);
 Q_DECLARE_METATYPE(dtCore::ActorRefPtrVector);
-Q_DECLARE_METATYPE(dtCore::RefPtr<dtCore::ActorProperty>);
+Q_DECLARE_METATYPE(ActorPropertyRefPtr);
 Q_DECLARE_METATYPE(OsgNodePtr);
 Q_DECLARE_METATYPE(OsgNodePtrVector);
 

@@ -51,16 +51,20 @@ namespace dtQt
    class DT_QT_EXPORT BaseNodeWrapper : public osg::Referenced
    {
    public:
-      typedef dtCore::RefPtr<BaseNodeWrapper> Ptr;
-
       BaseNodeWrapper() {}
 
       virtual std::string GetName() const = 0;
       virtual std::string GetClassName() const = 0;
       virtual std::string GetDescription() const = 0;
+
+      virtual const dtCore::UniqueId& GetId() const = 0;
+
       virtual void SetParentNode(BaseNodeWrapper* node) = 0;
       virtual BaseNodeWrapperPtr GetParentNode() const = 0;
+
       virtual unsigned int GetChildNodes(BaseNodeWrapperArray& outArray) = 0;
+
+      virtual bool Equals(const BaseNodeWrapper& other) const = 0;
 
       template<class T_DerivedType>
       T_DerivedType* As()
@@ -102,6 +106,11 @@ namespace dtQt
          return *mObj;
       }
 
+      bool Equals(const BaseNodeWrapper& other) const override
+      {
+         return GetId() == other.GetId();
+      }
+
    protected:
       virtual ~NodeWrapperT() {}
 
@@ -127,6 +136,8 @@ namespace dtQt
 
       std::string GetDescription() const override;
 
+      const dtCore::UniqueId& GetId() const override;
+
       void SetParentNode(BaseNodeWrapper* nodeWrapper) override;
 
       unsigned int GetChildNodes(BaseNodeWrapperArray& outArray) override;
@@ -135,6 +146,8 @@ namespace dtQt
 
    protected:
       virtual ~OsgNodeWrapper();
+
+      dtCore::UniqueId mId;
    };
 
    typedef dtCore::RefPtr<OsgNodeWrapper> OsgNodeWrapperPtr;
@@ -157,6 +170,8 @@ namespace dtQt
       std::string GetClassName() const override;
 
       std::string GetDescription() const override;
+
+      const dtCore::UniqueId& GetId() const override;
 
       void SetParentNode(BaseNodeWrapper* nodeWrapper) override;
 
@@ -373,6 +388,13 @@ namespace dtQt
    ////////////////////////////////////////////////////////////////////////////////
    // CLASS CODE
    ////////////////////////////////////////////////////////////////////////////////
+   typedef dtUtil::Functor<void, TYPELIST_1(BaseNodeWrapperArray&)> NodeProviderFunc;
+
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   // CLASS CODE
+   ////////////////////////////////////////////////////////////////////////////////
    class DT_QT_EXPORT NodeGraphScene : public QGraphicsScene
    {
       Q_OBJECT
@@ -380,7 +402,33 @@ namespace dtQt
       NodeGraphScene();
       virtual ~NodeGraphScene();
 
-      void SetSceneNodes(const BaseNodeWrapperArray& nodes);
+      /*
+      * Adds a single node to the scene.
+      * @param node The node to add to the scene.
+      * @param addChildren Determines if the method should also add all descendant nodes of the specified node.
+      * @return a new node item if the node was added, or NULL if the node already exists.
+      */
+      NodeItem* AddNode(BaseNodeWrapper& node, bool addChildren);
+
+      /*
+      * Adds several nodes to the scene.
+      * @param nodes The collection of nodes to add to the scene.
+      * @param addChildren Determines if the method should also add all descendant nodes of a specified node.
+      * @param outNodeItems Optional container for capturing all created node items for the scene.
+      * @return Count of nodes that were created and added to the scene.
+      */
+      unsigned int AddNodes(const BaseNodeWrapperArray& nodes, bool addChildren, NodeItemArray* outNodeItems = nullptr);
+
+      bool RemoveNode(BaseNodeWrapper& node);
+      bool RemoveNodeItem(NodeItem& nodeItem);
+
+      void SetNodeProviderFunc(NodeProviderFunc nodeProviderFunc);
+
+      NodeItem* FindNodeItem(BaseNodeWrapper& node) const;
+
+      unsigned int SetNodesSelected(const BaseNodeWrapperArray& nodes, bool selected);
+
+      unsigned int SetSelectedNodes(const BaseNodeWrapperArray& nodes);
 
       /*
       * Acquires the objects referenced by the currently selected nodes.
@@ -398,20 +446,29 @@ namespace dtQt
 
       void GetNodesFromItems(const NodeItemArray& nodeItems, BaseNodeWrapperArray& outNodes);
 
+      /*
+      * Refreshes the node graph scene by clearing all graphics items and reconstructing
+      * the scene calling upon the specified node provider functor. The overload version
+      * of this method that does not take a functor will use the functor set for this
+      * scene via SetNodeProviderFunc.
+      */
+      void UpdateScene(NodeProviderFunc nodeProviderFunc);
       void UpdateScene();
 
       /*
       * Method to detach graphical nodes from their graphical node parents.
-      * NOTE: This is only for graphics does not affect the actual
-      * relationships between objects represented by the nodes.
+      * NOTE: This is only for graphics and does not affect the actual
+      * relationships between objects represented by the node items.
       */
+      void DetachNodeItem(NodeItem& nodeItem);
       void DetachNodeItems(const NodeItemArray& nodeItems);
 
       /*
       * Method to attach graphical nodes to a graphical node parent.
-      * NOTE: This is only for graphics does not affect the actual
-      * relationships between objects represented by the nodes.
+      * NOTE: This is only for graphics and does not affect the actual
+      * relationships between objects represented by the node items.
       */
+      void AttachNodeItem(NodeItem& nodeItem, NodeItem& parentNodeItem);
       void AttachNodeItems(const NodeItemArray& nodeItems, NodeItem& parentNodeItem);
 
       void DetachSelectedNodes();
@@ -430,6 +487,8 @@ namespace dtQt
 
       bool IsAttachEnabled() const;
 
+      void ClearNodeItems();
+
    public slots:
       void OnSelectionChanged();
       void OnDetachAction();
@@ -440,15 +499,28 @@ namespace dtQt
       void SignalNodesDetached(const dtQt::BaseNodeWrapperArray& nodes);
       void SignalNodesAttached(const dtQt::BaseNodeWrapperArray& nodes, const dtQt::BaseNodeWrapper& parentNode);
 
+      void SignalNodeAttached(const dtQt::BaseNodeWrapper& node, const dtQt::BaseNodeWrapper& parentNode);
+      void SignalNodeDetached(const dtQt::BaseNodeWrapper& node);
+
+      void SignalNodeItemAdded(const dtQt::NodeItem& nodeItem);
+      void SignalNodeItemRemoved(const dtQt::NodeItem& nodeItem);
+
+      void SignalCleared();
+
    private:
       void CreateConnections();
 
       NodeConnectorManagerPtr mConnectorManager;
       NodeConnectorManagerPtr mFloatingConnectorManager;
-      BaseNodeWrapperArray mSceneNodes;
       NodeItem* mFloatNode;
 
       bool mAttachMode;
+
+      typedef dtUtil::RefString IdType;
+      typedef std::map<IdType, NodeItem*> IdNodeItemMap;
+      IdNodeItemMap mIdItemMap;
+
+      NodeProviderFunc mNodeProviderFunc;
    };
 
 

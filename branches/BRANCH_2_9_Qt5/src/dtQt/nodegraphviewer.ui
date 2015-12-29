@@ -85,7 +85,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="mBtnModeLink">
+      <widget class="QToolButton" name="mBtnModeAttach">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -99,10 +99,20 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Link</string>
+        <string>Attach</string>
        </property>
        <property name="text">
-        <string>Link</string>
+        <string>Attach</string>
+       </property>
+       <property name="icon">
+        <iconset resource="dtqt.qrc">
+         <normaloff>:/dtQt/icons/common/attach.png</normaloff>:/dtQt/icons/common/attach.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -110,7 +120,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="mBtnModeUnlink">
+      <widget class="QToolButton" name="mBtnModeDetach">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -124,10 +134,20 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Unlink</string>
+        <string>Detach</string>
        </property>
        <property name="text">
-        <string>Unlink</string>
+        <string>Detach</string>
+       </property>
+       <property name="icon">
+        <iconset resource="dtqt.qrc">
+         <normaloff>:/dtQt/icons/common/detach.png</normaloff>:/dtQt/icons/common/detach.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
        </property>
       </widget>
      </item>
@@ -158,6 +178,16 @@
        <property name="text">
         <string>Arrange</string>
        </property>
+       <property name="icon">
+        <iconset resource="dtqt.qrc">
+         <normaloff>:/dtQt/icons/common/arrange.png</normaloff>:/dtQt/icons/common/arrange.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
       </widget>
      </item>
      <item>
@@ -183,6 +213,9 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="toolTip">
+      <string>Arrange</string>
+     </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <property name="spacing">
        <number>4</number>
@@ -195,6 +228,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="dtqt.qrc"/>
+ </resources>
  <connections/>
 </ui>

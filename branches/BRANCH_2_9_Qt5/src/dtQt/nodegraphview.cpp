@@ -40,6 +40,7 @@ namespace dtQt
    ////////////////////////////////////////////////////////////////////////////////
    OsgNodeWrapper::OsgNodeWrapper(osg::Node& node)
       : BaseClass(node)
+      , mId(node.getName() + "(" + mObj->className() + ")") // TODO: Ensure node id value is unique
    {}
 
    OsgNodeWrapper::~OsgNodeWrapper()
@@ -75,6 +76,11 @@ namespace dtQt
       );
 
       return oss.str().c_str();
+   }
+
+   const dtCore::UniqueId& OsgNodeWrapper::GetId() const
+   {
+      return mId;
    }
 
    void OsgNodeWrapper::SetParentNode(BaseNodeWrapper* nodeWrapper)
@@ -165,6 +171,11 @@ namespace dtQt
    std::string ActorNodeWrapper::GetDescription() const
    {
       return mObj->GetActorType().GetDescription();
+   }
+
+   const dtCore::UniqueId& ActorNodeWrapper::GetId() const
+   {
+      return mObj->GetId();
    }
 
    void ActorNodeWrapper::SetParentNode(BaseNodeWrapper* nodeWrapper)
@@ -919,11 +930,167 @@ namespace dtQt
          this, SLOT(OnSelectionChanged()));
    }
 
-   void NodeGraphScene::SetSceneNodes(const BaseNodeWrapperArray& nodes)
+   NodeItem* NodeGraphScene::AddNode(BaseNodeWrapper& node, bool addChildren)
    {
-      mSceneNodes = nodes;
+      NodeItem* nodeItem = nullptr;
 
-      UpdateScene();
+      // Add the item only if it is not already referenced.
+      if (FindNodeItem(node) == nullptr)
+      {
+         nodeItem = new NodeItem(node);
+         addItem(nodeItem);
+         nodeItem->CreateChildNodeItems(addChildren);
+
+         mIdItemMap[node.GetId().ToString()] = nodeItem;
+
+         mConnectorManager->CreateConnectorsToChildren(*nodeItem, addChildren);
+
+         emit SignalNodeItemAdded(*nodeItem);
+      }
+
+      return nodeItem;
+   }
+
+   unsigned int NodeGraphScene::AddNodes(const BaseNodeWrapperArray& nodes, bool addChildren, NodeItemArray* outNodeItems)
+   {
+      unsigned int count = 0;
+
+      std::for_each(nodes.begin(), nodes.end(),
+         [&](BaseNodeWrapper* node)
+         {
+            NodeItem* nodeItem = AddNode(*node, addChildren);
+
+            if (nodeItem != nullptr)
+            {
+               ++count;
+
+               if (outNodeItems != nullptr)
+               {
+                  outNodeItems->push_back(nodeItem);
+               }
+            }
+         }
+      );
+
+      return count;
+   }
+
+   bool NodeGraphScene::RemoveNode(BaseNodeWrapper& node)
+   {
+      bool success = false;
+
+      NodeItem* nodeItem = FindNodeItem(node);
+
+      if (nodeItem != nullptr)
+      {
+         DetachNodeItem(*nodeItem);
+
+         IdNodeItemMap::iterator foundIter = mIdItemMap.find(node.GetId().ToString());
+         if (foundIter != mIdItemMap.end())
+         {
+            mIdItemMap.erase(foundIter);
+         }
+
+         emit SignalNodeItemRemoved(*nodeItem);
+
+         removeItem(nodeItem);
+
+         success = true;
+      }
+
+      return success;
+   }
+
+   bool NodeGraphScene::RemoveNodeItem(NodeItem& nodeItem)
+   {
+      bool success = false;
+
+      // Remove any internal id-to-nodeitem references.
+      IdNodeItemMap::iterator iter = mIdItemMap.begin();
+      for (; iter != mIdItemMap.end();)
+      {
+         if (iter->second == &nodeItem)
+         {
+            mIdItemMap.erase(iter++);
+            success = true;
+         }
+         else
+         {
+            ++iter;
+         }
+      }
+
+      // Remove the node graphics item if it was found.
+      if (success)
+      {
+         DetachNodeItem(nodeItem);
+
+         emit SignalNodeItemRemoved(nodeItem);
+
+         removeItem(&nodeItem);
+      }
+
+      return success;
+   }
+
+   void NodeGraphScene::SetNodeProviderFunc(NodeProviderFunc nodeProviderFunc)
+   {
+      mNodeProviderFunc = nodeProviderFunc;
+   }
+
+   NodeItem* NodeGraphScene::FindNodeItem(BaseNodeWrapper& node) const
+   {
+      NodeItem* nodeItem = nullptr;
+
+      IdNodeItemMap::const_iterator foundIter = mIdItemMap.find(node.GetId().ToString());
+      if (foundIter != mIdItemMap.end())
+      {
+         nodeItem = foundIter->second;
+      }
+
+      return nodeItem;
+   }
+
+   unsigned int NodeGraphScene::SetNodesSelected(const BaseNodeWrapperArray& nodes, bool selected)
+   {
+      unsigned int count = 0;
+
+      // Avoid sending out a multitude of signals during the loop.
+      blockSignals(true);
+
+      std::for_each(nodes.begin(), nodes.end(),
+         [&](BaseNodeWrapper* node)
+         {
+            NodeItem* nodeItem = FindNodeItem(*node);
+
+            if (nodeItem != nullptr && nodeItem->isSelected() != selected)
+            {
+               nodeItem->setSelected(selected);
+
+               ++count;
+            }
+         }
+      );
+      
+      // Re-enable signal functionality.
+      blockSignals(false);
+
+      // TODO: Determine if the signal should be sent out for the selection change.
+      /*if (count > 0)
+      {
+         OnSelectionChanged();
+      }*/
+
+      return count;
+   }
+
+   unsigned int NodeGraphScene::SetSelectedNodes(const BaseNodeWrapperArray& nodes)
+   {
+      blockSignals(true);
+      clearSelection();
+      blockSignals(false);
+
+      return SetNodesSelected(nodes, true);
    }
 
    unsigned int NodeGraphScene::GetSelectedNodes(BaseNodeWrapperArray& outNodes)
@@ -987,23 +1154,26 @@ namespace dtQt
       );
    }
 
-   void NodeGraphScene::UpdateScene()
+   void NodeGraphScene::UpdateScene(NodeProviderFunc nodeProviderFunc)
    {
-      clear();
-
-      if (! mSceneNodes.empty())
+      if (! nodeProviderFunc.valid())
       {
+         LOG_ERROR("No NodeProviderFunc was specified. Please assign a functor via SetNodeProviderFunc that will return node data to be displayed in the node graph scene.");
+      }
+      else // Node provider is valid...
+      {
+         ClearNodeItems();
+
          float offsetY = 0.0f;
          int index = 0;
 
-         std::for_each(mSceneNodes.begin(), mSceneNodes.end(),
+         BaseNodeWrapperArray nodes;
+         nodeProviderFunc(nodes);
+
+         std::for_each(nodes.begin(), nodes.end(),
             [&](BaseNodeWrapper* node)
             {
-               NodeItem* nodeItem = new NodeItem(*node);
-               addItem(nodeItem);
-               nodeItem->CreateChildNodeItems(true);
-
-               mConnectorManager->CreateConnectorsToChildren(*nodeItem, true);
+               NodeItem* nodeItem = AddNode(*node, true);
 
                dtCore::RefPtr<NodeArranger> arranger = new NodeArranger;
                NodeArranger::Params params;
@@ -1023,19 +1193,54 @@ namespace dtQt
       }
    }
 
+   void NodeGraphScene::UpdateScene()
+   {
+      UpdateScene(mNodeProviderFunc);
+   }
+
+   void NodeGraphScene::DetachNodeItem(NodeItem& nodeItem)
+   {
+      QPointF scenePos = nodeItem.scenePos();
+
+      nodeItem.setParentItem(nullptr);
+      nodeItem.setPos(scenePos);
+
+      mConnectorManager->RemoveConnectorToParent(nodeItem);
+
+      emit SignalNodeDetached(nodeItem.GetNodeWrapper());
+   }
+
    void NodeGraphScene::DetachNodeItems(const NodeItemArray& nodeItems)
    {
-      std::for_each(nodeItems.begin(), nodeItems.end(),
-         [&](NodeItem* nodeItem)
-         {
-            QPointF scenePos = nodeItem->scenePos();
+      if (! nodeItems.empty())
+      {
+         std::for_each(nodeItems.begin(), nodeItems.end(),
+            [&](NodeItem* nodeItem)
+            {
+               DetachNodeItem(*nodeItem);
+            }
+         );
 
-            nodeItem->setParentItem(nullptr);
-            nodeItem->setPos(scenePos);
+         BaseNodeWrapperArray nodes;
+         GetNodesFromItems(nodeItems, nodes);
 
-            mConnectorManager->RemoveConnectorToParent(*nodeItem);
-         }
-      );
+         emit SignalNodesDetached(nodes);
+      }
+   }
+
+   void NodeGraphScene::AttachNodeItem(NodeItem& nodeItem, NodeItem& parentNodeItem)
+   {
+      if (&nodeItem != &parentNodeItem)
+      {
+         QPointF scenePos = nodeItem.scenePos();
+
+         nodeItem.setParentItem(&parentNodeItem);
+         nodeItem.setPos(parentNodeItem.mapFromScene(scenePos));
+
+         mConnectorManager->CreateConnector(parentNodeItem, nodeItem);
+
+         emit SignalNodeAttached(nodeItem.GetNodeWrapper(), parentNodeItem.GetNodeWrapper());
+      }
    }
 
    void NodeGraphScene::AttachNodeItems(const NodeItemArray& nodeItems, NodeItem& parentNodeItem)
@@ -1045,12 +1250,7 @@ namespace dtQt
          std::for_each(nodeItems.begin(), nodeItems.end(),
             [&](NodeItem* nodeItem)
             {
-               if (nodeItem != &parentNodeItem)
-               {
-                  nodeItem->setParentItem(&parentNodeItem);
-
-                  mConnectorManager->CreateConnector(parentNodeItem, *nodeItem);
-               }
+               AttachNodeItem(*nodeItem, parentNodeItem);
             }
          );
 
@@ -1067,11 +1267,6 @@ namespace dtQt
       if (GetSelectedNodeItems(nodeItems) > 0)
       {
          DetachNodeItems(nodeItems);
-
-         BaseNodeWrapperArray nodes;
-         GetNodesFromItems(nodeItems, nodes);
-
-         emit SignalNodesDetached(nodes);
       }
    }
 
@@ -1081,11 +1276,6 @@ namespace dtQt
       if (GetSelectedNodeItems(nodeItems) > 0)
       {
          AttachNodeItems(nodeItems, parentNodeItem);
-
-         BaseNodeWrapperArray nodes;
-         GetNodesFromItems(nodeItems, nodes);
-
-         emit SignalNodesAttached(nodes, parentNodeItem.GetNodeWrapper());
       }
    }
 
@@ -1156,6 +1346,15 @@ namespace dtQt
       }
 
       mAttachMode = attachEnabled;
+   }
+
+   void NodeGraphScene::ClearNodeItems()
+   {
+      clear();
+
+      mIdItemMap.clear();
+
+      emit SignalCleared();
    }
 
 
@@ -1411,11 +1610,11 @@ namespace dtQt
          this, SLOT(OnZoomChanged(float)));
 
       // DETACH
-      connect(mUI->mBtnModeUnlink, SIGNAL(clicked()),
+      connect(mUI->mBtnModeDetach, SIGNAL(clicked()),
          mGraphView->GetNodeGraphScene(), SLOT(OnDetachAction()));
 
       // ATTACH
-      connect(mUI->mBtnModeLink, SIGNAL(clicked(bool)),
+      connect(mUI->mBtnModeAttach, SIGNAL(clicked(bool)),
          mGraphView->GetNodeGraphScene(), SLOT(OnAttachAction(bool)));
    }
 

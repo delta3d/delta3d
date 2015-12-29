@@ -11,6 +11,9 @@
       <file>icons/actors/actor.png</file>
       <file>icons/actors/drawable.png</file>
       <file>icons/actors/transform.png</file>
+      <file>icons/common/arrange.png</file>
+      <file>icons/common/attach.png</file>
+      <file>icons/common/detach.png</file>
       <file>icons/common/motion_fly.png</file>
       <file>icons/common/motion_orbit.png</file>
       <file>icons/common/motion_ufo.png</file>
