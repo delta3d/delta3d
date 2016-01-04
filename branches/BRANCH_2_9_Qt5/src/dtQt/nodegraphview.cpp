@@ -270,6 +270,11 @@ namespace dtQt
       return NodeItem::Type;
    }
 
+   NodeItem* NodeItem::GetParent() const
+   {
+      return ConvertToNodeItem(parentItem());
+   }
+
    void NodeItem::SetMovable(bool movable)
    {
       if (movable)
@@ -314,6 +319,47 @@ namespace dtQt
       return mCollapsed;
    }
 
+   NodeItem* NodeItem::GetHighestSelected()
+   {
+      NodeItem* nodeItem = nullptr;
+
+      NodeItem* curNodeItem = this;
+      while (curNodeItem != nullptr)
+      {
+         if (curNodeItem->isSelected())
+         {
+            nodeItem = curNodeItem;
+         }
+
+         curNodeItem = ConvertToNodeItem(parentItem());
+      }
+
+      return nodeItem;
+   }
+
+   const NodeItem* NodeItem::GetHighestSelected() const
+   {
+      const NodeItem* nodeItem = nullptr;
+
+      const NodeItem* curNodeItem = this;
+      while (curNodeItem != nullptr)
+      {
+         curNodeItem = ConvertToNodeItem(parentItem());
+
+         if (curNodeItem != nullptr)
+         {
+            nodeItem = curNodeItem;
+         }
+      }
+
+      return nodeItem;
+   }
+
+   bool NodeItem::IsHighestSelected() const
+   {
+      return GetHighestSelected() == this;
+   }
+
    NodeItemArray NodeItem::CreateChildNodeItems(bool recurse)
    {
       NodeItemArray nodeItemArray;
@@ -348,6 +394,18 @@ namespace dtQt
       }
 
       return nodeItemArray;
+   }
+
+   NodeItem* NodeItem::ConvertToNodeItem(QGraphicsItem* item)
+   {
+      NodeItem* nodeItem = nullptr;
+
+      if (item != nullptr)
+      {
+         nodeItem = ConvertToNodeItem(*item);
+      }
+
+      return nodeItem;
    }
 
    NodeItem* NodeItem::ConvertToNodeItem(QGraphicsItem& item)
@@ -808,19 +866,55 @@ namespace dtQt
    const float NodeArranger::DEFAULT_PADDING_H = 10.0f;
    const float NodeArranger::DEFAULT_PADDING_V = 10.0f;
 
-   QRectF NodeArranger::Arrange(NodeItem& node, const NodeArranger::Params& params)
+   void NodeArranger::Arrange(const NodeItemArray& nodeItems, const NodeArranger::Params& params)
    {
-      return Arrange_Internal(node, params);
+      float maxOffsetX = 0.0f;
+      float offsetX = 0.0f;
+      float offsetY = 0.0f;
+      int nodeCountVertical = 0;
+
+      std::for_each(nodeItems.begin(), nodeItems.end(),
+         [&](NodeItem* nodeItem)
+         {
+            QRectF totalTreeBounds = Arrange_Internal(*nodeItem, params);
+
+            bool goNextColumn = params.mNodeCountVertical > 0 && params.mNodeCountVertical == nodeCountVertical;
+            if (goNextColumn)
+            {
+               offsetX += maxOffsetX + params.mPaddingH;
+               offsetY = 0.0f;
+
+               maxOffsetX = 0.0f;
+               nodeCountVertical = 0;
+            }
+
+            nodeItem->setPos(QPointF(offsetX, offsetY));
+
+            if (maxOffsetX < totalTreeBounds.width())
+            {
+               maxOffsetX = totalTreeBounds.width();
+            }
+
+            offsetY += totalTreeBounds.height() + params.mPaddingV;
+
+            ++nodeCountVertical;
+         }
+      );
    }
 
-   QRectF NodeArranger::Arrange_Internal(NodeItem& node, const NodeArranger::Params& params)
+   QRectF NodeArranger::Arrange(NodeItem& nodeItem, const NodeArranger::Params& params)
+   {
+      return Arrange_Internal(nodeItem, params);
+   }
+
+   QRectF NodeArranger::Arrange_Internal(NodeItem& nodeItem, const NodeArranger::Params& params)
    {
       QRectF rect;
    
       NodeItemArray children;
-      node.GetChildNodeItems(children);
+      nodeItem.GetChildNodeItems(children);
 
-      QRectF parentRect = node.boundingRect();
+      QRectF parentRect = nodeItem.boundingRect();
 
       float height = 0.0f;
       float width = 0.0f;
@@ -831,7 +925,7 @@ namespace dtQt
       size_t numChildren = children.size();
       if (numChildren <= 0)
       {
-         return node.boundingRect();
+         return parentRect;
       }
 
       size_t i = 0;
@@ -903,6 +997,7 @@ namespace dtQt
       : mFloatNode(nullptr)
       , mAttachMode(false)
    {
+      mArranger = new NodeArranger;
       mConnectorManager = new NodeConnectorManager;
       mFloatingConnectorManager = new NodeConnectorManager;
 
@@ -928,6 +1023,16 @@ namespace dtQt
    {
       connect(this, SIGNAL(selectionChanged()),
          this, SLOT(OnSelectionChanged()));
+   }
+
+   void NodeGraphScene::SetNodeArranger(NodeArranger& arranger)
+   {
+      mArranger = &arranger;
+   }
+
+   NodeArranger& NodeGraphScene::GetNodeArranger() const
+   {
+      return *mArranger;
    }
 
    NodeItem* NodeGraphScene::AddNode(BaseNodeWrapper& node, bool addChildren)
@@ -1142,6 +1247,58 @@ namespace dtQt
       return count;
    }
 
+   unsigned int NodeGraphScene::GetHighestSelectedNodeItems(NodeItemArray& outNodeItems)
+   {
+      unsigned int count = 0;
+
+      typedef std::set<NodeItem*> NodeItemSet;
+      NodeItemSet nodeItemSet;
+
+      NodeItemArray selectedNodeItems;
+      if (GetSelectedNodeItems(selectedNodeItems) > 0)
+      {
+         NodeItem* curNodeItem = nullptr;
+         
+         std::for_each(selectedNodeItems.begin(), selectedNodeItems.end(),
+            [&](NodeItem* nodeItem)
+            {
+               curNodeItem = nodeItem->GetHighestSelected();
+
+               if (curNodeItem != nullptr && nodeItemSet.find(curNodeItem) == nodeItemSet.end())
+               {
+                  nodeItemSet.insert(curNodeItem);
+               }
+            }
+         );
+
+         if ( ! nodeItemSet.empty())
+         {
+            count = nodeItemSet.size();
+            outNodeItems.insert(outNodeItems.end(), nodeItemSet.begin(), nodeItemSet.end());
+         }
+      }
+
+      return count;
+   }
+
+   unsigned int NodeGraphScene::GetRootNodeItems(NodeItemArray& outNodeItems)
+   {
+      unsigned int count = 0;
+
+      IdNodeItemMap::iterator iter = mIdItemMap.begin();
+      for (; iter != mIdItemMap.end(); ++iter)
+      {
+         NodeItem* nodeItem = iter->second;
+         if (nodeItem->GetParent() == nullptr)
+         {
+            outNodeItems.push_back(nodeItem);
+            ++count;
+         }
+      }
+
+      return count;
+   }
+
    void NodeGraphScene::GetNodesFromItems(const NodeItemArray& nodeItems, BaseNodeWrapperArray& outNodes)
    {
       outNodes.reserve(nodeItems.size());
@@ -1154,48 +1311,45 @@ namespace dtQt
       );
    }
 
-   void NodeGraphScene::UpdateScene(NodeProviderFunc nodeProviderFunc)
+   void NodeGraphScene::UpdateScene(NodeProviderFunc nodeProviderFunc, NodeArranger& arranger, const NodeArranger::Params& params)
    {
       if (! nodeProviderFunc.valid())
       {
-         LOG_ERROR("No NodeProviderFunc was specified. Please assign a functor via SetNodeProviderFunc that will return node data to be displayed in the node graph scene.");
+         LOG_ERROR("No NodeProviderFunc was specified. Please assign a functor via SetNodeProviderFunc that will return node data to display in the node graph scene.");
       }
       else // Node provider is valid...
       {
          ClearNodeItems();
 
-         float offsetY = 0.0f;
-         int index = 0;
-
          BaseNodeWrapperArray nodes;
          nodeProviderFunc(nodes);
+
+         NodeItemArray nodeItems;
+         nodeItems.reserve(nodes.size());
 
          std::for_each(nodes.begin(), nodes.end(),
             [&](BaseNodeWrapper* node)
             {
-               NodeItem* nodeItem = AddNode(*node, true);
-
-               dtCore::RefPtr<NodeArranger> arranger = new NodeArranger;
-               NodeArranger::Params params;
-               params.mPaddingH = 40.0f;
-               params.mPaddingV = 40.0f;
-               QRectF totalTreeBounds = arranger->Arrange(*nodeItem, params);
-
-               if (index > 0)
-               {
-                  nodeItem->setPos(nodeItem->pos() + QPointF(0.0f, offsetY));
-               }
-
-               offsetY += totalTreeBounds.height() + params.mPaddingV;
-               ++index;
+               nodeItems.push_back(AddNode(*node, true));
             }
          );
+
+         if ( ! nodeItems.empty())
+         {
+            arranger.Arrange(nodeItems, params);
+         }
       }
    }
 
-   void NodeGraphScene::UpdateScene()
+   void NodeGraphScene::UpdateScene(NodeArranger& arranger, const NodeArranger::Params& params)
    {
-      UpdateScene(mNodeProviderFunc);
+      UpdateScene(mNodeProviderFunc, arranger, params);
+   }
+
+   void NodeGraphScene::UpdateScene(const NodeArranger::Params& params)
+   {
+      dtCore::RefPtr<dtQt::NodeArranger> arranger = new dtQt::NodeArranger;
+      UpdateScene(mNodeProviderFunc, *arranger, params);
    }
 
    void NodeGraphScene::DetachNodeItem(NodeItem& nodeItem)
@@ -1346,6 +1500,47 @@ namespace dtQt
       }
 
       mAttachMode = attachEnabled;
+   }
+
+   void NodeGraphScene::OnArrangeSelected()
+   {
+      NodeItemArray nodeItems;
+
+      // TODO: Move parameters to arranger instance.
+      NodeArranger::Params params;
+      params.mPaddingH = 40.0f;
+      params.mPaddingV = 40.0f;
+      params.mNodeCountVertical = 10;
+
+      // Get the highest most selected nodes so that
+      // selected child nodes of any selected node do
+      // not get processed more than once.
+      if (GetHighestSelectedNodeItems(nodeItems) > 0)
+      {
+         std::for_each(nodeItems.begin(), nodeItems.end(),
+            [&](NodeItem* nodeItem)
+            {
+               mArranger->Arrange(*nodeItem, params);
+            }
+         );
+      }
+   }
+   
+   void NodeGraphScene::OnArrangeAll()
+   {
+      NodeItemArray nodeItems;
+
+      // TODO: Move parameters to arranger instance.
+      NodeArranger::Params params;
+      params.mPaddingH = 40.0f;
+      params.mPaddingV = 40.0f;
+      params.mNodeCountVertical = 10;
+
+      // Get all root nodes to be arranged.
+      if (GetRootNodeItems(nodeItems) > 0)
+      {
+         mArranger->Arrange(nodeItems, params);
+      }
    }
 
    void NodeGraphScene::ClearNodeItems()
@@ -1599,6 +1794,8 @@ namespace dtQt
 
    void NodeGraphViewerPanel::CreateConnections()
    {
+      dtQt::NodeGraphScene* nodeScene = mGraphView->GetNodeGraphScene();
+
       // ZOOM
       // --- Control zoom factor by combobox selection action.
       connect(mUI->mZoom, SIGNAL(editTextChanged(const QString)),
@@ -1611,11 +1808,17 @@ namespace dtQt
 
       // DETACH
       connect(mUI->mBtnModeDetach, SIGNAL(clicked()),
-         mGraphView->GetNodeGraphScene(), SLOT(OnDetachAction()));
+         nodeScene, SLOT(OnDetachAction()));
 
       // ATTACH
       connect(mUI->mBtnModeAttach, SIGNAL(clicked(bool)),
-         mGraphView->GetNodeGraphScene(), SLOT(OnAttachAction(bool)));
+         nodeScene, SLOT(OnAttachAction(bool)));
+
+      // ARRANGE
+      connect(mUI->mBtnArrangeSelected, SIGNAL(clicked()),
+         nodeScene, SLOT(OnArrangeSelected()));
+      connect(mUI->mBtnArrangeAll, SIGNAL(clicked()),
+         nodeScene, SLOT(OnArrangeAll()));
    }
 
    void NodeGraphViewerPanel::OnZoomChanged(float value)

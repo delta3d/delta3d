@@ -205,8 +205,13 @@ void SceneHierarchyEditorPlugin::ConvertActorsToNodes(const dtCore::ActorRefPtrV
 ////////////////////////////////////////////////////////////////////////////////
 void SceneHierarchyEditorPlugin::UpdateUI()
 {
+   dtQt::NodeArranger::Params params;
+   params.mPaddingH = 40.0f;
+   params.mPaddingV = 40.0f;
+   params.mNodeCountVertical = 10;
+
    // Send  the node wrappers to be displayed in the node hierarchy graph.
-   mNodeGraphViewer->GetNodeGraphView().GetNodeGraphScene()->UpdateScene();
+   mNodeGraphViewer->GetNodeGraphView().GetNodeGraphScene()->UpdateScene(params);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

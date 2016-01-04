@@ -159,7 +159,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="mBtnArrangeChildren">
+      <widget class="QToolButton" name="mBtnArrangeSelected">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -173,7 +173,39 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Arrange child nodes</string>
+        <string>Arrange child nodes of selected nodes</string>
+       </property>
+       <property name="text">
+        <string>Arrange</string>
+       </property>
+       <property name="icon">
+        <iconset resource="dtqt.qrc">
+         <normaloff>:/dtQt/icons/common/arrange.png</normaloff>:/dtQt/icons/common/arrange.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="mBtnArrangeAll">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Arrange all nodes</string>
        </property>
        <property name="text">
         <string>Arrange</string>
