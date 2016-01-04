@@ -218,6 +218,8 @@ namespace dtQt
       NodeItem(BaseNodeWrapper& node);
       virtual ~NodeItem();
 
+      NodeItem* GetParent() const;
+
       // Enable the use of qgraphicsitem_cast with this item.
       int type() const;
 
@@ -230,8 +232,14 @@ namespace dtQt
       void SetCollapsed(bool collapsed);
       bool IsCollapsed() const;
 
+      NodeItem* GetHighestSelected();
+      const NodeItem* GetHighestSelected() const;
+
+      bool IsHighestSelected() const;
+
       NodeItemArray CreateChildNodeItems(bool recurse);
 
+      static NodeItem* ConvertToNodeItem(QGraphicsItem* item);
       static NodeItem* ConvertToNodeItem(QGraphicsItem& item);
 
       BaseNodeWrapper& GetNodeWrapper();
@@ -363,20 +371,24 @@ namespace dtQt
       {
          float mPaddingH;
          float mPaddingV;
+         int mNodeCountVertical;
 
          Params(float paddingH = DEFAULT_PADDING_H,
             float paddingV = DEFAULT_PADDING_V)
             : mPaddingH(paddingH)
             , mPaddingV(paddingV)
+            , mNodeCountVertical(0)
          {}
       };
 
       NodeArranger() {}
 
-      QRectF Arrange(NodeItem& node, const Params& params);
+      void Arrange(const NodeItemArray& nodeItems, const NodeArranger::Params& params);
+
+      QRectF Arrange(NodeItem& nodeItem, const Params& params);
 
    protected:
-      QRectF Arrange_Internal(NodeItem& node, const Params& params);
+      QRectF Arrange_Internal(NodeItem& nodeItem, const Params& params);
 
       virtual ~NodeArranger() {}
    };
@@ -401,6 +413,9 @@ namespace dtQt
    public:
       NodeGraphScene();
       virtual ~NodeGraphScene();
+
+      void SetNodeArranger(NodeArranger& arranger);
+      NodeArranger& GetNodeArranger() const;
 
       /*
       * Adds a single node to the scene.
@@ -444,6 +459,10 @@ namespace dtQt
       */
       unsigned int GetSelectedNodeItems(NodeItemArray& outNodeItems);
 
+      unsigned int GetHighestSelectedNodeItems(NodeItemArray& outNodeItems);
+
+      unsigned int GetRootNodeItems(NodeItemArray& outNodeItems);
+
       void GetNodesFromItems(const NodeItemArray& nodeItems, BaseNodeWrapperArray& outNodes);
 
       /*
@@ -451,9 +470,31 @@ namespace dtQt
       * the scene calling upon the specified node provider functor. The overload version
       * of this method that does not take a functor will use the functor set for this
       * scene via SetNodeProviderFunc.
+      * @param nodeProviderFunc Functor that returns all nodes to be displayed in the graph.
+      * @param arranger The arranger object that will arrange the nodes in the scene.
+      * @param params Arranger parameters to be used by the arranger.
       */
-      void UpdateScene(NodeProviderFunc nodeProviderFunc);
-      void UpdateScene();
+      void UpdateScene(NodeProviderFunc nodeProviderFunc, NodeArranger& arranger, const NodeArranger::Params& params);
+
+      /*
+      * Refreshes the node graph scene by clearing all graphics items and reconstructing
+      * the scene calling upon the specified node provider functor. This overload method
+      * does not take a functor but will use the node provider functor set for this scene
+      * via SetNodeProviderFunc.
+      * @param arranger The arranger object that will arrange the nodes in the scene.
+      * @param params Arranger parameters to be used by the arranger.
+      */
+      void UpdateScene(NodeArranger& arranger, const NodeArranger::Params& params);
+
+      /*
+      * Refreshes the node graph scene by clearing all graphics items and reconstructing
+      * the scene calling upon the specified node provider functor. This overload method
+      * does not take a functor but will use the node provider functor set for this scene
+      * via SetNodeProviderFunc. This method also uses a default node arranger instance.
+      * @param arranger The arranger object that will arrange the nodes in the scene.
+      * @param params Arranger parameters to be used by the arranger.
+      */
+      void UpdateScene(const NodeArranger::Params& params);
 
       /*
       * Method to detach graphical nodes from their graphical node parents.
@@ -493,6 +534,8 @@ namespace dtQt
       void OnSelectionChanged();
       void OnDetachAction();
       void OnAttachAction(bool attachEnabled);
+      void OnArrangeSelected();
+      void OnArrangeAll();
 
    signals:
       void SignalNodesSelected(const dtQt::BaseNodeWrapperArray& nodes);
@@ -510,6 +553,7 @@ namespace dtQt
    private:
       void CreateConnections();
 
+      NodeArrangerPtr mArranger;
       NodeConnectorManagerPtr mConnectorManager;
       NodeConnectorManagerPtr mFloatingConnectorManager;
       NodeItem* mFloatNode;
