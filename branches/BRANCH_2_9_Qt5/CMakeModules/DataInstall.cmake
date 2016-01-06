@@ -32,14 +32,6 @@ INSTALL (
 )
 
 INSTALL (
-   DIRECTORY    ${CMAKE_SOURCE_DIR}/demos/TankTargetTutorial/StageProject
-   DESTINATION  demos/TankTargetTutorial
-   COMPONENT    delta3d-demos
-   PATTERN .svn EXCLUDE
-   PATTERN  *~  EXCLUDE
-)
-
-INSTALL (
    DIRECTORY    ${CMAKE_SOURCE_DIR}/demos/fireFighter/FireFighterProject
    DESTINATION  demos/FireFighter
    COMPONENT    delta3d-demos
