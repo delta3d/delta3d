@@ -1097,7 +1097,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtGame::GameActorProxy> GameManager::CreateRemoteGameActor(const dtCore::ActorType& actorType)
+   dtCore::RefPtr<dtGame::GameActorProxy> GameManager::CreateRemoteActor(const dtCore::ActorType& actorType)
    {
       dtCore::RefPtr<dtGame::GameActorProxy> result;
       CreateActor(actorType, result);
