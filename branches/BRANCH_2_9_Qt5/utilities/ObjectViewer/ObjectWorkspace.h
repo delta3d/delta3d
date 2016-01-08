@@ -27,9 +27,13 @@
 #include <QtWidgets/QMainWindow>
 #include <QtCore/QFileInfoList>
 #include <dtCore/refptr.h>
+//#include <dtCore/undosystem.h>
 #include <osgDB/Options>
 #include <osgUtil/Optimizer>
 #include "Typedefs.h"
+
+#include <dtQt/nodegraphview.h>
+#include <dtQt/statesetpanel.h>
 
 
 
@@ -91,9 +95,6 @@ public slots:
 
    void OnInitialization();
    void OnShutdown();
-   void OnToggleResourceDock();
-   void OnToggleAnimationControlDock();
-   void OnToggleNodeToolsDock();
    void OnToggleShadingToolbar();
    void OnToggleGenerateTangents();
    void OnRecompileClicked();
@@ -137,12 +138,18 @@ private:
    QAction* mOpenVertexShaderAction;
    QAction* mOpenGeometryShaderAction;
    QAction* mOpenFragmentShaderAction;
+
+   // Edit Menu
+   //QAction* mUndo;
+   //QAction* mRedo;
    
    // View Menu
    QAction* mToggleDockResources;
    QAction* mToggleDockAnimationControl;
+   QAction* mToggleDockNodeGraph;
    QAction* mToggleDockNodeTools;
    QAction* mToggleDockProperties;
+   QAction* mToggleDockStateSet;
 
    QToolBar* mCoordinateToolbar;
    QToolBar* mDisplayToolbar;
@@ -155,13 +162,19 @@ private:
    QDockWidget* mNodeToolsDock;
    dtQt::NodeTreePanel* mNodeTree;
    QDockWidget* mPropertiesDock;
-   //dtQt::PropertyPanel* mPropertyPanel;
-   //dtCore::RefPtr<dtCore::PropertyContainer> mProperties;
+   dtQt::PropertyPanel* mPropertyPanel;
+   QDockWidget* mStateSetDock;
+   dtQt::StateSetPanel* mStateSetPanel;
+   dtCore::RefPtr<dtCore::PropertyContainer> mProperties;
+   QDockWidget* mNodeGraphDock;
+   dtQt::NodeGraphViewerPanel* mNodeGraph;
 
    std::string mContextPath;
    QString mShaderDefinitionName;
 
    QList<std::string> mAdditionalShaderFiles;
+
+   //dtCore::RefPtr<dtCore::UndoSystem> mUndoSystem;
 
    ObjectViewer* mViewer;
    QObject* GetResourceObject();
@@ -176,6 +189,7 @@ private:
    void UpdateGeometryList();
    void UpdateShaderList();
    void UpdateMapList();
+   void UpdateUndoRedoActions();
    bool IsDeltaMapFile(const QString& filename);
 
    dtCore::RefPtr<osg::Node> OptimizeModel(osg::Node& model, osgUtil::Optimizer::OptimizationOptions options, bool optimizeCopy);
@@ -188,8 +202,12 @@ private slots:
    void OnLoadShaderDefinition();
    void OnLoadGeometry();
    void OnChangeContext();
+   void OnNodeSelected(OsgNodePtr node);
 
    void OnToggleGridClicked(bool toggledOn);
+
+   void OnUndo();
+   void OnRedo();
 
    std::string GetContextPathFromUser();
    void SaveCurrentContextPath();
