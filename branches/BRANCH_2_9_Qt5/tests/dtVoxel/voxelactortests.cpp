@@ -76,12 +76,16 @@ namespace dtVoxel
             mGM->CreateActor(*VoxelActorRegistry::VOXEL_ACTOR_TYPE, voxelActor);
             CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(0U));
             voxelActor->SetDatabase(dtCore::ResourceDescriptor("Volumes:delta3d_island.vdb"));
+            CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(0U));
+            voxelActor->CompleteLoad();
             CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(1U));
             openvdb::GridBase::Ptr grid = voxelActor->GetGrid(0);
             CPPUNIT_ASSERT(grid);
             voxelActor->SetDatabase(dtCore::ResourceDescriptor::NULL_RESOURCE);
             CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(0U));
             voxelActor->SetDatabase(dtCore::ResourceDescriptor("Volumes:delta3d_island.vdb"));
+            CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(0U));
+            voxelActor->CompleteLoad();
             CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(1U));
             openvdb::GridBase::Ptr grid2 = voxelActor->GetGrid(0);
             CPPUNIT_ASSERT(grid2 && grid2 != grid);
@@ -100,6 +104,7 @@ namespace dtVoxel
              mGM->CreateActor(*VoxelActorRegistry::VOXEL_ACTOR_TYPE, voxelActor);
              CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(0U));
              voxelActor->SetDatabase(dtCore::ResourceDescriptor("Volumes:delta3d_island.vdb"));
+             voxelActor->CompleteLoad();
              CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(1U));
              mGM->AddActor(*voxelActor, false, false);
              openvdb::BoolGrid::Ptr grid = boost::dynamic_pointer_cast<openvdb::BoolGrid>(voxelActor->GetGrid(0));
@@ -214,6 +219,7 @@ namespace dtVoxel
             mGM->CreateActor(*VoxelActorRegistry::VOXEL_ACTOR_TYPE, voxelActor);
             CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(0U));
             voxelActor->SetDatabase(dtCore::ResourceDescriptor("Volumes:delta3d_island.vdb"));
+            voxelActor->CompleteLoad();
             CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(1U));
 
             openvdb::BoolGrid::Ptr grid = boost::dynamic_pointer_cast<openvdb::BoolGrid>(voxelActor->GetGrid(0));
