@@ -127,7 +127,7 @@ namespace dtCore
    {
    public:
       typedef T_Enum ValueType;
-      typedef typename OSGEnum<T_Enum> OSGEnumType;
+      typedef OSGEnum<T_Enum> OSGEnumType;
 
       typedef dtUtil::Enumeration BaseClass;
 
