@@ -96,6 +96,7 @@ namespace dtCore
 
       mShaderGroups.clear();
       mShaderProgramCache.clear();
+      mShaderResources.clear();
       mTotalShaderCount = 0;
       mActiveNodeList.clear();
    }
@@ -485,9 +486,17 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void ShaderManager::ReloadAndReassignShaderDefinitions(const std::string& fileName)
+   void ShaderManager::ReloadAndReassignShaderDefinitions(const std::string& /*fileName*/)
    {
-      LOG_WARNING("Attempting to reload ALL Shaders using file[" + fileName + "]. This is a test behavior and may result in artifacts or changes in the scene.");
+      // NOTE: This method that takes a file parameter is deprecated.
+      // Call the parameterless method.
+      ReloadAndReassignShaderDefinitions();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void ShaderManager::ReloadAndReassignShaderDefinitions()
+   {
+      LOG_WARNING("Attempting to reload ALL previously loaded shaders. This is a test behavior and may result in artifacts or changes in the scene.");
 
       std::vector<ActiveNodeEntry> mCopiedNodeList;
       ShaderGroupListType::const_iterator groupItor;
@@ -501,11 +510,20 @@ namespace dtCore
          mCopiedNodeList.push_back(activeNode);
       }
 
+      // Copy resource set.
+      ShaderResourceSet shaderResourceSet;
+      shaderResourceSet.insert(mShaderResources.begin(), mShaderResources.end());
+
       // Now, clear everything - all prototypes, all assignments, everything!!!
       Clear();
 
       // Reload our file
-      LoadShaderDefinitions(fileName, false);
+      std::for_each(shaderResourceSet.begin(), shaderResourceSet.end(),
+         [&](const std::string& fileName)
+         {
+            LoadShaderDefinitions(fileName, true);
+         }
+      );
 
       // Now, the tricky part. Loop through all our previous nodes and try to
       // find a match to the new shader. If we find one, reassign it.
@@ -588,6 +606,10 @@ namespace dtCore
          ++itr;
       }
 
+      if (mShaderResources.find(fileName) == mShaderResources.end())
+      {
+         mShaderResources.insert(fileName);
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -634,6 +656,11 @@ namespace dtCore
          //apply it to the supplied drawable
          AssignShaderFromPrototype(*shadersInGroup[0],
                                    *drawable.GetOSGNode());
+
+         if (mShaderResources.find(shaderResource) == mShaderResources.end())
+         {
+            mShaderResources.insert(shaderResource);
+         }
       }
    }
 
