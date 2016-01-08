@@ -38,8 +38,20 @@ namespace dtQt
       }
       else if (layout != NULL)
       {
-         delete mBaseUI->mContentArea->layout();
-         mBaseUI->mContentArea->setLayout(layout);
+         QLayout* contentLayout = mBaseUI->mContentArea->layout();
+
+         // Replace the content area layout if it is not the same
+         // as the one specified by the property widget.
+         if (contentLayout != layout)
+         {
+            if (contentLayout != NULL)
+            {
+               delete contentLayout;
+               contentLayout = NULL;
+            }
+
+            mBaseUI->mContentArea->setLayout(layout);
+         }
       }
 
       // Create the widget connections after updating the UI
