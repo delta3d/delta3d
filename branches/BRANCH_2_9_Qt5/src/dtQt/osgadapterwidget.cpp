@@ -262,11 +262,16 @@ namespace dtQt
    //////////////////////////////////////////////////////////////////////////////////
    void OSGAdapterWidget::resizeGL( int width, int height )
    {
-      if (!mDrawOnSeparateThread && !mDoResize)
+      if (!mDrawOnSeparateThread)
       {
-         mDoResize = true; // this stops a recursion problem.
-         resizeGLImpl(width, height);
-         mDoResize = false;
+#ifndef WIN32
+         if (!mDoResize)
+#endif
+         {
+            mDoResize = true; // this stops a recursion problem.
+            resizeGLImpl(width, height);
+            mDoResize = false;
+         }
       }
       else
       {
