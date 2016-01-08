@@ -70,7 +70,7 @@ namespace dtUtil
          }
          catch(...)
          {
-            LOG_ERROR("Exception thrown trying to load terrain:" + mFileToLoad);
+            LOG_ERROR("Exception thrown trying to load data:" + mFileToLoad);
             mComplete = true;
          }
       }
