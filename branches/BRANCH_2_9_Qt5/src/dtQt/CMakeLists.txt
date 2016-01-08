@@ -67,8 +67,10 @@ propertyeditormodel.cpp
 propertyeditortreeview.cpp
 propertypanel.cpp
 propertypanelbuilder.cpp
-resourceselectorwidget.cpp
 qtguiwindowsystemwrapper.cpp
+qtutils.cpp
+resourceselectorwidget.cpp
+statesetpanel.cpp
 viewwindow.cpp
 
 )
@@ -99,7 +101,8 @@ qt5_wrap_ui(UI_SOURCES actortreepanel.ui
                        propertycontrolresource.ui
                        propertycontrolstring.ui
                        propertycontrolvec4.ui
-                       propertypanel.ui)
+                       propertypanel.ui
+                       statesetpanel.ui)
                        
 QT5_WRAP_CPP(MOC_SOURCES ${LIB_PUBLIC_HEADERS})
 
