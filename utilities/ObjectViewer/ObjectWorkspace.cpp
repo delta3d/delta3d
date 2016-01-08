@@ -16,9 +16,11 @@
 #include <dtCore/datatype.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/map.h>
+#include <dtCore/osgpropertycontainers.h>
 #include <dtCore/project.h>
 #include <dtCore/shaderprogram.h>
 //#include <dtCore/shaderpropertycontainer.h>
+//#include <dtUtil/nodeactions.h>
 
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QAction>
@@ -50,9 +52,11 @@ static const QString APP_TITLE("Object Viewer");
 
 static const QString GROUP_VIEWS("Views");
 static const QString SETTING_ANIMATION_DOCK_VIS("AnimControlDock.Visible");
+static const QString SETTING_NODEGRAPH_DOCK_VIS("NodeGraphDock.Visible");
 static const QString SETTING_NODETOOLS_DOCK_VIS("NodeToolsDock.Visible");
 static const QString SETTING_PROPERTIES_DOCK_VIS("PropertiesDock.Visible");
 static const QString SETTING_RESOURCE_DOCK_VIS("ResourceDock.Visible");
+static const QString SETTING_STATESET_DOCK_VIS("StateSetDock.Visible");
 
 
 
@@ -68,6 +72,8 @@ ObjectWorkspace::ObjectWorkspace()
 {
    resize(1024, 768);
 
+   //mUndoSystem = new dtCore::UndoSystem;
+
    mResourceDock = new ResourceDock;
    addDockWidget(Qt::LeftDockWidgetArea, mResourceDock);
 
@@ -81,11 +87,27 @@ ObjectWorkspace::ObjectWorkspace()
    mNodeTree = new dtQt::NodeTreePanel();
    mNodeToolsDock->setWidget(mNodeTree);
 
+   mNodeGraphDock = new QDockWidget;
+   mNodeGraphDock->setWindowTitle("Node Graph");
+   addDockWidget(Qt::BottomDockWidgetArea, mNodeGraphDock);
+   mNodeGraph = new dtQt::NodeGraphViewerPanel;
+   mNodeGraphDock->setWidget(mNodeGraph);
+
    // Properties dock setup
-   /*mPropertyPanel = new dtQt::PropertyPanel();
+   mPropertyPanel = new dtQt::PropertyPanel;
    mPropertiesDock = new QDockWidget;
+   mPropertiesDock->setWindowTitle("Node Properties");
    mPropertiesDock->setWidget(mPropertyPanel);
-   addDockWidget(Qt::RightDockWidgetArea, mPropertiesDock);*/
+   addDockWidget(Qt::RightDockWidgetArea, mPropertiesDock);
+
+   mStateSetPanel = new dtQt::StateSetPanel;
+   mStateSetDock = new QDockWidget;
+   mStateSetDock->setWindowTitle("Node StateSet");
+   mStateSetDock->setWidget(mStateSetPanel);
+   addDockWidget(Qt::RightDockWidgetArea, mStateSetDock);
+
+   connect(mNodeTree, SIGNAL(SignalNodeSelected(OsgNodePtr)),
+      this, SLOT(OnNodeSelected(OsgNodePtr)));
 
    // Create all program actions
    CreateFileMenuActions();
@@ -193,6 +215,7 @@ void ObjectWorkspace::closeEvent(QCloseEvent* eventClose)
 void ObjectWorkspace::CreateMenus()
 {
    QMenu* windowMenu   = menuBar()->addMenu("&File");
+   //QMenu* editMenu     = menuBar()->addMenu("&Edit");
    QMenu* viewMenu     = menuBar()->addMenu("&View");
    QMenu* settingsMenu = menuBar()->addMenu("&Settings");
 
@@ -202,6 +225,9 @@ void ObjectWorkspace::CreateMenus()
    windowMenu->addAction(mLoadGeometryAction);
    windowMenu->addAction(mSaveAsAction);
    windowMenu->addAction(mChangeContextAction);
+
+   //editMenu->addAction(mUndo);
+   //editMenu->addAction(mRedo);
 
    QAction* toggleShadeToolbarAction = toolBarMenu->addAction(tr("Shading toolbar"));
    toggleShadeToolbarAction->setCheckable(true);
@@ -219,8 +245,10 @@ void ObjectWorkspace::CreateMenus()
 
    viewMenu->addAction(mToggleDockAnimationControl);
    viewMenu->addAction(mToggleDockResources);
+   viewMenu->addAction(mToggleDockNodeGraph);
    viewMenu->addAction(mToggleDockNodeTools);
    viewMenu->addAction(mToggleDockProperties);
+   viewMenu->addAction(mToggleDockStateSet);
    
    connect(mToggleDockAnimationControl, SIGNAL(toggled(bool)), mAnimationControlDock, SLOT(setVisible(bool)));
    connect(mAnimationControlDock, SIGNAL(visibilityChanged(bool)), mToggleDockAnimationControl, SLOT(setChecked(bool)));
@@ -231,8 +259,14 @@ void ObjectWorkspace::CreateMenus()
    connect(mToggleDockNodeTools, SIGNAL(toggled(bool)), mNodeToolsDock, SLOT(setVisible(bool)));
    connect(mNodeToolsDock, SIGNAL(visibilityChanged(bool)), mToggleDockNodeTools, SLOT(setChecked(bool)));
 
-   //connect(mToggleDockProperties, SIGNAL(toggled(bool)), mPropertiesDock, SLOT(setVisible(bool)));
-   //connect(mPropertiesDock, SIGNAL(visibilityChanged(bool)), mToggleDockProperties, SLOT(setChecked(bool)));
+   connect(mToggleDockNodeGraph, SIGNAL(toggled(bool)), mNodeGraphDock, SLOT(setVisible(bool)));
+   connect(mNodeGraphDock, SIGNAL(visibilityChanged(bool)), mToggleDockNodeGraph, SLOT(setChecked(bool)));
+
+   connect(mToggleDockProperties, SIGNAL(toggled(bool)), mPropertiesDock, SLOT(setVisible(bool)));
+   connect(mPropertiesDock, SIGNAL(visibilityChanged(bool)), mToggleDockProperties, SLOT(setChecked(bool)));
+
+   connect(mToggleDockStateSet, SIGNAL(toggled(bool)), mStateSetDock, SLOT(setVisible(bool)));
+   connect(mStateSetDock, SIGNAL(visibilityChanged(bool)), mToggleDockStateSet, SLOT(setChecked(bool)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -251,6 +285,12 @@ void ObjectWorkspace::CreateFileMenuActions()
    mLoadGeometryAction->setStatusTip(tr("Open an existing shader definition file."));
    connect(mLoadGeometryAction, SIGNAL(triggered()), this, SLOT(OnLoadGeometry()));
 
+   //mUndo = new QAction(tr("Undo"), this);
+   //connect(mUndo, SIGNAL(triggered()), this, SLOT(OnUndo()));
+
+   //mRedo = new QAction(tr("Redo"), this);
+   //connect(mRedo, SIGNAL(triggered()), this, SLOT(OnRedo()));
+
    mSaveAsAction = new QAction(tr("&Save As..."), this);
    mSaveAsAction->setStatusTip(tr("Save a model as a different file name or format."));
    mSaveAsAction->setEnabled(false); // Should only be enabled when there is something available to save.
@@ -268,6 +308,10 @@ void ObjectWorkspace::CreateFileMenuActions()
    mToggleDockResources->setCheckable(true);
    mToggleDockResources->setChecked(true);
 
+   mToggleDockNodeGraph = new QAction(tr("Node Graph"), this);
+   mToggleDockNodeGraph->setCheckable(true);
+   mToggleDockNodeGraph->setChecked(true);
+
    mToggleDockNodeTools = new QAction(tr("Node Tools"), this);
    mToggleDockNodeTools->setCheckable(true);
    mToggleDockNodeTools->setChecked(true);
@@ -275,6 +319,10 @@ void ObjectWorkspace::CreateFileMenuActions()
    mToggleDockProperties = new QAction(tr("Properties"), this);
    mToggleDockProperties->setCheckable(true);
    mToggleDockProperties->setChecked(true);
+
+   mToggleDockStateSet = new QAction(tr("StateSet"), this);
+   mToggleDockStateSet->setCheckable(true);
+   mToggleDockStateSet->setChecked(true);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -428,45 +476,6 @@ void ObjectWorkspace::OnShutdown()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::OnToggleResourceDock()
-{
-   if (mResourceDock->isHidden())
-   {
-      mResourceDock->show();
-   }
-   else
-   {
-      mResourceDock->hide();
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::OnToggleAnimationControlDock()
-{
-   if (mAnimationControlDock->isHidden())
-   {
-      mAnimationControlDock->show();
-   }
-   else
-   {
-      mAnimationControlDock->hide();
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::OnToggleNodeToolsDock()
-{
-   if (mNodeToolsDock->isHidden())
-   {
-      mNodeToolsDock->show();
-   }
-   else
-   {
-      mNodeToolsDock->hide();
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnToggleShadingToolbar()
 {
    if (mDisplayToolbar->isHidden())
@@ -590,7 +599,7 @@ void ObjectWorkspace::UpdateShaderList()
    if (directory.cd(QString(mContextPath.c_str()) + "/" + dtCore::DataType::SHADER.GetName().c_str()))
    {
       QStringList nameFilters;
-      nameFilters << "*.dtShader" << "*.xml";
+      nameFilters << "*.dtshader" << "*.xml";
 
       QFileInfoList fileList = directory.entryInfoList(nameFilters, QDir::Files);
 
@@ -635,7 +644,7 @@ void ObjectWorkspace::UpdateMapList()
 void ObjectWorkspace::OnLoadShaderDefinition()
 {
    QString filename = QFileDialog::getOpenFileName(this, tr("Load Shader Definition File"),
-      mContextPath.c_str(), tr("Shaders(*.dtShader)") + " " + tr("Shaders(*.xml)") );
+      mContextPath.c_str(), tr("Shaders (*.dtshader)") + ";;" + tr("Shaders (*.xml)"));
 
    QString statusMessage;
 
@@ -683,7 +692,7 @@ void ObjectWorkspace::OnLoadGeometry()
                                                    tr("Load Geometry File"),
                                                    mContextPath.c_str(),
                                                    tr("Geometry(*.osg *.ive *.flt *.3ds *.txp *.xml *.earth *.dae *)") );
-
+   
    QString statusMessage;
 
    if (!filename.isEmpty())
@@ -819,6 +828,18 @@ void ObjectWorkspace::OnGeometryChanged()
 
    mNodeTree->SetNode(node);
 
+   if (node == nullptr)
+   {
+      mNodeGraph->GetNodeGraphView().GetNodeGraphScene()->ClearNodeItems();
+   }
+   else
+   {
+      dtQt::BaseNodeWrapperArray nodeWrappers;
+      osg::Node* node = mViewer->GetDeltaObject()->GetOSGNode();
+      nodeWrappers.push_back(new dtQt::OsgNodeWrapper(*node));
+      mNodeGraph->GetNodeGraphView().GetNodeGraphScene()->AddNodes(nodeWrappers, true);
+   }
+
    mSaveAsAction->setEnabled(objectValid);
 }
 
@@ -843,9 +864,75 @@ void ObjectWorkspace::OnChangeContext()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::OnNodeSelected(OsgNodePtr node)
+{
+   osg::StateSet* ss = node.valid() ? node->getStateSet() : nullptr;
+   mStateSetPanel->SetStateSet(ss);
+
+   mPropertyPanel->Clear();
+
+   // Update the properties panel for the selected node.
+   if (node.valid())
+   {
+      dtCore::RefPtr<dtCore::OsgNodePropertiesBuilder> propBuilder = new dtCore::OsgNodePropertiesBuilder;
+      mProperties = propBuilder->CreatePropertiesForNode(*node);
+
+      if (mProperties.valid())
+      {
+         dtCore::RefPtr<dtQt::PropertyPanelBuilder> builder = new dtQt::PropertyPanelBuilder;
+         builder->AddPropertiesToPanel(*mProperties, *mPropertyPanel);
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnToggleGridClicked(bool toggledOn)
 {
    emit ToggleGrid(toggledOn);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::OnUndo()
+{
+   //mUndoSystem->Undo();
+
+   UpdateUndoRedoActions();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::OnRedo()
+{
+   //mUndoSystem->Redo();
+
+   UpdateUndoRedoActions();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::UpdateUndoRedoActions()
+{
+   /*dtUtil::ActionCommandRefPtr undo = mUndoSystem->GetFrontUndo();
+   mUndo->setEnabled(undo.valid());
+   if (undo.valid())
+   {
+      std::string text = "Undo " + undo->GetType().GetDisplayName();
+      mUndo->setText(text.c_str());
+   }
+   else
+   {
+      mUndo->setText("Undo");
+   }
+
+   dtUtil::ActionCommandRefPtr redo = mUndoSystem->GetFrontRedo();
+   mRedo->setEnabled(redo.valid());
+   if (redo.valid())
+   {
+      std::string text = "Redo " + redo->GetType().GetDisplayName();
+      mRedo->setText(text.c_str());
+   }
+   else
+   {
+      mRedo->setText("Redo");
+   }*/
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1153,8 +1240,10 @@ void ObjectWorkspace::LoadSettings()
 
    settings.beginGroup(GROUP_VIEWS);
    mAnimationControlDock->setVisible(settings.value(SETTING_ANIMATION_DOCK_VIS, false).toBool());
+   mNodeGraphDock->setVisible(settings.value(SETTING_NODEGRAPH_DOCK_VIS, true).toBool());
    mNodeToolsDock->setVisible(settings.value(SETTING_NODETOOLS_DOCK_VIS, true).toBool());
-   //mPropertiesDock->setVisible(settings.value(SETTING_PROPERTIES_DOCK_VIS, true).toBool());
+   mPropertiesDock->setVisible(settings.value(SETTING_PROPERTIES_DOCK_VIS, true).toBool());
+   mStateSetDock->setVisible(settings.value(SETTING_STATESET_DOCK_VIS, true).toBool());
    mResourceDock->setVisible(settings.value(SETTING_RESOURCE_DOCK_VIS, true).toBool());
    settings.endGroup();
 }
@@ -1166,8 +1255,10 @@ void ObjectWorkspace::SaveSettings()
 
    settings.beginGroup(GROUP_VIEWS);
    settings.setValue(SETTING_ANIMATION_DOCK_VIS, mAnimationControlDock->isVisible());
+   settings.setValue(SETTING_NODEGRAPH_DOCK_VIS, mNodeGraphDock->isVisible());
    settings.setValue(SETTING_NODETOOLS_DOCK_VIS, mNodeToolsDock->isVisible());
-   //settings.setValue(SETTING_PROPERTIES_DOCK_VIS, mPropertiesDock->isVisible());
+   settings.setValue(SETTING_PROPERTIES_DOCK_VIS, mPropertiesDock->isVisible());
+   settings.setValue(SETTING_STATESET_DOCK_VIS, mStateSetDock->isVisible());
    settings.setValue(SETTING_RESOURCE_DOCK_VIS, mResourceDock->isVisible());
    settings.endGroup();
 }
