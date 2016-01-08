@@ -131,6 +131,7 @@ SET(LIB_SOURCES
                 objectmotionmodel.cpp
                 objecttype.cpp
                 orbitmotionmodel.cpp
+                osgpropertycontainers.cpp
                 particlesystem.cpp
                 particleutil.cpp
                 pointaxis.cpp
