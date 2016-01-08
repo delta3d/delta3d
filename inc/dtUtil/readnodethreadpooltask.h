@@ -30,31 +30,31 @@
 
 namespace dtUtil
 {
-      class DT_UTIL_EXPORT ReadNodeThreadPoolTask : public dtUtil::ThreadPoolTask
-      {
-      public:
-         ReadNodeThreadPoolTask();
+   class DT_UTIL_EXPORT ReadNodeThreadPoolTask : public dtUtil::ThreadPoolTask
+   {
+   public:
+      ReadNodeThreadPoolTask();
 
-         virtual void operator()();
+      void operator()() override;
 
-         osg::Node* GetLoadedNode();
-         const osg::Node* GetLoadedNode() const;
+      osg::Node* GetLoadedNode();
+      const osg::Node* GetLoadedNode() const;
 
-         /// Check to see if the loading is complete.  If it returns true, call WaitUntilComplete() to make sure.
-         bool IsComplete() const;
+      /// Check to see if the loading is complete.  If it returns true, call WaitUntilComplete() to make sure.
+      bool IsComplete() const;
 
-         virtual void ResetData();
+      virtual void ResetData();
 
-         DT_DECLARE_ACCESSOR(bool, UseFileCaching);
-         DT_DECLARE_ACCESSOR(std::string, FileToLoad);
-         DT_DECLARE_ACCESSOR(osg::ref_ptr<osgDB::Options>, LoadOptions);
+      DT_DECLARE_ACCESSOR(bool, UseFileCaching);
+      DT_DECLARE_ACCESSOR(std::string, FileToLoad);
+      DT_DECLARE_ACCESSOR(osg::ref_ptr<osgDB::Options>, LoadOptions);
 
-      protected:
-         virtual ~ReadNodeThreadPoolTask();
-      private:
-         osg::ref_ptr<osg::Node> mLoadedNode;
-         volatile bool mComplete;
-      };
+   protected:
+      virtual ~ReadNodeThreadPoolTask();
+   private:
+      osg::ref_ptr<osg::Node> mLoadedNode;
+      volatile bool mComplete;
+   };
 }
 
 #endif
