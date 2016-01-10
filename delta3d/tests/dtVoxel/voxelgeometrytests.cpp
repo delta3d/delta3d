@@ -25,6 +25,7 @@
 #include <openvdb/openvdb.h>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range2d.h>
+#include <dtCore/system.h>
 
 namespace dtVoxel
 {
@@ -36,6 +37,7 @@ namespace dtVoxel
 
          CPPUNIT_TEST(testVoxelGeometry);
          CPPUNIT_TEST(testVoxelActorGeometryCreation);
+         CPPUNIT_TEST(testVoxelActorGeometryCreateRemote);
 
       CPPUNIT_TEST_SUITE_END();
 
@@ -57,6 +59,7 @@ namespace dtVoxel
             mGM->CreateActor(*VoxelActorRegistry::VOXEL_ACTOR_TYPE, voxelActor);
             CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(0U));
             voxelActor->SetDatabase(dtCore::ResourceDescriptor("Volumes:delta3d_island.vdb"));
+            voxelActor->CompleteLoad();
             CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(1U));
 
             openvdb::BoolGrid::Ptr grid = boost::dynamic_pointer_cast<openvdb::BoolGrid>(voxelActor->GetGrid(0));
@@ -125,6 +128,8 @@ namespace dtVoxel
             mGM->CreateActor(*VoxelActorRegistry::VOXEL_ACTOR_TYPE, voxelActor);
             CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(0U));
             voxelActor->SetDatabase(dtCore::ResourceDescriptor("Volumes:delta3d_island.vdb"));
+            CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(0U));
+            voxelActor->CompleteLoad();
             CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(1U));
 
             dtPhysics::PhysicsActCompPtr pac = new dtPhysics::PhysicsActComp;
@@ -149,6 +154,51 @@ namespace dtVoxel
             CPPUNIT_FAIL(ex.ToString());
          }
 
+      }
+
+      void testVoxelActorGeometryCreateRemote()
+      {
+         ChangeEngine(GetPhysicsEngineList()[0]);
+         testVoxelActorGeometryCreateRemote(true);
+         testVoxelActorGeometryCreateRemote(false);
+      }
+
+      void testVoxelActorGeometryCreateRemote(bool createRemotePhysics)
+      {
+         try
+         {
+            VoxelActorPtr voxelActor;
+            mGM->CreateRemoteActor(*VoxelActorRegistry::VOXEL_ACTOR_TYPE, voxelActor);
+            CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(0U));
+            voxelActor->SetCreateRemotePhysics(createRemotePhysics);
+            voxelActor->SetDatabase(dtCore::ResourceDescriptor("Volumes:delta3d_island.vdb"));
+            voxelActor->CompleteLoad();
+            CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(1U));
+
+            dtPhysics::PhysicsActCompPtr pac = new dtPhysics::PhysicsActComp;
+            voxelActor->AddComponent(*pac);
+
+            dtPhysics::PhysicsObjectPtr po = dtPhysics::PhysicsObject::CreateNew("TestVoxel");
+            po->SetPrimitiveType(dtPhysics::PrimitiveType::CUSTOM_CONCAVE_MESH);
+            po->SetMechanicsType(dtPhysics::MechanicsType::STATIC);
+            pac->AddPhysicsObject(*po);
+
+            mGM->AddActor(*voxelActor, true, false);
+
+            dtPhysics::RayCast ray;
+            ray.SetOrigin(dtPhysics::VectorType(12.0f, 12.0f, 200.0f));
+            ray.SetDirection(dtPhysics::VectorType(0.0f, 0.0f, -205.0f));
+            std::vector<dtPhysics::RayCast::Report> hits;
+            mPhysicsComp->GetPhysicsWorld().TraceRay(ray, hits);
+            CPPUNIT_ASSERT_EQUAL(createRemotePhysics? size_t(4U): size_t(0U), hits.size());
+
+            mGM->DeleteActor(*voxelActor);
+            dtCore::System::GetInstance().Step(0.016f);
+         }
+         catch (const dtUtil::Exception& ex)
+         {
+            CPPUNIT_FAIL(ex.ToString());
+         }
       }
    };
 

@@ -22,6 +22,7 @@
 
 #include <dtVoxel/export.h>
 #include <dtVoxel/volumeupdatemessage.h>
+#include <dtVoxel/readovdbthreadpooltask.h>
 #include <dtGame/gameactorproxy.h>
 #include <dtUtil/getsetmacros.h>
 //Really need to fine grain this.
@@ -46,6 +47,11 @@ namespace dtVoxel
       void BuildPropertyMap() override;
 
       DT_DECLARE_ACCESSOR(dtCore::ResourceDescriptor, Database);
+
+      /**
+       * This is a counter property so that remote versions will reset the database when ResetGrid is called.
+       */
+      DT_DECLARE_ACCESSOR(int, ResetCount);
 
       openvdb::GridPtrVecPtr GetGrids();
       openvdb::GridBase::Ptr GetGrid(int i);
@@ -87,6 +93,9 @@ namespace dtVoxel
 
       // This exists external objects can deform the grid, created a change message, and then tell the visual to update with the message.
       void UpdateVolume(const VolumeUpdateMessage& msg, bool updateVisualOnly);
+
+      /// Forces the background grid loading to block and complete.  It's also called when the loading actually completes
+      void CompleteLoad();
    protected:
       virtual void SharedTick(const dtGame::TickMessage& tickMessage, bool local);
       /**
@@ -100,12 +109,19 @@ namespace dtVoxel
       /// This is used by the message handler
       void OnVolumeUpdateMsg(const VolumeUpdateMessage& msg);
 
-      /// Loads or resets the physics based on the current state and configuration.
+      /** Loads or resets the physics based on the current state and configuration.
+       *  It creates the physics for each grid in the file, but the grids can only be bool or float, and
+       *  there must be a physics object with the same index as each grid that is configured to be CUSTOM_CONCAVE_MESH
+       */
       void InitializePhysics();
+      ///  Deletes just the physics data associated with the voxel grids.
+      void CleanupPhysics();
    private:
 
       template<typename GridTypePtr>
       void UpdateVolumeInternal(GridTypePtr grid, const dtCore::NamedArrayParameter* indices, const dtCore::NamedArrayParameter* values, bool updateVisualOnly);
+
+      dtCore::RefPtr<ReadOVDBThreadPoolTask> mLoader;
 
       dtCore::RefPtr<VoxelGrid> mVisualGrid;
       openvdb::GridPtrVecPtr mGrids;

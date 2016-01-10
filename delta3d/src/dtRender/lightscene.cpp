@@ -85,7 +85,8 @@ namespace dtRender
 
       //todo- cache these operations for efficiency
       template<class T>
-      bool operator()(T& pElement1, T& pElement2)
+      //bool operator()(T& pElement1, T& pElement2)
+      bool operator()(T pElement1, T pElement2)
       {
          osg::Vec3 vectElement1 = pElement1->GetLightPosition() - mViewPos;
          osg::Vec3 vectElement2 = pElement2->GetLightPosition() - mViewPos;

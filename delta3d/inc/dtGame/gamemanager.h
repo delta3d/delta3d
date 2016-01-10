@@ -31,6 +31,7 @@
 #include <dtCore/base.h>
 #include <dtCore/timer.h>
 #include <dtUtil/enumeration.h> //for ComponentPriority
+#include <dtGame/exceptionenum.h>
 
 namespace dtUtil
 {
@@ -388,28 +389,56 @@ namespace dtGame
        * @throws dtCore::ExceptionEnum::ObjectFactoryUnknownType
        * @throws dtGame::ExceptionEnum::INVALID_PARAMETER if actortype is NOT a game actor
        */
-      dtCore::RefPtr<dtGame::GameActorProxy> CreateRemoteGameActor(const dtCore::ActorType& actorType);
+      dtCore::RefPtr<dtGame::GameActorProxy> CreateRemoteActor(const dtCore::ActorType& actorType);
+      DEPRECATE_FUNC dtCore::RefPtr<dtGame::GameActorProxy> CreateRemoteGameActor(const dtCore::ActorType& actorType) { return CreateRemoteActor(actorType); }
+
+
+      /**
+       * Creates an actor marked as remote based on the actor type and stores it in a ref pointer.
+       * This method is templated so that the caller can create a ref pointer to the actual type of the actor,
+       * not BaseActorObject.  This is very handy with GameActorProxies since it is typical that uses will create those most often.
+       * @param The actor type to create.
+       * @param proxy a RefPtr to fill with the created actor.  If the actor is not type specified, the RefPtr will be NULL.
+       * @throws dtCore::ExceptionEnum::ObjectFactoryUnknownType
+       * @throws dtGame::ExceptionEnum::INVALID_PARAMETER if actortype is NOT a game actor
+       */
+      template <typename ActorT>
+      void CreateRemoteActor(const dtCore::ActorType& actorType, dtCore::RefPtr<ActorT>& actor)
+      {
+         CreateActor(actorType, actor);
+
+         if (actor.valid())
+         {
+            actor->SetRemote(true);
+         }
+         else
+         {
+            throw dtGame::InvalidParameterException( "The actor type \""
+               + actorType.GetFullName() + "\" is invalid because it doesn't exist or is not a game actor type."
+               , __FILE__, __LINE__);
+         }
+      }
 
       /**
        * Creates an actor based on the actor type.
        * @param The actor type to create.
        * @throws dtCore::ExceptionEnum::ObjectFactoryUnknownType
        */
-      dtCore::RefPtr<dtCore::BaseActorObject> CreateActor(const dtCore::ActorType& actorType);
+      dtCore::ActorPtr CreateActor(const dtCore::ActorType& actorType);
 
       /**
-       * Creates an actor based on the actor type and store it in a ref pointer.
-       * This method is templated so that the caller can create a ref pointer to the actual type of the proxy,
+       * Creates an actor based on the actor type and stores it in a ref pointer.
+       * This method is templated so that the caller can create a ref pointer to the actual type of the actor,
        * not BaseActorObject.  This is very handy with GameActorProxies since it is typical that uses will create those most often.
        * @param The actor type to create.
        * @param proxy a RefPtr to fill with the created actor.  If the actor is not type specified, the RefPtr will be NULL.
        * @throws dtCore::ExceptionEnum::ObjectFactoryUnknownType
        */
-      template <typename ProxyType>
-      void CreateActor(const dtCore::ActorType& actorType, dtCore::RefPtr<ProxyType>& proxy)
+      template <typename ActorT>
+      void CreateActor(const dtCore::ActorType& actorType, dtCore::RefPtr<ActorT>& actorOut)
       {
-         dtCore::RefPtr<dtCore::BaseActorObject> tmpProxy = CreateActor(actorType);
-         proxy = dynamic_cast<ProxyType*>(tmpProxy.get());
+         dtCore::RefPtr<dtCore::BaseActorObject> tmpActorPtr = CreateActor(actorType);
+         actorOut = dynamic_cast<ActorT*>(tmpActorPtr.get());
       }
 
       /**
@@ -418,7 +447,7 @@ namespace dtGame
        * @param name The name corresponding to the actor type
        * @throws dtCore::ExceptionEnum::ObjectFactoryUnknownType
        */
-      dtCore::RefPtr<dtCore::BaseActorObject> CreateActor(const std::string& category, const std::string& name);
+      dtCore::ActorPtr CreateActor(const std::string& category, const std::string& name);
 
       /**
        * Creates an actor based on the string version of the actor type and store it in a ref pointer.
@@ -431,7 +460,7 @@ namespace dtGame
       template <typename ProxyType>
       void CreateActor(const std::string& category, const std::string& name, dtCore::RefPtr<ProxyType>& proxy)
       {
-         dtCore::RefPtr<dtCore::BaseActorObject> tmpProxy = CreateActor(category, name);
+         dtCore::ActorPtr tmpProxy = CreateActor(category, name);
          proxy = dynamic_cast<ProxyType*>(tmpProxy.get());
       }
 

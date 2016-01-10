@@ -1,6 +1,6 @@
 /*
  * Delta3D Open Source Game and Simulation Engine
- * Copyright (C) 2015 Caper Holdings, LLC
+ * Copyright (C) 2016 Caper Holdings, LLC
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,43 +18,38 @@
  *
  */
 
-#ifndef DELTA_READ_NODE_THREAD_POOL_TASK_
-#define DELTA_READ_NODE_THREAD_POOL_TASK_
+#ifndef READOVDBTHREADPOOLTASK_H_
+#define READOVDBTHREADPOOLTASK_H_
 
-#include <dtUtil/export.h>
+#include <dtVoxel/export.h>
+#include <openvdb/openvdb.h>
 #include <dtUtil/getsetmacros.h>
 #include <dtUtil/threadpool.h>
-#include <osg/Node>
-#include <osg/ref_ptr>
-#include <osgDB/Options>
 
-namespace dtUtil
+namespace dtVoxel
 {
-   class DT_UTIL_EXPORT ReadNodeThreadPoolTask : public dtUtil::ThreadPoolTask
+   class DT_VOXEL_EXPORT ReadOVDBThreadPoolTask : public dtUtil::ThreadPoolTask
    {
    public:
-      ReadNodeThreadPoolTask();
+      ReadOVDBThreadPoolTask();
 
-      void operator()() override;
+      virtual void operator()();
 
-      osg::Node* GetLoadedNode();
-      const osg::Node* GetLoadedNode() const;
+      openvdb::GridPtrVecPtr GetLoadedGrids();
 
       /// Check to see if the loading is complete.  If it returns true, call WaitUntilComplete() to make sure.
       bool IsComplete() const;
 
       virtual void ResetData();
 
-      DT_DECLARE_ACCESSOR(bool, UseFileCaching);
       DT_DECLARE_ACCESSOR(std::string, FileToLoad);
-      DT_DECLARE_ACCESSOR(osg::ref_ptr<osgDB::Options>, LoadOptions);
 
    protected:
-      virtual ~ReadNodeThreadPoolTask();
+      virtual ~ReadOVDBThreadPoolTask();
    private:
-      osg::ref_ptr<osg::Node> mLoadedNode;
+      openvdb::GridPtrVecPtr mGrids;
       volatile bool mComplete;
    };
 }
 
-#endif
+#endif /* READOVDBTHREADPOOLTASK_H_ */

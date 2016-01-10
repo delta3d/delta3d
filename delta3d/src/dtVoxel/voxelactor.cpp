@@ -35,6 +35,7 @@
 #include <dtGame/basemessages.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/shaderactorcomponent.h>
+#include <dtGame/drpublishingactcomp.h>
 
 #include <openvdb/openvdb.h>
 #include <openvdb/tools/Interpolation.h>
@@ -47,7 +48,8 @@ namespace dtVoxel
 {
 
    VoxelActor::VoxelActor()
-   : mViewDistance(1000.0f)
+   : mResetCount(0)
+   , mViewDistance(1000.0f)
    , mIsoLevel(0.12f)
    , mSimplify(false)
    , mSampleRatio(0.2f)
@@ -67,37 +69,58 @@ namespace dtVoxel
 
    /////////////////////////////////////////////////////
    DT_IMPLEMENT_ACCESSOR_WITH_STATEMENT(VoxelActor, dtCore::ResourceDescriptor, Database, LoadGrid(value););
+   DT_IMPLEMENT_ACCESSOR_WITH_STATEMENT(VoxelActor, int, ResetCount, if (value > mResetCount) {printf("ResetCount old %d, new %d\n", value, mResetCount); ResetGrid();});
 
    /////////////////////////////////////////////////////
    void VoxelActor::LoadGrid(const dtCore::ResourceDescriptor& rd)
    {
-
       if (rd != GetDatabase() && !rd.IsEmpty())
       {
-         LOGN_DEBUG("voxelactor.cpp", "Loading Grid");
+         CleanupPhysics();
+         mGrids.reset();
          try
          {
-            openvdb::io::File file(dtCore::Project::GetInstance().GetResourcePath(rd));
-            file.open();
-            mGrids = file.getGrids();
-            file.close();
-
-            LOGN_DEBUG("voxelactor.cpp", "Done Loading Grid");
-
-            InitializePhysics();
-
+            if (!mLoader.valid())
+            {
+               mLoader = new ReadOVDBThreadPoolTask();
+            }
+            mLoader->ResetData();
+            mLoader->SetFileToLoad(dtCore::Project::GetInstance().GetResourcePath(rd));
+            dtUtil::ThreadPool::AddTask(*mLoader, dtUtil::ThreadPool::IO);
          }
-         catch (const openvdb::IoError& ioe)
+         catch (const dtUtil::FileNotFoundException& ex)
          {
-            LOG_ERROR("Error Loading Grid");
-
-            throw dtUtil::FileUtilIOException(ioe.what(), __FILE__, __LINE__);
+            ex.LogException(dtUtil::Log::LOG_ERROR);
+            throw ex;
          }
       }
       else if (rd.IsEmpty())
       {
          LOGN_DEBUG("voxelactor.cpp", "Unloading Grid");
          mGrids.reset();
+      }
+   }
+
+   /////////////////////////////////////////////////////
+   void VoxelActor::CompleteLoad()
+   {
+      if (!mLoader.valid())
+         return;
+
+      if (!mLoader->IsComplete())
+      {
+         mLoader->WaitUntilComplete();
+      }
+
+      mGrids = mLoader->GetLoadedGrids();
+
+      mLoader = nullptr;
+
+      InitializePhysics();
+
+      if (mVisualGrid.valid())
+      {
+         mVisualGrid->ResetGrid();
       }
    }
 
@@ -125,6 +148,9 @@ namespace dtVoxel
       DT_REGISTER_PROPERTY(UpdateCellsOnBackgroundThread, "If this should push the update task to a thread pool BACKGROUND task.  If true, runs multithreaded but blocks the main thread until it completes.", RegHelper, regHelper);
       DT_REGISTER_PROPERTY(NumLODs, "The number of LODs to generate, can be 0, 1, 2 or 3", RegHelper, regHelper);
       DT_REGISTER_PROPERTY_WITH_LABEL(CreateRemotePhysics, "Create Remote Physics", "Create the voxel geometry for the physics if this actor is remote.", RegHelper, regHelper);
+      DT_REGISTER_PROPERTY(ResetCount, "A database reset counter that will increment when reset is called so remotes will update.", RegHelper, regHelper);
+      GetProperty("ResetCount")->SetSendInPartialUpdate(true);
+
 
       DT_REGISTER_RESOURCE_PROPERTY(dtCore::DataType::VOLUME, Database, "Database", "Voxel database file", RegHelper, regHelper);
    }
@@ -202,6 +228,11 @@ namespace dtVoxel
    /////////////////////////////////////////////////////
    void VoxelActor::SharedTick(const dtGame::TickMessage& tickMessage, bool local)
    {
+      if (mLoader.valid() && mLoader->IsComplete())
+      {
+         CompleteLoad();
+      }
+
       if (mVisualGrid.valid())// && !mPauseUpdate)
       {
          dtGame::GameManager* gm = GetGameManager();
@@ -401,31 +432,54 @@ namespace dtVoxel
          dtPhysics::PhysicsActCompPtr pac = GetComponent<dtPhysics::PhysicsActComp>();
          if (mGrids && pac.valid())
          {
-            dtPhysics::PhysicsObject* po = pac->GetMainPhysicsObject();
-            if (po != nullptr && po->GetPrimitiveType() == dtPhysics::PrimitiveType::CUSTOM_CONCAVE_MESH)
+            for (unsigned i = 0; i < mGrids->size(); ++i)
             {
-               po->CleanUp();
+               dtPhysics::PhysicsObject* po = pac->GetPhysicsObjectByIndex(0);
+               if (po != nullptr && po->GetPrimitiveType() == dtPhysics::PrimitiveType::CUSTOM_CONCAVE_MESH)
+               {
+                  po->CleanUp();
 
-               dtPhysics::TransformType xform;
-               VoxelGeometryPtr geometry;
-               openvdb::FloatGrid::Ptr gridF = boost::dynamic_pointer_cast<openvdb::FloatGrid>(GetGrid(0));
-               if (gridF)
-               {
-                  geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridF);
+                  dtPhysics::TransformType xform;
+                  VoxelGeometryPtr geometry;
+                  openvdb::FloatGrid::Ptr gridF = boost::dynamic_pointer_cast<openvdb::FloatGrid>(GetGrid(0));
+                  if (gridF)
+                  {
+                     geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridF);
+                  }
+                  else
+                  {
+                     openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(GetGrid(0));
+                     if (gridB)
+                        geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridB);
+                  }
+                  if (geometry.valid())
+                     po->CreateFromGeometry(*geometry);
                }
-               else
-               {
-                  openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(GetGrid(0));
-                  if (gridB)
-                     geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridB);
-               }
-               if (geometry.valid())
-                  po->CreateFromGeometry(*geometry);
             }
          }
       }
    }
 
+   /////////////////////////////////////////////////////
+   void VoxelActor::CleanupPhysics()
+   {
+      dtPhysics::PhysicsActCompPtr pac = GetComponent<dtPhysics::PhysicsActComp>();
+      if (pac.valid())
+      {
+         dtPhysics::PhysicsActCompPtr pac = GetComponent<dtPhysics::PhysicsActComp>();
+         if (mGrids && pac.valid())
+         {
+            for (unsigned i = 0; i < mGrids->size(); ++i)
+            {
+               dtPhysics::PhysicsObject* po = pac->GetPhysicsObjectByIndex(0);
+               if (po != nullptr && po->GetPrimitiveType() == dtPhysics::PrimitiveType::CUSTOM_CONCAVE_MESH)
+               {
+                  po->CleanUp();
+               }
+            }
+         }
+      }
+   }
 
    /////////////////////////////////////////////////////
    void VoxelActor::OnEnteredWorld()
@@ -463,7 +517,14 @@ namespace dtVoxel
          LOG_ERROR("NULL GameManager!");
       }
 
-      InitializePhysics();
+      if (mLoader.valid() && mLoader->IsComplete())
+      {
+         CompleteLoad();
+      }
+      else
+      {
+         InitializePhysics();
+      }
 
       RegisterForMessagesAboutSelf(VoxelMessageType::INFO_VOLUME_CHANGED, dtUtil::MakeFunctor(&VoxelActor::OnVolumeUpdateMsg, this));
 
@@ -476,16 +537,23 @@ namespace dtVoxel
    }
 
 
-
    void VoxelActor::ResetGrid()
    {
       dtCore::ResourceDescriptor temp = mDatabase;
       SetDatabase(dtCore::ResourceDescriptor::NULL_RESOURCE);
       SetDatabase(temp);
 
-      if (mVisualGrid.valid())
+      if (!IsRemote())
       {
-         mVisualGrid->ResetGrid();
+         ++mResetCount;
+         if (!HasComponent(dtGame::DRPublishingActComp::TYPE))
+         {
+            NotifyPartialActorUpdate();
+         }
+         else
+         {
+            GetComponent<dtGame::DRPublishingActComp>()->ForceUpdateAtNextOpportunity();
+         }
       }
    }
 
