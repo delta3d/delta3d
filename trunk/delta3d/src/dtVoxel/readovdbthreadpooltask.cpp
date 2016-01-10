@@ -1,6 +1,6 @@
 /*
  * Delta3D Open Source Game and Simulation Engine
- * Copyright (C) 2015 Caper Holdings, LLC
+ * Copyright (C) 2016 Caper Holdings, LLC
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,60 +17,42 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  */
-#include <dtUtil/readnodethreadpooltask.h>
+#include <dtVoxel/readovdbthreadpooltask.h>
 #include <dtUtil/fileutils.h>
 #include <osgDB/ReaderWriter>
 
-namespace dtUtil
+namespace dtVoxel
 {
    ///////////////////////////////////////////////////////////////////////////////
-   ReadNodeThreadPoolTask::ReadNodeThreadPoolTask()
-   : mUseFileCaching(true)
-   , mComplete(false)
+   ReadOVDBThreadPoolTask::ReadOVDBThreadPoolTask()
+   : mComplete(false)
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ReadNodeThreadPoolTask::~ReadNodeThreadPoolTask()
+   ReadOVDBThreadPoolTask::~ReadOVDBThreadPoolTask()
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ReadNodeThreadPoolTask::operator()()
+   void ReadOVDBThreadPoolTask::operator()()
    {
       if (!mFileToLoad.empty())
       {
-         osg::ref_ptr<osgDB::ReaderWriter::Options> options;
-         if (mLoadOptions.valid())
-         {
-            options = mLoadOptions;
-         }
-         else
-         {
-            options = new osgDB::Options;
-         }
-
-         if (mUseFileCaching)
-         {
-            options->setObjectCacheHint(osgDB::Options::CACHE_ALL);
-         }
-         else
-         {
-            options->setObjectCacheHint(osgDB::Options::CACHE_NONE);
-         }
-
-         options->setOptionString("loadMaterialsToStateSet");
-
-         mLoadedNode = NULL;
-
+         LOGN_DEBUG("voxelactor.cpp", "Loading Grid");
          try
          {
-            mLoadedNode = dtUtil::FileUtils::GetInstance().ReadNode(mFileToLoad, options.get());
+            openvdb::io::File file(mFileToLoad);
+            file.open();
+            mGrids = file.getGrids();
+            file.close();
+
+            LOGN_DEBUG("voxelactor.cpp", "Done Loading Grid");
             mComplete = true;
          }
-         catch(...)
+         catch (const openvdb::IoError& ioe)
          {
-            LOG_ERROR("Exception thrown trying to load data:" + mFileToLoad);
+            LOG_ERROR("Error Loading Grid");
             mComplete = true;
          }
       }
@@ -81,32 +63,25 @@ namespace dtUtil
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   osg::Node* ReadNodeThreadPoolTask::GetLoadedNode()
+   openvdb::GridPtrVecPtr ReadOVDBThreadPoolTask::GetLoadedGrids()
    {
-      return mLoadedNode;
+      return mGrids;
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   const osg::Node* ReadNodeThreadPoolTask::GetLoadedNode() const
-   {
-      return mLoadedNode;
-   }
 
    ///////////////////////////////////////////////////////////////////////////////
-   bool ReadNodeThreadPoolTask::IsComplete() const
+   bool ReadOVDBThreadPoolTask::IsComplete() const
    {
       return mComplete;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ReadNodeThreadPoolTask::ResetData()
+   void ReadOVDBThreadPoolTask::ResetData()
    {
-      mLoadedNode = NULL;
+      mGrids = nullptr;
       mComplete = false;
    }
 
-   DT_IMPLEMENT_ACCESSOR(ReadNodeThreadPoolTask, bool, UseFileCaching);
-   DT_IMPLEMENT_ACCESSOR(ReadNodeThreadPoolTask, std::string, FileToLoad);
-   DT_IMPLEMENT_ACCESSOR(ReadNodeThreadPoolTask, osg::ref_ptr<osgDB::ReaderWriter::Options>, LoadOptions);
+   DT_IMPLEMENT_ACCESSOR(ReadOVDBThreadPoolTask, std::string, FileToLoad);
 
 }

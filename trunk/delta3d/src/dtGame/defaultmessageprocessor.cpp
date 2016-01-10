@@ -272,7 +272,7 @@ namespace dtGame
             throw dtGame::InvalidParameterException( "The actor type parameters with value \""
               + fullType + "\" are invalid because no such actor type is registered.", __FILE__, __LINE__);
          }
-         gap = gm->CreateRemoteGameActor(*type);
+         gap = gm->CreateRemoteActor(*type);
       }
 
       // Change the id to match the one this is ghosting.

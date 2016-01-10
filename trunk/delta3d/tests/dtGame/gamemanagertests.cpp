@@ -866,14 +866,14 @@ void GameManagerTests::TestCreateRemoteActor()
    CPPUNIT_ASSERT(type.valid());
    CPPUNIT_ASSERT(gameActorType.valid());
 
-   CPPUNIT_ASSERT_THROW(mGM->CreateRemoteGameActor(*type), dtUtil::Exception);
+   CPPUNIT_ASSERT_THROW(mGM->CreateRemoteActor(*type), dtUtil::Exception);
 
-   dtCore::RefPtr<dtGame::GameActorProxy> proxy;
-   CPPUNIT_ASSERT_NO_THROW(proxy = mGM->CreateRemoteGameActor(*gameActorType));
-   CPPUNIT_ASSERT_MESSAGE("Proxy should have a valid GM on it", proxy->GetGameManager() != NULL);
-   CPPUNIT_ASSERT_MESSAGE("The proxy created as remote should not be NULL.", proxy.valid());
-   CPPUNIT_ASSERT_MESSAGE("The proxy created as remote should have a valid actor.", proxy->GetDrawable() != NULL);
-   CPPUNIT_ASSERT_MESSAGE("The proxy should already be remote.", proxy->IsRemote());
+   dtCore::RefPtr<dtGame::GameActorProxy> actor;
+   CPPUNIT_ASSERT_NO_THROW(actor = mGM->CreateRemoteActor(*gameActorType));
+   CPPUNIT_ASSERT_MESSAGE("Actor should have a valid GM on it", actor->GetGameManager() != NULL);
+   CPPUNIT_ASSERT_MESSAGE("The proxy created as remote should not be NULL.", actor.valid());
+   CPPUNIT_ASSERT_MESSAGE("The proxy created as remote should have a valid actor.", actor->GetDrawable() != nullptr);
+   CPPUNIT_ASSERT_MESSAGE("The proxy should already be remote.", actor->IsRemote());
 }
 
 //////////////////////////////////////////////////////////////////////////
