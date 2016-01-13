@@ -771,6 +771,9 @@ namespace dtVoxel
       {
          //clear all cells to be regenerated
          mDirtyCells.clear();
+   
+         //clear all children
+         mRootNode->removeChildren(0, mRootNode->getNumChildren());
 
          for (int i = 0; i < mNumBlocks; ++i)
          {
@@ -790,10 +793,17 @@ namespace dtVoxel
                }
                else
                {
+                  mBlocks[i].SetEmpty(false);
+
                   mRootNode->addChild(mBlocks[i].GetOSGNode());
                }
             }
          }
+
+         LOGN_DEBUG("voxelgrid.cpp", "Optimizing Grid");
+         osgUtil::Optimizer opt;
+         opt.optimize(mRootNode, osgUtil::Optimizer::SPATIALIZE_GROUPS);
+         LOGN_DEBUG("voxelgrid.cpp", "Done Optimizing");
       }
 
    }
