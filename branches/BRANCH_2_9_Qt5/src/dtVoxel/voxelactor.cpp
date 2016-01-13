@@ -57,6 +57,7 @@ namespace dtVoxel
    , mMinCellsToUpdatePerFrame(0)
    , mUpdateCellsOnBackgroundThread(true)
    , mNumLODs(0)
+   , mPhysicsTesselationMode(&PhysicsTesselationMode::BOX_2_TRI_PER_SIDE)
    , mCreateRemotePhysics(false)
    , mPauseUpdate(false)
    , mTicksSinceVisualUpdate(0)
@@ -87,6 +88,8 @@ namespace dtVoxel
             mLoader->ResetData();
             mLoader->SetFileToLoad(dtCore::Project::GetInstance().GetResourcePath(rd));
             dtUtil::ThreadPool::AddTask(*mLoader, dtUtil::ThreadPool::IO);
+            if (IsInSTAGE())
+               CompleteLoad();
          }
          catch (const dtUtil::FileNotFoundException& ex)
          {
@@ -149,6 +152,7 @@ namespace dtVoxel
       DT_REGISTER_PROPERTY(NumLODs, "The number of LODs to generate, can be 0, 1, 2 or 3", RegHelper, regHelper);
       DT_REGISTER_PROPERTY_WITH_LABEL(CreateRemotePhysics, "Create Remote Physics", "Create the voxel geometry for the physics if this actor is remote.", RegHelper, regHelper);
       DT_REGISTER_PROPERTY(ResetCount, "A database reset counter that will increment when reset is called so remotes will update.", RegHelper, regHelper);
+      DT_REGISTER_PROPERTY(PhysicsTesselationMode, "The mode of tesselating the physics geometry.", RegHelper, regHelper);
       GetProperty("ResetCount")->SetSendInPartialUpdate(true);
 
 
@@ -444,13 +448,13 @@ namespace dtVoxel
                   openvdb::FloatGrid::Ptr gridF = boost::dynamic_pointer_cast<openvdb::FloatGrid>(GetGrid(0));
                   if (gridF)
                   {
-                     geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridF);
+                     geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridF, mPhysicsTesselationMode);
                   }
                   else
                   {
                      openvdb::BoolGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::BoolGrid>(GetGrid(0));
                      if (gridB)
-                        geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridB);
+                        geometry = VoxelGeometry::CreateVoxelGeometry(xform, po->GetMass(), gridB, mPhysicsTesselationMode);
                   }
                   if (geometry.valid())
                      po->CreateFromGeometry(*geometry);
