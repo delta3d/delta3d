@@ -23,6 +23,7 @@
 #include <dtVoxel/export.h>
 #include <dtVoxel/volumeupdatemessage.h>
 #include <dtVoxel/readovdbthreadpooltask.h>
+#include <dtVoxel/physicstesselationmode.h>
 #include <dtGame/gameactorproxy.h>
 #include <dtUtil/getsetmacros.h>
 //Really need to fine grain this.
@@ -85,6 +86,7 @@ namespace dtVoxel
       DT_DECLARE_ACCESSOR_INLINE(unsigned, MinCellsToUpdatePerFrame)
       DT_DECLARE_ACCESSOR_INLINE(bool, UpdateCellsOnBackgroundThread)
       DT_DECLARE_ACCESSOR_INLINE(unsigned, NumLODs)
+      DT_DECLARE_ACCESSOR_INLINE(dtUtil::EnumerationPointer<PhysicsTesselationMode>, PhysicsTesselationMode)
 
       // if the physics geometry should be created when the actor is remote.
       DT_DECLARE_ACCESSOR_INLINE(bool, CreateRemotePhysics)

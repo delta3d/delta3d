@@ -29,7 +29,7 @@ namespace dtVoxel
       dtCore::RefPtr<VoxelGeometry> result = new VoxelGeometry();
 
       palCustomConcaveGeometry* convGeom = dtPhysics::PhysicsWorld::GetInstance().GetPalFactory()->CreateCustomConcaveGeometry();
-      if(convGeom == NULL)
+      if (convGeom == NULL)
       {
          LOG_ERROR("Failed to create voxel geometry.");
          return NULL;

@@ -23,6 +23,7 @@
 #include <dtVoxel/export.h>
 #include <dtPhysics/geometry.h>
 #include <dtVoxel/aabbintersector.h>
+#include <dtVoxel/physicstesselationmode.h>
 #include <pal/palFactory.h>
 #include <pal/palGeometry.h>
 #include <openvdb/openvdb.h>
@@ -46,10 +47,12 @@ namespace dtVoxel
       typedef AABBIntersector<GridType> IntersectorType;
       typedef typename GridType::ConstPtr GridPtr;
 
-      ColliderCallback(const palBoundingBox& shapeBoundingBox, GridPtr grid)
+      ColliderCallback(const palBoundingBox& shapeBoundingBox, GridPtr grid, PhysicsTesselationMode& mode = PhysicsTesselationMode::BOX_2_TRI_PER_SIDE)
       : palCustomGeometryCallback(shapeBoundingBox)
       , mGrid(grid)
+      , mTesselationMode(mode)
       {
+         mTriCount = mode == PhysicsTesselationMode::BOX_2_TRI_PER_SIDE ? 12U : 6U;
       }
 
       ~ColliderCallback()  {}
@@ -61,23 +64,24 @@ namespace dtVoxel
       {
          static const int faces[] =
                {
-                     0, 2, 1,
-                     0, 3, 2, // -x
+                     0, 3, 2,
+                     0, 2, 1, // -x
                      0, 1, 4,
                      6, 0, 4, // +z
                      4, 5, 6,
                      5, 7, 6, // +x
-                     2, 3, 5,
-                     5, 3, 7, // -z
+                     5, 3, 7,
+                     2, 3, 5, // -z
                      0, 6, 3,
                      3, 6, 7, // +y
-                     1, 2, 4,
-                     4, 2, 5  // -y
+                     4, 2, 5,
+                     1, 2, 4  // -y
                };
          //typedef typename GridType::ValueOnIter GridItr;
          openvdb::BBoxd worldBoundingBox(openvdb::Vec3d(bbBox.min.x,bbBox.min.y,bbBox.min.z), openvdb::Vec3d(bbBox.max.x,bbBox.max.y,bbBox.max.z));
          openvdb::CoordBBox collideBox;
          GridPtr grid = mGrid;
+         bool debugDraw = false;
          if (worldBoundingBox.volume() < size_t(UINT32_MAX))
          {
 #ifdef VOXEL_PHYSICS_GEOM_LOGGING
@@ -99,10 +103,14 @@ namespace dtVoxel
             openvdb::Vec3d max(cameraOvdb + openvdb::Vec3d(10.0, 10.0, 5.0));
 
             collideBox = openvdb::CoordBBox(grid->transform().worldToIndexCellCentered(min), grid->transform().worldToIndexCellCentered(max));
+            debugDraw = true;
          }
 
          const palBoundingBox& fullBoundingBox = GetBoundingBox();
          typename GridType::ConstAccessor ca = mGrid->getConstAccessor();
+
+         unsigned divisor = mTriCount/6U;
+         unsigned faceMultiplier = 3U * (12U/mTriCount);
 
 #ifdef VOXEL_PHYSICS_GEOM_LOGGING
          std::cout << " collision box: " << collideBox << std::endl;
@@ -151,11 +159,11 @@ namespace dtVoxel
                               max.x(),  max.y(),  max.z(),
                               max.x(),  max.y(),  min.z()
                         };
-                  static int triCount = 12;
-                  int baseTriIdx = (triCount * k);
-                  for (int triIdx=0; triIdx < triCount; ++triIdx)
+
+                  int baseTriIdx = (mTriCount * k);
+                  for (unsigned triIdx=0; triIdx < mTriCount; ++triIdx)
                   {
-                     if (!activeNeighbors[triIdx/2])
+                     if (!activeNeighbors[triIdx/divisor])
                      {
                         palTriangle triangle;
 #ifdef VOXEL_PHYSICS_GEOM_LOGGING
@@ -163,9 +171,10 @@ namespace dtVoxel
 #endif
                         for (unsigned vertIdx = 0; vertIdx < 3; ++vertIdx)
                         {
-                           triangle.vertices[vertIdx].x = cube_vertices[3 * faces[3*triIdx + vertIdx] + 0];
-                           triangle.vertices[vertIdx].y = cube_vertices[3 * faces[3*triIdx + vertIdx] + 1];
-                           triangle.vertices[vertIdx].z = cube_vertices[3 * faces[3*triIdx + vertIdx] + 2];
+                           unsigned faceIdx = faceMultiplier * triIdx + vertIdx;
+                           triangle.vertices[vertIdx].x = cube_vertices[3 * faces[faceIdx] + 0];
+                           triangle.vertices[vertIdx].y = cube_vertices[3 * faces[faceIdx] + 1];
+                           triangle.vertices[vertIdx].z = cube_vertices[3 * faces[faceIdx] + 2];
 #ifdef VOXEL_PHYSICS_GEOM_LOGGING
                            std::cout << "[" << triangle.vertices[vertIdx].x << " " << triangle.vertices[vertIdx].y << " " << triangle.vertices[vertIdx].z << "]";
 #endif
@@ -174,6 +183,7 @@ namespace dtVoxel
                         std::cout << std::endl;
 #endif
                         callback.ProcessTriangle(triangle, partId,  baseTriIdx + triIdx);
+                        if (debugDraw) break; // in debug draw, exit after the first triangle is output.
                      }
                   }
                }
@@ -182,6 +192,8 @@ namespace dtVoxel
       }
 
       GridPtr mGrid;
+      PhysicsTesselationMode& mTesselationMode;
+      unsigned mTriCount;
    };
 
    class DT_VOXEL_EXPORT VoxelGeometry : public dtPhysics::Geometry
@@ -189,7 +201,7 @@ namespace dtVoxel
    public:
 
       template<typename GridTypePtr>
-      static dtCore::RefPtr<VoxelGeometry> CreateVoxelGeometry(const dtCore::Transform& worldxform, float mass, GridTypePtr grid)
+      static dtCore::RefPtr<VoxelGeometry> CreateVoxelGeometry(const dtCore::Transform& worldxform, float mass, GridTypePtr grid, PhysicsTesselationMode& mode = PhysicsTesselationMode::BOX_2_TRI_PER_SIDE)
       {
          typedef typename GridTypePtr::element_type GridType;
 
@@ -201,7 +213,7 @@ namespace dtVoxel
          palBoundingBox palBB;
          palBB.min.Set(Float(start.x()), Float(start.y()), Float(start.z()));
          palBB.max.Set(Float(end.x()), Float(end.y()), Float(end.z()));
-         ColliderCallback<GridType>* cc = new ColliderCallback<GridType>(palBB, grid);
+         ColliderCallback<GridType>* cc = new ColliderCallback<GridType>(palBB, grid, mode);
          return CreateVoxelGeometryWithCallback(worldxform, mass, cc);
       }
       static dtCore::RefPtr<VoxelGeometry> CreateVoxelGeometryWithCallback(const dtCore::Transform& worldxform, float mass, palCustomGeometryCallback* callBack);

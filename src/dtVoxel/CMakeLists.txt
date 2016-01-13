@@ -10,6 +10,7 @@ file(GLOB LIB_PUBLIC_HEADERS
 
 SET( LIB_SOURCES
   marchingcubes.cpp
+  physicstesselationmode.cpp
   readovdbthreadpooltask.cpp
   volumescene.cpp
   volumeupdatemessage.cpp
