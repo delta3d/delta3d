@@ -49,14 +49,29 @@ namespace dtVoxel
          BaseClass::GetRequiredLibraries(names);
          names.push_back(voxelLib);
       }
-
       void testVoxelGeometry()
       {
          ChangeEngine(GetPhysicsEngineList()[0]);
+         testVoxelGeometry(PhysicsTesselationMode::BOX_2_TRI_PER_SIDE);
+         testVoxelGeometry(PhysicsTesselationMode::BOX_1_TRI_PER_SIDE);
+      }
+
+      void testVoxelGeometry(PhysicsTesselationMode& mode)
+      {
          try
          {
             dtCore::RefPtr<VoxelActor> voxelActor;
             mGM->CreateActor(*VoxelActorRegistry::VOXEL_ACTOR_TYPE, voxelActor);
+            voxelActor->SetPhysicsTesselationMode(mode);
+            dtPhysics::PhysicsActCompPtr pac = new dtPhysics::PhysicsActComp;
+            voxelActor->AddComponent(*pac);
+            dtPhysics::PhysicsObjectPtr po = dtPhysics::PhysicsObject::CreateNew("TestVoxel");
+            dtPhysics::TransformType xform;
+            po->SetMass(100.0f);
+            po->SetMechanicsType(dtPhysics::MechanicsType::STATIC);
+            po->SetPrimitiveType(dtPhysics::PrimitiveType::CUSTOM_CONCAVE_MESH);
+            pac->AddPhysicsObject(*po, true);
+
             CPPUNIT_ASSERT_EQUAL(voxelActor->GetNumGrids(), size_t(0U));
             voxelActor->SetDatabase(dtCore::ResourceDescriptor("Volumes:delta3d_island.vdb"));
             voxelActor->CompleteLoad();
@@ -64,11 +79,8 @@ namespace dtVoxel
 
             openvdb::BoolGrid::Ptr grid = boost::dynamic_pointer_cast<openvdb::BoolGrid>(voxelActor->GetGrid(0));
             CPPUNIT_ASSERT(grid);
-            dtPhysics::PhysicsObjectPtr po = dtPhysics::PhysicsObject::CreateNew("TestVoxel");
-            dtPhysics::TransformType xform;
-            VoxelGeometryPtr geometry = VoxelGeometry::CreateVoxelGeometry(xform, 100.0f, grid);
-            CPPUNIT_ASSERT(geometry.valid());
-            po->CreateFromGeometry(*geometry);
+
+            mGM->AddActor(*voxelActor, false, false);
 
             tbb::parallel_for(tbb::blocked_range2d<float>(-4.0f,8.0f,1, -4.0f,8.0f,1),
                   [&](const tbb::blocked_range2d<float>& r)
@@ -112,6 +124,8 @@ namespace dtVoxel
                   }
                }
                   });
+            mGM->DeleteActor(*voxelActor);
+            dtCore::System::GetInstance().Step(0.016);
          }
          catch (const dtUtil::Exception& ex)
          {
