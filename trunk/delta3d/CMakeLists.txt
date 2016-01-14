@@ -173,6 +173,7 @@ OPTION(BUILD_DEMOS         "Enables the building of the Delta3D demo projects" O
 OPTION(BUILD_WITH_QT       "Enables the building of projects that require Qt" OFF)
 OPTION(BUILD_3DSMAX_PLUGIN "Build the Autodesk 3ds Max exporter plugin" OFF)
 OPTION(BUILD_WITH_PCH      "Enables use of precomplied headers, experimental" OFF)
+OPTION(BUILD_WITH_TBB_MALLOC    "If intel threading buliding blocks is found, it will use their thread safe memory manager for all of delta3d" ON)
 
 include(CMakeDependentOption)
 CMAKE_DEPENDENT_OPTION(BUILD_WITH_OPENVDB  "Enables a basic integration with openvdb and builds a utility to convert 3D meshes into voxel grids or octrees" OFF
