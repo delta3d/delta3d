@@ -1022,7 +1022,7 @@ namespace dtExample
 
    void InputComponent::ReloadShaders()
    {
-      dtCore::ShaderManager::GetInstance().ReloadAndReassignShaderDefinitions("shaders/ShaderDefinitions.xml");
+      dtCore::ShaderManager::GetInstance().ReloadAndReassignShaderDefinitions();
    }
 
    void InputComponent::ToggleAIWaypointDrawMode()
