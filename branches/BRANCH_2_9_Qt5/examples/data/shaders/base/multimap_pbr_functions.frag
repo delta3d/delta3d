@@ -133,12 +133,9 @@ void computeMultiMapColor(inout MapParams mp, inout FragParams fp, inout EffectP
 
    mp.specular = specColor;
       
-   //fp.worldNormal = (2.0 * normalColor.rgb) - vec3(1.0, 1.0, 1.0);
-   //fp.worldNormal = normalize(fp.tbn * fp.worldNormal);
+   fp.worldNormal = (2.0 * normalColor.rgb) - vec3(1.0, 1.0, 1.0);
+   fp.worldNormal = normalize(fp.tbn * fp.worldNormal);
    
-   fp.worldNormal = normalize(fp.tbn * normalColor.rgb);
-   fp.worldNormal = normalize((2.0 * fp.worldNormal.rgb) - vec3(1.0, 1.0, 1.0));
-
    // Normalize all incoming vectors 
    vec3 viewDir = normalize(fp.viewDir);
    
