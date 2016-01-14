@@ -199,7 +199,7 @@ function (BUILD_GAME_START libraryTargetName linkBool)
          MACOSX_BUNDLE_BUNDLE_NAME "${libraryTargetName}"
          MACOSX_BUNDLE_SHORT_VERSION_STRING "${delta3d_VERSION_MAJOR}.${delta3d_VERSION_MINOR}"
          MACOSX_BUNDLE_BUNDLE_VERSION  1
-         MACOSX_BUNDLE_COPYRIGHT "2014 CaperHoldings LLC.")
+         MACOSX_BUNDLE_COPYRIGHT "2016 CaperHoldings LLC.")
    else ()
       ADD_EXECUTABLE(${libraryTargetName}_START
           ${PROG_SOURCES}
@@ -208,6 +208,16 @@ function (BUILD_GAME_START libraryTargetName linkBool)
 
    SET_TARGET_PROPERTIES(${libraryTargetName}_START PROPERTIES 
        OUTPUT_NAME ${libraryTargetName})
+
+   if (TBB_FOUND)
+      INCLUDE_DIRECTORIES(${TBB_INCLUDE_DIR}) 
+      TARGET_LINK_LIBRARIES(${libraryTargetName}_START
+         ${TBB_LIBRARIES}
+         ${TBB_MALLOC_LIBRARIES}
+         ${TBB_MALLOC_PROXY_LIBRARIES}
+         )
+   endif()
+
 
    TARGET_LINK_LIBRARIES(${libraryTargetName}_START
                          ${DTUTIL_LIBRARIES}
@@ -225,8 +235,12 @@ function (BUILD_GAME_START libraryTargetName linkBool)
    INCLUDE(ProgramInstall OPTIONAL)
    
    IF (MSVC)
-     SET_TARGET_PROPERTIES(${libraryTargetName}_START PROPERTIES LINK_FLAGS "/LARGEADDRESSAWARE")
-     SET_TARGET_PROPERTIES(${libraryTargetName}_START PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
+      if (TBB_FOUND)
+         SET_TARGET_PROPERTIES(${libraryTargetName}_START PROPERTIES LINK_FLAGS "/LARGEADDRESSAWARE " ${TBB_MALLOC_PROXY_LINKER_FLAGS})
+      else()
+         SET_TARGET_PROPERTIES(${libraryTargetName}_START PROPERTIES LINK_FLAGS "/LARGEADDRESSAWARE")
+      endif()
+      SET_TARGET_PROPERTIES(${libraryTargetName}_START PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
    ENDIF (MSVC)
 endfunction (BUILD_GAME_START libraryTargetName)
 
