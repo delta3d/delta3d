@@ -5,6 +5,7 @@
 #
 # The contents of this file are placed in the public domain. Feel
 # free to make use of it in any way you like.
+#
 #-------------------------------------------------------------------
 
 # - Try to find ThreadingBuildingBlocks libraries
@@ -13,6 +14,9 @@
 #  TBB_FOUND - system has TBB
 #  TBB_INCLUDE_DIRS - the TBB include directories 
 #  TBB_LIBRARIES - link these to use TBB
+#  TBB_MALLOC_LIBRARIES - link to these for the TBB allocators
+#  TBB_MALLOC_PROXY_LIBRARES - link to these to replace malloc
+#              See https://www.threadingbuildingblocks.org/docs/help/tbb_userguide/Automically_Replacing_malloc.htm
 
 include(FindPkgMacros)
 findpkg_begin(TBB)
@@ -120,3 +124,11 @@ find_library(TBB_MALLOC_PROXY_LIBRARY_REL NAMES ${TBB_MALLOC_PROXY_LIBRARY_NAMES
 find_library(TBB_MALLOC_PROXY_LIBRARY_DBG NAMES ${TBB_MALLOC_PROXY_LIBRARY_NAMES_DBG} HINTS ${TBB_LIB_SEARCH_PATH} ${TBB_PKGC_LIBRARY_DIRS})
 make_library_set(TBB_MALLOC_PROXY_LIBRARY)
 findpkg_finish(TBB_MALLOC_PROXY)
+
+if (MSVC)
+   set(TBB_MALLOC_PROXY_LINKER_FLAGS "/INCLUDE:___TBB_malloc_proxy")
+   if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+      set(TBB_MALLOC_PROXY_LINKER_FLAGS "/INCLUDE:__TBB_malloc_proxy")
+   endif()
+endif()
+
