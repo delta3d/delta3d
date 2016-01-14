@@ -179,13 +179,13 @@ namespace dtVoxel
          tbb::mutex::scoped_lock sl(elemMtx);
          
          //this seems to cause a performance bottleneck in VS2013 x64
-         //vertArray->reserve(vertArray->size() +  vertArraySub->size());
+         vertArray->reserve(vertArray->size() +  vertArraySub->size());
          
          int startingIdx = vertArray->size();
          vertArray->insert(vertArray->end(), vertArraySub->begin(), vertArraySub->end());
          
          //this seems to cause a performance bottleneck in VS2013 x6
-         //drawElements->reserve(drawElements->size() +  drawElementsSub->size());
+         drawElements->reserve(drawElements->size() +  drawElementsSub->size());
          
          for (auto itr = drawElementsSub->begin(), itrEnd = drawElementsSub->end(); itr != itrEnd; ++itr)
          {
