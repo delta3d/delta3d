@@ -87,7 +87,8 @@ namespace dtVoxel
             }
             mLoader->ResetData();
             mLoader->SetFileToLoad(dtCore::Project::GetInstance().GetResourcePath(rd));
-            dtUtil::ThreadPool::AddTask(*mLoader, dtUtil::ThreadPool::IO);
+            mLoader->operator()();
+            //dtUtil::ThreadPool::AddTask(*mLoader, dtUtil::ThreadPool::IO);
             if (IsInSTAGE())
                CompleteLoad();
          }
