@@ -43,7 +43,7 @@ namespace dtVoxel
          try
          {
             openvdb::io::File file(mFileToLoad);
-            file.open(false);
+            file.open();
             mGrids = file.getGrids();
             file.close();
 
