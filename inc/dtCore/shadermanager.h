@@ -301,9 +301,20 @@ namespace dtCore
           * shader definitions in the system to test out different effects.
           * THIS IS INTENDED FOR TESTING PURPOSES. AN END USER SHOULD NEVER ACCESS 
           * THIS METHOD DURING REAL GAME PLAY. 
-          * @param fileName The XML file containing the shader definitions. Merge is not supported
+          * @param fileName (NO LONGER USED) The XML file containing the shader definitions. Merge is not supported
           */
-         void ReloadAndReassignShaderDefinitions(const std::string& fileName);
+         DEPRECATE_FUNC void ReloadAndReassignShaderDefinitions(const std::string& fileName);
+
+         /**
+         * This method should be used ONLY for testing and tweaking shaders interatively.
+         * It unassigns ALL currently assigned nodes, clears out all prototypes,
+         * and then reloads all previously loaded shader definition files. It then, tries
+         * to remap all of the previously assigned nodes using the newly loaded definitions.
+         *
+         * THIS IS INTENDED FOR TESTING PURPOSES. AN END USER SHOULD NEVER ACCESS
+         * THIS METHOD DURING REAL GAME PLAY.
+         */
+         void ReloadAndReassignShaderDefinitions();
 
          /**
           * Called when a message is sent from one of this classes message signalers.
@@ -378,6 +389,10 @@ namespace dtCore
          ///Shader program cache which stores compiled shader programs that may
          ///be shared amongst the loaded shaders.
          ShaderProgramListType mShaderProgramCache;
+
+         typedef std::set<std::string> ShaderResourceSet;
+         /// Keep track of all loaded shader resources.
+         ShaderResourceSet mShaderResources;
 
          // list of all the actively assigned nodes.  Each active entry has a ref to its instance 
          // of the shader as well as a weak reference to the node itself.  
