@@ -209,7 +209,7 @@ function (BUILD_GAME_START libraryTargetName linkBool)
    SET_TARGET_PROPERTIES(${libraryTargetName}_START PROPERTIES 
        OUTPUT_NAME ${libraryTargetName})
 
-   if (TBB_FOUND)
+   if (BUILD_WITH_TBB_MALLOC AND TBB_FOUND)
       INCLUDE_DIRECTORIES(${TBB_INCLUDE_DIR}) 
       TARGET_LINK_LIBRARIES(${libraryTargetName}_START
          ${TBB_LIBRARIES}
@@ -235,7 +235,7 @@ function (BUILD_GAME_START libraryTargetName linkBool)
    INCLUDE(ProgramInstall OPTIONAL)
    
    IF (MSVC)
-      if (TBB_FOUND)
+      if (BUILD_WITH_TBB_MALLOC AND TBB_FOUND)
          SET_TARGET_PROPERTIES(${libraryTargetName}_START PROPERTIES LINK_FLAGS "/LARGEADDRESSAWARE ${TBB_MALLOC_PROXY_LINKER_FLAGS}" )
       else()
          SET_TARGET_PROPERTIES(${libraryTargetName}_START PROPERTIES LINK_FLAGS "/LARGEADDRESSAWARE")
