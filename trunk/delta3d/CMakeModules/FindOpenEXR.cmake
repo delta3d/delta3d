@@ -8,7 +8,7 @@
 # correspond to the ./configure --prefix=$OPENEXR_DIR
 #
 # Created by Robert Osfield. 
-FIND_PATH(OPENEXR_INCLUDE_DIR OpenEXR/ImfIO.h
+FIND_PATH(OPENEXR_INCLUDE_DIR OpenEXR/half.h
     PATH_SUFFIXES include inc
     HINTS
     $ENV{OPENEXR_DIR}
