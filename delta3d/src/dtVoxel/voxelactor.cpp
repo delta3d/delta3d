@@ -285,17 +285,19 @@ namespace dtVoxel
                   dtUtil::Clamp(numToUpdate, mMinCellsToUpdatePerFrame, mMaxCellsToUpdatePerFrame);
                   mVisualGrid->BeginNewUpdates(pos, numToUpdate, mUpdateCellsOnBackgroundThread);
                   mTicksSinceVisualUpdate = 0;
+
+                  LOGN_DEBUG("voxelactor.cpp", "Beginning New Updates on " + dtUtil::ToString(numToUpdate) + " tiles .");
                }
                else if (mMinCellsToUpdatePerFrame > 0 || mTicksSinceVisualUpdate > 2)
                {
-                  //std::cout << "Updating forced to 1 or minimum cells." << std::endl;
+                  LOGN_DEBUG("voxelactor.cpp", "Updating forced to 1 or minimum cells.");
                   mVisualGrid->BeginNewUpdates(pos, dtUtil::Max(mMinCellsToUpdatePerFrame, 1U), mUpdateCellsOnBackgroundThread);
                   mTicksSinceVisualUpdate = 0;
                }
                else
                {
                   ++mTicksSinceVisualUpdate;
-                  //std::cout << "Skipping visual update to help catch up." << std::endl;
+                  LOGN_DEBUG("voxelactor.cpp", "Simulation time is behind by " + dtUtil::ToString(timeDiff) + "ms skipping voxel update to help catch up.");
                }
             }
          }
