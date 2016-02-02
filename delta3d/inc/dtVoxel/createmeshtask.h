@@ -60,31 +60,49 @@ namespace dtVoxel
       
       double GetTime() const;
 
+      void ResetWithBounds(const osg::BoundingBox& bb);
+
       DT_DECLARE_ACCESSOR_INLINE(bool, SkipBackFaces);
+      DT_DECLARE_ACCESSOR_INLINE(bool, CacheTriangleData);
       DT_DECLARE_ACCESSOR_INLINE(int, NumThreads);
 
    private:
             
+      int ComputeIndex(int i, int j, int k) const;
+      
       void RunMultiThreads();
       void RunSingleThreaded();
 
       int SampleSingleCell(int i, int j, int k, openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>& sampler, TRIANGLE* triangles);
       double SampleCoord(double x, double y, double z, openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>& fastSampler);
 
+      void CopyTriangleData(const TRIANGLE* triData, TRIANGLE* toFill, int numTris);
+
       volatile bool mIsDone;
            
       GenerateMode mMode;
       
+      bool mUseCache;
+      bool mUseBoundingBox;
       double mTime;
       double mIsoLevel;
       
       osg::Vec3 mOffset;
       osg::Vec3 mTexelSize;
       osg::Vec3i mResolution;
+      osg::BoundingBox mDirtyBounds;
       dtCore::RefPtr<osg::Geode> mMesh;
       openvdb::FloatGrid::Ptr mGrid;
+      
+      typedef struct {
+         TRIANGLE mTris[5];
+      } TRI_GROUP;
 
-      osg::Vec3::value_type* mCacheData;
+      typedef std::vector<TRI_GROUP> TriangleMap;
+      typedef std::vector<char> TriangleOccupancyArray;
+      
+      TriangleMap mCacheData;
+      TriangleOccupancyArray mOccupancy;
    };
    
 } /* namespace dtVoxel */

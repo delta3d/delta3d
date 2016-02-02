@@ -230,7 +230,7 @@ namespace dtVoxel
       mImpl->mVectorMap.clear();
    }
 
-   void VoxelCell::CreateMeshWithTask(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution)
+   void VoxelCell::CreateMeshWithTask(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution, const osg::BoundingBox& optionalBounds)
    {
       {
          mImpl->mOffset = transform.getTrans();
@@ -242,8 +242,15 @@ namespace dtVoxel
          openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(voxelActor.GetGrid(0));
 
 
-         mImpl->mCreateMeshTask = new CreateMeshTask(mImpl->mOffset, texelSize, resolution, voxelActor.GetIsoLevel(), gridB);
-         mImpl->mCreateMeshTask->SetSkipBackFaces(true);
+         if (mImpl->mCreateMeshTask.valid())
+         {
+            mImpl->mCreateMeshTask->ResetWithBounds(optionalBounds);
+         }
+         else
+         {
+            mImpl->mCreateMeshTask = new CreateMeshTask(mImpl->mOffset, texelSize, resolution, voxelActor.GetIsoLevel(), gridB);
+            mImpl->mCreateMeshTask->SetSkipBackFaces(true);
+         }
       }
    }
 

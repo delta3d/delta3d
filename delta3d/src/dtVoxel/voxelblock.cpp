@@ -229,7 +229,7 @@ namespace dtVoxel
                               transform.setTrans(pos + mOffset);
 
                               //start generating the mesh on a background thread
-                              vc->CreateMeshWithTask(voxelActor, transform, mWSCellDimensions, textureResolution);
+                              vc->CreateMeshWithTask(voxelActor, transform, mWSCellDimensions, textureResolution, dirtyBounds);
                            }
                            /*else
                            {
