@@ -55,7 +55,7 @@ namespace dtVoxel
       
       void CreateMesh(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution);
       
-      void CreateMeshWithTask(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution);
+      void CreateMeshWithTask(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution, const osg::BoundingBox& optionalBounds);
 
       bool RunTask(bool allowBackgroundThreading);
 
