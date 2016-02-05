@@ -218,7 +218,6 @@ function (BUILD_GAME_START libraryTargetName linkBool)
          )
    endif()
 
-
    TARGET_LINK_LIBRARIES(${libraryTargetName}_START
                          ${DTUTIL_LIBRARIES}
                          ${DTCORE_LIBRARIES}

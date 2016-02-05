@@ -7,6 +7,7 @@
 
 #include <dtVoxel/volumeupdatemessage.h>
 #include <dtCore/namedarrayparameter.h>
+#include <iostream>
 
 namespace dtVoxel
 {
@@ -17,7 +18,8 @@ namespace dtVoxel
    const dtUtil::RefString VolumeUpdateMessage::PARAM_ARRAY_ITEM("x");
 
    VolumeUpdateMessage::VolumeUpdateMessage()
-   : mIndicesChanged(new dtCore::NamedArrayParameter(PARAM_INDICES_CHANGED))
+   : mStoreHalfFloats(true)
+   , mIndicesChanged(new dtCore::NamedArrayParameter(PARAM_INDICES_CHANGED))
    , mValuesChanged(new dtCore::NamedArrayParameter(PARAM_VALUES_CHANGED))
    {
       AddParameter(mIndicesChanged);
@@ -26,16 +28,38 @@ namespace dtVoxel
 
    VolumeUpdateMessage::~VolumeUpdateMessage() {}
 
+   unsigned VolumeUpdateMessage::AddOrReuseIndex(const osg::Vec3& idx)
+   {
+      unsigned size = GetIndicesChanged()->GetSize();
+      for (unsigned i = size; i > 0; --i)
+      {
+         unsigned curIdx = i - 1;
+         dtCore::NamedVec3Parameter* nvp = static_cast<dtCore::NamedVec3Parameter*>(GetIndicesChanged()->GetParameter(curIdx));
+         if (nvp != nullptr && nvp->GetValue() == idx)
+         {
+            return i;
+         }
+      }
+      GetIndicesChanged()->AddParameter(*new dtCore::NamedVec3Parameter(PARAM_ARRAY_ITEM, idx));
+      return size;
+   }
+
    void VolumeUpdateMessage::AddChangedValue(const osg::Vec3& idx, dtCore::NamedParameter& np)
    {
-      GetIndicesChanged()->AddParameter(*new dtCore::NamedVec3Parameter(PARAM_ARRAY_ITEM, idx));
-      GetValuesChanged()->AddParameter(np);
+      unsigned position = AddOrReuseIndex(idx);
+      if (position == GetValuesChanged()->GetSize())
+         GetValuesChanged()->AddParameter(np);
+      else
+         GetValuesChanged()->SetParameter(position, np);
    }
 
    void VolumeUpdateMessage::AddDeactivatedIndex(const osg::Vec3& idx)
    {
-      GetIndicesChanged()->AddParameter(*new dtCore::NamedVec3Parameter(PARAM_ARRAY_ITEM, idx));
-      GetValuesChanged()->AddEmptyIndex();
+      unsigned position = AddOrReuseIndex(idx);
+      if (position == GetValuesChanged()->GetSize())
+         GetValuesChanged()->AddEmptyIndex();
+      else
+         GetValuesChanged()->SetEmptyIndex(position);
    }
 
    const VolumeUpdateMessage::ArrayT* VolumeUpdateMessage::GetIndicesChanged() const
