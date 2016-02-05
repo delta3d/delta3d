@@ -387,6 +387,15 @@ namespace dtCore
       mParameterList.push_back(NULL);
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
+   void NamedArrayParameter::SetEmptyIndex(unsigned index)
+   {
+      if (index < mParameterList.size())
+      {
+         mParameterList[index] = nullptr;
+      }
+   }
+
 
    ///////////////////////////////////////////////////////////////////////////////
    void NamedArrayParameter::AddParameter(NamedParameter& param)
