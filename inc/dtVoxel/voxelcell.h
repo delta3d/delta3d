@@ -41,32 +41,6 @@ namespace dtVoxel
     
    class VoxelCellImpl;
    class VoxelCell;
-   
-   class DT_VOXEL_EXPORT CreateMeshTask : public dtUtil::ThreadPoolTask
-   {
-   public:
-      CreateMeshTask(const osg::Vec3& offset, const osg::Vec3& texelSize, const osg::Vec3i& resolution, double isoLevel, openvdb::FloatGrid::Ptr grid);
-
-      osg::Geode* TakeGeometry();
-
-      bool IsDone() const;
-
-      virtual void operator()();
-
-      double SampleCoord(double x, double y, double z, openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>& fastSampler);
-
-
-   private:
-   
-      volatile bool mIsDone;
-      double mIsoLevel;
-      osg::Vec3 mOffset;
-      osg::Vec3 mTexelSize;
-      osg::Vec3i mResolution;
-      dtCore::RefPtr<osg::Geode> mMesh;
-      openvdb::FloatGrid::Ptr mGrid;
-
-   };
 
    /***
    *  A VoxelCell represents a 3d grid of individual voxels stored in a 3d texture.
@@ -81,7 +55,7 @@ namespace dtVoxel
       
       void CreateMesh(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution);
       
-      void CreateMeshWithTask(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution);
+      void CreateMeshWithTask(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution, const osg::BoundingBox& optionalBounds);
 
       bool RunTask(bool allowBackgroundThreading);
 
