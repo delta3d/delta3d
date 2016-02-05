@@ -18,6 +18,7 @@
  */
 
 #include <dtVoxel/voxelcell.h>
+#include <dtVoxel/createmeshtask.h>
 #include <osgVolume/VolumeTile>
 #include <osgVolume/MultipassTechnique>
 #include <osgVolume/RayTracedTechnique>
@@ -59,161 +60,6 @@ namespace dtVoxel
       return index;
    }
 
-   //this is always 1 because the actual values are interploated from 0-1 using the iso value property now
-   float isolevel = 1.0f;
-
-   CreateMeshTask::CreateMeshTask(const osg::Vec3& offset, const osg::Vec3& texelSize, const osg::Vec3i& resolution, double isolevel, openvdb::FloatGrid::Ptr grid)
-      : mIsDone(false)
-      , mIsoLevel(isolevel)
-      , mOffset(offset)
-      , mTexelSize(texelSize)
-      , mResolution(resolution)
-      , mMesh(new osg::Geode())
-      , mGrid(grid)
-   {
-   }
-
-   bool CreateMeshTask::IsDone() const
-   {
-      return mIsDone;
-   }
-
-
-   osg::Geode* CreateMeshTask::TakeGeometry()
-   {
-      return mMesh.release();
-   }
-
-   void CreateMeshTask::operator()()
-   {
-      unsigned blockSize = 2U;
-      tbb::task_scheduler_init init(blockSize);
-
-      dtCore::Timer_t startTime = dtCore::Timer::Instance()->Tick();
-      dtCore::RefPtr<osg::Geometry> geom = new osg::Geometry();
-      dtCore::RefPtr<osg::Vec3Array> vertArray = new osg::Vec3Array();
-      dtCore::RefPtr<osg::DrawElementsUInt> drawElements = new osg::DrawElementsUInt(GL_TRIANGLES);
-      
-      tbb::mutex /*hashMtx,*/ elemMtx;
-
-      tbb::parallel_for(tbb::blocked_range3d<int>(0, mResolution[0], 1U, 0, mResolution[1], 16U, 0, mResolution[2],  9U),
-            [&](const tbb::blocked_range3d<int>& r)
-            {
-         openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler> sampler(mGrid->getConstAccessor(), mGrid->transform());
-         // It may not be as efficient for rendering to have one per thread, but having to lock a shared kills performance.
-         std::map<osg::Vec3, int> mVectorMap;
-
-         dtCore::RefPtr<osg::Vec3Array> vertArraySub = new osg::Vec3Array();
-         dtCore::RefPtr<osg::DrawElementsUInt> drawElementsSub = new osg::DrawElementsUInt(GL_TRIANGLES);
-
-         //reusing this improves performance by quite a bit
-         osg::Vec3 vertlist[12];
-         GRIDCELL grid;
-         TRIANGLE triangles[5];
-
-         for (int i = r.pages().begin(); i < r.pages().end(); ++i)
-         {
-            for (int j = r.rows().begin(); j < r.rows().end(); ++j)
-            {
-               for (int k = r.cols().begin(); k < r.cols().end(); ++k)
-               {
-                  double worldX = mOffset[0] + (i * mTexelSize[0]);
-                  double worldY = mOffset[1] + (j * mTexelSize[1]);
-                  double worldZ = mOffset[2] + (k * mTexelSize[2]);
-
-                  osg::Vec3 from(worldX, worldY, worldZ);
-
-                  grid.p[0] = from;
-                  grid.val[0] = SampleCoord(grid.p[0].x(), grid.p[0].y(), grid.p[0].z(), sampler);
-
-                  grid.p[1].set(from[0] + mTexelSize[0], from[1], from[2]);
-                  grid.val[1] = SampleCoord(grid.p[1].x(), grid.p[1].y(), grid.p[1].z(), sampler);
-
-                  grid.p[2].set(from[0] + mTexelSize[0], from[1] + mTexelSize[1], from[2]);
-                  grid.val[2] = SampleCoord(grid.p[2].x(), grid.p[2].y(), grid.p[2].z(), sampler);
-
-                  grid.p[3].set(from[0], from[1] + mTexelSize[1], from[2]);
-                  grid.val[3] = SampleCoord(grid.p[3].x(), grid.p[3].y(), grid.p[3].z(), sampler);
-
-                  grid.p[4].set(from[0], from[1], from[2] + mTexelSize[2]);
-                  grid.val[4] = SampleCoord(grid.p[4].x(), grid.p[4].y(), grid.p[4].z(), sampler);
-
-                  grid.p[5].set(from[0] + mTexelSize[0], from[1], from[2] + mTexelSize[2]);
-                  grid.val[5] = SampleCoord(grid.p[5].x(), grid.p[5].y(), grid.p[5].z(), sampler);
-
-                  grid.p[6].set(from[0] + mTexelSize[0], from[1] + mTexelSize[1], from[2] + mTexelSize[2]);
-                  grid.val[6] = SampleCoord(grid.p[6].x(), grid.p[6].y(), grid.p[6].z(), sampler);
-
-                  grid.p[7].set(from[0], from[1] + mTexelSize[1], from[2] + mTexelSize[2]);
-                  grid.val[7] = SampleCoord(grid.p[7].x(), grid.p[7].y(), grid.p[7].z(), sampler);
-
-
-                  int numTriangles = PolygonizeCube(grid, isolevel, triangles, &vertlist[0]);
-
-
-                  for (int n = 0; n < numTriangles; ++n)
-                  {
-                     for (int i = 0; i < 3; ++i)
-                     {
-                        bool inserted = false;
-                        int index = -1;
-                        {
-                           index = HashVec3(mVectorMap, triangles[n].p[i], inserted);
-                           if (inserted)
-                           {
-                              vertArraySub->push_back(triangles[n].p[i]);
-                              if ((vertArraySub->size() - 1) != unsigned(index))
-                              {
-                                 printf("Error! %lu %d\n", vertArraySub->size(), index);
-                              }
-                           }
-                        }
-
-                        drawElementsSub->addElement(index);
-
-                     }
-                  }
-               }
-            }
-         }
-         tbb::mutex::scoped_lock sl(elemMtx);
-         
-         //this seems to cause a performance bottleneck in VS2013 x64
-         vertArray->reserve(vertArray->size() +  vertArraySub->size());
-         
-         int startingIdx = vertArray->size();
-         vertArray->insert(vertArray->end(), vertArraySub->begin(), vertArraySub->end());
-         
-         //this seems to cause a performance bottleneck in VS2013 x6
-         drawElements->reserve(drawElements->size() +  drawElementsSub->size());
-         
-         for (auto itr = drawElementsSub->begin(), itrEnd = drawElementsSub->end(); itr != itrEnd; ++itr)
-         {
-            drawElements->push_back((*itr) + startingIdx);
-         }
-         //drawElements->insert(drawElements->end(), drawElementsSub->begin(), drawElementsSub->end());
-            });
-      //std::cout << "Num Verts " << vertArray->getNumElements() << std::endl;
-
-      
-      geom->setVertexArray(vertArray);
-      geom->addPrimitiveSet(drawElements);
-
-      mMesh->addDrawable(geom);
-
-      mIsDone = true;
-      LOGN_DEBUG("voxelcell.cpp", "Time to update cell ms: " + dtUtil::ToString(dtCore::Timer::Instance()->DeltaMil(startTime, dtCore::Timer::Instance()->Tick())));
-   }
-
-   double CreateMeshTask::SampleCoord(double x, double y, double z, openvdb::tools::GridSampler<openvdb::FloatGrid::ConstAccessor, openvdb::tools::PointSampler>& fastSampler)
-   {
-      double result = (fastSampler.wsSample(openvdb::Vec3R(x, y, z)));
-      
-      dtUtil::Clamp(result, 0.0, mIsoLevel);
-
-      result = dtUtil::MapRangeValue(result, 0.0, mIsoLevel, 0.0, 1.0);
-      return result;
-   }
 
    class VoxelCellImpl
    {
@@ -277,7 +123,7 @@ namespace dtVoxel
       mImpl->mMeshNode = NULL;
       mImpl->mImage = NULL;
       mImpl->mVolumeTile = NULL;
-
+      mImpl->mIsDirty = false;
       mImpl->mIsAllocated = false;
    }
 
@@ -312,6 +158,9 @@ namespace dtVoxel
          
          HashVec3(mImpl->mVectorMap, pos, inserted);
       }
+
+      //this is always 1 because the actual values are interploated from 0-1 using the iso value property now
+      const float isolevel = 1.0f;
 
       //reusing this improves performance by quite a bit 
       osg::Vec3 vertlist[12];
@@ -381,7 +230,7 @@ namespace dtVoxel
       mImpl->mVectorMap.clear();
    }
 
-   void VoxelCell::CreateMeshWithTask(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution)
+   void VoxelCell::CreateMeshWithTask(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution, const osg::BoundingBox& optionalBounds)
    {
       {
          mImpl->mOffset = transform.getTrans();
@@ -393,8 +242,15 @@ namespace dtVoxel
          openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(voxelActor.GetGrid(0));
 
 
-         mImpl->mCreateMeshTask = new CreateMeshTask(mImpl->mOffset, texelSize, resolution, voxelActor.GetIsoLevel(), gridB);
-
+         if (mImpl->mCreateMeshTask.valid())
+         {
+            mImpl->mCreateMeshTask->ResetWithBounds(optionalBounds);
+         }
+         else
+         {
+            mImpl->mCreateMeshTask = new CreateMeshTask(mImpl->mOffset, texelSize, resolution, voxelActor.GetIsoLevel(), gridB);
+            mImpl->mCreateMeshTask->SetSkipBackFaces(true);
+         }
       }
    }
 

@@ -30,13 +30,11 @@ namespace dtVoxel
 
    typedef struct {
       osg::Vec3 p[8];
-      osg::Vec3 n[8];
       float val[8];
    } GRIDCELL;
 
    typedef struct {
       osg::Vec3 p[3];         /* Vertices */
-      osg::Vec3 c;            /* Centroid */
       osg::Vec3 n[3];         /* Normal   */
    } TRIANGLE;
 
