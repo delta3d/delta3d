@@ -257,12 +257,13 @@ namespace dtVoxel
                ModifyGrids.emit_signal(tickMessage);
             }
 
-            std::for_each(mUpdateMessages.begin(), mUpdateMessages.end(),
+            std::vector<VolumeUpdateMessagePtr> workingMessages;
+            workingMessages.swap(mUpdateMessages);
+            std::for_each(workingMessages.begin(), workingMessages.end(),
                   [this](VolumeUpdateMessagePtr& msg)
                   {
                      UpdateVolume(*msg, false);
                   });
-            mUpdateMessages.clear();
 
             if (mMinCellsToUpdatePerFrame >= mMaxCellsToUpdatePerFrame)
             {
@@ -279,17 +280,19 @@ namespace dtVoxel
                   dtUtil::Clamp(numToUpdate, mMinCellsToUpdatePerFrame, mMaxCellsToUpdatePerFrame);
                   mVisualGrid->BeginNewUpdates(pos, numToUpdate, mUpdateCellsOnBackgroundThread);
                   mTicksSinceVisualUpdate = 0;
+
+                  LOGN_DEBUG("voxelactor.cpp", "Beginning New Updates on " + dtUtil::ToString(numToUpdate) + " tiles .");
                }
                else if (mMinCellsToUpdatePerFrame > 0 || mTicksSinceVisualUpdate > 2)
                {
-                  //std::cout << "Updating forced to 1 or minimum cells." << std::endl;
+                  LOGN_DEBUG("voxelactor.cpp", "Updating forced to 1 or minimum cells.");
                   mVisualGrid->BeginNewUpdates(pos, dtUtil::Max(mMinCellsToUpdatePerFrame, 1U), mUpdateCellsOnBackgroundThread);
                   mTicksSinceVisualUpdate = 0;
                }
                else
                {
                   ++mTicksSinceVisualUpdate;
-                  //std::cout << "Skipping visual update to help catch up." << std::endl;
+                  LOGN_DEBUG("voxelactor.cpp", "Simulation time is behind by " + dtUtil::ToString(timeDiff) + "ms skipping voxel update to help catch up.");
                }
             }
          }
@@ -320,6 +323,26 @@ namespace dtVoxel
       mVisualGrid = new VoxelGrid();
       SetDrawable(*mVisualGrid);
 
+   }
+
+   template<typename T>
+   bool convertFromHalfFloat(const dtCore::NamedParameter* np, T& value)
+   {
+      return false;
+   }
+
+   template<>
+   bool convertFromHalfFloat<float>(const dtCore::NamedParameter* np, float& value)
+   {
+      auto nsp = dynamic_cast<const dtCore::NamedUnsignedShortIntParameter*>(np);
+      if (nsp != nullptr)
+      {
+         half h;
+         h.setBits(nsp->GetValue());
+         value = h;
+         return true;
+      }
+      return false;
    }
 
    /////////////////////////////////////////////////////
@@ -372,16 +395,33 @@ namespace dtVoxel
             bb.expandBy(osg::Vec3(worldVec.x(), worldVec.y(), worldVec.z()));
             if (!updateVisualOnly)
             {
-               auto valueParam = dynamic_cast<const ParameterType*>(values->GetParameter(i));
+               auto baseParam = values->GetParameter(i);
+               auto valueParam = dynamic_cast<const ParameterType*>(baseParam);
+
                openvdb::Coord c(std::round(idxVec.x()), std::round(idxVec.y()), std::round(idxVec.z()));
                if (valueParam != nullptr)
                {
                   ValueType val = valueParam->GetValue();
                   accessor.setValueOn(c, val);
+                  //std::cout << "Updating coord: "  << c << std::endl;
+               }
+               else if (baseParam != nullptr)
+               {
+                  ValueType val;
+                  if (convertFromHalfFloat(baseParam, val))
+                  {
+                     accessor.setValueOn(c, val);
+                  }
+                  else
+                  {
+                     // It supposed to have a value, but it's not the right type.
+                     accessor.setValueOn(c, grid->background());
+                  }
                }
                else
                {
                   accessor.setValueOff(c, grid->background());
+                  //std::cout << "turning off coord: "  << c << std::endl;
                }
             }
 
