@@ -86,11 +86,11 @@ namespace dtVoxel
       if (mStoreHalfFloats)
       {
          half h(value);
-         AddChangedValue(idx, *new typename dtCore::TypeToActorProperty<unsigned short>::named_parameter_type(PARAM_ARRAY_ITEM, h.bits()));
+         AddChangedValue(idx, *new dtCore::TypeToActorProperty<unsigned short>::named_parameter_type(PARAM_ARRAY_ITEM, h.bits()));
       }
       else
       {
-         AddChangedValue(idx, *new typename dtCore::TypeToActorProperty<float>::named_parameter_type(PARAM_ARRAY_ITEM, value));
+         AddChangedValue(idx, *new dtCore::TypeToActorProperty<float>::named_parameter_type(PARAM_ARRAY_ITEM, value));
       }
 
    }
