@@ -66,9 +66,13 @@ namespace dtCore
          NamedParameter* GetParameter(unsigned index);
          const NamedParameter* GetParameter(unsigned index) const;
          void AddParameter(NamedParameter& param);
-         // To support doing a partial change, you set indices with empty values.
-         // You can also just insert at a higher index
+         /**
+          * The can be used for a partial update to make an index as existing but unchanged, or it can be used
+          * to just say an index has no value.  You can also do insert or set at a higher index, and it will resize
+          * and set any index in between to empty.
+          */
          void AddEmptyIndex();
+
          /**
           * Inserts a parameter.  If the index is passed the end, empty indices will be inserted to backfill.
           */
@@ -80,6 +84,13 @@ namespace dtCore
           * set the values on the indices you want to change.
           */
          void SetParameter(unsigned index, NamedParameter& param);
+
+         /**
+          * Sets an existing index to an empty element.  This will NOT resize the list, however, so if the index
+          * listed is past the end, this will just be a nop.
+          * @see #AddEmptyIndex
+          */
+         void SetEmptyIndex(unsigned index);
 
          void RemoveParameter(unsigned index);
          size_t GetSize() const;
