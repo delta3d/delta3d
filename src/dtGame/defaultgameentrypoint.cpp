@@ -107,10 +107,10 @@ namespace dtGame
             dtCore::Project::GetInstance().SetContext(GetProjectPath(), true);
             LOGN_INFO("defaultgameentrypoint.cpp", "Using project context path: " + mProjectPath);
          }
-         catch (dtUtil::Exception& )
+         catch (dtUtil::Exception& ex)
          {
             throw dtGame::GameApplicationConfigException(
-                  "Invalid project context path: " + mProjectPath, __FILE__, __LINE__);
+                  "Invalid project context path: " + mProjectPath + ". failed with exception. " + ex.ToString(), __FILE__, __LINE__);
          }
       }
       else if (fi.fileType == dtUtil::REGULAR_FILE)
@@ -120,10 +120,10 @@ namespace dtGame
             dtCore::Project::GetInstance().SetupFromProjectConfigFile(mProjectPath);
             LOGN_INFO("defaultgameentrypoint.cpp", "Using project config: " + mProjectPath);
          }
-         catch (dtUtil::Exception& )
+         catch (dtUtil::Exception& ex)
          {
             throw dtGame::GameApplicationConfigException(
-                  "Invalid project config file: " + mProjectPath, __FILE__, __LINE__);
+                  "Invalid project config file: " + mProjectPath + ". failed with exception. " + ex.ToString(), __FILE__, __LINE__);
          }
       }
       else
