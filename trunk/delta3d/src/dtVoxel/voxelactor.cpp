@@ -87,7 +87,7 @@ namespace dtVoxel
             }
             mLoader->ResetData();
             mLoader->SetFileToLoad(dtCore::Project::GetInstance().GetResourcePath(rd));
-            
+            mLoader->operator()();
             //dtUtil::ThreadPool::AddTask(*mLoader, dtUtil::ThreadPool::IO);
             if (IsInSTAGE())
                CompleteLoad();
@@ -233,11 +233,6 @@ namespace dtVoxel
    /////////////////////////////////////////////////////
    void VoxelActor::SharedTick(const dtGame::TickMessage& tickMessage, bool local)
    {
-      if (mLoader.valid() && !mLoader->IsComplete())
-      {
-         mLoader->operator()();
-      }
-
       if (mLoader.valid() && mLoader->IsComplete())
       {
          CompleteLoad();
