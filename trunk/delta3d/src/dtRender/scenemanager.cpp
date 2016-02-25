@@ -1097,7 +1097,7 @@ namespace dtRender
    {
       BaseClass::BuildActorComponents();
       AddComponent(*new UniformActComp());
-      AddComponent(*new OptimzerActComp());
+      AddComponent(*new OptimizerActComp());
       GetDrawable<SceneManager>()->PostComponentInit();
    }
 
