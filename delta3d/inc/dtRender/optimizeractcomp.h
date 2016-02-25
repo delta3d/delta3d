@@ -48,7 +48,7 @@ namespace dtRender
    /////////////////////////////////////////////////////////////////////////////
    // Class:
    /////////////////////////////////////////////////////////////////////////////
-   class DT_RENDER_EXPORT OptimzerActComp: public dtGame::ActorComponent
+   class DT_RENDER_EXPORT OptimizerActComp: public dtGame::ActorComponent
    {
       public:
          typedef dtGame::ActorComponent BaseClass;
@@ -61,7 +61,7 @@ namespace dtRender
 
       public:
          // constructors
-         OptimzerActComp();
+         OptimizerActComp();
          
          void SetName(const dtUtil::RefString& n);
          const dtUtil::RefString& GetName() const;
@@ -98,7 +98,7 @@ namespace dtRender
          DT_DECLARE_ACCESSOR_INLINE(unsigned, TraversalMask)
          
       protected:
-         ~OptimzerActComp();
+         ~OptimizerActComp();
 
          void CleanUp();
          void Optimize();
@@ -110,9 +110,9 @@ namespace dtRender
 
       private:
          /// hiding copy constructor and operator=
-         OptimzerActComp(const OptimzerActComp&);
+         OptimizerActComp(const OptimizerActComp&);
          /// hiding copy constructor and operator=
-         const OptimzerActComp& operator=(const OptimzerActComp&);
+         const OptimizerActComp& operator=(const OptimizerActComp&);
 
 
          dtUtil::RefString mName;
