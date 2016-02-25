@@ -22,7 +22,7 @@
 #ifndef DELTA_NODE_COLLECTOR
 #define DELTA_NODE_COLLECTOR
 
-#include <dtCore/refptr.h>
+#include <dtCore/observerptr.h>
 #include <dtUtil/export.h>
 
 #include <dtUtil/warningdisable.h>
@@ -72,15 +72,15 @@ namespace dtUtil
    public:
 
       //Type Definitions for the four different node maps
-      typedef std::map<std::string, dtCore::RefPtr <osg::Group> >             GroupNodeMap;
-      typedef std::map<std::string, dtCore::RefPtr <osgSim::DOFTransform> >   TransformNodeMap;
-      typedef std::map<std::string, dtCore::RefPtr <osg::MatrixTransform> >   MatrixTransformNodeMap;
-      typedef std::map<std::string, dtCore::RefPtr <osg::Switch> >            SwitchNodeMap;
-      typedef std::map<std::string, dtCore::RefPtr <osgSim::MultiSwitch> >    MultiSwitchNodeMap;
-      typedef std::map<std::string, dtCore::RefPtr <osg::LOD> >               LODNodeMap;
+      typedef std::map<std::string, dtCore::ObserverPtr <osg::Group> >             GroupNodeMap;
+      typedef std::map<std::string, dtCore::ObserverPtr <osgSim::DOFTransform> >   TransformNodeMap;
+      typedef std::map<std::string, dtCore::ObserverPtr <osg::MatrixTransform> >   MatrixTransformNodeMap;
+      typedef std::map<std::string, dtCore::ObserverPtr <osg::Switch> >            SwitchNodeMap;
+      typedef std::map<std::string, dtCore::ObserverPtr <osgSim::MultiSwitch> >    MultiSwitchNodeMap;
+      typedef std::map<std::string, dtCore::ObserverPtr <osg::LOD> >               LODNodeMap;
 
       //Type Definitions for the two different geode node maps
-      typedef std::map<std::string, dtCore::RefPtr<osg::Geode> >     GeodeNodeMap;
+      typedef std::map<std::string, dtCore::ObserverPtr<osg::Geode> >     GeodeNodeMap;
 
       ///Type Definition that is used to declare flags that allow the user to request searches for different types of nodes or geode nodes.
       typedef unsigned NodeFlag;
