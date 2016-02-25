@@ -31,7 +31,7 @@ namespace dtVoxel
    unsigned VolumeUpdateMessage::AddOrReuseIndex(const osg::Vec3& idx)
    {
       unsigned size = GetIndicesChanged()->GetSize();
-      for (unsigned i = size; i > 0; --i)
+      /*for (unsigned i = size; i > 0; --i)
       {
          unsigned curIdx = i - 1;
          dtCore::NamedVec3Parameter* nvp = static_cast<dtCore::NamedVec3Parameter*>(GetIndicesChanged()->GetParameter(curIdx));
@@ -39,7 +39,7 @@ namespace dtVoxel
          {
             return i;
          }
-      }
+      }*/
       GetIndicesChanged()->AddParameter(*new dtCore::NamedVec3Parameter(PARAM_ARRAY_ITEM, idx));
       return size;
    }
