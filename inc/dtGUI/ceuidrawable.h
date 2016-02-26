@@ -152,7 +152,8 @@ namespace dtGUI
 
    protected: 
 
-      void OnMessage(dtCore::Base::MessageData* data);
+      void OnSystem(const dtUtil::RefString& str, double, double)
+;
       
       CEGUI::System* mUI; ///<Pointer to the CUI_UI
 

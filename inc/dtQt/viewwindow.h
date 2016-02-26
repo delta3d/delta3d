@@ -26,7 +26,7 @@ namespace osgViewer
 namespace dtQt
 {
    ///Little class used to hold the Delta3D rendering surface
-   class DT_QT_EXPORT ViewWindow : public QGLWidget, dtCore::Base
+   class DT_QT_EXPORT ViewWindow : public QGLWidget, public dtCore::Base
    {
       Q_OBJECT
 
@@ -43,7 +43,7 @@ namespace dtQt
       void ThreadedInitializeGL();
       void ThreadedMakeCurrent();
 
-      virtual void OnMessage(MessageData*);
+      void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal);
 
       public slots:
          //does the actual painting.

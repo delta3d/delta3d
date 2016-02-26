@@ -192,7 +192,8 @@ namespace dtCore
           *
           * @param data the message structure
           */
-         virtual void OnMessage(MessageData* data);
+         virtual void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+;
 
 
       protected:

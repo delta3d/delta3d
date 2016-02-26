@@ -63,7 +63,7 @@ HUD::HUD(osg::Camera* pTargetCamera, dtCore::Keyboard* pObservedKeyboard, dtCore
    m_pMouseListener    = new dtGUI::CEGUIMouseListener(this);
    m_pKeyboardListener = new dtGUI::CEGUIKeyboardListener(this);
 
-   AddSender(&dtCore::System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &Action::OnSystem);
    RegisterInstance(this);
 
    _SetupInternalGraph();
@@ -91,7 +91,7 @@ HUD::HUD(dtCore::Camera* pTargetCamera, dtCore::Keyboard* pObservedKeyboard, dtC
    m_pMouseListener = new CEGUIMouseListener(this);
    m_pKeyboardListener = new CEGUIKeyboardListener(this);
 
-   AddSender( &dtCore::System::GetInstance() );
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &(decltype(*this))::OnSystem);;
    RegisterInstance(this);
 
    _SetupInternalGraph();
@@ -132,7 +132,8 @@ HUD::~HUD()
    }
 
    DeregisterInstance(this);
-   RemoveSender(&dtCore::System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.disconnect(this);
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -376,9 +377,10 @@ void HUD::SetKeyboard(dtCore::Keyboard* pObservedKeyboard)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void HUD::OnMessage(dtCore::Base::MessageData* data)
+void HUD::OnSystem(const dtUtil::RefString& str, double, double)
+
 {
-   if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
+   if (str == dtCore::System::MESSAGE_PRE_FRAME)
    {
       _CheckCamera();
 

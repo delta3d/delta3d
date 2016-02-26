@@ -25,28 +25,29 @@ Trigger::~Trigger()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Trigger::OnMessage(dtCore::Base::MessageData* data)
+void Trigger::OnSystem(const dtUtil::RefString& str, double deltaSim, double)
+
 {
-   if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
+   if (str == dtCore::System::MESSAGE_PRE_FRAME)
    {
-      double dt = *static_cast<double*>(data->userData);
-      Update(dt);
+      Update(deltaSim);
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void Trigger::Fire()
 {
+
    if (mEnabled)
    {
       if (mTimesActive < 0)
       {
          // Infinite activations
-         AddSender(&dtCore::System::GetInstance());
+         dtCore::System::GetInstance().TickSignal.connect_slot(this, &Trigger::OnSystem);
       }
       else if (mTimesTriggered < mTimesActive)
       {
-         AddSender(&dtCore::System::GetInstance());
+         dtCore::System::GetInstance().TickSignal.connect_slot(this, &Trigger::OnSystem);
          ++mTimesTriggered;
       }
    }
@@ -66,7 +67,7 @@ void Trigger::Update(double time)
             mActionToFire->Start();
          }
          mTimeLeft = mTimeDelay;
-         RemoveSender(&dtCore::System::GetInstance());
+         dtCore::System::GetInstance().TickSignal.disconnect(this);
       }
    }
 }

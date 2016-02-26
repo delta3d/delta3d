@@ -167,6 +167,11 @@ namespace dtCore
       virtual ~System();
 
    public:
+
+      // This signal sends the phase name, and delta sim time and delta real time.
+      sigslot::signal3<const dtUtil::RefString&, double, double> TickSignal;
+
+
       ///Perform any configuration required.  Message: "configure"
       void Config();
 

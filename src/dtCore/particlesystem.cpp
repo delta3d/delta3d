@@ -70,15 +70,13 @@ ParticleSystem::ParticleSystem(std::string name)
 
    RegisterInstance(this);
 
-   AddSender(&System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &ParticleSystem::OnSystem);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 ParticleSystem::~ParticleSystem()
 {
    mLayers.clear();
-
-   RemoveSender(&System::GetInstance());
 
    DeregisterInstance(this);
 }
@@ -288,13 +286,14 @@ bool ParticleLayer::operator==(const ParticleLayer& testLayer) const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void ParticleSystem::OnMessage(MessageData* data)
+void ParticleSystem::OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
 {
-   if (data->message == dtCore::System::MESSAGE_PAUSE_START)
+   if (str == dtCore::System::MESSAGE_PAUSE_START)
    {
       OnPause();
    }
-   else if (data->message == dtCore::System::MESSAGE_PAUSE_END)
+   else if (str == dtCore::System::MESSAGE_PAUSE_END)
    {
       OnUnpause();
    }

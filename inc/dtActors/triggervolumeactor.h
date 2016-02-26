@@ -51,7 +51,8 @@ namespace dtActors
       void SetMaxTriggerCount(int maxTriggercount) { mMaxTriggerCount = maxTriggercount; }
       int GetMaxTriggerCount() const               { return mMaxTriggerCount; }
 
-      virtual void OnMessage(dtCore::Base::MessageData* data);
+      virtual void OnSystem(const dtUtil::RefString& str, double, double)
+;
 
 
       ///From DeltaDrawable

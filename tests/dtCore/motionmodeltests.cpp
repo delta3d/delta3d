@@ -183,11 +183,7 @@ void MotionModelTests::TestFlyMotionModelUpdate()
    motionModel->GetTurnLeftRightAxis()->SetState(0.5, 0.5);
    motionModel->GetTurnUpDownAxis()->SetState(0.5, 0.5);
 
-   dtCore::Base::MessageData data;
-   data.message = dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL;
-   double userData[2] = { 0.7, 0.7 };
-   data.userData = userData;
-   motionModel->OnMessage(&data);
+   motionModel->OnSystem(dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL, 0.7, 0.7);
 
    target->GetTransform(xform2, dtCore::Transformable::REL_CS);
 

@@ -12,13 +12,14 @@ dtInspectorQt::InspectorQt::InspectorQt(int& argc, char **argv)
    mInspector = new InspectorWindow();
    mInspector->show();
 
-   AddSender(&dtCore::System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &InspectorQt::OnSystem);
 }
 
 //////////////////////////////////////////////////////////////////////////
 dtInspectorQt::InspectorQt::~InspectorQt()
 {
-   RemoveSender(&dtCore::System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.disconnect(this);
+
 
    mInspector->hide();
    mApp->exit();
@@ -30,10 +31,10 @@ dtInspectorQt::InspectorQt::~InspectorQt()
    mApp = NULL;
 }
 
-//////////////////////////////////////////////////////////////////////////
-void dtInspectorQt::InspectorQt::OnMessage(MessageData* data)
+/////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::InspectorQt::OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
 {
-   if (data->message == dtCore::System::MESSAGE_POST_FRAME)
+   if (str == dtCore::System::MESSAGE_POST_FRAME)
    {
       mApp->processEvents();
    }

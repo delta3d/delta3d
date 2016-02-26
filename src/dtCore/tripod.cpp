@@ -18,7 +18,7 @@ Tripod::Tripod(Transformable* child, Transformable* parent)
 {
    RegisterInstance(this);
 
-   AddSender(&System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &Tripod::OnSystem);
    SetChild(child);
    SetAttachToTransformable(parent);
 
@@ -31,7 +31,6 @@ Tripod::Tripod(Transformable* child, Transformable* parent)
 Tripod::~Tripod(void)
 {
    DeregisterInstance(this);
-   RemoveSender( &System::GetInstance() );
 }
 
 void Tripod::SetCamera(Camera* cam)
@@ -132,11 +131,12 @@ void Tripod::SetScale(float x, float y, float z, float h, float p, float r)
 
 
 ///Override to receive messages
-void Tripod::OnMessage(MessageData *data)
+void Tripod::OnSystem(const dtUtil::RefString& str, double deltaSim, double /*deltaReal*/)
+
 {
-   if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
+   if (str == dtCore::System::MESSAGE_PRE_FRAME)
    {
-      Update( *static_cast<double*>(data->userData) );
+      Update( deltaSim );
    }
 }
 

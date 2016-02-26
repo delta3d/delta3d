@@ -499,7 +499,8 @@ namespace dtGUI
       void BindShaders(osg::Node* node, const std::string& vertShader, const std::string& fragShader);
 
       ///used to receive "preframe"-delta-messages
-      void OnMessage(dtCore::Base::MessageData *data);
+      void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+;
 
       static void _SetupSystemAndRenderer();
       static bool SystemAndRendererCreatedByHUD;

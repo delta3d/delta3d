@@ -59,7 +59,8 @@ namespace dtAnim
       CharDrawable(dtAnim::BaseModelWrapper* wrapper);
       ~CharDrawable();
 
-      void OnMessage(dtCore::Base::MessageData* data);
+      void OnSystem(const dtUtil::RefString& str, double, double)
+;
 
       /** 
         * Get the Node representing the geometry.

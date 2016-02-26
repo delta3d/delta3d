@@ -41,7 +41,7 @@ SoundEffectBinder::SoundEffectBinder(const std::string& name /*= "SoundEffectBin
    dtCore::System* sys = &dtCore::System::GetInstance();
    assert(sys);
 
-   AddSender(sys);
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &SoundEffectBinder::OnSystem);
 
    SoundEffectListener::EffectFunctor addEffect(this, &SoundEffectBinder::EffectAdded);
    SoundEffectListener::EffectFunctor removeEffect(this, &SoundEffectBinder::EffectRemoved);
@@ -56,7 +56,8 @@ SoundEffectBinder::SoundEffectBinder(const std::string& name /*= "SoundEffectBin
 SoundEffectBinder::~SoundEffectBinder()
 {
    Shutdown();
-   RemoveSender(&dtCore::System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.disconnect(this);
+
 }
 
 
@@ -215,29 +216,20 @@ void SoundEffectBinder::RemoveEffectTypeRange(const std::string& fxType, bool mi
  *
  * @param data the message received by this object
  */
-void SoundEffectBinder::OnMessage(MessageData* data)
+void SoundEffectBinder::OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
 {
-   if (data == NULL)
+   if (str == kPreFrame)
    {
-      return;
+      PreFrame(deltaSim);
    }
-
-   if (data->message == kPreFrame)
+   else if (str == kFrame)
    {
-      PreFrame(*static_cast<const double*>(data->userData));
-      return;
+      Frame(deltaSim);
    }
-
-   if (data->message == kFrame)
+   else if (str == kPostFrame)
    {
-      Frame(*static_cast<const double*>(data->userData));
-      return;
-   }
-
-   if (data->message == kPostFrame)
-   {
-      PostFrame(*static_cast<const double*>(data->userData));
-      return;
+      PostFrame(deltaSim);
    }
 }
 

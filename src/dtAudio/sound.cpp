@@ -98,7 +98,7 @@ Sound::Sound()
 {
    RegisterInstance(this);
 
-   AddSender(&dtCore::System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &Sound::OnSystem);
 
    SetPosition(osg::Vec3(0.0f, 0.0f, 0.0f));
    SetDirection(osg::Vec3(0.0f, 0.0f, 0.0f));
@@ -124,20 +124,20 @@ Sound::~Sound()
    } 
 
    //tell the system to stop sending me messages.
-   RemoveSender(&dtCore::System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.disconnect(this);
+
 
    DeregisterInstance(this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Sound::OnMessage(MessageData* data)
+void Sound::OnSystem(const dtUtil::RefString& str, double /*deltaSim*/, double /*deltaReal*/)
+
 {
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-   assert(data);
-
    ALint srcState;
 
-   if (data->message == dtCore::System::MESSAGE_POST_FRAME)
+   if (str == dtCore::System::MESSAGE_POST_FRAME)
    {
       if (IsSource(mSource))
       {
@@ -145,9 +145,9 @@ void Sound::OnMessage(MessageData* data)
          CheckForError("Getting source state", __FUNCTION__, __LINE__);
 
          //If the sound has stopped it needs to be marked stopped and the
-		 //source needs to be deallocated. Saves memory -- some sound hardware
-   		 //was only allowing for 32 sources.  Don't worry, we'll reallocate when
-   		 //it's time to play again.
+         //source needs to be deallocated. Saves memory -- some sound hardware
+         //was only allowing for 32 sources.  Don't worry, we'll reallocate when
+         //it's time to play again.
          if (srcState == AL_STOPPED && !IsStopped())
          {
             Stop();
@@ -290,20 +290,20 @@ bool Sound::RestoreSource()
 void Sound::LoadFile(const char* file)
 {
    mFileName = file;
-   SendMessage(kCommand[LOAD], this);
+   SoundCommand.emit_signal(kCommand[LOAD], this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void Sound::LoadResource(const dtCore::ResourceDescriptor& rd)
 {
    mFileName = dtCore::Project::GetInstance().GetResourcePath(rd);
-   SendMessage(kCommand[LOAD], this);
+   SoundCommand.emit_signal(kCommand[LOAD], this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void Sound::UnloadFile()
 {
-   SendMessage(kCommand[UNLOAD], this);
+   SoundCommand.emit_signal(kCommand[UNLOAD], this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

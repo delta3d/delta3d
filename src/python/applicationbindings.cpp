@@ -338,25 +338,26 @@ class ApplicationWrap : public Application, public wrapper<Application>
       }
 
       //////////////////////////////////////////////////////////////////////////
-      void OnMessage(MessageData* data)
+      void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
       {
-         if (data->message == dtCore::System::MESSAGE_EVENT_TRAVERSAL)
+         if (str == dtCore::System::MESSAGE_EVENT_TRAVERSAL)
          {
             EventTraversal(*static_cast<const double*>(data->userData));
          }
-         else if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
+         else if (str == dtCore::System::MESSAGE_PRE_FRAME)
          {
             PreFrame(*static_cast<const double*>(data->userData));
          }
-         else if (data->message == System::MESSAGE_FRAME)
+         else if (str == System::MESSAGE_FRAME)
          {
             Frame(*static_cast<const double*>(data->userData));
          }
-         else if (data->message == dtCore::System::MESSAGE_POST_FRAME)
+         else if (str == dtCore::System::MESSAGE_POST_FRAME)
          {
             PostFrame(*static_cast<const double*>(data->userData));
          }
-         else if (data->message == "collision")
+         else if (str == "collision")
          {
             OnCollisionMessage(PythonCollisionData(static_cast< Scene::CollisionData* >(data->userData)));
          }

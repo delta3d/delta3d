@@ -112,7 +112,8 @@ namespace dtCore
       void Create();
       osg::Geode* CreateDome(float radius, int segs);
       void LoadShaderSource(osg::Shader* obj, const std::string& fileName);
-      virtual void OnMessage(MessageData* data);
+      virtual void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+;
       void Update(const double deltaFrameTime);
 
       dtCore::RefPtr<osg::Geode> mDome;

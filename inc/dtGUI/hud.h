@@ -257,7 +257,8 @@ class DT_GUI_EXPORT HUD : public dtCore::Base,
     private:
 
         ///used to receive "preframe"-delta-messages
-        void OnMessage(dtCore::Base::MessageData *);
+        void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+;
 
         /********************************************************************************
                              methods used internally (code scattering)

@@ -2267,8 +2267,7 @@ void GMLoggerTests::TestLogControllerComponent()
       // let the GM send 'em.
 
       tc->reset();
-      double deltaTime[2] = {0.3, 0.3};
-      dtCore::System::GetInstance().SendMessage("preframe", &deltaTime);
+      dtCore::System::GetInstance().Step(0.3);
 
       // validate them.
       for (unsigned i = 0; i < tc->GetReceivedProcessMessages().size(); ++i)
@@ -2405,8 +2404,7 @@ void GMLoggerTests::TestControllerSignals()
       pMsg->SetStatus(status);
       mGameManager->SendMessage(*statusMessage);
       //mGameManager->SendNetworkMessage(*statusMessage);
-      double deltaTime[2] = {0.3, 0.3};
-      dtCore::System::GetInstance().SendMessage("preframe", &deltaTime); // let the GM send 'em.
+      dtCore::System::GetInstance().Step(0.3); // let the GM send 'em.
 
       // check the results
 

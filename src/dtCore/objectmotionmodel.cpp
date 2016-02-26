@@ -68,15 +68,13 @@ ObjectMotionModel::ObjectMotionModel(dtCore::View* view)
    // Create our three axis.
    InitArrows();
 
-   AddSender(&System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &ObjectMotionModel::OnSystem);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 ObjectMotionModel::~ObjectMotionModel()
 {
    SetEnabled(false);
-
-   RemoveSender(&System::GetInstance());
 
    DeregisterInstance(this);
 }
@@ -387,33 +385,31 @@ void ObjectMotionModel::OnRightMouseReleased(void)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ObjectMotionModel::OnMessage(MessageData *data)
+void ObjectMotionModel::OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
 {
-   if (data->sender == &dtCore::System::GetInstance())
+   if (str == dtCore::System::MESSAGE_FRAME_SYNCH)
    {
-      if (data->message == dtCore::System::MESSAGE_FRAME_SYNCH)
+      // If we have a Delta3D mouse, then set our mouse position with it.
+      if (mMouse)
       {
-         // If we have a Delta3D mouse, then set our mouse position with it.
-         if (mMouse)
+         bool bLeftMouse = mMouse->GetButtonState(dtCore::Mouse::LeftButton);
+         bool bRightMouse= mMouse->GetButtonState(dtCore::Mouse::RightButton);
+
+         if (mLeftMouse != bLeftMouse)
          {
-            bool bLeftMouse = mMouse->GetButtonState(dtCore::Mouse::LeftButton);
-            bool bRightMouse= mMouse->GetButtonState(dtCore::Mouse::RightButton);
-
-            if (mLeftMouse != bLeftMouse)
-            {
-               if (bLeftMouse) OnLeftMousePressed();
-               else            OnLeftMouseReleased();
-            }
-
-            if (mRightMouse != bRightMouse)
-            {
-               if (bRightMouse) OnRightMousePressed();
-               else             OnRightMouseReleased();
-            }
-
-            osg::Vec2 mousePos = mMouse->GetPosition();
-            Update(mousePos);
+            if (bLeftMouse) OnLeftMousePressed();
+            else            OnLeftMouseReleased();
          }
+
+         if (mRightMouse != bRightMouse)
+         {
+            if (bRightMouse) OnRightMousePressed();
+            else             OnRightMouseReleased();
+         }
+
+         osg::Vec2 mousePos = mMouse->GetPosition();
+         Update(mousePos);
       }
    }
 }

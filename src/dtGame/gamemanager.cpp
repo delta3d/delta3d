@@ -87,7 +87,7 @@ namespace dtGame
    : dtCore::Base("GameManager")
    , mGMImpl(new GMImpl(scene))
    {
-      AddSender(&dtCore::System::GetInstance());
+      dtCore::System::GetInstance().TickSignal.connect_slot(this, &GameManager::OnSystem);
 
       mGMImpl->mMapChangeStateData = new MapChangeStateData(*this);
 
@@ -110,7 +110,8 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    GameManager::~GameManager()
    {
-      RemoveSender(&dtCore::System::GetInstance());
+      dtCore::System::GetInstance().TickSignal.disconnect(this);
+
       delete mGMImpl;
    }
 
@@ -252,52 +253,48 @@ namespace dtGame
    void GameManager::SetScene(dtCore::Scene& newScene) { mGMImpl->mScene = &newScene; }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::OnMessage(MessageData* data)
+   void GameManager::OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
    {
       if (mGMImpl->mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
          mGMImpl->mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                  "GM Starting delta message \"" + data->message + "\"");
+                  "GM Starting delta message \"" + str + "\"");
       }
 
-      if (data->message == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL)
+      if (str == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL)
       {
-         double* timeChange = (double*)data->userData;
-         PostEventTraversal(timeChange[0], timeChange[1]);
+         PostEventTraversal(deltaSim, deltaReal);
       }
-      else if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
+      else if (str == dtCore::System::MESSAGE_PRE_FRAME)
       {
-         double* timeChange = (double*)data->userData;
-         PreFrame(timeChange[0], timeChange[1]);
+         PreFrame(deltaSim, deltaReal);
       }
-      else if (data->message == dtCore::System::MESSAGE_FRAME_SYNCH)
+      else if (str == dtCore::System::MESSAGE_FRAME_SYNCH)
       {
-         double* timeChange = (double*)data->userData;
-         FrameSynch(timeChange[0], timeChange[1]);
+         FrameSynch(deltaSim, deltaReal);
       }
-      else if (data->message == dtCore::System::MESSAGE_POST_FRAME)
+      else if (str == dtCore::System::MESSAGE_POST_FRAME)
       {
-         double* timeChange = (double*)data->userData;
-         PostFrame(timeChange[0], timeChange[1]);
+         PostFrame(deltaSim, deltaReal);
       }
-      else if (data->message == dtCore::System::MESSAGE_PAUSE_START)
+      else if (str == dtCore::System::MESSAGE_PAUSE_START)
       {
          SendMessage(*GetMessageFactory().CreateMessage(MessageType::INFO_PAUSED));
       }
-      else if (data->message == dtCore::System::MESSAGE_PAUSE_END)
+      else if (str == dtCore::System::MESSAGE_PAUSE_END)
       {
          SendMessage(*GetMessageFactory().CreateMessage(MessageType::INFO_RESUMED));
       }
-      else if (data->message == dtCore::System::MESSAGE_PAUSE)
+      else if (str == dtCore::System::MESSAGE_PAUSE)
       {
-         double* timeChange = (double*)data->userData;
-         PreFrame(0.0, *timeChange);
+         PreFrame(0.0, deltaReal);
       }
 
       if (mGMImpl->mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
          mGMImpl->mLogger->LogMessage(dtUtil::Log::LOG_DEBUG,__FUNCTION__, __LINE__,
-                  "GM Finishing delta message \"" + data->message + "\"");
+                  "GM Finishing delta message \"" + str + "\"");
       }
    }
 
