@@ -215,7 +215,7 @@ AudioManager::AudioManager(const std::string& name /*= "audiomanager"*/,
 {
    RegisterInstance(this);
 
-   AddSender(&dtCore::System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &AudioManager::OnSystem);
 
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
 
@@ -292,7 +292,8 @@ AudioManager::~AudioManager()
       CloseDevice();
    }
 
-   RemoveSender(&dtCore::System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.disconnect(this);
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -367,52 +368,42 @@ void SetSpeedOfSound(float s)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void AudioManager::OnMessage(MessageData* data)
+void AudioManager::OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
 {
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-   assert(data);
-
-   if (data->sender == &dtCore::System::GetInstance())
+   // system messages
+   if (str == dtCore::System::MESSAGE_PRE_FRAME)
    {
-      // system messages
-      if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
-      {
-         PreFrame(*static_cast<const double*>(data->userData));
-         return;
-      }
-
-      if (data->message == dtCore::System::MESSAGE_PAUSE)
-      {
-         // During a system-wide pause, we want the AudioManager to behave
-         // as normal. In many games, there are sounds that occur during
-         // during a pause, such as background music or GUI clicks. So
-         // here we just call the normal functions all at once.
-         PreFrame(*static_cast<const double*>(data->userData));
-         return;
-      }
-
-      if (data->message == dtCore::System::MESSAGE_PAUSE_START)
-      {
-         PauseSounds();
-      }
-
-      if (data->message == dtCore::System::MESSAGE_PAUSE_END)
-      {
-         UnPauseSounds();
-      }
+      PreFrame(deltaSim);
    }
-   else
+   else if (str == dtCore::System::MESSAGE_PAUSE)
    {
-      //A LOAD request typically comes from a sound when it's loading data from
-      //a file.  We run it through the AudioManager so the sounds data buffer
-      //can be managed (mostly trying to avoid redundant buffers from the same file).
-      if (data->message == Sound::kCommand[Sound::LOAD])
-      {
-         assert(data->userData);
-         Sound* snd(static_cast<Sound*>(data->userData));
+      // During a system-wide pause, we want the AudioManager to behave
+      // as normal. In many games, there are sounds that occur during
+      // during a pause, such as background music or GUI clicks. So
+      // here we just call the normal functions all at once.
+      PreFrame(deltaReal);
+   }
+   else if (str == dtCore::System::MESSAGE_PAUSE_START)
+   {
+      PauseSounds();
+   }
+   else if (str == dtCore::System::MESSAGE_PAUSE_END)
+   {
+      UnPauseSounds();
+   }
+}
 
-         LoadSoundBuffer(*snd);
-      }
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::OnSoundCommand(const dtUtil::RefString& command, Sound* snd)
+{
+   //A LOAD request typically comes from a sound when it's loading data from
+   //a file.  We run it through the AudioManager so the sounds data buffer
+   //can be managed (mostly trying to avoid redundant buffers from the same file).
+   if (command == Sound::kCommand[Sound::LOAD] && snd != nullptr)
+   {
+      LoadSoundBuffer(*snd);
    }
 }
 
@@ -498,7 +489,7 @@ Sound* AudioManager::NewSound()
    }
 
    // listen to messages from this guy
-   AddSender(snd.get());
+   snd->SoundCommand.connect_slot(this, &AudioManager::OnSoundCommand);
 
    // save the sound
    mSoundList.push_back(snd);
@@ -532,9 +523,9 @@ void AudioManager::FreeSound(Sound* sound)
    }
 
    // stop listening to this guys messages
-   snd->RemoveSender(this);
-   snd->RemoveSender(&dtCore::System::GetInstance());
-   RemoveSender(snd.get());
+   //snd->RemoveSender(this);
+   dtCore::System::GetInstance().TickSignal.disconnect(snd);
+   snd->SoundCommand.disconnect(this);
 
    // free the sound's source and buffer
    UnloadSound(snd.get());

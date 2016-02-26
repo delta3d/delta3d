@@ -113,7 +113,7 @@ FPSMotionModel::FPSMotionModel(Keyboard* keyboard,
       SetDefaultMappings(keyboard, mouse);
    }
 
-   AddSender(&System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &FPSMotionModel::OnSystem);
 
    mMouse    = mouse;
    mKeyboard = keyboard;
@@ -122,7 +122,6 @@ FPSMotionModel::FPSMotionModel(Keyboard* keyboard,
 ////////////////////////////////////////////////////////////////////////////////
 FPSMotionModel::~FPSMotionModel()
 {
-   RemoveSender(&System::GetInstance());
 
    if (mLookUpDownAxis.get())
    {
@@ -493,17 +492,18 @@ float FPSMotionModel::GetFallingHeight() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void FPSMotionModel::OnMessage(MessageData* data)
+void FPSMotionModel::OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
 {
 
-   if (data->message == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL)
+   if (str == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL)
    {
       if (!IsCurrentlyActive()) {return;}
 
       // use the simulated change in time, not the real time change
       // see dtCore::System for the difference.
       // The ideal solution would be to use options, like FlyMotionModel
-      double deltaFrameTime = static_cast<const double*>(data->userData)[0];
+      double deltaFrameTime = deltaSim;
 
       // clamp frame time to be no more then 3 fps
       const double MAX_FRAME_TIME = 1.0 / 3.0;

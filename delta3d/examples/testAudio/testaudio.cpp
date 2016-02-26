@@ -63,8 +63,6 @@ TestAudioApp::TestAudioApp(const std::string& configFilename /*= "config.xml"*/)
    , mSmokeCountC(0L)
    , mRecorder(new SoundRecorder())
 {
-   AddSender(&dtCore::System::GetInstance());
-
    AudioManager::Instantiate();
 
    for (unsigned int ii(0L); ii < kNumSoundFiles; ii++)
@@ -118,7 +116,8 @@ TestAudioApp::~TestAudioApp()
 
    AudioManager::Destroy();
 
-   RemoveSender(&dtCore::System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.disconnect(this);
+
 }
 
 

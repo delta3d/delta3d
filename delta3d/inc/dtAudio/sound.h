@@ -98,6 +98,8 @@ namespace dtAudio
    public:
       DT_DECLARE_VIRTUAL_REF_INTERFACE_INLINE
 
+      sigslot::signal2<const dtUtil::RefString&, Sound*> SoundCommand;
+
       typedef void (*CallBack)(Sound* sound, void* param);  ///callback function type
 
       class FrameData : public osg::Referenced
@@ -170,7 +172,8 @@ namespace dtAudio
        *
        * @param data the received message
        */
-      virtual void OnMessage(MessageData* data);
+      virtual void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+;
 
       // Get the state of the indicated flag.
       unsigned int GetState(unsigned int flag) const { return mCommandState & BIT(flag); }

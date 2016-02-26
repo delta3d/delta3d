@@ -18,7 +18,7 @@ CharDrawable::CharDrawable(dtAnim::BaseModelWrapper* wrapper)
    , mNode(new osg::Node())
    , mLastMeshCount(0)
 {
-   AddSender(&dtCore::System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &CharDrawable::OnSystem);
 
    GetMatrixNode()->addChild(mNode.get());
 
@@ -28,21 +28,22 @@ CharDrawable::CharDrawable(dtAnim::BaseModelWrapper* wrapper)
 ////////////////////////////////////////////////////////////////////////////////
 CharDrawable::~CharDrawable()
 {
-   RemoveSender(&dtCore::System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.disconnect(this);
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void CharDrawable::OnMessage(dtCore::Base::MessageData* data)
+void CharDrawable::OnSystem(const dtUtil::RefString& str, double dt, double)
+
 {
    // tick the animation
-   if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
+   if (str == dtCore::System::MESSAGE_PRE_FRAME)
    {
       if (mModel.valid())
       {
          dtAnim::AnimationUpdaterInterface* animator = mModel->GetAnimator();
          if (animator != NULL)
          {
-            double dt = *static_cast<double*>(data->userData);
             animator->Update(dt);
          }
 

@@ -267,7 +267,8 @@ namespace dtCore
       EnvEffectList mToBeRemoved;///<temp list of effects to remove
       RefPtr<osg::Group> mEnvEffectNode; ///<Contains the env effects
       RefPtr<osg::Group> mDrawableNode; ///<Contains the actual model
-      virtual void OnMessage(MessageData *data);
+      virtual void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+;
       void RemoveEffectCache();///<actually remove EnvEffects from the Env
 
       RefPtr<Light> mSkyLight; ///< The sky light

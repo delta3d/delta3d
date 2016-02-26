@@ -23,13 +23,14 @@ namespace dtEditQt
    {
       RegisterInstance(this);
 
-      AddSender(&dtCore::System::GetInstance());
+      dtCore::System::GetInstance().TickSignal.connect_slot(this, &STAGECameraMotionModel::OnSystem);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    STAGECameraMotionModel::~STAGECameraMotionModel()
    {
-      RemoveSender(&dtCore::System::GetInstance());
+      dtCore::System::GetInstance().TickSignal.disconnect(this);
+
 
       DeregisterInstance(this);
    }
@@ -59,7 +60,8 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void STAGECameraMotionModel::OnMessage(MessageData *data)
+   void STAGECameraMotionModel::OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
    {
    }
 

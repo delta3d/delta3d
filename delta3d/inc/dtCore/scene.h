@@ -181,7 +181,8 @@ namespace dtCore
       bool GetHeightOfTerrain(float& heightOfTerrain, float x, float y, float maxZ = 10000.0f, float minZ = -10000.0f);
 
       ///Performs collision detection and updates physics
-      virtual void OnMessage(MessageData* data);
+      virtual void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+;
 
       ///The user data associated with "collision" messages
       struct DT_CORE_EXPORT CollisionData

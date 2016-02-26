@@ -111,7 +111,7 @@ ViewWindow::ViewWindow(bool drawOnSeparateThread, QWidget* parent,
    //allow keyboard input to come through this widget (via user click or tab)
    setFocusPolicy(Qt::StrongFocus);
 
-   AddSender(&dtCore::System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &ViewWindow::OnSystem);
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -171,9 +171,9 @@ void ViewWindow::ThreadedMakeCurrent()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void ViewWindow::OnMessage(MessageData* data)
+void ViewWindow::OnSystem(const dtUtil::RefString& str, double /*deltaSim*/, double /*deltaReal*/)
 {
-   if (data->message == dtCore::System::MESSAGE_FRAME)
+   if (str == dtCore::System::MESSAGE_FRAME)
    {
       if (doubleBuffer())
       {

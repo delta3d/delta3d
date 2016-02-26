@@ -63,7 +63,6 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    ShaderParamOscillator::~ShaderParamOscillator()
    {
-      RemoveSender(&dtCore::System::GetInstance());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -86,7 +85,7 @@ namespace dtCore
          Update();
 
          // register for PreFrame
-         AddSender(&dtCore::System::GetInstance());
+         dtCore::System::GetInstance().TickSignal.connect_slot(this, &ShaderParamOscillator::OnSystem);
       }
 
       stateSet.addUniform(floatUniform);
@@ -174,9 +173,10 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderParamOscillator::OnMessage(MessageData *data)
+   void ShaderParamOscillator::OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
    {
-      if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
+      if (str == dtCore::System::MESSAGE_PRE_FRAME)
       {
          // If the oscillation needs to be 'triggered' to start,
          // only continue if it was already triggered.
@@ -188,9 +188,7 @@ namespace dtCore
          // If we have more cycles left, keep oscillating
          if (mCycleCountTotal == INFINITE_CYCLE || mCurrentCycleCount < mCycleCountTotal)
          {
-            // timeChange[0] is sim time, [1] is real
-            double* timeChange = (double*)data->userData;
-            (mUseRealTime) ? DoShaderUpdate(timeChange[1]): DoShaderUpdate(timeChange[0]);
+            (mUseRealTime) ? DoShaderUpdate(deltaSim): DoShaderUpdate(deltaReal);
          }
       }
    }

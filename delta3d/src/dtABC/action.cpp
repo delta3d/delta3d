@@ -14,13 +14,12 @@ Action::Action()
    , mIsRunning(false)
    , mTickOncePerFrame(false)
 {
-   AddSender(&dtCore::System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &Action::OnSystem);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 Action::~Action()
 {
-   RemoveSender(&dtCore::System::GetInstance());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -54,11 +53,11 @@ void Action::UnPause()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Action::OnMessage(MessageData* data)
+void Action::OnSystem(const dtUtil::RefString& str, double deltaSim, double)
 {
-   if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
+   if (str == dtCore::System::MESSAGE_PRE_FRAME)
    {
-      Update(*(double*)data->userData);
+      Update(deltaSim);
    }
 }
 

@@ -28,12 +28,14 @@ class BaseWrap : public Base
          : mSelf(self)
       {}
 
-      virtual void OnMessage(MessageData* data)
+      virtual void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
       {
          call_method<void>(mSelf, "OnMessage", data); 
       }
 
-      void DefaultOnMessage(MessageData* data)
+      void DefaultOnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
       {
          Base::OnMessage(data);
       }

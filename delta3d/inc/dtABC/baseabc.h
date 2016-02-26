@@ -154,10 +154,6 @@ namespace dtABC
        */      
       virtual void Pause(const double deltaRealTime) = 0;
 
-      /// Base override to receive messages.
-      /// This method should be called from derived classes
-      /// @param data the message to receive
-      virtual void OnMessage(MessageData* data);
 
       ///Create the basic instances
       virtual void CreateInstances();
@@ -169,6 +165,7 @@ namespace dtABC
       typedef std::vector<dtCore::RefPtr<dtCore::View> > ViewList;
       ViewList mViewList;
 
+      void OnSystem(const dtUtil::RefString& str, double, double);
    private:
       void KeyPressed(const dtCore::Keyboard* keyboard, int);        ///< private & unimplemented by design.
       void HandleKeyPressed(const dtCore::Keyboard* keyboard, int);  ///< private & unimplemented by design.

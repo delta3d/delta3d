@@ -84,10 +84,11 @@ float STAGERTSCameraMotionModel::GetGroundHeight() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void STAGERTSCameraMotionModel::OnMessage(MessageData *data)
+void STAGERTSCameraMotionModel::OnSystem(const dtUtil::RefString& str, double delta, double deltaReal)
+
 {
-   if(data->message != dtCore::System::MESSAGE_PRE_FRAME &&
-      data->message != dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL)
+   if(str != dtCore::System::MESSAGE_PRE_FRAME &&
+      str != dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL)
    {
       return;
    }
@@ -96,9 +97,6 @@ void STAGERTSCameraMotionModel::OnMessage(MessageData *data)
    {
       dtCore::Transform transform;
       mCamera->getDeltaCamera()->GetTransform(transform);
-
-      double *timeChange = (double *)data->userData;
-      double delta = timeChange[0];
 
       // Interpolate the distance.
       float travel = mDistance - mCurrentDistance;

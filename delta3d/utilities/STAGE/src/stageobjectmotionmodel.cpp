@@ -55,7 +55,8 @@ void STAGEObjectMotionModel::OnRightMouseReleased(void)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//void STAGEObjectMotionModel::OnMessage(MessageData *data)
+//void STAGEObjectMotionModel::OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
 //{
 //   // This function is overwritten to do nothing.
 //}
