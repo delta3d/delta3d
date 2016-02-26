@@ -51,6 +51,8 @@ namespace dtCore
     * subscribing to the System, Base derived objects can receive the System
     * messages "preframe", "frame", "postframe", and "configure".
     *
+    *@see #TickSignal for information on listening to the signals.
+    *
     * To enable fixed time stepping, you will need to set the rate to the rate you
     * want, the MaxTimeBetweenDraws to something like .1, and the use fixed time step
     * to true
@@ -168,7 +170,13 @@ namespace dtCore
 
    public:
 
-      // This signal sends the phase name, and delta sim time and delta real time.
+      /**
+       * To use this, make a function like
+       * OnSystem(const dtUtil::RefString&, double dtSim, double dtReal)
+       * connect it using
+       * dtCore::System::GetInstance().TickSignal.connect_slot(this, &MyClass::OnSystem);
+       * This signal sends the phase name, and delta sim time and delta real time.
+       */
       sigslot::signal3<const dtUtil::RefString&, double, double> TickSignal;
 
 
