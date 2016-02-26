@@ -62,7 +62,7 @@ namespace dtRender
       template<class T>
       bool operator()(T lightPtr)
       {
-         return lightPtr->GetLightId() == mId;
+         return lightPtr.valid() && lightPtr->GetLightId() == mId;
       }
    private:
 
@@ -74,7 +74,7 @@ namespace dtRender
       template<class T>
       bool operator()(T lightPtr)
       {
-         return lightPtr->GetDeleteMe();
+         return !lightPtr.valid() || lightPtr->GetDeleteMe();
       }
    };
 
@@ -85,16 +85,23 @@ namespace dtRender
 
       //todo- cache these operations for efficiency
       template<class T>
-      //bool operator()(T& pElement1, T& pElement2)
-      bool operator()(T pElement1, T pElement2)
+      bool operator()(T& pElement1, T& pElement2)
       {
-         osg::Vec3 vectElement1 = pElement1->GetLightPosition() - mViewPos;
-         osg::Vec3 vectElement2 = pElement2->GetLightPosition() - mViewPos;
+         if (pElement1.valid() && pElement2.valid())
+         {
+            osg::Vec3 vectElement1 = pElement1->GetLightPosition() - mViewPos;
+            osg::Vec3 vectElement2 = pElement2->GetLightPosition() - mViewPos;
 
-         float dist1 = dtUtil::Max(0.0f, vectElement1.length() - pElement1->GetRadius());
-         float dist2 = dtUtil::Max(0.0f, vectElement2.length() - pElement2->GetRadius());
+            float dist1 = dtUtil::Max(0.0f, vectElement1.length() - pElement1->GetRadius());
+            float dist2 = dtUtil::Max(0.0f, vectElement2.length() - pElement2->GetRadius());
 
-         return  dist1 < dist2;
+            return  dist1 < dist2;
+         }
+         else
+         {
+            //if the first element is valid it will be sorted to the front
+            return pElement1.valid();
+         }
       }
 
    private:
@@ -269,75 +276,84 @@ namespace dtRender
 
       for(;iter != endIter; ++iter)
       {
-         DynamicLight* dl = (*iter).get();
-
-         //this if check looks a little iffy but the control flow is used to allow the auto delete, max time, and fade out to all work together
-         //while the first component of the if is straight forward, the second component "(!dl->mDeleteAfterMaxTime && dl->mAutoDeleteLightOnTargetNull)"
-         //ensures that we do not fade out if are target is still valid but we DONT have a max time
-         if((dl->GetDeleteOnTargetIsNull() && dl->GetTarget() == NULL ) || (!dl->GetDeleteAfterMaxTime() && dl->GetDeleteOnTargetIsNull()))
+         if ((*iter).valid())
          {
-            if(dl->GetTarget() == NULL )
+            DynamicLight* dl = (*iter).get();
+
+            //this if check looks a little iffy but the control flow is used to allow the auto delete, max time, and fade out to all work together
+            //while the first component of the if is straight forward, the second component "(!dl->mDeleteAfterMaxTime && dl->mAutoDeleteLightOnTargetNull)"
+            //ensures that we do not fade out if are target is still valid but we DONT have a max time
+            if ((dl->GetDeleteOnTargetIsNull() && dl->GetTarget() == NULL) || (!dl->GetDeleteAfterMaxTime() && dl->GetDeleteOnTargetIsNull()))
             {
-               if(dl->GetFadeOut())
+               if (dl->GetTarget() == NULL)
                {
-                  //by setting this to false we will continue into a fade out
-                  dl->SetDeleteOnTargetIsNull(false);
-                  //by setting this one false we ensure we will begin fading out next frame
-                  dl->SetDeleteAfterMaxTime(false);
+                  if (dl->GetFadeOut())
+                  {
+                     //by setting this to false we will continue into a fade out
+                     dl->SetDeleteOnTargetIsNull(false);
+                     //by setting this one false we ensure we will begin fading out next frame
+                     dl->SetDeleteAfterMaxTime(false);
+                  }
+                  else
+                  {
+                     dl->SetDeleteMe(true);
+                     //std::cout << "Auto delete on NULL Ptr" << std::endl;
+                     continue;
+                  }
                }
-               else
+            }
+            else if (dl->GetDeleteAfterMaxTime())
+            {
+               dl->SetMaxTime(dl->GetMaxTime() - dt);
+
+               if (dl->GetMaxTime() <= 0.0f)
+               {
+                  if (dl->GetFadeOut())
+                  {
+                     //by setting this to false we will continue into a fade out
+                     dl->SetDeleteAfterMaxTime(false);
+                     //by setting this one false we ensure we will begin fading out next frame
+                     dl->SetDeleteOnTargetIsNull(false);
+                  }
+                  else
+                  {
+                     dl->SetDeleteMe(true);
+                     //std::cout << "Auto delete on Max Time" << std::endl;
+                     continue;
+                  }
+               }
+            }
+            else if (dl->GetFadeOut())
+            {
+               dl->SetIntensityMod(dl->GetIntensityMod() - (dt / dl->GetFadeOutTime()));
+               if (dl->GetIntensityMod() <= 0.0f)
                {
                   dl->SetDeleteMe(true);
-                  //std::cout << "Auto delete on NULL Ptr" << std::endl;
+                  //std::cout << "Auto delete on fade out" << std::endl;
                   continue;
                }
             }
-         }
-         else if(dl->GetDeleteAfterMaxTime())
-         {
-            dl->SetMaxTime(dl->GetMaxTime() - dt);
 
-            if(dl->GetMaxTime() <= 0.0f)
+            //apply different update effects
+            if (dl->GetFlicker())
             {
-               if(dl->GetFadeOut())
-               {
-                  //by setting this to false we will continue into a fade out
-                  dl->SetDeleteAfterMaxTime(false);
-                  //by setting this one false we ensure we will begin fading out next frame
-                  dl->SetDeleteOnTargetIsNull(false);
-               }
-               else
-               {
-                  dl->SetDeleteMe(true);
-                  //std::cout << "Auto delete on Max Time" << std::endl;
-                  continue;
-               }
+               //lets flicker the lights a little
+               static dtUtil::Noise1f perlinNoise;
+               float noiseValue = dl->GetFlickerScale() * perlinNoise.GetNoise(dt + dtUtil::RandFloat(0.0f, 10.0f));
+
+               //keep the intensity within range of the noise flicker
+               //TODO- don't assume an intensity of 1.0
+               if (dtUtil::Abs(1.0f - (dl->GetIntensityMod() + noiseValue)) > dl->GetFlickerScale()) noiseValue *= -1.0f;
+               dl->SetIntensityMod(dl->GetIntensityMod() + noiseValue);
+
+               //std::cout << "Intensity " << dl->mIntensity << std::endl;
             }
          }
-         else if(dl->GetFadeOut())
+         else
          {
-            dl->SetIntensityMod(dl->GetIntensityMod() - (dt / dl->GetFadeOutTime()));
-            if(dl->GetIntensityMod() <= 0.0f)
-            {
-               dl->SetDeleteMe(true);
-               //std::cout << "Auto delete on fade out" << std::endl;
-               continue;
-            }
-         }
-
-         //apply different update effects
-         if(dl->GetFlicker())
-         {
-            //lets flicker the lights a little
-            static dtUtil::Noise1f perlinNoise;
-            float noiseValue = dl->GetFlickerScale() * perlinNoise.GetNoise(dt + dtUtil::RandFloat(0.0f, 10.0f));
-
-            //keep the intensity within range of the noise flicker
-            //TODO- don't assume an intensity of 1.0
-            if(dtUtil::Abs(1.0f - (dl->GetIntensityMod() + noiseValue)) > dl->GetFlickerScale()) noiseValue *= -1.0f;
-            dl->SetIntensityMod(dl->GetIntensityMod() + noiseValue);
-
-            //std::cout << "Intensity " << dl->mIntensity << std::endl;
+            //dynamic light actor was deleted
+            LOG_ALWAYS("Erasing light because it is null");
+            iter = mLights.erase(iter);
          }
 
       }

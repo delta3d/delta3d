@@ -359,18 +359,18 @@ namespace dtRender
 
 
 
-   const dtGame::ActorComponent::ACType OptimzerActComp::TYPE(new dtCore::ActorType("OptimzerActComp", "ActorComponents",
-          "An actor component which runs the optimizer on the actors node.",
+   const dtGame::ActorComponent::ACType OptimizerActComp::TYPE(new dtCore::ActorType("OptimizerActComp", "ActorComponents",
+      "An actor component which can be placed on the scene to optimize the scene after loading a map, use different options to control the level of optimization.",
           dtGame::ActorComponent::BaseActorComponentType));
 
-   const dtUtil::RefString OptimzerActComp::PROPERTY_OPTIMIZER_COMP_NAME("Optimzer Actor Component Name");
+   const dtUtil::RefString OptimizerActComp::PROPERTY_OPTIMIZER_COMP_NAME("Optimzer Actor Component Name");
 
-   const dtUtil::RefString OptimzerActComp::INVOKABLE_MAP_LOADED("Map Loaded");
+   const dtUtil::RefString OptimizerActComp::INVOKABLE_MAP_LOADED("Map Loaded");
 
    
    /////////////////////////////////////////////////////////////////////////////
-   OptimzerActComp::OptimzerActComp()
-   : dtGame::ActorComponent(OptimzerActComp::TYPE)
+   OptimizerActComp::OptimizerActComp()
+   : dtGame::ActorComponent(OptimizerActComp::TYPE)
    , mSpatializeGroups(false)
    , mFlattenStaticTransforms(false)
    , mShareDuplicateState(false)
@@ -386,49 +386,49 @@ namespace dtRender
    {
    }
 
-   OptimzerActComp::~OptimzerActComp()
+   OptimizerActComp::~OptimizerActComp()
    {
       // Cleanup now happens in OnRemovedFromWorld.  It can't happen here because it's virtual.
    }
 
-   void OptimzerActComp::SetName(const dtUtil::RefString& n)
+   void OptimizerActComp::SetName(const dtUtil::RefString& n)
    {
       mName = n;
    }
 
-   const dtUtil::RefString& OptimzerActComp::GetName() const
+   const dtUtil::RefString& OptimizerActComp::GetName() const
    {
       return mName;
    }
 
    
-   void OptimzerActComp::OnEnteredWorld()
+   void OptimizerActComp::OnEnteredWorld()
    {
       BaseClass::OnEnteredWorld();
 
       RegisterForMapLoaded();
    }
 
-   void OptimzerActComp::OnRemovedFromWorld()
+   void OptimizerActComp::OnRemovedFromWorld()
    {
       CleanUp();
    }
 
-   void OptimzerActComp::CleanUp()
+   void OptimizerActComp::CleanUp()
    {
 
    }
 
-   void OptimzerActComp::OnAddedToActor(dtCore::BaseActorObject& actor)
+   void OptimizerActComp::OnAddedToActor(dtCore::BaseActorObject& actor)
    {
       
    }
 
-   void OptimzerActComp::OnRemovedFromActor(dtCore::BaseActorObject& actor)
+   void OptimizerActComp::OnRemovedFromActor(dtCore::BaseActorObject& actor)
    {
    }
 
-   void OptimzerActComp::Optimize()
+   void OptimizerActComp::Optimize()
    {
       dtGame::GameActorProxy* act = NULL;
       GetOwner(act);
@@ -511,14 +511,14 @@ namespace dtRender
       }
    }
      
-   void OptimzerActComp::BuildPropertyMap()
+   void OptimizerActComp::BuildPropertyMap()
    {
-      static const dtUtil::RefString GROUP("OptimzerActComp");
+      static const dtUtil::RefString GROUP("OptimizerActComp");
 
       dtGame::GameActorProxy* actor = NULL;
       GetOwner(actor);
 
-      typedef dtCore::PropertyRegHelper<dtCore::PropertyContainer&, OptimzerActComp> RegHelperType;
+      typedef dtCore::PropertyRegHelper<dtCore::PropertyContainer&, OptimizerActComp> RegHelperType;
       RegHelperType propReg(*actor, this, GROUP);
 
       DT_REGISTER_PROPERTY(SpatializeGroups, "Reorganizes the scene spatially for optimizing culling and traversal time.", RegHelperType, propReg);
@@ -541,7 +541,7 @@ namespace dtRender
 
 
    //////////////////////////////////////////////////////////////////////////
-   void OptimzerActComp::RegisterForMapLoaded()
+   void OptimizerActComp::RegisterForMapLoaded()
    {
       dtGame::GameActorProxy* owner = NULL;
       GetOwner(owner);
@@ -550,23 +550,23 @@ namespace dtRender
          std::string tickInvokable = "Map Loaded " + GetType()->GetFullName();
          if(!owner->GetInvokable(tickInvokable))
          {
-            owner->AddInvokable(*new dtGame::Invokable(tickInvokable, dtUtil::MakeFunctor(&OptimzerActComp::OnAddedMap, this)));
+            owner->AddInvokable(*new dtGame::Invokable(tickInvokable, dtUtil::MakeFunctor(&OptimizerActComp::OnAddedMap, this)));
          }
          owner->RegisterForMessages(dtGame::MessageType::INFO_MAP_CHANGE_LOAD_END, tickInvokable);
       }
    }
 
-   void OptimzerActComp::SetNameByString(const std::string& name)
+   void OptimizerActComp::SetNameByString(const std::string& name)
    {
       mName = name;
    }
 
-   const std::string& OptimzerActComp::GetNameAsString() const
+   const std::string& OptimizerActComp::GetNameAsString() const
    {
       return mName;
    }
 
-   void OptimzerActComp::OnAddedMap(const dtGame::Message&)
+   void OptimizerActComp::OnAddedMap(const dtGame::Message&)
    {
       Optimize();
    }

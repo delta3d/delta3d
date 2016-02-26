@@ -63,7 +63,7 @@ private:
    QPushButton*  mCalculateButton;
    QTreeWidget* mStatTable;
 
-   typedef std::map<std::string, dtCore::RefPtr<osg::Geode> > GeodeNodeMap;
+   typedef std::map<std::string, dtCore::ObserverPtr<osg::Geode> > GeodeNodeMap;
 
    void GetGeometryMetrics(dtCore::BaseActorObject* actor, unsigned int& outVerts, unsigned int& outPrimitives);
    void GetGeometryMetrics(GeodeNodeMap& nodeMap, unsigned int& outVerts, unsigned int& outPrimitives);
