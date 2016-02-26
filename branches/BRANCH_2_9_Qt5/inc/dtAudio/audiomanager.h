@@ -263,7 +263,9 @@ namespace dtAudio
        * handles the timeing messages (pre-post-frame) from the system
        * pushes sounds onto the command queue for later processing
        */
-      virtual void OnMessage(MessageData* data);
+      void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal);
+      void OnSoundCommand(const dtUtil::RefString& command, Sound* snd);
+
       /// create or recycle a new sound for the user
       Sound* NewSound();
 

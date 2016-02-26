@@ -40,14 +40,13 @@ namespace dtCore
       : dtCore::Base("ShaderManager")
    {
       Clear();
-      AddSender(&dtCore::System::GetInstance());
+      dtCore::System::GetInstance().TickSignal.connect_slot(this, &ShaderManager::OnSystem);
    }
 
    /////////////////////////////////////////////////////////////////////////////
    ShaderManager::~ShaderManager()
    {
       Clear();
-      RemoveSender(&dtCore::System::GetInstance());
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -102,12 +101,12 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void ShaderManager::OnMessage(dtCore::Base::MessageData* msgData)
+   void ShaderManager::OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
    {
-      if (msgData->message == dtCore::System::MESSAGE_PRE_FRAME)
+      if (str == dtCore::System::MESSAGE_PRE_FRAME)
       {
-         double *timeData = (double *)msgData->userData;
-         OnPreFrame(timeData[0],timeData[1]);
+         OnPreFrame(deltaSim, deltaReal);
       }
    }
 

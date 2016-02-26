@@ -60,7 +60,7 @@ CloudDome::CloudDome(int   octaves,
    SetOSGNode(new osg::Group());
    GetOSGNode()->setName(this->GetName());
    Create();
-   AddSender(&System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &CloudDome::OnSystem);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -100,14 +100,13 @@ CloudDome::CloudDome(float radius,
    GetOSGNode()->setName(this->GetName());
 
    Create();
-   AddSender(&System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &CloudDome::OnSystem);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 CloudDome::~CloudDome()
 {
    DeregisterInstance(this);
-   RemoveSender(&System::GetInstance());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -302,12 +301,12 @@ void CloudDome::Repaint(const osg::Vec3& skyColor,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void CloudDome::OnMessage(MessageData* data)
+void CloudDome::OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
 {
-   if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
+   if (str == dtCore::System::MESSAGE_PRE_FRAME)
    {
-      double deltaFrameTime = *static_cast<double*>(data->userData);
-      Update(deltaFrameTime);
+      Update(deltaSim);
    }
 }
 

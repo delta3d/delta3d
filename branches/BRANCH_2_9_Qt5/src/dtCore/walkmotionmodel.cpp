@@ -49,7 +49,7 @@ WalkMotionModel::WalkMotionModel(Keyboard* keyboard,
       SetDefaultMappings(keyboard, mouse);
    }
 
-   AddSender(&System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &WalkMotionModel::OnSystem);
 }
 
 /**
@@ -57,8 +57,6 @@ WalkMotionModel::WalkMotionModel(Keyboard* keyboard,
  */
 WalkMotionModel::~WalkMotionModel()
 {
-   RemoveSender(&System::GetInstance());
-
    DeregisterInstance(this);
 }
 
@@ -369,14 +367,13 @@ float WalkMotionModel::GetMaximumStepUpDistance()
  *
  * @param data the message data
  */
-void WalkMotionModel::OnMessage(MessageData* data)
+void WalkMotionModel::OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
 {
    if (GetTarget() != 0 &&
       IsEnabled() &&
-      data->message == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL/*MESSAGE_PRE_FRAME*/)
+      str == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL/*MESSAGE_PRE_FRAME*/)
    {
-      double dtCore = *static_cast<double*>(data->userData);
-
       Transform transform;
 
       GetTarget()->GetTransform(transform);
@@ -387,7 +384,7 @@ void WalkMotionModel::OnMessage(MessageData* data)
 
       if (mTurnLeftRightAxis != 0)
       {
-         hpr[0] -= float(mTurnLeftRightAxis->GetState() * mMaximumTurnSpeed * dtCore);
+         hpr[0] -= float(mTurnLeftRightAxis->GetState() * mMaximumTurnSpeed * deltaSim);
       }
 
       hpr[1] = 0.0f;
@@ -399,12 +396,12 @@ void WalkMotionModel::OnMessage(MessageData* data)
 
       if (mWalkForwardBackwardAxis != 0)
       {
-         translation[1] = float(mWalkForwardBackwardAxis->GetState() * mMaximumWalkSpeed * dtCore);
+         translation[1] = float(mWalkForwardBackwardAxis->GetState() * mMaximumWalkSpeed * deltaSim);
       }
 
       if (mSidestepLeftRightAxis != 0)
       {
-         translation[0] = float(mSidestepLeftRightAxis->GetState() * mMaximumSidestepSpeed * dtCore);
+         translation[0] = float(mSidestepLeftRightAxis->GetState() * mMaximumSidestepSpeed * deltaSim);
       }
 
       osg::Matrix mat;
@@ -446,9 +443,9 @@ void WalkMotionModel::OnMessage(MessageData* data)
          }
          else if (xyz[2] > height)
          {
-            xyz[2] -= float(mDownwardSpeed * dtCore);
+            xyz[2] -= float(mDownwardSpeed * deltaSim);
 
-            mDownwardSpeed += float(9.8 * dtCore);
+            mDownwardSpeed += float(9.8 * deltaSim);
          }
       }
 

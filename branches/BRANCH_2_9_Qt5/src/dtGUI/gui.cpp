@@ -268,7 +268,7 @@ GUI::GUI(dtCore::Camera* camera,
    mMouseListener    = new CEGUIMouseListener();
    mKeyboardListener = new CEGUIKeyboardListener();
 
-   AddSender(&dtCore::System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &GUI::OnSystem);
    RegisterInstance(this);
 
    _SetupInternalGraph();
@@ -284,8 +284,6 @@ GUI::GUI(dtCore::Camera* camera,
 ////////////////////////////////////////////////////////////////////////////////
 GUI::~GUI()
 {
-   RemoveSender(&dtCore::System::GetInstance());
-
    if (mCamera.valid() && mInternalGraph.valid())
    {
       mCamera->GetOSGCamera()->removeChild(mInternalGraph.get());
@@ -613,16 +611,16 @@ Widget* GUI::CreateWidget(const std::string& typeName, const std::string& name)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void GUI::OnMessage(dtCore::Base::MessageData *data)
+void GUI::OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
 {
-   if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
+   if (str == dtCore::System::MESSAGE_PRE_FRAME)
    {
       // deltaTime[0] is simulated time, [1] is real frame rate time
-      const double* deltaTime = static_cast<const double*>(data->userData);
 
-      CEGUI::System::getSingletonPtr()->injectTimePulse(static_cast<float>(deltaTime[1]));
+      CEGUI::System::getSingletonPtr()->injectTimePulse(static_cast<float>(deltaReal));
 
-      UpdateTasks((float)*deltaTime);
+      UpdateTasks((float)deltaSim);
    }
 }
 

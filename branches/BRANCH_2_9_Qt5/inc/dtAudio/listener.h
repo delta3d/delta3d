@@ -120,7 +120,8 @@ namespace dtAudio
          /**
           * Calls update from the old OnMessage update queue
           */
-         virtual void OnMessage(MessageData* data);
+         virtual void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+;
 
          /// clean up listener
          void Clear(void);

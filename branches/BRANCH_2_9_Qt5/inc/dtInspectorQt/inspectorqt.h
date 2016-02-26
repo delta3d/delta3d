@@ -37,7 +37,7 @@ namespace dtInspectorQt
    public:
    	InspectorQt(int& argc, char** argv);
 
-      virtual void OnMessage(MessageData*);
+      void OnSystem(const dtUtil::RefString& phase, double dtSim, double dtReal);
 
       void AddCustomView(IView* customView);
       void Show();

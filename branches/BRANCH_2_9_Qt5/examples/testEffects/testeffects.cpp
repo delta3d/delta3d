@@ -52,19 +52,20 @@ public:
       , mCameraHeading(0.0f)
       , mCameraPitch(0.0f)
    {
-      AddSender(&dtCore::System::GetInstance());
+      dtCore::System::GetInstance().TickSignal.connect_slot(this, &Updater::OnSystem);
    }
 
-   virtual void OnMessage(MessageData* data)
+   virtual void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
    {
-      if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
+      if (str == dtCore::System::MESSAGE_PRE_FRAME)
       {
          if (mKeyboard->GetKeyState(osgGA::GUIEventAdapter::KEY_Escape))
          {
             System::GetInstance().Stop();
          }
 
-         const double delta = *static_cast<const double*>(data->userData);
+         const double delta = deltaSim;
 
          float value = float(rand()) / RAND_MAX;
 

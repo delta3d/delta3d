@@ -259,7 +259,8 @@ namespace dtCore
        *
        * @param[in] data  The message data
        */
-      void OnMessage(MessageData* data);
+      void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+;
 
       /**
        * Updates the motion model.

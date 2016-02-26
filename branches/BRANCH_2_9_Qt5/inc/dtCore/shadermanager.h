@@ -317,10 +317,10 @@ namespace dtCore
          void ReloadAndReassignShaderDefinitions();
 
          /**
-          * Called when a message is sent from one of this classes message signalers.
-          * @param msgData Data pertaining to the particular message sent.
+          * Called when system sends out update data.
           */
-         void OnMessage(dtCore::Base::MessageData* msgData);
+         void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+;
 
          /**
           * Attempts to find an active shader instance for this node. Active shaders are 

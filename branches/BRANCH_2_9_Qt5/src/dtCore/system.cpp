@@ -197,12 +197,6 @@ namespace dtCore
       ///One System frame
       void SystemStep(float realDt = 0.0f);
 
-      /// A passthough hack so impl methods can send messages
-      void SendMessage(const std::string& message = "", void* data = NULL)
-      {
-         System::GetInstance().SendMessage(message, data);
-      }
-
       dtCore::Timer mTickClock;
       dtCore::Timer_t mTimerStart;
       dtCore::ObserverPtr<osg::Stats> mStats;
@@ -431,11 +425,11 @@ namespace dtCore
 
       if (mSystemImpl->mPaused)
       {
-         SendMessage(MESSAGE_PAUSE_START);
+         TickSignal.emit_signal(System::MESSAGE_PAUSE_START, 0.0, 0.0);
       }
       else
       {
-         SendMessage(MESSAGE_PAUSE_END);
+         TickSignal.emit_signal(System::MESSAGE_PAUSE_END, 0.0, 0.0);
       }
    }
 
@@ -461,7 +455,7 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    void SystemImpl::Pause(const double deltaRealTime)
    {
-      SendMessage(System::MESSAGE_PAUSE, const_cast<double*>(&deltaRealTime));
+      System::GetInstance().TickSignal.emit_signal(System::MESSAGE_PAUSE, 0.0, deltaRealTime);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -632,7 +626,7 @@ namespace dtCore
       }
 
       LOG_DEBUG("System: Exiting...");
-      SendMessage(MESSAGE_EXIT);
+      TickSignal.emit_signal(MESSAGE_EXIT, 0.0, 0.0);
       LOG_DEBUG("System: Done Exiting.");
    }
 
@@ -682,8 +676,7 @@ namespace dtCore
       {
          StartStatTimer();
 
-         double userData[2] = { deltaSimTime, deltaRealTime };
-         SendMessage(System::MESSAGE_EVENT_TRAVERSAL, userData);
+         System::GetInstance().TickSignal.emit_signal(System::MESSAGE_EVENT_TRAVERSAL, deltaSimTime, deltaRealTime);
 
          EndStatTimer(System::MESSAGE_EVENT_TRAVERSAL, System::STAGE_EVENT_TRAVERSAL);
       }
@@ -696,8 +689,7 @@ namespace dtCore
       {
          StartStatTimer();
 
-         double userData[2] = { deltaSimTime, deltaRealTime };
-         SendMessage(System::MESSAGE_POST_EVENT_TRAVERSAL, userData);
+         System::GetInstance().TickSignal.emit_signal(System::MESSAGE_POST_EVENT_TRAVERSAL, deltaSimTime, deltaRealTime);
 
          EndStatTimer(System::MESSAGE_POST_EVENT_TRAVERSAL, System::STAGE_POST_EVENT_TRAVERSAL);
       }
@@ -710,8 +702,7 @@ namespace dtCore
       {
          StartStatTimer();
 
-         double userData[2] = { deltaSimTime, deltaRealTime };
-         SendMessage(System::MESSAGE_PRE_FRAME, userData);
+         System::GetInstance().TickSignal.emit_signal(System::MESSAGE_PRE_FRAME, deltaSimTime, deltaRealTime);
 
          EndStatTimer(System::MESSAGE_PRE_FRAME, System::STAGE_PREFRAME);
       }
@@ -724,8 +715,7 @@ namespace dtCore
       {
          StartStatTimer();
 
-         double userData[2] = { deltaSimTime, deltaRealTime };
-         SendMessage(System::MESSAGE_FRAME_SYNCH, userData);
+         System::GetInstance().TickSignal.emit_signal(System::MESSAGE_FRAME_SYNCH, deltaSimTime, deltaRealTime);
 
          EndStatTimer(System::MESSAGE_FRAME_SYNCH, System::STAGE_FRAME_SYNCH);
       }
@@ -738,8 +728,7 @@ namespace dtCore
       {
          StartStatTimer();
 
-         double userData[2] = { deltaSimTime, deltaRealTime };
-         SendMessage(System::MESSAGE_CAMERA_SYNCH, userData);
+         System::GetInstance().TickSignal.emit_signal(System::MESSAGE_CAMERA_SYNCH, deltaSimTime, deltaRealTime);
 
          EndStatTimer(System::MESSAGE_CAMERA_SYNCH, System::STAGE_CAMERA_SYNCH);
       }
@@ -752,8 +741,7 @@ namespace dtCore
       {
          StartStatTimer();
 
-         double userData[2] = { deltaSimTime, deltaRealTime };
-         SendMessage(System::MESSAGE_FRAME, userData );
+         System::GetInstance().TickSignal.emit_signal(System::MESSAGE_FRAME, deltaSimTime, deltaRealTime);
 
          EndStatTimer(System::MESSAGE_FRAME, System::STAGE_FRAME);
       }
@@ -766,8 +754,7 @@ namespace dtCore
       {
          StartStatTimer();
 
-         double userData[2] = { deltaSimTime, deltaRealTime };
-         SendMessage(System::MESSAGE_POST_FRAME, userData);
+         System::GetInstance().TickSignal.emit_signal(System::MESSAGE_POST_FRAME, deltaSimTime, deltaRealTime);
 
          EndStatTimer(System::MESSAGE_POST_FRAME, System::STAGE_POSTFRAME);
       }
@@ -778,7 +765,7 @@ namespace dtCore
    {
       if (dtUtil::Bits::Has(mSystemImpl->mSystemStages, System::STAGE_CONFIG))
       {
-         SendMessage(System::MESSAGE_CONFIG);
+         System::GetInstance().TickSignal.emit_signal(System::MESSAGE_CONFIG, 0.0, 0.0);
       }
    }
 

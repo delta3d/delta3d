@@ -99,12 +99,12 @@ namespace dtPhysics
    }
 
    ///////////////////////////////////////////////////////////////////////////
-   void CharacterMotionModel::OnMessage(MessageData* data)
+   void CharacterMotionModel::OnSystem(const dtUtil::RefString& str, double deltaSim, double /*deltaReal*/)
+
    {
-      if (data->message == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL)
+      if (str == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL)
       {
-         double deltaFrameTime = static_cast<const double*>(data->userData)[0];
-         TickMotionModel(deltaFrameTime);
+         TickMotionModel(deltaSim);
       }
    }
 

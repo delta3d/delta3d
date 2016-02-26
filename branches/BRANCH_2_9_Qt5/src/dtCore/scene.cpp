@@ -73,7 +73,6 @@ Scene::~Scene()
 
    DeregisterInstance(this);
 
-   RemoveSender(&System::GetInstance());
    delete mImpl;
    mImpl = NULL;
 }
@@ -113,7 +112,7 @@ void Scene::Ctor()
    AddChild(skyLight);
    skyLight->SetEnabled(true);
 
-   AddSender(&System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &Scene::OnSystem);
 
    // TODO set default render face, mode
 }
@@ -419,9 +418,9 @@ bool Scene::GetHeightOfTerrain(float& heightOfTerrain, float x, float y, float m
 
 /////////////////////////////////////////////
 // Performs collision detection and updates physics
-void Scene::OnMessage(MessageData* data)
+void Scene::OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
 {
-   if (data->message == dtCore::System::MESSAGE_EXIT)
+   if (str == dtCore::System::MESSAGE_EXIT)
    {
       RemoveAllDrawables();
    }

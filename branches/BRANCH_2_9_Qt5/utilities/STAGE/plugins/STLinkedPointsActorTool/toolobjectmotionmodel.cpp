@@ -68,7 +68,8 @@ void ToolObjectMotionModel::OnRightMouseReleased(void)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ToolObjectMotionModel::OnMessage(MessageData *data)
+void ToolObjectMotionModel::OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
 {
    // This function is overritten to do nothing.
 }

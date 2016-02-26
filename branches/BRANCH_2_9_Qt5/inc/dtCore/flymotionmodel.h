@@ -245,10 +245,11 @@ namespace dtCore
           *
           * @param data the message data
           */
-         virtual void OnMessage(MessageData* data);
+         virtual void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+;
 
       protected:
-         double GetTimeDelta(const MessageData* data) const;
+         double GetTimeDelta(double dtSim, double dtReal) const;
          osg::Vec3 Rotate(const osg::Vec3& hpr, double delta, bool& changed) const;
          osg::Vec3 Translate(const osg::Vec3& xyz, double delta, bool& changed) const;
 

@@ -155,7 +155,8 @@ namespace dtCore
       public:
 
          ///Performs collision detection and updates physics
-         virtual void OnMessage(MessageData* data);
+         virtual void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+;
 
          ///Load a file from disk
          virtual osg::Node* LoadFile( const std::string& filename, bool useCache = true);

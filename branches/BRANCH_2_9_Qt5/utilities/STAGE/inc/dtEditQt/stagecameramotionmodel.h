@@ -86,7 +86,8 @@ namespace dtEditQt
       *
       * @param[in] data  The message data
       */
-      virtual void OnMessage(MessageData* data);
+      virtual void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+;
 
       /**
       * Event handler when the left mouse button is pressed.

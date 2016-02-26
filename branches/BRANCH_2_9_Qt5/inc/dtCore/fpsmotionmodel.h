@@ -311,7 +311,7 @@ namespace dtCore
        *
        * @param data the message data
        */
-      virtual void OnMessage(MessageData* data);
+      virtual void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal);
 
       /**
        * Sets having to use the mouse buttons to move the camera
