@@ -45,7 +45,8 @@ public:
    /**
     *  Filters out preframe events
     */
-   void OnMessage(MessageData* data);
+   void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+;
 
    void Update(double dt);
 

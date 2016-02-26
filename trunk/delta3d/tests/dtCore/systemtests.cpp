@@ -98,12 +98,11 @@ public:
       m_TimeTwo = 0;
 
       ResetState();
-      AddSender(&System::GetInstance());
+      dtCore::System::GetInstance().TickSignal.connect_slot(this, &DummyDrawable::OnSystem);
    }
 
    ~DummyDrawable()
    {
-      RemoveSender(&System::GetInstance());
    }
 
    const osg::Node* GetOSGNode() const
@@ -147,64 +146,63 @@ public:
       mCounter = 0;
    }
 
-   void OnMessage(dtCore::Base::MessageData* data)
+   void OnSystem(const dtUtil::RefString& str, double dtSim, double dtReal)
+
    {
-      if (data->message == dtCore::System::MESSAGE_EVENT_TRAVERSAL)
+      if (str == dtCore::System::MESSAGE_EVENT_TRAVERSAL)
       {
          mEventTraversalCalled = true;
          mEventTraversalOrder = mCounter++;
       }
-      else if (data->message == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL)
+      else if (str == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL)
       {
          mPostEventTraversalCalled = true;
          mPostEventTraversalOrder = mCounter++;
       }
-      else if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
+      else if (str == dtCore::System::MESSAGE_PRE_FRAME)
       {
          mPreframeCalled = true;
-         double userData[2] = {0.0,0.0};
-         memcpy(userData, data->userData, sizeof(double) * 2);
-         m_TimeOne = userData[0];
-         m_TimeTwo = userData[1];
+         m_TimeOne = dtSim;
+         m_TimeTwo = dtReal;
 
          mPreframeOrder = mCounter++;
       }
-      else if (data->message == dtCore::System::MESSAGE_CAMERA_SYNCH)
+      else if (str == dtCore::System::MESSAGE_CAMERA_SYNCH)
       {
          mCameraSynchCalled = true;
          mCameraSynchOrder = mCounter++;
       }
-      else if (data->message == dtCore::System::MESSAGE_FRAME_SYNCH)
+      else if (str == dtCore::System::MESSAGE_FRAME_SYNCH)
       {
          mFrameSynchCalled = true;
          mFrameSynchOrder = mCounter++;
       }
-      else if (data->message == dtCore::System::MESSAGE_FRAME)
+      else if (str == dtCore::System::MESSAGE_FRAME)
       {
          mFrameCalled = true;
          mFrameOrder = mCounter++;
       }
-      else if (data->message == dtCore::System::MESSAGE_POST_FRAME)
+      else if (str == dtCore::System::MESSAGE_POST_FRAME)
       {
          mPostFrameCalled = true;
          mPostFrameOrder = mCounter++;
       }
-      else if (data->message == dtCore::System::MESSAGE_PAUSE_START)
+      else if (str == dtCore::System::MESSAGE_PAUSE_START)
       {
          mPauseStartCalled = true;
          mPauseStartOrder = mCounter++;
       }
-      else if (data->message == dtCore::System::MESSAGE_PAUSE_END)
+      else if (str == dtCore::System::MESSAGE_PAUSE_END)
       {
          mPauseEndCalled = true;
          mPauseEndOrder = mCounter++;
       }
-      else if (data->message == dtCore::System::MESSAGE_PAUSE)
+      else if (str == dtCore::System::MESSAGE_PAUSE)
       {
          mPauseCalled = true;
          mPauseOrder = mCounter++;
       }
-      else if (data->message == dtCore::System::MESSAGE_CONFIG)
+      else if (str == dtCore::System::MESSAGE_CONFIG)
       {
          mConfigCalled = true;
          mConfigOrder = mCounter++;

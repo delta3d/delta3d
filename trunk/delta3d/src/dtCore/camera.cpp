@@ -77,7 +77,7 @@ namespace dtCore
       RegisterInstance(this);
 
       System* sys = &dtCore::System::GetInstance();
-      AddSender(sys);
+      dtCore::System::GetInstance().TickSignal.connect_slot(this, &Camera::OnSystem);
 
       SetClearColor(0.2f, 0.2f, 0.6f, 1.0f);
    }
@@ -111,7 +111,6 @@ namespace dtCore
    Camera::~Camera()
    {
       DeregisterInstance(this);
-      RemoveSender(&dtCore::System::GetInstance());
 
       if (mCallbackContainer.valid())
       {
@@ -197,12 +196,13 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Camera::OnMessage(MessageData* data)
+   void Camera::OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
    {
 
-      if (data->message == dtCore::System::MESSAGE_CAMERA_SYNCH)
+      if (str == dtCore::System::MESSAGE_CAMERA_SYNCH)
       {
-         CameraSynch(*static_cast<const double*>(data->userData));
+         CameraSynch(deltaSim);
       }
    }
 

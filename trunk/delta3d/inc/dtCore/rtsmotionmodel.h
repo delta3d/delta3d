@@ -67,7 +67,8 @@ namespace dtCore
        *
        * @param data the message data
        */
-      virtual void OnMessage(MessageData* data);
+      virtual void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+;
 
       void SetTerrain(dtCore::DeltaDrawable* terrain) { mTerrainDrawable = terrain; }
 

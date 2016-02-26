@@ -29,9 +29,7 @@ BaseABC::BaseABC(const std::string& name /*= "BaseABC"*/)
 {
    RegisterInstance(this);
 
-   System* sys = &dtCore::System::GetInstance();
-   assert(sys);
-   AddSender(sys);
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &BaseABC::OnSystem);
    CreateDefaultView();
 }
 
@@ -39,7 +37,6 @@ BaseABC::BaseABC(const std::string& name /*= "BaseABC"*/)
 BaseABC::~BaseABC()
 {
    DeregisterInstance(this);
-   RemoveSender(&dtCore::System::GetInstance());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -101,27 +98,27 @@ void BaseABC::RemoveDrawable(DeltaDrawable* obj)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void BaseABC::OnMessage(MessageData* data)
+void BaseABC::OnSystem(const dtUtil::RefString& str, double deltaSim, double)
 {
-   if (data->message == dtCore::System::MESSAGE_EVENT_TRAVERSAL)
+   if (str == dtCore::System::MESSAGE_EVENT_TRAVERSAL)
    {
-      EventTraversal(*static_cast<const double*>(data->userData));
+      EventTraversal(deltaSim);
    }
-   else if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
+   else if (str == dtCore::System::MESSAGE_PRE_FRAME)
    {
-      PreFrame(*static_cast<const double*>(data->userData));
+      PreFrame(deltaSim);
    }
-   else if (data->message == dtCore::System::MESSAGE_FRAME)
+   else if (str == dtCore::System::MESSAGE_FRAME)
    {
-      Frame(*static_cast<const double*>(data->userData));
+      Frame(deltaSim);
    }
-   else if (data->message == dtCore::System::MESSAGE_POST_FRAME)
+   else if (str == dtCore::System::MESSAGE_POST_FRAME)
    {
-      PostFrame(*static_cast<const double*>(data->userData));
+      PostFrame(deltaSim);
    }
-   else if (data->message == dtCore::System::MESSAGE_PAUSE)
+   else if (str == dtCore::System::MESSAGE_PAUSE)
    {
-      Pause(*static_cast<const double*>(data->userData));
+      Pause(deltaSim);
    }
 }
 

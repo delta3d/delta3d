@@ -144,7 +144,7 @@ Environment::Environment(const std::string& name)
 
    Update(999.99);
 
-   AddSender(&System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &Environment::OnSystem);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -174,7 +174,7 @@ Environment::~Environment()
    delete mSunlightShader;
    delete mSkyDomeShader;
 
-   RemoveSender(&System::GetInstance());
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -287,14 +287,14 @@ void Environment::RemoveChild(DeltaDrawable* child)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Environment::OnMessage(MessageData* data)
+void Environment::OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
 {
-   if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
+   if (str == dtCore::System::MESSAGE_PRE_FRAME)
    {
-      double deltaFrameTime = *static_cast<double*>(data->userData);
-      Update(deltaFrameTime);
+      Update(deltaSim);
    }
-   else if (data->message == dtCore::System::MESSAGE_POST_FRAME)
+   else if (str == dtCore::System::MESSAGE_POST_FRAME)
    {
       // remove any EnvEffects that need removing
       if (mToBeRemoved.size() > 0)
@@ -302,7 +302,7 @@ void Environment::OnMessage(MessageData* data)
          RemoveEffectCache();
       }
    }
-   else if (data->message == dtCore::System::MESSAGE_EXIT)
+   else if (str == dtCore::System::MESSAGE_EXIT)
    {
       // time to get rid of any added children
       while (GetNumChildren() > 0)

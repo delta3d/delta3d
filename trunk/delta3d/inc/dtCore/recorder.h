@@ -87,7 +87,7 @@ namespace dtCore
         */
       Recorder(const std::string& name = "recorder"): Base(name), mState(Stopped)
       {
-         AddSender( &System::GetInstance() );
+         dtCore::System::GetInstance().TickSignal.connect_slot(this, &Recorder::OnSystem);
       }
 
    protected:
@@ -96,7 +96,6 @@ namespace dtCore
         */
       virtual ~Recorder()
       {
-         RemoveSender( &System::GetInstance() );
       }
 
    public:
@@ -299,13 +298,14 @@ namespace dtCore
         *
         * @param data the received message
         */
-      virtual void OnMessage(dtCore::Base::MessageData *data)
+      virtual void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
       {
          switch (mState)
          {
          case Recording:
             {
-               if (data->message == dtCore::System::MESSAGE_POST_FRAME)
+               if (str == dtCore::System::MESSAGE_POST_FRAME)
                {
                   mDeltaTime = mClock.Tick();
                   double timeCode = mClock.DeltaSec(mStartTime, mDeltaTime);
@@ -327,7 +327,7 @@ namespace dtCore
             // for now, this just plays a frame-by-frame playback, no time stamp interpolation for FrameData
          case Playing:
             {
-               if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
+               if (str == dtCore::System::MESSAGE_PRE_FRAME)
                {
                   if (mKeyFrameIter != mKeyFrames.end())
                   {

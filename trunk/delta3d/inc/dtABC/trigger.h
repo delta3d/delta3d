@@ -40,7 +40,8 @@ namespace dtABC
       virtual ~Trigger();
    public:
 
-      virtual void OnMessage(dtCore::Base::MessageData* data);
+      virtual void OnSystem(const dtUtil::RefString& str, double, double)
+;
 
       void SetEnabled(bool enabled) { mEnabled = enabled; }
       bool GetEnabled() const { return mEnabled; }

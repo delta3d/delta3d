@@ -314,10 +314,7 @@ namespace dtCore
       ///Override for CameraSynch
       virtual void CameraSynch(const double deltaFrameTime);
 
-      /// Base override to receive messages.
-      /// This method should be called from derived classes
-      /// @param data the message to receive
-      virtual void OnMessage(MessageData* data);
+      virtual void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal);
 
       /// Call all of the static frame sync callbacks using this camera.
       void CallCameraSyncCallbacks();

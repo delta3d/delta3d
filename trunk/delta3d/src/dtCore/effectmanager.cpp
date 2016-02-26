@@ -102,14 +102,13 @@ namespace dtCore
    {
       RegisterInstance(this);
       mGroup = new osg::Group;
-      AddSender(&System::GetInstance());
+      dtCore::System::GetInstance().TickSignal.connect_slot(this, &EffectManager::OnSystem);;
    }
 
    /////////////////////////////////////////////////////////////////////////////
    EffectManager::~EffectManager()
    {
       DeregisterInstance(this);
-      RemoveSender(&System::GetInstance());
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -349,11 +348,11 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void EffectManager::OnMessage(MessageData* data)
+   void EffectManager::OnSystem(const dtUtil::RefString& str, double delta, double deltaReal)
+
    {
-      if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
+      if (str == dtCore::System::MESSAGE_PRE_FRAME)
       {
-         const double delta = *static_cast<const double*>(data->userData);
 
          if(mLastTime != 0)
          {

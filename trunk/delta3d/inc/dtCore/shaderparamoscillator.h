@@ -298,7 +298,8 @@ namespace dtCore
           * @param The data from the message
           * @see dtCore::Base
           */
-         virtual void OnMessage(MessageData* data);
+         virtual void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+;
 
          /**
           * Triggers the oscillation to begin if the trigger type is 'manual'

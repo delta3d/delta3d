@@ -23,7 +23,8 @@ TriggerVolumeActor::TriggerVolumeActor(dtActors::TriggerVolumeActorProxy& proxy,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void TriggerVolumeActor::OnMessage(dtCore::Base::MessageData* /*data*/)
+void TriggerVolumeActor::OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
 {
    // Do not send events in STAGE.
    if (IsGameActorProxyValid() && GetGameActorProxy().IsInSTAGE())
@@ -148,7 +149,7 @@ void dtActors::TriggerVolumeActor::AddedToScene(dtCore::Scene* scene)
 {
    if (scene)
    {
-      AddSender(scene);
+      //AddSender(scene);
    }
 
    dtGame::GameActor::AddedToScene(scene);
@@ -159,7 +160,7 @@ void dtActors::TriggerVolumeActor::RemovedFromScene(dtCore::Scene* scene)
 {
    if (scene)
    {
-      RemoveSender(scene);
+      //RemoveSender(scene);
    }
 
    dtGame::GameActor::RemovedFromScene(scene);

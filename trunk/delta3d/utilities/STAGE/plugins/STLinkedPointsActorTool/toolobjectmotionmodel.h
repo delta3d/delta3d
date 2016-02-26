@@ -99,7 +99,8 @@ class ToolObjectMotionModel : public dtCore::ObjectMotionModel
       *
       * @param[in] data  The message data
       */
-      void OnMessage(MessageData* data);
+      void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+;
 
       /**
       * Resets the GetMouseLine callback function.

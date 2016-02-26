@@ -207,7 +207,8 @@ namespace dtAudio
        *
        * @param data the message received by this object
        */
-      virtual void OnMessage(MessageData* data);
+      virtual void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+;
 
       /**
        * Called when an effect is added to the manager.

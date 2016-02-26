@@ -84,7 +84,7 @@ CEUIDrawable::CEUIDrawable(dtCore::DeltaWin* win,
    DEPRECATE("dtGUI::CEUIDrawable",
              "dtGUI::GUI");
 
-   AddSender(&dtCore::System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &Action::OnSystem);
 
    RegisterInstance(this);
    
@@ -118,7 +118,7 @@ DEPRECATE_FUNC dtGUI::CEUIDrawable::CEUIDrawable(dtCore::DeltaWin* win,
 {
    DEPRECATE("dtGUI::CEUIDrawable",
              "dtGUI::GUI");
-   AddSender(&dtCore::System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &Action::OnSystem);
 
    RegisterInstance(this);
 
@@ -131,7 +131,8 @@ DEPRECATE_FUNC dtGUI::CEUIDrawable::CEUIDrawable(dtCore::DeltaWin* win,
 ////////////////////////////////////////////////////////////////////////////////
 CEUIDrawable::~CEUIDrawable()
 {
-   RemoveSender(&dtCore::System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.disconnect(this);
+
    DeregisterInstance(this);
    
    SetOSGNode(NULL);
@@ -309,9 +310,10 @@ void CEUIDrawable::DisplayProperties(CEGUI::Window* window, bool onlyNonDefault)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void CEUIDrawable::OnMessage(dtCore::Base::MessageData* data)
+void CEUIDrawable::OnSystem(const dtUtil::RefString& str, double, double)
+
 {
-   if(data->message == dtCore::System::MESSAGE_PRE_FRAME)
+   if(str == dtCore::System::MESSAGE_PRE_FRAME)
    {  
       if ((GetAutoResizing() == true) && (mWindow.valid()))
       {

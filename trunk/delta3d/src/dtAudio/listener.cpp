@@ -71,7 +71,7 @@ Listener::Listener()
 
    Clear();
 
-   AddSender(&dtCore::System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &Listener::OnSystem);
 
    RegisterInstance(this);
 }
@@ -79,7 +79,8 @@ Listener::Listener()
 ////////////////////////////////////////////////////////////////////////////////
 Listener::~Listener()
 {
-   RemoveSender(&dtCore::System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.disconnect(this);
+
    DeregisterInstance(this);
 }
 
@@ -188,12 +189,12 @@ void Listener::Update()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Listener::OnMessage(MessageData* data)
+void Listener::OnSystem(const dtUtil::RefString& str, double /*deltaSim*/, double /*deltaReal*/)
+
 {
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-   assert(data);
 
-   if(data->message == dtCore::System::MESSAGE_FRAME)
+   if(str == dtCore::System::MESSAGE_FRAME)
    {
       Update();
    }

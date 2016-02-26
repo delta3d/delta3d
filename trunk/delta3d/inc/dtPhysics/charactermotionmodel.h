@@ -53,7 +53,8 @@ namespace dtPhysics
                );
 
       /// Override of base method used to update the target
-      virtual void OnMessage(MessageData* data);
+      virtual void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+;
 
       void ResetMouse();
 

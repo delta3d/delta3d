@@ -63,7 +63,7 @@ CloudPlane::CloudPlane(int   octaves,
    GetOSGNode()->setNodeMask(dtUtil::NodeMask::BACKGROUND);
 
    Create(textureFilePath);
-   AddSender(&System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &CloudPlane::OnSystem);
 
 }
 
@@ -96,14 +96,13 @@ CloudPlane::CloudPlane(float height, const std::string& name, const std::string&
    GetOSGNode()->setNodeMask(dtUtil::NodeMask::BACKGROUND);
 
    Create(textureFilePath);
-   AddSender(&System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &CloudPlane::OnSystem);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 CloudPlane::~CloudPlane()
 {
    DeregisterInstance(this);
-   RemoveSender(&System::GetInstance());
 }
 
 
@@ -308,12 +307,12 @@ void CloudPlane::Repaint(const osg::Vec3& skyColor,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void CloudPlane::OnMessage(MessageData* data)
+void CloudPlane::OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
 {
-   if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
+   if (str == dtCore::System::MESSAGE_PRE_FRAME)
    {
-      double *deltaFrameTime = (double*)data->userData;
-      Update(*deltaFrameTime);
+      Update(deltaSim);
    }
 }
 

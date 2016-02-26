@@ -58,7 +58,7 @@ FlyMotionModel::FlyMotionModel(Keyboard* keyboard, Mouse* mouse, unsigned int op
       SetDefaultMappings(keyboard, mouse);
    }
 
-   AddSender(&System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &FlyMotionModel::OnSystem);
 }
 
 /**
@@ -66,8 +66,6 @@ FlyMotionModel::FlyMotionModel(Keyboard* keyboard, Mouse* mouse, unsigned int op
  */
 FlyMotionModel::~FlyMotionModel()
 {
-   RemoveSender(&System::GetInstance());
-
    DeregisterInstance(this);
 }
 
@@ -491,16 +489,17 @@ void FlyMotionModel::SetUseSimTimeForSpeed(bool useSimTimeForSpeed)
  *
  * @param data the message data
  */
-void FlyMotionModel::OnMessage(MessageData* data)
+void FlyMotionModel::OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
 {
    if (GetTarget() != NULL &&
       IsEnabled() &&
-      (data->message == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL/*MESSAGE_PRE_FRAME*/) &&
+      (str == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL/*MESSAGE_PRE_FRAME*/) &&
       // don't move if paused & using simtime for speed (since simtime will be 0 if paused)
       (!HasOption(OPTION_USE_SIMTIME_FOR_SPEED) || !System::GetInstance().GetPause()))
    {
       // Get the time change (sim time or real time)
-      double delta = GetTimeDelta(data);
+      double delta = GetTimeDelta(deltaSim, deltaReal);
 
       Transform transform;
 
@@ -537,24 +536,12 @@ void FlyMotionModel::OnMessage(MessageData* data)
    }
 }
 
-double FlyMotionModel::GetTimeDelta(const MessageData* data) const
+double FlyMotionModel::GetTimeDelta(double dtSim, double dtReal) const
 {
-   // Get the time change (sim time or real time)
-   double delta;
-   double* timeChange = (double*)data->userData;
-   //if (data->message == dtCore::System::MESSAGE_PAUSE) // paused and !useSimTime
-   // Note - the if in OnMessage() prevents getting here if paused & OPTION_USE_SIMTIME_FOR_SPEED is set
-   if (System::GetInstance().GetPause())
+   double delta = dtReal;
+   if (HasOption(OPTION_USE_SIMTIME_FOR_SPEED) && !System::GetInstance().GetPause() )
    {
-      delta = timeChange[1]; // 0 is real time when paused
-   }
-   else if (HasOption(OPTION_USE_SIMTIME_FOR_SPEED))
-   {
-      delta = timeChange[0]; // 0 is sim time
-   }
-   else
-   {
-      delta = timeChange[1]; // 1 is real time
+      delta = dtSim;
    }
 
    return delta;

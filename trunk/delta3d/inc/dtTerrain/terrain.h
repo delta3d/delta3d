@@ -340,7 +340,8 @@ namespace dtTerrain
 
          PagedTerrainTileFactory *GetTerrainTileFactory() { return mTileFactory.get(); }
 
-         virtual void OnMessage(dtCore::Base::MessageData *data);
+         virtual void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+;
 
       protected:
 

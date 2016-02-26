@@ -42,7 +42,7 @@ UFOMotionModel::UFOMotionModel(Keyboard* keyboard,
       SetDefaultMappings(keyboard, mouse);
    }
 
-   AddSender(&System::GetInstance());
+   dtCore::System::GetInstance().TickSignal.connect_slot(this, &UFOMotionModel::OnSystem);
 }
 
 /**
@@ -50,8 +50,6 @@ UFOMotionModel::UFOMotionModel(Keyboard* keyboard,
  */
 UFOMotionModel::~UFOMotionModel()
 {
-   RemoveSender(&System::GetInstance());
-
    DeregisterInstance(this);
 }
 
@@ -331,13 +329,13 @@ float UFOMotionModel::GetMaximumTurnSpeed()
  *
  * @param data the message data
  */
-void UFOMotionModel::OnMessage(MessageData* data)
+void UFOMotionModel::OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+
 {
    if (GetTarget() != 0 &&
       IsEnabled() &&
-      data->message == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL/*MESSAGE_PRE_FRAME*/)
+      str == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL/*MESSAGE_PRE_FRAME*/)
    {
-      const double dtCore = *static_cast<const double*>(data->userData);
 
       Transform transform;
 
@@ -349,7 +347,7 @@ void UFOMotionModel::OnMessage(MessageData* data)
 
       if (mTurnLeftRightAxis != 0)
       {
-         hpr[0] -= float(mTurnLeftRightAxis->GetState() * mMaximumTurnSpeed * dtCore);
+         hpr[0] -= float(mTurnLeftRightAxis->GetState() * mMaximumTurnSpeed * deltaSim);
       }
 
       hpr[1] = 0.0f;
@@ -362,19 +360,19 @@ void UFOMotionModel::OnMessage(MessageData* data)
       if (mFlyForwardBackwardAxis != 0)
       {
          translation[1] =
-            (float)(mFlyForwardBackwardAxis->GetState() * mMaximumFlySpeed * dtCore);
+            (float)(mFlyForwardBackwardAxis->GetState() * mMaximumFlySpeed * deltaSim);
       }
 
       if (mFlyLeftRightAxis != 0)
       {
          translation[0] =
-            (float)(mFlyLeftRightAxis->GetState() * mMaximumFlySpeed * dtCore);
+            (float)(mFlyLeftRightAxis->GetState() * mMaximumFlySpeed * deltaSim);
       }
 
       if (mFlyUpDownAxis != 0)
       {
          translation[2] =
-            (float)(mFlyUpDownAxis->GetState() * mMaximumFlySpeed * dtCore);
+            (float)(mFlyUpDownAxis->GetState() * mMaximumFlySpeed * deltaSim);
       }
 
       osg::Matrix mat;

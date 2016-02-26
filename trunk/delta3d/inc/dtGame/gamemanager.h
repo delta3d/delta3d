@@ -291,7 +291,8 @@ namespace dtGame
        * @param The data from the message
        * @see dtCore::Base
        */
-      virtual void OnMessage(MessageData* data);
+      virtual void OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
+;
 
       /**
        * Calls DispatchNetworkMessage on all of the components
