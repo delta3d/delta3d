@@ -33,7 +33,7 @@
 namespace dtRender
 {
    const dtGame::ActorComponent::ACType UniformActComp::TYPE(new dtCore::ActorType("UniformActComp", "ActorComponents",
-          "An actor component to manage uniforms.",
+      "An actor component which makes it easy to store and access uniforms on an actor, also useful for storing on the main scene for rendering globals like HDR.",
           dtGame::ActorComponent::BaseActorComponentType));
 
    const dtUtil::RefString UniformActComp::PROPERTY_UNIFORM_COMP_NAME("Uniform Component Name");

@@ -36,6 +36,9 @@
 #include <dtRender/videoscene.h>
 #include <dtRender/atmospherescene.h>
 
+#include <dtRender/uniformactcomp.h>
+#include <dtRender/optimizeractcomp.h>
+
 
 // For the autoreg
 #include <dtCore/actorfactory.h> 
@@ -95,7 +98,7 @@ namespace dtRender
    dtCore::RefPtr<dtCore::ActorType> RenderActorRegistry::VIDEO_SCENE_ACTOR_TYPE(new dtCore::ActorType
       ("Video Scene", "dtRender", "This actor renders a video to a texture.")); 
 
-   
+
    // Must be after the types or it will crash.
    //dtCore::AutoLibraryRegister<RenderActorRegistry> gAutoReg("dtRender");
 
@@ -137,5 +140,9 @@ namespace dtRender
       mActorFactory->RegisterType<SpotLight>(SPOT_LIGHT_ACTOR_TYPE.get());
       mActorFactory->RegisterType<SSAOSceneActor>(SSAO_SCENE_ACTOR_TYPE.get());
       mActorFactory->RegisterType<VideoSceneActor>(VIDEO_SCENE_ACTOR_TYPE.get());
+
+      mActorFactory->RegisterType<OptimizerActComp>();
+      mActorFactory->RegisterType<UniformActComp>();
+
    }
 }

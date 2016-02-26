@@ -256,6 +256,11 @@ namespace dtUtil
       }
    }
 
+   //Destructor
+   NodeCollector::~NodeCollector()
+   {
+      ClearAll();
+   }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
    
    //Function that when called will automatically generate the node maps or geode maps that you request
@@ -753,10 +758,7 @@ namespace dtUtil
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
    
-   //Destructor
-   NodeCollector::~NodeCollector()
-   {
-   }
+   
 
  }//namespace dtUtil
 

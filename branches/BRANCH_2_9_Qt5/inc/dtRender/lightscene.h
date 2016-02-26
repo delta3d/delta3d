@@ -46,9 +46,7 @@ namespace dtRender
       static const dtUtil::RefString UNIFORM_NUM_SPOT_LIGHTS_TO_USE;
 
 
-      typedef std::vector<dtCore::RefPtr<DynamicLight> > LightArray;
-      typedef std::vector<dtCore::RefPtr<DynamicLight> > SpotLightArray;
-
+      typedef std::vector<dtCore::ObserverPtr<DynamicLight> > LightArray;      
 
       static const std::string DEFAULT_LIGHT_NAME;
 
