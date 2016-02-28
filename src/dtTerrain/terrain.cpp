@@ -98,7 +98,7 @@ namespace dtTerrain
       SetName(name);
       mLoadDistance = 30000.0f;      
       SetTerrainTileFactory(*(new PagedTerrainTileFactory()));
-      dtCore::System::GetInstance().TickSignal.connect_slot(this, &Action::OnSystem);
+      dtCore::System::GetInstance().TickSignal.connect_slot(this, &Terrain::OnSystem);
 
       SetLineOfSightSpacing(25.0f); // a bit less than DTED L2
    }
@@ -355,13 +355,11 @@ namespace dtTerrain
    void Terrain::OnSystem(const dtUtil::RefString& str, double deltaSim, double deltaReal)
 
    {
-      //Make sure we call our super class implementation of this method.
-      dtCore::Transformable::OnMessage(data);
 
       if (str == dtCore::System::MESSAGE_PRE_FRAME)
-         PreFrame(*(double *)data->userData);
+         PreFrame(deltaSim);
       else if (str == dtCore::System::MESSAGE_POST_FRAME)
-         PostFrame(*(double *)data->userData);     
+         PostFrame(deltaSim);     
    }
 
    //////////////////////////////////////////////////////////////////////////
