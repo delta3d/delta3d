@@ -55,6 +55,12 @@ namespace dtVoxel
       
       void CreateMesh(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution);
       
+      /**
+       * This will either create a task to run in the background to update the cell or part of the cell, or it will update
+       * the bounds on the existing task if it has not yet run.
+       * If the task is already, set to run, keep in mind that the only parameter that will matter is the bounds, so
+       * if the other parameters have changed, the task will need to have been run before calling this function.
+       */
       void CreateMeshWithTask(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution, const osg::BoundingBox& optionalBounds);
 
       bool RunTask(bool allowBackgroundThreading);
