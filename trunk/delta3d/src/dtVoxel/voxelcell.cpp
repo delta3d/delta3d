@@ -232,25 +232,23 @@ namespace dtVoxel
 
    void VoxelCell::CreateMeshWithTask(VoxelActor& voxelActor, osg::Matrix& transform, const osg::Vec3& cellSize, const osg::Vec3i& resolution, const osg::BoundingBox& optionalBounds)
    {
+      mImpl->mOffset = transform.getTrans();
+
+      osg::Vec3 texelSize(cellSize[0] / float(resolution[0]), cellSize[1] / float(resolution[1]), cellSize[2] / float(resolution[2]));
+
+
+      //openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(localGrid);
+      openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(voxelActor.GetGrid(0));
+
+
+      if (mImpl->mCreateMeshTask.valid())
       {
-         mImpl->mOffset = transform.getTrans();
-
-         osg::Vec3 texelSize(cellSize[0] / float(resolution[0]), cellSize[1] / float(resolution[1]), cellSize[2] / float(resolution[2]));
-
-
-         //openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(localGrid);
-         openvdb::FloatGrid::Ptr gridB = boost::dynamic_pointer_cast<openvdb::FloatGrid>(voxelActor.GetGrid(0));
-
-
-         if (mImpl->mCreateMeshTask.valid())
-         {
-            mImpl->mCreateMeshTask->ResetWithBounds(optionalBounds);
-         }
-         else
-         {
-            mImpl->mCreateMeshTask = new CreateMeshTask(mImpl->mOffset, texelSize, resolution, voxelActor.GetIsoLevel(), gridB);
-            mImpl->mCreateMeshTask->SetSkipBackFaces(true);
-         }
+         mImpl->mCreateMeshTask->UpdateWithBounds(optionalBounds);
+      }
+      else
+      {
+         mImpl->mCreateMeshTask = new CreateMeshTask(mImpl->mOffset, texelSize, resolution, voxelActor.GetIsoLevel(), gridB);
+         mImpl->mCreateMeshTask->SetSkipBackFaces(true);
       }
    }
 

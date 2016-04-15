@@ -60,7 +60,8 @@ namespace dtVoxel
       
       double GetTime() const;
 
-      void ResetWithBounds(const osg::BoundingBox& bb);
+      // This resets the task if it's done, or if it's not yet run, it will add the passed in bounding box to the work order.
+      void UpdateWithBounds(const osg::BoundingBox& bb);
 
       DT_DECLARE_ACCESSOR_INLINE(bool, SkipBackFaces);
       DT_DECLARE_ACCESSOR_INLINE(bool, CacheTriangleData);

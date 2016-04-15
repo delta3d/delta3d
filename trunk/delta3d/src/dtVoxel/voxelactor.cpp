@@ -260,6 +260,7 @@ namespace dtVoxel
 
             std::vector<VolumeUpdateMessagePtr> workingMessages;
             workingMessages.swap(mUpdateMessages);
+            std::cout << "Number of update messages " << workingMessages.size() << std::endl;
             std::for_each(workingMessages.begin(), workingMessages.end(),
                   [this](VolumeUpdateMessagePtr& msg)
                   {
