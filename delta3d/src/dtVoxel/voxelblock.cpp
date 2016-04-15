@@ -192,7 +192,7 @@ namespace dtVoxel
                         
                         //std::cout << "Found Cell" << std::endl;
 
-                        if (vc != nullptr && !vc->IsDirty())
+                        if (vc != nullptr /*&& !vc->IsDirty()*/)
                         {
                            //std::cout << "Cell is not dirty " << std::endl;
 
@@ -204,23 +204,24 @@ namespace dtVoxel
                                                             
                               //std::cout << "Found Node" << std::endl;
 
-                              fv.mLOD->setNumChildrenThatCannotBeExpired(fv.mLOD->getNumChildren());
+                              if (!vc->IsDirty())
+                              {
+                                 fv.mLOD->setNumChildrenThatCannotBeExpired(fv.mLOD->getNumChildren());
 
+                                 VoxelCellUpdateInfo updateInfo;
+                                 updateInfo.mBlock = this;
+                                 updateInfo.mCell = vc;
+                                 updateInfo.mNodeToUpdate = fv.mFoundNode;
+                                 updateInfo.mCellIndex.set(x, y, z);
+                                 updateInfo.mStarted = false;
+                                 updateInfo.mLODNode = fv.mLOD;
 
-                              VoxelCellUpdateInfo updateInfo;
-                              updateInfo.mBlock = this;
-                              updateInfo.mCell = vc;
-                              updateInfo.mNodeToUpdate = fv.mFoundNode;
-                              updateInfo.mCellIndex.set(x, y, z);
-                              updateInfo.mStarted = false;
-                              updateInfo.mLODNode = fv.mLOD;
-                              
+                                 vc->SetDirty(true);
 
-                              vc->SetDirty(true);
+                                 //std::cout << "Adding nodes to dirty cells" << std::endl;
 
-                              //std::cout << "Adding nodes to dirty cells" << std::endl;
-
-                              dirtyCells.push_back(updateInfo);
+                                 dirtyCells.push_back(updateInfo);
+                              }
 
                               osg::Vec3 pos(x * mWSCellDimensions[0], y * mWSCellDimensions[1], z * mWSCellDimensions[2]);
 

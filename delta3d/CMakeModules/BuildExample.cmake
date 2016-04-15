@@ -27,7 +27,7 @@ function(BUILD_EXE_EXAMPLE TGTNAME)
          SET_SOURCE_FILES_PROPERTIES(
             ${PROG_CONFIG_FILE}
              PROPERTIES
-             MACOSX_PACKAGE_LOCATION Resources/deltaData
+             MACOSX_PACKAGE_LOCATION Resources
           )
          ADD_DIRECTORY_TO_BUNDLE(apple_bundle_sources ${CMAKE_SOURCE_DIR}/data Resources/deltaData)
       endif()
