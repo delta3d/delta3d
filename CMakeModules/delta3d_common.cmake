@@ -182,7 +182,7 @@ function (BUILD_GAME_START libraryTargetName linkBool)
          SET_SOURCE_FILES_PROPERTIES(
           ${PROG_CONFIG_FILE}
           PROPERTIES
-          MACOSX_PACKAGE_LOCATION Resources/deltaData
+          MACOSX_PACKAGE_LOCATION Resources
          )
       endif()
    
