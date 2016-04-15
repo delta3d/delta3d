@@ -412,13 +412,19 @@ namespace dtVoxel
       }
    }
 
-   void CreateMeshTask::ResetWithBounds(const osg::BoundingBox& bb)
+   void CreateMeshTask::UpdateWithBounds(const osg::BoundingBox& bb)
    {
-      mDirtyBounds = bb;
-      
-      mUseBoundingBox = true;
-      mIsDone = false;
-      mMesh = new osg::Geode();
+      if (!mIsDone)
+      {
+         mDirtyBounds.expandBy(bb);
+      }
+      else
+      {
+         mDirtyBounds = bb;
+         mMesh = new osg::Geode();
+         mIsDone = false;
+         mUseBoundingBox = true;
+      }
    }
 
    
