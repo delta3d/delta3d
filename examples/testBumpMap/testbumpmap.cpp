@@ -89,6 +89,8 @@ TestBumpMapApp::TestBumpMapApp(const std::string& customObjectName,
 
    mRotationUniform = new osg::Uniform(osg::Uniform::FLOAT_MAT4, "RotationMatrix");
    GetCamera()->GetOSGCamera()->getOrCreateStateSet()->addUniform(mRotationUniform);
+   
+   SetNextStatisticsType();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
