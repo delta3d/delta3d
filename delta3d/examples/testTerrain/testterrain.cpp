@@ -633,7 +633,7 @@ int main(int argc, char** argv)
    double longitude;
    std::string cachePath;
    std::string resourcePath;
-   bool vegetation(false);
+   bool vegetation(true);
    std::string geospecific;
    std::string drapeImagePath;
 
