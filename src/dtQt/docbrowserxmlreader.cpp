@@ -80,7 +80,7 @@ namespace dtQt
                data.length(), "DocBrowserFile", false);
 
             parser.parse(*memBuf);
-            delete buffer;
+            delete[] buffer;
             return;
          }
       }

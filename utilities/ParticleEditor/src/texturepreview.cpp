@@ -58,7 +58,7 @@ std::string TexturePreview::GetTexture()
 /**
  * Draws the widget.
  */
-void TexturePreview::paintEvent(QPaintEvent* event)
+void TexturePreview::paintEvent(QPaintEvent* /*event*/)
 {
    QImage qImage = QImage(width(), height(), QImage::Format_ARGB32);
    qImage.fill(qRgb(255, 255, 255));
