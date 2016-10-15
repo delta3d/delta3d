@@ -525,7 +525,7 @@ namespace dtAnim
    {
       int results = 0;
 
-      typedef dtAnim::OsgModelResourceFinder::OsgAnimationArray OsgAnimationArray;
+      //typedef dtAnim::OsgModelResourceFinder::OsgAnimationArray OsgAnimationArray;
       typedef dtAnim::OsgModelResourceFinder::OsgAnimManagerArray OsgAnimManagerArray;
 
       osg::Node* node = GetOrCreateModelNode();
@@ -627,7 +627,7 @@ namespace dtAnim
          int numDrawables = geode->getNumDrawables();
          for (int i = 0; i < numDrawables; ++i)
          {
-            osg::Drawable* geom = geode->getDrawable(i)->asGeometry();
+            //osg::Drawable* geom = geode->getDrawable(i)->asGeometry();
             rigGeom = dynamic_cast<osgAnimation::RigGeometry*>(curIter->get());
             if (rigGeom != NULL)
             {

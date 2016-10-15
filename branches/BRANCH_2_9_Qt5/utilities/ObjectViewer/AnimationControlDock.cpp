@@ -201,7 +201,7 @@ void AnimationControlDock::UpdateUI()
          curPath = iter->get()->getAnimationPath();
          double firstTime = curPath->getFirstTime();
          double lastTime = curPath->getLastTime();
-         double timePeriod = lastTime - firstTime;
+         //double timePeriod = lastTime - firstTime;
 
          if (timeEarliest == -1.0f || firstTime < timeEarliest)
             timeEarliest = firstTime;

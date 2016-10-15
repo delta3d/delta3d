@@ -259,10 +259,6 @@ namespace dtCore
 
       static const RefString GROUP(GROUP_OSG_LOD);
 
-      osg::LOD* lod = &GetNode();
-
-      // TODO:
-
       // ENUM PROPERTIES
       typedef EnumActorProperty<dtCore::LODCenterMode> LODCenterModeEnumProperty;
       AddProperty(new LODCenterModeEnumProperty(

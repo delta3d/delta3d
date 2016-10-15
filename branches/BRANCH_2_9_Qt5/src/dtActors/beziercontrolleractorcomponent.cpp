@@ -114,7 +114,7 @@ void BezierControllerActorComponent::BuildPropertyMap()
 
    using namespace dtUtil; // for RefString
 
-   BezierController* bc = GetController();
+   //BezierController* bc = GetController();
 
    RefString GROUP("Controller");
 
