@@ -69,8 +69,8 @@ namespace {
    usage(int exitStatus = EXIT_FAILURE)
    {
       std::cerr <<
-            "Usage: " << gProgName << " in.vdb [in.vdb ...] [options]\n" <<
-            "Which: prints information about OpenVDB grids\n" <<
+            "Usage: " << gProgName << " inFile1 [inFile2 ...] [options]\n" <<
+            "Which: Converts meshes into voxel grids\n" <<
             "Options:\n" <<
             "    -b,            convert to a bool grid or tree (default).\n" <<
             "    -f,            convert to a float grid or tree.\n" <<
